@@ -3,24 +3,24 @@ import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 /**
  * Config for the oidc client.
  */
-const settings = {
+ const settings = {
     // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.sessionStorage }),
     // URL to the authentication server (including realm)
-    authority: 'http://mobydick.crs4.it:8087/auth/realms/bbmri-dev',
+    authority: ' https://login.bbmri-eric.eu/oidc/',
     // The name of the client in Keycloak setup for this service
-    client_id: 'negotiator-authentication-pkce',
+    client_id: '5b0bed7f-eb53-4773-86de-8a47f48cd9bd',
     // Where to redirect the user to after successful authentication
-    redirect_uri: 'http://localhost:5173/redirect',
+    redirect_uri: 'http://negotiator-dev2.vm.cesnet.cz/login',
     // Where to redirect the user to after logging the user out
-    post_logout_redirect_uri: 'http://localhost:5173',
+    post_logout_redirect_uri: 'http://negotiator-dev2.vm.cesnet.cz/',
     // Indicate the the authorization code flow should be used
     response_type: 'code',
     // "openid" tells the server that this client uses oidc for authentication
-    scope: 'openid',
+    scope: 'openid profile email offline_access eduperson_entitlement negotiator_api',
     // Enable automatic (silent) renewal of the access token
     automaticSilentRenew: true
-  }
+}
 
 let userManager = new UserManager(settings)
 

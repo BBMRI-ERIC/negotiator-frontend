@@ -19,7 +19,7 @@ router.beforeEach((to) => {
   console.log(to)
   console.log(window)
   // Here we handle the login redirect and than send the user to the "/" route.
-  if (to.path === '/redirect')   {
+  if (to.path === '/login')   {
     console.log('HERE')
     // Inform the authentication service that a user logged in. Afterwards we send the user to the main page
     authService.handleLoginRedirect()
