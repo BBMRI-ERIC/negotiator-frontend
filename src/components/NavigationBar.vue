@@ -14,9 +14,24 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
-          <li class="nav-item btn-nav">
-            <button class="btn btn-outline-primary my-2 my-sm-0">Login</button>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a
+              v-if="!isUserLoggedIn"
+              class="nav-link active"
+              aria-current="page"
+              href="#"
+              @click.stop.prevent="onLogin"
+              >Login
+            </a>
+            <a
+              v-else
+              class="nav-link active"
+              aria-current="page"
+              href="#"
+              @click.stop.prevent="onLogout"
+              >Logout
+            </a>
           </li>
         </ul>
       </div>
@@ -27,7 +42,41 @@
 <script>
 export default {
   name: "navigation-bar",
-}
+  data() {
+    return {
+      isUserLoggedIn: false,
+      authToken: "",
+      user: "",
+    };
+  },
+  async mounted() {
+    this.isUserLoggedIn = await this.$auth.isUserLoggedIn();
+    if (this.isUserLoggedIn) {
+      this.authToken = await this.$auth.getAccessToken();
+      const profile = await this.$auth.getProfile();
+      this.user = profile.name;
+    }
+    //this.$auth.isUserLoggedIn()
+    //  .then(isLoggedIn => {
+    //    console.log('Evaluating Mounted...')
+    //    console.log(isLoggedIn)
+    //    this.isUserLoggedIn = isLoggedIn
+    //  })
+    // If somehting goes wrong we assume no user is logged in
+    //  .catch(error => {
+    //    console.log(error)
+    //    this.isUserLoggedIn = false
+    // })
+  },
+  methods: {
+    onLogin() {
+      this.$auth.login();
+    },
+    onLogout() {
+      this.$auth.logout();
+    },
+  },
+};
 </script>
 
 <style>
@@ -42,7 +91,7 @@ nav {
     text-align: left;
     font-size: 1rem;
     padding: 1rem 0;
-  } 
+  }
 }
 </style>
 
