@@ -9,3 +9,5 @@ const app = createApp(App);
 app.use(router);
 
 app.mount("#app");
+
+import './assets/scss/bbmri.scss'
