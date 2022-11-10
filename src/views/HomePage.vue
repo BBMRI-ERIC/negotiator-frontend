@@ -1,41 +1,37 @@
 <template>
   <header>
-    <navigation-bar/>
+    <navigation-bar :user="user" />
   </header>
-  <div>
-    <h1 v-if="!isUserLoggedIn">
-      Welcome! ckick in the login button below to start login process
-    </h1>
-    <h1 v-if="isUserLoggedIn">
-      Dear {{ user }}, You are logged in! This is your Authentication Token:
-    </h1>
-    <div class="box">
-      <p align="justify">{{ authToken }}</p>
-    </div>
-    <h5>This is the negotiator</h5>
-  </div>
+  <negotiation-form></negotiation-form>
 </template>
 
 <script>
-import NavigationBar from '../components/NavigationBar.vue';
+import NegotiationForm from "@/components/NegotiationForm.vue";
+import NavigationBar from "@/components/NavigationBar.vue";
+
 export default {
   name: "home-page",
   components: {
-    NavigationBar
+    NavigationBar,
+    NegotiationForm,
   },
   data() {
     return {
       isUserLoggedIn: false,
       authToken: "",
-      user: "",
+      profile: undefined,
     };
+  },
+  computed: {
+    user() {
+      return this.profile !== undefined ? this.profile.name : '';
+    },
   },
   async mounted() {
     this.isUserLoggedIn = await this.$auth.isUserLoggedIn();
     if (this.isUserLoggedIn) {
       this.authToken = await this.$auth.getAccessToken();
-      const profile = await this.$auth.getProfile();
-      this.user = profile.name;
+      this.profile = await this.$auth.getProfile();
     }
   },
 };

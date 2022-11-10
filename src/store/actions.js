@@ -1,5 +1,5 @@
 export default {
-    getAccessCriteria({ commit }) {
+    retrieveAccessCriteria({ commit }) {
         const accessCriteria = {
             "accessCriteria": [
                 {
