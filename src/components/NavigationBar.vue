@@ -22,16 +22,16 @@
               aria-current="page"
               href="#"
               @click.stop.prevent="onLogin"
-              >Login</a
-            >
+              >Login
+            </a>
             <a
               v-else
               class="nav-link active"
               aria-current="page"
               href="#"
               @click.stop.prevent="onLogout"
-              >Logout</a
-            >
+              >Logout
+            </a>
           </li>
         </ul>
       </div>
