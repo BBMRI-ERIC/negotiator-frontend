@@ -1,5 +1,5 @@
 <template>
-  <div v-for="criteria in accessCriteria.accessCriteria" :key="criteria.name" class="mb-3 ms-3 me-3">
+  <div v-for="criteria in accessCriteria" :key="criteria.name" class="mb-3 ms-3 me-3">
     <label class="form-label">{{ criteria.name }} </label>
     <input type="{{criteria.type}}" class="form-control" />
   </div>
@@ -17,7 +17,6 @@ export default {
   },
   mounted() {
     this.retrieveAccessCriteria();
-    console.log(this.accessCriteria)
   },
 };
 </script>
