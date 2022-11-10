@@ -15,16 +15,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  console.log('Redirection...')
-  console.log(to)
-  console.log(window)
   // Here we handle the login redirect and than send the user to the "/" route.
   if (to.path === '/login')   {
-    console.log('HERE')
     // Inform the authentication service that a user logged in. Afterwards we send the user to the main page
     authService.handleLoginRedirect()
       .then(() => {
-        console.log(authService.getAccessToken())
         router.push('/')
       })
       .catch(error => {

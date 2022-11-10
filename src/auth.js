@@ -3,7 +3,7 @@ import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 /**
  * Config for the oidc client.
  */
- const settings = {
+const settings = {
     // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.sessionStorage }),
     // URL to the authentication server (including realm)
@@ -32,14 +32,12 @@ class AuthService {
      * Initate the login process.
      */
     login() {
-        console.log('CALLING LOGIN')
         userManager.signinRedirect()
             .catch(error => console.log(error))
     }
 
     logout() {
         userManager.signoutRedirect()
-            .then(() => console.log('User logged out'))
             .catch(error => console.log(error))
     }
 
@@ -47,10 +45,6 @@ class AuthService {
      * Handles the redirect from the OAuth server after a user logged in.
      */
     handleLoginRedirect() {
-        // Returns a promise
-        // userManager.signinRedirect({ state: { bar: 15 } });
-        // return userManager.signinRedirect({ state: { bar: 15 } })
-        console.log('completing login')
         return userManager.signinRedirectCallback()
     }
 
@@ -104,11 +98,8 @@ class AuthService {
      */
     getAccessToken() {
         return new Promise((resolve, reject) => {
-            console.log('Get access token from user')
-            console.log(userManager.getUser())
             userManager.getUser()
                 .then(user => {
-                    console.log('Got access token from user')
                     resolve(user.access_token)
                 })
                 .catch(error => reject(error))
@@ -117,8 +108,6 @@ class AuthService {
 
     async obtainToken() {
         const a = await this.getAccessToken()
-        console.log('TOKEN')
-        console.log(a)
         return a
     }
 
