@@ -24,7 +24,7 @@ jobs:
       run: yarn --prefer-offline
 
     - name: Build
-      run: yarn build
+      run: yarn install && yarn build
     -
       name: Set up QEMU
       uses: docker/setup-qemu-action@v2
