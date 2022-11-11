@@ -3,7 +3,7 @@ RUN apk update
 RUN apk upgrade
 RUN apk add bash
 WORKDIR /app
-COPY . /app
+ADD . /app
 RUN npm install -g http-server
 RUN chown -R 1001:1001 /app
 EXPOSE 8080
