@@ -7,5 +7,6 @@ COPY . .
 RUN chown -R 1001:1001 /app
 RUN npm run build
 EXPOSE 8080
+RUN chmod +x start.sh
 USER 1001
-CMD [ "http-server", "dist" ]
+CMD [ "./start.sh" ]
