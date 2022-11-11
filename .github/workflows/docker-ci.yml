@@ -24,7 +24,7 @@ jobs:
       run: yarn --prefer-offline
 
     - name: Build
-      run: yarn build
+      run: yarn install && yarn build && ls -a
     -
       name: Set up QEMU
       uses: docker/setup-qemu-action@v2
@@ -54,6 +54,7 @@ jobs:
       name: Build and push
       uses: docker/build-push-action@v3
       with:
+        context: .
         platforms: linux/amd64,linux/arm64
         push: true
         labels: ${{ steps.meta.outputs.labels }}
