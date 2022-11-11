@@ -1,9 +1,9 @@
-FROM node:6.9.5-alpine
+FROM node:lts-alpine
 RUN apk update
 RUN apk upgrade
 RUN apk add bash
 WORKDIR /app
-ADD . /app
+COPY . /app
 RUN npm install -g http-server
 RUN chown -R 1001:1001 /app
 EXPOSE 8080
