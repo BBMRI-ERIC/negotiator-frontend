@@ -21,7 +21,7 @@ jobs:
         cache: 'yarn'
 
     - name: Install project dependencies
-      run: yarn --prefer-offline
+      run: yarn build --prefer-offline
     -
       name: Set up QEMU
       uses: docker/setup-qemu-action@v2
