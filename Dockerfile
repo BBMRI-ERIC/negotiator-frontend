@@ -3,7 +3,7 @@ RUN apk update
 RUN apk upgrade
 RUN apk add bash
 WORKDIR /app
-COPY ./dist/ .
+COPY dist/ .
 RUN npm install yarn
 RUN chown -R 1001:1001 /app
 EXPOSE 8080

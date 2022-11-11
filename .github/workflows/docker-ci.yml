@@ -23,7 +23,7 @@ jobs:
     - name: Install project dependencies
       run: yarn --prefer-offline
 
-    - name: Install project dependencies
+    - name: Build
       run: yarn build
     -
       name: Set up QEMU
