@@ -2,7 +2,21 @@
   <header>
     <navigation-bar :user="user" />
   </header>
-  <negotiation-form></negotiation-form>
+  <div class="container pt-4">
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <negotiation-form
+          v-if="$route.params.requestId"
+          :requestId="$route.params.requestId"
+        ></negotiation-form>
+        <div v-else>
+            Start negotiation by performing a query in the service you have to chose
+        </div>
+      </div>
+      <div class="col-4"></div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -24,7 +38,7 @@ export default {
   },
   computed: {
     user() {
-      return this.profile !== undefined ? this.profile.name : '';
+      return this.profile !== undefined ? this.profile.name : "";
     },
   },
   async mounted() {

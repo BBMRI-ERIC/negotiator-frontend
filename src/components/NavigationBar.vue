@@ -14,8 +14,10 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <span class="navbar-text ms-auto">Welcome back {{ user }}</span>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <span v-if="isUserLoggedIn" class="navbar-text me-2 "
+            >Welcome back {{ user }}</span
+          >
           <li class="nav-item">
             <button
               v-if="!isUserLoggedIn"
@@ -48,7 +50,7 @@ export default {
   },
   data() {
     return {
-      isUserLoggedIn: false
+      isUserLoggedIn: false,
     };
   },
   async mounted() {
