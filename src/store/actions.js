@@ -22,8 +22,8 @@ export default {
     },
     createNegotiation(store, data) {
         data = {
-            "title": "Test Request #2 with project included",
-            "description": "Need some samples for a very important study on a disease",
+            "title": data.title,
+            "description": data.description,
             "project": {
                 "title": "Project of request #2",
                 "description": "Great",
@@ -32,11 +32,11 @@ export default {
                 "expectedEndDate": "2022-11-10",
                 "isTestProject": false
             },
-            "queries": ["27207e53-e975-453a-9ee1-419526365eec"]
+            "queries": data.queries
         }
         axios.post(NEGOTIATION_PATH, data, { auth })
             .then((response) => {
-                console.log(`${response} created correctly`)
+                console.log(`Negotiation created correctly with data ${response.data.id}`)
             })
     }
 }
