@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sed -i 's|VITE_AUTH_CLIENT_ID_PLACEHOLDER|'"${CLIENT_ID}"'|g' .env
+sed -i 's|VITE_AUTH_URL_PLACEHOLDER|'${AUTH_URL}'|g' .env
+sed -i 's|VITE_AUTH_REDIRECT_URI_PLACEHOLDER|'"${REDIRECT_URI}"'|g' .env
+sed -i 's|VITE_AUTH_POST_LOGOUT_REDIRECT_URI_PLACEHOLDER|'"${POST_LOGOUT_REDIRECT_URI}"'|g' .env
+http-server dist

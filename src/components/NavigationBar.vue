@@ -14,24 +14,27 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <span v-if="isUserLoggedIn" class="navbar-text me-2 "
+            >Welcome back {{ user }}</span
+          >
           <li class="nav-item">
-            <a
+            <button
               v-if="!isUserLoggedIn"
-              class="nav-link active"
+              class="btn btn-outline-primary me-2"
               aria-current="page"
-              href="#"
               @click.stop.prevent="onLogin"
-              >Login
-            </a>
-            <a
+            >
+              Login
+            </button>
+            <button
               v-else
-              class="nav-link active"
+              class="btn btn-outline-secondary me-2"
               aria-current="page"
-              href="#"
               @click.stop.prevent="onLogout"
-              >Logout
-            </a>
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>
@@ -42,31 +45,16 @@
 <script>
 export default {
   name: "navigation-bar",
+  props: {
+    user: String,
+  },
   data() {
     return {
       isUserLoggedIn: false,
-      authToken: "",
-      user: "",
     };
   },
   async mounted() {
     this.isUserLoggedIn = await this.$auth.isUserLoggedIn();
-    if (this.isUserLoggedIn) {
-      this.authToken = await this.$auth.getAccessToken();
-      const profile = await this.$auth.getProfile();
-      this.user = profile.name;
-    }
-    //this.$auth.isUserLoggedIn()
-    //  .then(isLoggedIn => {
-    //    console.log('Evaluating Mounted...')
-    //    console.log(isLoggedIn)
-    //    this.isUserLoggedIn = isLoggedIn
-    //  })
-    // If somehting goes wrong we assume no user is logged in
-    //  .catch(error => {
-    //    console.log(error)
-    //    this.isUserLoggedIn = false
-    // })
   },
   methods: {
     onLogin() {
