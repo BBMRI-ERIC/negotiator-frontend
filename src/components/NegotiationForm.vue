@@ -6,7 +6,7 @@
   >
     <label class="form-label">{{ criteria.name }} </label>
     <input
-      type="{{ criteria.type }}"
+      :type="criteria.type"
       v-model="negotiationCriteria[criteria.name]"
       class="form-control"
     />
@@ -34,10 +34,11 @@ export default {
   data() {
     return {
       negotiationCriteria: {
-        title: '',
-        description: '',
-        queries: [this.requestId]
-      }
+        title: "",
+        description: "",
+        ethicsVote: "",
+        queries: [this.requestId],
+      },
     };
   },
   computed: {
@@ -46,11 +47,19 @@ export default {
   methods: {
     ...mapActions(["retrieveAccessCriteria", "createNegotiation"]),
     startNegotiation() {
-      this.createNegotiation(this.negotiationCriteria);
+      this.$auth.getAccessToken().then((token) => {
+        this.createNegotiation({
+          data: this.negotiationCriteria,
+          token: token,
+        });
+      });
     },
   },
   mounted() {
-    this.retrieveAccessCriteria();
+    this.$auth.getAccessToken()
+    .then((token) => {
+        this.retrieveAccessCriteria(token);
+    })
   },
 };
 </script>

@@ -24,7 +24,7 @@ import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 
 const settings = {
     // Where the tokens will be stored
-    userStore: new WebStorageStateStore({ store: window.sessionStorage }),
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
     // URL to the authentication server (including realm)
     authority: import.meta.env.VITE_AUTH_URL,
     // The name of the client in Keycloak setup for this service
@@ -41,7 +41,6 @@ const settings = {
     automaticSilentRenew: true
 }
 
-console.log(settings)
 let userManager = new UserManager(settings)
 
 /**

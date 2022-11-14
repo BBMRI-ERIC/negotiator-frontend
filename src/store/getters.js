@@ -1,3 +1,4 @@
 export default {
-    getAccessCriteria: state => state.accessCriteria
+    getAccessCriteria: state => state.accessCriteria,
+    getRequest: state => state.request
 }
