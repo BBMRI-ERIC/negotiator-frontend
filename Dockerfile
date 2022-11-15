@@ -5,6 +5,7 @@ RUN apk add bash
 WORKDIR /app
 COPY . /app
 COPY ./dist /app
+COPY .env /app/dist
 RUN npm install -g http-server
 RUN chown -R 1001:1001 /app
 EXPOSE 8080
