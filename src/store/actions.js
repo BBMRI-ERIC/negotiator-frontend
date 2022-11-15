@@ -29,7 +29,7 @@ export default {
                 console.log(`Error retrieving access criteria: ${error}`)
             })
     },
-    createNegotiation(store, { data, token }) {
+    createNegotiation({ commit }, { data, token }) {
         data = {
             "title": data.title,
             "description": data.description,
@@ -46,6 +46,7 @@ export default {
         axios.post(NEGOTIATION_PATH, data, getBearerHeaders(token))
             .then((response) => {
                 console.log(`Negotiation created correctly with data ${response.data.id}`)
+                commit('setNotification', `Negotiation created correctly with data ${response.data.id}`)
             })
     }
 }

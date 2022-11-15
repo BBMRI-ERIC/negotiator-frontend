@@ -4,5 +4,8 @@ export default {
     },
     setCurrentRequest(state, request) {
         state.request = request
+    },
+    setNotification(state, notificationMessage) {
+        state.notification = notificationMessage
     }
 }

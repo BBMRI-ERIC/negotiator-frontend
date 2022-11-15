@@ -1,4 +1,5 @@
 export default {
     accessCriteria: {},
-    request: {}
+    request: {},
+    notification: undefined
 }
