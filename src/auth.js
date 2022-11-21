@@ -26,13 +26,13 @@ const settings = {
     // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     // URL to the authentication server (including realm)
-    authority: import.meta.env.VITE_AUTH_URL,
+    authority: 'AUTH_URL_PLACEHOLDER',
     // The name of the client in Keycloak setup for this service
-    client_id: import.meta.env.VITE_CLIENT_ID,
+    client_id: 'CLIENT_ID_PLACEHOLDER',
     // Where to redirect the user to after successful authentication
-    redirect_uri: import.meta.env.VITE_AUTH_REDIRECT_URI,
+    redirect_uri: 'REDIRECT_URI_PLACEHOLDER',
     // Where to redirect the user to after logging the user out
-    post_logout_redirect_uri: import.meta.env.VITE_AUTH_POST_LOGOUT_REDIRECT_URI,
+    post_logout_redirect_uri: 'LOGOUT_URI_PLACEHOLDER',
     // Indicate the the authorization code flow should be used
     response_type: 'code',
     // "openid" tells the server that this client uses oidc for authentication
