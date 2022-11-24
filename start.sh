@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Replacing env constants in JS"
-for file in dist/assets/*.js*;
+for file in assets/*.js*;
 do
   echo "Processing $file ...";
 
