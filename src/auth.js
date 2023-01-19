@@ -101,7 +101,7 @@ class AuthService {
         return new Promise((resolve, reject) => {
             userManager.getUser()
                 .then(user => {
-                    if (user === null) {
+                    if (user === null || user.expired) {
                         resolve(null)
                     }
                     resolve(user.profile)
