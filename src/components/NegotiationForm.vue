@@ -54,26 +54,25 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({ accessCriteria: "getAccessCriteria" }),
+    ...mapGetters({ accessCriteria: "getAccessCriteria", request: "getRequest" }),
     loading() {
-      return this.accessCriteria === {};
+      console.log(this.accessCriteria)
+      return this.accessCriteria === undefined
     },
   },
   methods: {
-    ...mapActions(["retrieveAccessCriteria", "createNegotiation"]),
-    startNegotiation() {
-      this.$auth.getAccessToken().then((token) => {
-        this.createNegotiation({
+    ...mapActions(["retrieveAccessCriteriaByRequestId", "createNegotiation"]),
+    async startNegotiation() {
+      const token = await this.$auth.getAccessToken()
+      this.createNegotiation({
           data: this.negotiationCriteria,
           token: token,
-        });
       });
     },
   },
-  mounted() {
-    this.$auth.getAccessToken().then((token) => {
-      this.retrieveAccessCriteria(token);
-    });
-  },
+  async mounted() {
+    const token = await this.$auth.getAccessToken()
+    this.retrieveAccessCriteriaByRequestId({ token, requestId: this.requestId })
+  }
 };
 </script>
