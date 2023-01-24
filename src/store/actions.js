@@ -35,7 +35,6 @@ export default {
                 const resourceId = response.data.resources[0].id  // At the moment we only get criteria for the first biobank
                 axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
                     .then((response) => {
-                        console.log(response.data)
                         commit('setCurrentAccessCriteria', response.data)
                     })
                     .catch(() => {

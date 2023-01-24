@@ -25,19 +25,40 @@
           :key="criteria.name"
           class="mb-4 ms-3 me-3"
         >
-          <label v-if="criteria.required" class="form-label required">{{ criteria.name }} </label>
+          <label v-if="criteria.required" class="form-label required"
+            >{{ criteria.name }}
+          </label>
           <label v-else class="form-label">{{ criteria.name }} </label>
-          <textarea v-if="criteria.type === 'textarea'"
-            v-model="negotiationCriteria[criteria.name]"
+          <textarea
+            v-if="criteria.type === 'textarea'"
+            v-model="negotiationCriteria[section.title][criteria.name]"
             class="form-control"
             :required="criteria.required"
           />
-          <input v-else
+          <input
+            v-else
             :type="criteria.type"
-            v-model="negotiationCriteria[criteria.name]"
+            v-model="negotiationCriteria[section.title][criteria.name]"
             class="form-control"
             :required="criteria.required"
           />
+        </div>
+      </tab-content>
+      <tab-content title="Overview">
+        <div
+          v-for="(criteria, section) in negotiationCriteria"
+          :key="section"
+          class="border input-group p-3 mb-3"
+        >
+          <span class="mb-4 fs-4 fw-bold text-secondary">{{ section }}:</span>
+          <div
+            v-for="(value, key) in criteria"
+            :key="key"
+            class="input-group mb-3"
+          >
+            <label class="me-2 fw-bold" :id="key">{{ key }}:</label>
+            <span>{{ value }}</span>
+          </div>
         </div>
       </tab-content>
       <template v-slot:footer="props">
@@ -52,14 +73,7 @@
           </button>
         </div>
         <div class="wizard-footer-right">
-          <button
-            v-if="!props.isLastStep"
-            @click="props.nextTab()"
-            class="btn btn-primary"
-          >
-            Next
-          </button>
-          <button v-else @click="alert('Done')" class="btn btn-primary">
+          <button @click="props.nextTab()" class="btn btn-primary">
             {{ props.isLastStep ? "Start Negotiation" : "Next" }}
           </button>
         </div>
@@ -86,12 +100,7 @@ export default {
   },
   data() {
     return {
-      negotiationCriteria: {
-        title: "",
-        description: "",
-        ethicsVote: "",
-        queries: [this.requestId],
-      },
+      negotiationCriteria: {},
     };
   },
   computed: {
@@ -100,18 +109,35 @@ export default {
       request: "getRequest",
     }),
     loading() {
-      console.log(this.accessCriteria);
+      if (this.accessCriteria !== undefined) {
+        this.initNegotiationCriteria();
+      }
       return this.accessCriteria === undefined;
     },
   },
   methods: {
     ...mapActions(["retrieveAccessCriteriaByRequestId", "createNegotiation"]),
     async startNegotiation() {
-      const token = await this.$auth.getAccessToken();
-      this.createNegotiation({
-        data: this.negotiationCriteria,
-        token: token,
-      });
+      console.log(this.negotiationCriteria);
+      for (let section in this.negotiationCriteria) {
+        console.log(section);
+      }
+      //   const token = await this.$auth.getAccessToken();
+      //   this.createNegotiation({
+      //     data: this.negotiationCriteria,
+      //     token: token,
+      //   });
+    },
+    initNegotiationCriteria() {
+      for (var section of this.accessCriteria.sections) {
+        console.log(criteria);
+        this.negotiationCriteria[section.title] = {};
+        for (var criteria of section.accessCriteria) {
+          console.log(criteria);
+          this.negotiationCriteria[section.title][criteria.name] = null;
+        }
+      }
+      console.log(this.negotiationCriteria);
     },
   },
   async mounted() {
@@ -130,7 +156,7 @@ export default {
 }
 
 .required:after {
-    content:"  *\00a0";
-    color:red;
+  content: "  *\00a0";
+  color: red;
 }
 </style>
