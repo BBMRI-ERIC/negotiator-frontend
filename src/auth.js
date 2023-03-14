@@ -104,31 +104,10 @@ class AuthService {
         })
     }
 
-    async obtainToken() {
-        const a = await this.getAccessToken()
-        return a
-    }
-
-    async checkLogged() {
-        return await (await (this.isUserLoggedIn()))
-    }
-
 
 }
-
 
 /**
 * Create and expose an instance of the auth service.
 */
 export const authService = new AuthService()
-
-// /**
-//  * Default export to register the authentication service in the global Vue instance.
-//  *
-//  * This allows us to reference it using "this.$auth" whenever we are inside of a Vue context.
-//  */
-// export default {
-//   install: function (Vue) {
-//     Vue.prototype.$auth = authService
-//   }
-// }
