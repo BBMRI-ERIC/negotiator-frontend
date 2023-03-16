@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../views/HomePage.vue";
-import { authService } from '../auth'
+import { authService } from '@/auth'
 
 
 const router = createRouter({

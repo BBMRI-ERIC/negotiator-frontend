@@ -5,7 +5,6 @@ import vue from "@vitejs/plugin-vue";
 
 const PROXY_TARGET = 'http://localhost:8081'
 
-// https://vitejs.dev/config/
 export default defineConfig({
     plugins: [vue()],
     resolve: {

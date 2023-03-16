@@ -1,6 +1,25 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 
+const dev_settings = {
+    // Where the tokens will be stored
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    // URL to the authentication server (including realm)
+    authority: 'http://localhost:4011/',
+    // The name of the client in Keycloak setup for this service
+    client_id: 'client-credentials-mock-client',
+    client_secret: 'authorization-code-with-pkce-client-secret',
+    // Where to redirect the user to after successful authentication
+    redirect_uri: 'http://localhost:8080/login',
+    // Where to redirect the user to after logging the user out
+    post_logout_redirect_uri: 'LOGOUT_URI_PLACEHOLDER',
+    // Indicate the authorization code flow should be used
+    response_type: 'code',
+    // "openid" tells the server that this client uses oidc for authentication
+    scope: 'openid profile email permissions',
+    // Enable automatic (silent) renewal of the access token
+    automaticSilentRenew: true,
 
+}
 const settings = {
     // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.localStorage }),
@@ -102,6 +121,16 @@ class AuthService {
                 })
                 .catch(error => reject(error))
         })
+    }
+
+    async getClaims() {
+        const response = await fetch('http://localhost:4011/connect/userinfo', {
+            headers:
+                {
+                    'Authorization': 'Bearer ' + await this.getAccessToken()
+                }
+        })
+        return response.json()
     }
 
 
