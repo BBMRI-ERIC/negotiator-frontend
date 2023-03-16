@@ -50,9 +50,12 @@ class AuthService {
     /**
      * Initate the login process.
      */
-    login() {
-        userManager.signinRedirect()
-            .catch(error => console.log(error))
+    login(currenPath) {
+        userManager.signinRedirect({
+            state: {
+                previousPath: currenPath
+            }
+        }).catch(error => console.log(error))
     }
 
     logout() {
@@ -83,7 +86,7 @@ class AuthService {
         return new Promise((resolve, reject) => {
             userManager.getUser()
                 .then(user => {
-                    if (user === null || user.expired ) {
+                    if (user === null || user.expired) {
                         resolve(false)
                     }
                     resolve(true)
@@ -101,7 +104,7 @@ class AuthService {
         return new Promise((resolve, reject) => {
             userManager.getUser()
                 .then(user => {
-                    if (user === null  || user.expired) {
+                    if (user === null || user.expired) {
                         resolve(null)
                     }
                     resolve(user.profile)
