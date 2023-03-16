@@ -1,18 +1,20 @@
-# negotiator-v3-frontend
+# NegotiatorV3 Frontend
 
-## Project setup
+## Development mode
+
+To run the application in fully accessible development mode you need to run an instance of a [mock OIDC server](https://github.com/Soluto/oidc-server-mock).
+You can spin up a preconfigured instance with the following command.
 ```
-npm install
+cd odic_mock && docker-compose up -d
+```
+Then to run the application with correct settings run:
+```
+vite dev
 ```
 
-### Compiles and hot-reloads for development
+## Production build
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+vite build
 ```
 
 ### Lints and fixes files
