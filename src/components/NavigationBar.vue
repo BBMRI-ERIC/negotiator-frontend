@@ -58,7 +58,8 @@ export default {
   },
   methods: {
     onLogin() {
-      this.$auth.login();
+      console.log(this.$router.currentRoute.value.fullPath)
+      this.$auth.login(this.$router.currentRoute.value.fullPath);
     },
     onLogout() {
       this.$auth.logout();

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const BASE_API_PATH = '/api/v3'
 
-const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
+const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
 
@@ -20,13 +20,29 @@ export default {
         axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(token))
             .then((response) => commit('setCurrentRequest', response.data))
     },
-    retrieveAccessCriteria({ commit }, token) {
-        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=bbmri-eric:ID:AT_MUG:collection:COVID19PROSPECTIVE`, getBearerHeaders(token))
+    retrieveAccessCriteria({ commit }, { token, resourceId }) {
+        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
             .then((response) => {
-                commit('setCurrentAccessCriteria', response.data.accessCriteria)
+                commit('setCurrentAccessCriteria', response.data)
             })
             .catch((error) => {
                 console.log(`Error retrieving access criteria: ${error}`)
+            })
+    },
+    retrieveAccessCriteriaByRequestId({ commit }, { token, requestId }) {
+        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(token))
+            .then((response) => {
+                const resourceId = response.data.resources[0].id  // At the moment we only get criteria for the first biobank
+                axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
+                    .then((response) => {
+                        commit('setCurrentAccessCriteria', response.data)
+                    })
+                    .catch(() => {
+                        commit('setNotification', 'Error getting request data from server')
+                    })
+            })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
             })
     },
     createNegotiation({ commit }, { data, token }) {
