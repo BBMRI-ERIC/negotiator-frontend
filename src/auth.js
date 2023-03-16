@@ -26,13 +26,13 @@ const settings = {
     // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     // URL to the authentication server (including realm)
-    authority: 'AUTH_URL_PLACEHOLDER',
+    authority: import.meta.env.VITE_AUTH_URL,
     // The name of the client in Keycloak setup for this service
-    client_id: 'CLIENT_ID_PLACEHOLDER',
+    client_id: import.meta.env.VITE_CLIENT_ID,
     // Where to redirect the user to after successful authentication
-    redirect_uri: 'REDIRECT_URI_PLACEHOLDER',
+    redirect_uri: import.meta.env.VITE_AUTH_REDIRECT_URI,
     // Where to redirect the user to after logging the user out
-    post_logout_redirect_uri: 'LOGOUT_URI_PLACEHOLDER',
+    post_logout_redirect_uri: import.meta.env.VITE_AUTH_LOGOUT_URI,
     // Indicate the the authorization code flow should be used
     response_type: 'code',
     // "openid" tells the server that this client uses oidc for authentication
@@ -50,9 +50,12 @@ class AuthService {
     /**
      * Initate the login process.
      */
-    login() {
-        userManager.signinRedirect()
-            .catch(error => console.log(error))
+    login(currenPath) {
+        userManager.signinRedirect({
+            state: {
+                previousPath: currenPath
+            }
+        }).catch(error => console.log(error))
     }
 
     logout() {
@@ -83,7 +86,7 @@ class AuthService {
         return new Promise((resolve, reject) => {
             userManager.getUser()
                 .then(user => {
-                    if (user === null) {
+                    if (user === null || user.expired) {
                         resolve(false)
                     }
                     resolve(true)

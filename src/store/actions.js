@@ -23,7 +23,7 @@ export default {
     retrieveAccessCriteria({ commit }, { token, resourceId }) {
         axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
             .then((response) => {
-                commit('setCurrentAccessCriteria', response.data.accessCriteria)
+                commit('setCurrentAccessCriteria', response.data)
             })
             .catch((error) => {
                 console.log(`Error retrieving access criteria: ${error}`)
@@ -35,7 +35,7 @@ export default {
                 const resourceId = response.data.resources[0].id  // At the moment we only get criteria for the first biobank
                 axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
                     .then((response) => {
-                        commit('setCurrentAccessCriteria', response.data.accessCriteria)
+                        commit('setCurrentAccessCriteria', response.data)
                     })
                     .catch(() => {
                         commit('setNotification', 'Error getting request data from server')
