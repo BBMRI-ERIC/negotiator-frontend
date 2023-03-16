@@ -1,44 +1,30 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 
-/**
- * Config for the oidc client.
- */
-// const settings = {
-//     // Where the tokens will be stored
-//     userStore: new WebStorageStateStore({ store: window.sessionStorage }),
-//     // URL to the authentication server (including realm)
-//     authority: 'https://login.bbmri-eric.eu/oidc/',
-//     // The name of the client in Keycloak setup for this service
-//     client_id: '5b0bed7f-eb53-4773-86de-8a47f48cd9bd',
-//     // Where to redirect the user to after successful authentication
-//     redirect_uri: 'http://negotiator-dev2.vm.cesnet.cz/login',
-//     // Where to redirect the user to after logging the user out
-//     post_logout_redirect_uri: 'http://negotiator-dev2.vm.cesnet.cz/',
-//     // Indicate the the authorization code flow should be used
-//     response_type: 'code',
-//     // "openid" tells the server that this client uses oidc for authentication
-//     scope: 'openid profile email offline_access eduperson_entitlement negotiator_api',
-//     // Enable automatic (silent) renewal of the access token
-//     automaticSilentRenew: true
-// }
-
-const settings = {
-    // Where the tokens will be stored
+const dev_settings = {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
-    // URL to the authentication server (including realm)
-    authority: import.meta.env.VITE_AUTH_URL,
-    // The name of the client in Keycloak setup for this service
-    client_id: import.meta.env.VITE_CLIENT_ID,
-    // Where to redirect the user to after successful authentication
-    redirect_uri: import.meta.env.VITE_AUTH_REDIRECT_URI,
-    // Where to redirect the user to after logging the user out
-    post_logout_redirect_uri: import.meta.env.VITE_AUTH_LOGOUT_URI,
-    // Indicate the the authorization code flow should be used
+    authority: 'http://localhost:4011/',
+    client_id: 'client-credentials-mock-client',
+    client_secret: 'authorization-code-with-pkce-client-secret',
+    redirect_uri: 'http://localhost:8080/login',
+    post_logout_redirect_uri: 'http://localhost:8080',
     response_type: 'code',
-    // "openid" tells the server that this client uses oidc for authentication
+    scope: 'openid profile email permissions',
+    automaticSilentRenew: true,
+
+}
+const prod_settings = {
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    authority: 'AUTH_URL_PLACEHOLDER',
+    client_id: 'CLIENT_ID_PLACEHOLDER',
+    redirect_uri: 'REDIRECT_URI_PLACEHOLDER',
+    post_logout_redirect_uri: 'LOGOUT_URI_PLACEHOLDER',
+    response_type: 'code',
     scope: 'openid profile email offline_access eduperson_entitlement negotiator_api',
-    // Enable automatic (silent) renewal of the access token
     automaticSilentRenew: true
+}
+let settings = prod_settings
+if (import.meta.env.DEV) {
+    settings = dev_settings
 }
 
 let userManager = new UserManager(settings)
@@ -128,31 +114,20 @@ class AuthService {
         })
     }
 
-    async obtainToken() {
-        const a = await this.getAccessToken()
-        return a
-    }
-
-    async checkLogged() {
-        return await (await (this.isUserLoggedIn()))
+    async getClaims() {
+        const response = await fetch('http://localhost:4011/connect/userinfo', {
+            headers:
+                {
+                    'Authorization': 'Bearer ' + await this.getAccessToken()
+                }
+        })
+        return response.json()
     }
 
 
 }
 
-
 /**
 * Create and expose an instance of the auth service.
 */
 export const authService = new AuthService()
-
-// /**
-//  * Default export to register the authentication service in the global Vue instance.
-//  *
-//  * This allows us to reference it using "this.$auth" whenever we are inside of a Vue context.
-//  */
-// export default {
-//   install: function (Vue) {
-//     Vue.prototype.$auth = authService
-//   }
-// }

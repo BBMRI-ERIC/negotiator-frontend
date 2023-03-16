@@ -1,0 +1,6 @@
+[
+  {
+    "Name": "permissions",
+    "ClaimTypes": ["eduperson_entitlement"]
+  }
+]
