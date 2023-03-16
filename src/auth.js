@@ -12,7 +12,7 @@ const dev_settings = {
     automaticSilentRenew: true,
 
 }
-const settings = {
+const prod_settings = {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     authority: 'AUTH_URL_PLACEHOLDER',
     client_id: 'CLIENT_ID_PLACEHOLDER',
@@ -21,6 +21,10 @@ const settings = {
     response_type: 'code',
     scope: 'openid profile email offline_access eduperson_entitlement negotiator_api',
     automaticSilentRenew: true
+}
+let settings = prod_settings
+if (import.meta.env.DEV) {
+    settings = dev_settings
 }
 
 let userManager = new UserManager(settings)
