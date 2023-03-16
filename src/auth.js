@@ -1,41 +1,25 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
 
 const dev_settings = {
-    // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.localStorage }),
-    // URL to the authentication server (including realm)
     authority: 'http://localhost:4011/',
-    // The name of the client in Keycloak setup for this service
     client_id: 'client-credentials-mock-client',
     client_secret: 'authorization-code-with-pkce-client-secret',
-    // Where to redirect the user to after successful authentication
     redirect_uri: 'http://localhost:8080/login',
-    // Where to redirect the user to after logging the user out
-    post_logout_redirect_uri: 'LOGOUT_URI_PLACEHOLDER',
-    // Indicate the authorization code flow should be used
+    post_logout_redirect_uri: 'http://localhost:8080',
     response_type: 'code',
-    // "openid" tells the server that this client uses oidc for authentication
     scope: 'openid profile email permissions',
-    // Enable automatic (silent) renewal of the access token
     automaticSilentRenew: true,
 
 }
 const settings = {
-    // Where the tokens will be stored
     userStore: new WebStorageStateStore({ store: window.localStorage }),
-    // URL to the authentication server (including realm)
     authority: 'AUTH_URL_PLACEHOLDER',
-    // The name of the client in Keycloak setup for this service
     client_id: 'CLIENT_ID_PLACEHOLDER',
-    // Where to redirect the user to after successful authentication
     redirect_uri: 'REDIRECT_URI_PLACEHOLDER',
-    // Where to redirect the user to after logging the user out
     post_logout_redirect_uri: 'LOGOUT_URI_PLACEHOLDER',
-    // Indicate the the authorization code flow should be used
     response_type: 'code',
-    // "openid" tells the server that this client uses oidc for authentication
     scope: 'openid profile email offline_access eduperson_entitlement negotiator_api',
-    // Enable automatic (silent) renewal of the access token
     automaticSilentRenew: true
 }
 
