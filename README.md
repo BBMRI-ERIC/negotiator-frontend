@@ -5,7 +5,7 @@
 To run the application in fully accessible development mode you need to run an instance of a [mock OIDC server](https://github.com/Soluto/oidc-server-mock).
 You can spin up a preconfigured instance with the following command.
 ```
-cd odic_mock && docker-compose up -d
+cd oidc_mock && docker-compose up -d
 ```
 Then to run the application with correct settings run:
 ```
