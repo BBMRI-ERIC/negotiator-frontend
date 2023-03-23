@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_API_PATH = '/api/v3'
+const BASE_API_PATH = 'http://localhost:8081/api/v3'
 
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
@@ -40,6 +40,7 @@ export default {
                     .catch(() => {
                         commit('setNotification', 'Error getting request data from server')
                     })
+                console.log(response.data)
             })
             .catch(() => {
                 commit('setNotification', 'Error getting request data from server')

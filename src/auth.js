@@ -1,8 +1,10 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
+import {OidcClient, UserManager, WebStorageStateStore} from 'oidc-client-ts'
 
 const dev_settings = {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     authority: 'http://localhost:4011/',
+    loadUserInfo: true,
+    user_info_endpoint: 'http://localhost:4011/connect/userinfo',
     client_id: 'client-credentials-mock-client',
     client_secret: 'authorization-code-with-pkce-client-secret',
     redirect_uri: 'http://localhost:8080/login',
@@ -108,20 +110,11 @@ class AuthService {
         return new Promise((resolve, reject) => {
             userManager.getUser()
                 .then(user => {
+                    console.log(user.access_token)
                     resolve(user.access_token)
                 })
                 .catch(error => reject(error))
         })
-    }
-
-    async getClaims() {
-        const response = await fetch('http://localhost:4011/connect/userinfo', {
-            headers:
-                {
-                    'Authorization': 'Bearer ' + await this.getAccessToken()
-                }
-        })
-        return response.json()
     }
 
 
