@@ -1,4 +1,4 @@
-import {OidcClient, UserManager, WebStorageStateStore} from 'oidc-client-ts'
+import {UserManager, WebStorageStateStore} from 'oidc-client-ts'
 
 const dev_settings = {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
