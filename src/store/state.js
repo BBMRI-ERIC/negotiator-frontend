@@ -1,5 +1,6 @@
 export default {
     accessCriteria: undefined,
     request: {},
-    notification: undefined
+    notification: undefined,
+    negotiations: Array
 }

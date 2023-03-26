@@ -48,5 +48,13 @@ export default {
             .then((response) => {
                 commit('setNotification', `Negotiation created correctly with data ${response.data.id}`)
             })
+    },
+    retrieveNegotiations({commit}, {token}) {
+        axios.get(NEGOTIATION_PATH, getBearerHeaders(token)).then((response) => {
+            commit('setNegotiations', response.data)
+        })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
+            })
     }
 }

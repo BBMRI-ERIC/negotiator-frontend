@@ -8,27 +8,28 @@
 
 import NavigationBar from "@/components/NavigationBar.vue";
 import NegotiationList from "@/components/NegotiationList.vue";
+import {mapActions, mapGetters} from "vuex";
 export default {
   name: "Researcher",
   components: {
     NavigationBar,
     NegotiationList
   },
-  data() {
-    return {
-      negotiations: []
-    }
+  methods: {
+    ...mapActions(["retrieveNegotiations"])
   },
-  created() {
-    this.negotiations = [{
-      id: 1,
-      title: "This is my first dummy request"
-    },
-      {
-      id: 2,
-      title: "This is my second dummy request"
-      }]
-  }
+  computed: {
+    ...mapGetters({
+      negotiations: "getNegotiations",
+    })
+  },
+  async mounted() {
+    const token = await this.$auth.getAccessToken();
+    await this.retrieveNegotiations({
+      token
+    });
+    console.log(this.negotiations)
+  },
 }
 </script>
 
