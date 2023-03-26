@@ -1,6 +1,7 @@
 <template>
   <div class="negotiation">
-    <h3>Request title: {{ negotiation.title }}</h3>
+    <div class="object-title">Request title:{{ negotiation.title }}</div>
+    <div class="object-id">Request id:{{ negotiation.id }}</div>
   </div>
 
 </template>
@@ -22,9 +23,24 @@ export default {
   padding: 10px 20px;
   cursor: pointer;
 }
-.negotiation h3 {
+.negotiation {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+}
+
+.object-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.object-id {
+  font-size: 1rem;
+  color: #999;
+}
+.object-details {
+  position:relative;
+  top:0;
+  right:0;
 }
 </style>

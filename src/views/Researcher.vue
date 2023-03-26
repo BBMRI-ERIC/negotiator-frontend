@@ -6,9 +6,9 @@
 </template>
 <script>
 
-import NavigationBar from "@/components/NavigationBar.vue";
 import NegotiationList from "@/components/NegotiationList.vue";
 import {mapActions, mapGetters} from "vuex";
+import NavigationBar from "@/components/NavigationBar.vue";
 export default {
   name: "Researcher",
   components: {
@@ -28,7 +28,6 @@ export default {
     await this.retrieveNegotiations({
       token
     });
-    console.log(this.negotiations)
   },
 }
 </script>
@@ -38,10 +37,8 @@ export default {
   max-width: 1000px;
   margin: 30px auto;
   overflow: auto;
-  min-height: 300px;
+  min-height: 200px;
   text-align: center;
-  border: 1px solid #ec6707;
   padding: 30px;
-  border-radius: 5px;
 }
 </style>
