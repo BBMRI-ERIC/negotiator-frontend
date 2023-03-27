@@ -1,9 +1,6 @@
 import axios from 'axios'
 
 let BASE_API_PATH = '/api/v3'
-if (import.meta.env.DEV){
-    BASE_API_PATH = 'http://localhost:8081/api/v3'
-}
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
