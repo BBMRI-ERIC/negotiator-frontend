@@ -3,7 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
-const PROXY_TARGET = 'http://localhost:8090'
+const PROXY_TARGET = 'http://localhost:8081'
 
 export default defineConfig({
     plugins: [vue()],

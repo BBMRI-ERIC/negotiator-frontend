@@ -62,13 +62,13 @@ export default {
     return {
       isUserLoggedIn: false,
       authToken: "",
-      userClaims: undefined,
+      profile: undefined,
     };
   },
   computed: {
     ...mapGetters({ notification: "getNotification" }),
     user() {
-      return this.userClaims !== undefined ? this.userClaims.name : "";
+      return this.profile !== undefined ? this.profile.name : "";
     },
   },
   methods: {
@@ -82,7 +82,6 @@ export default {
     if (this.isUserLoggedIn) {
       this.authToken = await this.$auth.getAccessToken();
       this.profile = await this.$auth.getProfile();
-      this.userClaims = await this.$auth.getClaims();
     }
   },
 };

@@ -1,11 +1,9 @@
 import axios from 'axios'
 
-const BASE_API_PATH = '/api/v3'
-
+let BASE_API_PATH = '/api/v3'
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
-
 function getBearerHeaders(token) {
     return {
         headers: {
