@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import OidcCallback from '@/components/OidcCallback.vue'
 import HomePage from "../views/HomePage.vue";
-import { authService } from '@/auth'
+import Login from "@/components/Login.vue";
+import store from '@/store'
+import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
+
 
 
 const router = createRouter({
@@ -12,26 +16,24 @@ const router = createRouter({
             component: HomePage,
         },
         {
+            path: '/logged-in', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
+            name: 'oidcCallback',
+            component: OidcCallback
+        },
+        {
             path: "/requests/:requestId",
             name: "request",
             component: HomePage,
+            meta: { requiresAuth: true }
+        },
+        {
+            path: "/login",
+            name: "login",
+            component: Login
         }
     ],
 });
 
-router.beforeEach((to) => {
-    // Here we handle the login redirect and than send the user to the "/" route.
-    if (to.path === '/login') {
-        // Inform the authentication service that a user logged in. Afterwards we send the user to the main page
-        authService.handleLoginRedirect()
-            .then((user) => {
-                router.push(user.state.previousPath)
-            })
-            .catch(error => {
-                console.log(error)
-                router.push('/')
-            })
-    }
-})
+router.beforeEach(vuexOidcCreateRouterMiddleware(store))
 
 export default router;

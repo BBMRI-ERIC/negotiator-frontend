@@ -14,12 +14,12 @@ function getBearerHeaders(token) {
 
 
 export default {
-    retrieveRequestById({ commit }, { token, requestId }) {
-        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(token))
+    retrieveRequestById({ state, commit }, { requestId }) {
+        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidcStore.access_token))
             .then((response) => commit('setCurrentRequest', response.data))
     },
-    retrieveAccessCriteria({ commit }, { token, resourceId }) {
-        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
+    retrieveAccessCriteria({ state, commit }, { resourceId }) {
+        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidcStore.access_token))
             .then((response) => {
                 commit('setCurrentAccessCriteria', response.data)
             })
@@ -27,11 +27,11 @@ export default {
                 console.log(`Error retrieving access criteria: ${error}`)
             })
     },
-    retrieveAccessCriteriaByRequestId({ commit }, { token, requestId }) {
-        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(token))
+    retrieveAccessCriteriaByRequestId({ state, commit }, { requestId }) {
+        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidcStore.access_token))
             .then((response) => {
                 const resourceId = response.data.resources[0].id  // At the moment we only get criteria for the first biobank
-                axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(token))
+                axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidcStore.access_token))
                     .then((response) => {
                         commit('setCurrentAccessCriteria', response.data)
                     })
@@ -43,23 +43,9 @@ export default {
                 commit('setNotification', 'Error getting request data from server')
             })
     },
-    createNegotiation({ commit }, { data, token }) {
-        data = {
-            "title": data.title,
-            "description": data.description,
-            "project": {
-                "title": "Project of request #2",
-                "description": "Great",
-                "ethicsVote": data.ethicsVote,
-                "expectedDataGeneration": true,
-                "expectedEndDate": "2022-11-10",
-                "isTestProject": false
-            },
-            "queries": data.queries
-        }
-        axios.post(NEGOTIATION_PATH, data, getBearerHeaders(token))
+    createNegotiation({ state, commit }, { data }) {
+        axios.post(NEGOTIATION_PATH, data, getBearerHeaders(state.oidcStore.access_token))
             .then((response) => {
-                console.log(`Negotiation created correctly with data ${response.data.id}`)
                 commit('setNotification', `Negotiation created correctly with data ${response.data.id}`)
             })
     }

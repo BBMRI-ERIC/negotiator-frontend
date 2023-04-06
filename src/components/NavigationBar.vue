@@ -15,15 +15,15 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <span v-if="isUserLoggedIn" class="navbar-text me-2 "
-            >Welcome back {{ user }}</span
-          >
+          <span v-if="oidcIsAuthenticated" class="navbar-text me-2 ">
+            Welcome back {{ oidcUser.name }}
+          </span>
           <li class="nav-item">
             <button
-              v-if="!isUserLoggedIn"
+              v-if="!oidcIsAuthenticated"
               class="btn btn-outline-primary me-2"
               aria-current="page"
-              @click.stop.prevent="onLogin"
+              @click.stop.prevent="authenticateOidc"
             >
               Login
             </button>
@@ -31,7 +31,7 @@
               v-else
               class="btn btn-outline-secondary me-2"
               aria-current="page"
-              @click.stop.prevent="onLogout"
+              @click.stop.prevent="signOutOidc"
             >
               Logout
             </button>
@@ -43,28 +43,19 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
   name: "navigation-bar",
-  props: {
-    user: String,
-  },
-  data() {
-    return {
-      isUserLoggedIn: false,
-    };
-  },
-  async mounted() {
-    this.isUserLoggedIn = await this.$auth.isUserLoggedIn();
+  computed: {
+    ...mapGetters(['oidcIsAuthenticated', 'oidcUser'])
   },
   methods: {
-    onLogin() {
-      console.log(this.$router.currentRoute.value.fullPath)
-      this.$auth.login(this.$router.currentRoute.value.fullPath);
-    },
-    onLogout() {
-      this.$auth.logout();
-    },
-  },
+    ...mapActions([
+        'signOutOidc',
+        'authenticateOidc'
+    ])
+  }
 };
 </script>
 
