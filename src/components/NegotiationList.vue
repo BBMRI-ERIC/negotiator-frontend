@@ -1,32 +1,45 @@
 <template>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <header>
     <h3>
-      List of your ongoing negotiations:
+      List of your Negotiations:
     </h3>
   </header>
-    <table id="tableComponent" class="table table-bordered table-striped">
+    <table id="tableComponent" class="table table-hover">
         <thead>
         <tr>
-            <!-- loop through each value of the fields to get the table header -->
-            <th  v-for="field in headers" :key='field' @click="sortTable(field)" >
-                {{field}} <i class="bi bi-sort-alpha-down" aria-label='Sort Icon'></i>
+            <th  v-for="field in headers" :key='field' >
+                {{field}}
             </th>
         </tr>
         </thead>
-        <tbody>
-        <!-- Loop through the list get the each student data -->
-        <tr v-for="item in negotiations" :key='item'>
+        <tbody v-for="item in negotiations" :key='item'>
+        <tr>
             <td v-for="field in headers" :key='field'>{{item[field]}}</td>
+            <td>
+                <span style="white-space: pre">
+                    <button type="button" class="editButton" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <i class="fa fa-pencil"></i>
+                    Edit
+                </button>
+                <button class="abandonButton">
+                    <i class="fa fa-trash"></i>
+                    Abandon
+                </button>
+                </span>
+            </td>
         </tr>
         </tbody>
     </table>
+    <negotiation-modal id="exampleModal"/>
 </template>
 
 <script>
-import Negotiation from "@/components/Negotiation.vue";
-import {ref} from "vue";
+import NegotiationModal from "@/components/NegotiationModal.vue";
+
 export default {
   name: "NegotiationsList",
+    components: {NegotiationModal},
   props: {
     negotiations: Array
   },
@@ -34,20 +47,17 @@ export default {
         return {
             headers: [
                 "id",
-                "title",
-                "description"
-            ]
+                "title"
+            ],
+            show: false
         }
     }
-  ,
-  components: {
-    Negotiation
-  }
 }
-
-
 </script>
 
 <style scoped>
+
+.editButton {background-color: #008CBA; border: none} /* Blue */
+.abandonButton {background-color: #f44336;border: none} /* Red */
 
 </style>
