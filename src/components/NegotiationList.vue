@@ -1,10 +1,12 @@
 <template>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <header>
     <h3>
       List of your Negotiations:
     </h3>
   </header>
+    <div class="float-child">
     <table id="tableComponent" class="table table-hover styled-table">
         <thead>
         <tr>
@@ -32,6 +34,15 @@
         </tr>
         </tbody>
     </table>
+    </div>
+    <div class="float-child">
+        <h6 class="bg-light p-2 border-top border-bottom filter-header">Filter</h6>
+        <ul class="list-group border-2">
+            <li class="list-group-item list-group-item-action">All <span class="badge badge-primary rounded-pill">2</span></li>
+            <li class="list-group-item list-group-item-action">Year 2022 <span class="badge badge-primary rounded-pill">0</span></li>
+            <li class="list-group-item list-group-item-action">Accepted <span class="badge badge-primary rounded-pill">0</span></li>
+        </ul>
+    </div>
     <negotiation-modal id="exampleModal"/>
 </template>
 
@@ -72,8 +83,14 @@ export default {
     margin: 25px 0;
     font-size: 0.9em;
     font-family: sans-serif;
-    min-width: 400px;
+    min-width: 700px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.filter-header {
+    margin-top: 25px;
+    background-color: #dee2e6;
+    color: black;
+    text-transform: uppercase;
 }
 .styled-table thead tr {
     background-color: #dee2e6;
@@ -98,6 +115,21 @@ export default {
 .styled-table tbody tr.active-row {
     font-weight: bold;
     color: #343a40;
+}
+.float-child {
+    float: right;
+    padding: 10px;
+    width: auto;
+}
+.list-group {
+    min-width: 200px;
+    width: auto;
+    border-collapse: collapse;
+    border: black 1px;
+}
+.badge {
+    vertical-align: middle;
+    horiz-align: center;
 }
 
 </style>
