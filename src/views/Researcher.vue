@@ -16,7 +16,7 @@ export default {
     NegotiationList
   },
   methods: {
-    ...mapActions(["retrieveNegotiations"])
+    ...mapActions(["retrieveResearcherRoleNegotiations"])
   },
   computed: {
     ...mapGetters({
@@ -25,7 +25,7 @@ export default {
   },
   async mounted() {
     const token = await this.$auth.getAccessToken();
-    await this.retrieveNegotiations({
+    await this.retrieveResearcherRoleNegotiations({
       token
     });
   },
