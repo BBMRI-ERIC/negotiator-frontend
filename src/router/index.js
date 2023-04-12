@@ -14,22 +14,25 @@ const router = createRouter({
             path: "/",
             name: "home",
             component: HomePage,
+            meta: { isPublic: true }
         },
         {
-            path: '/logged-in', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
+            path: '/logged-in',
             name: 'oidcCallback',
-            component: OidcCallback
+            component: OidcCallback,
+            meta: { isPublic: true }
         },
         {
             path: "/requests/:requestId",
             name: "request",
             component: HomePage,
-            meta: { requiresAuth: true }
+            meta: { isPublic: false }
         },
         {
             path: "/login",
             name: "login",
-            component: Login
+            component: Login,
+            meta: { isPublic: true }
         }
     ],
 });

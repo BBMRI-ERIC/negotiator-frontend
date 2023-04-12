@@ -12,7 +12,7 @@ import actions from './actions'
 
 export default new Vuex.Store({
     modules: {
-        oidcStore: vuexOidcCreateStoreModule(oidcSettings, { publicRoutePaths: ['/'] })
+        oidc: vuexOidcCreateStoreModule(oidcSettings)
     },
     state,
     mutations,

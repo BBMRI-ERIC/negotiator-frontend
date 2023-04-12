@@ -6,7 +6,7 @@ const devSettings = {
     postLogoutRedirectUri: 'http://localhost:8080',
     responseType: 'code',
     scope: 'openid profile email permissions',
-    automaticSilentRenew: true,
+    automaticSilentRenew: true
 
 }
 const prodSettings = {

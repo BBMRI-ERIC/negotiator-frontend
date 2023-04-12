@@ -15,11 +15,11 @@ function getBearerHeaders(token) {
 
 export default {
     retrieveRequestById({ state, commit }, { requestId }) {
-        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidcStore.access_token))
+        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidc.access_token))
             .then((response) => commit('setCurrentRequest', response.data))
     },
     retrieveAccessCriteria({ state, commit }, { resourceId }) {
-        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidcStore.access_token))
+        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 commit('setCurrentAccessCriteria', response.data)
             })
@@ -28,10 +28,10 @@ export default {
             })
     },
     retrieveAccessCriteriaByRequestId({ state, commit }, { requestId }) {
-        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidcStore.access_token))
+        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 const resourceId = response.data.resources[0].id  // At the moment we only get criteria for the first biobank
-                axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidcStore.access_token))
+                axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidc.access_token))
                     .then((response) => {
                         commit('setCurrentAccessCriteria', response.data)
                     })
@@ -44,7 +44,7 @@ export default {
             })
     },
     createNegotiation({ state, commit }, { data }) {
-        axios.post(NEGOTIATION_PATH, data, getBearerHeaders(state.oidcStore.access_token))
+        axios.post(NEGOTIATION_PATH, data, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 commit('setNotification', `Negotiation created correctly with data ${response.data.id}`)
             })
