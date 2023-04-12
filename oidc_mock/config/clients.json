@@ -5,7 +5,7 @@
     "ClientSecrets": ["authorization-code-with-pkce-client-secret"],
     "AllowedGrantTypes": ["authorization_code"],
     "AllowAccessTokensViaBrowser": true,
-    "RedirectUris": ["http://localhost:8080/login"],
+    "RedirectUris": ["http://localhost:8080/logged-in"],
     "AllowedScopes": ["openid", "profile", "email", "permissions"],
     "IdentityTokenLifetime": 3600,
     "AccessTokenLifetime": 3600,

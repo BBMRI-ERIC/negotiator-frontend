@@ -1,7 +1,4 @@
 <template>
-  <header>
-    <navigation-bar :user="user" />
-  </header>
   <div class="container pt-4">
     <div v-if="notification !== undefined" class="row">
       <div col="12">
@@ -49,41 +46,22 @@
 
 <script>
 import NegotiationForm from "@/components/NegotiationForm.vue";
-import NavigationBar from "@/components/NavigationBar.vue";
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "home-page",
   components: {
-    NavigationBar,
     NegotiationForm,
   },
-  data() {
-    return {
-      isUserLoggedIn: false,
-      authToken: "",
-      profile: undefined,
-    };
-  },
   computed: {
-    ...mapGetters({ notification: "getNotification" }),
-    user() {
-      return this.profile !== undefined ? this.profile.name : "";
-    },
+    ...mapGetters({ notification: "getNotification" })
   },
   methods: {
     ...mapMutations(['setNotification']),
     resetNotification () {
         this.setNotification(undefined)
     }
-  },
-  async mounted() {
-    this.isUserLoggedIn = await this.$auth.isUserLoggedIn();
-    if (this.isUserLoggedIn) {
-      this.authToken = await this.$auth.getAccessToken();
-      this.profile = await this.$auth.getProfile();
-    }
-  },
+  }
 };
 </script>
 

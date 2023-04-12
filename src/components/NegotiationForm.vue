@@ -17,28 +17,28 @@
     >
       <tab-content
         v-for="section in accessCriteria.sections"
-        :key="section.id"
-        :title="section.title"
+        :key="section.name"
+        :title="section.label"
+        class="form-step border rounded px-2 py-3 mb-2"
       >
         <div
           v-for="criteria in section.accessCriteria"
           :key="criteria.name"
           class="mb-4 ms-3 me-3"
         >
-          <label v-if="criteria.required" class="form-label required"
-            >{{ criteria.name }}
+          <label class="form-label" :class="{ required: criteria.required }"
+            >{{ criteria.label }}
           </label>
-          <label v-else class="form-label">{{ criteria.name }} </label>
           <textarea
             v-if="criteria.type === 'textarea'"
-            v-model="negotiationCriteria[section.title][criteria.name]"
+            v-model="negotiationCriteria[section.name][criteria.name]"
             class="form-control"
             :required="criteria.required"
           />
           <input
             v-else
             :type="criteria.type"
-            v-model="negotiationCriteria[section.title][criteria.name]"
+            v-model="negotiationCriteria[section.name][criteria.name]"
             class="form-control"
             :required="criteria.required"
           />
@@ -46,18 +46,18 @@
       </tab-content>
       <tab-content title="Overview">
         <div
-          v-for="(criteria, section) in negotiationCriteria"
-          :key="section"
+          v-for="section in accessCriteria.sections"
+          :key="section.name"
           class="border input-group p-3 mb-3"
         >
-          <span class="mb-4 fs-4 fw-bold text-secondary">{{ section }}:</span>
+          <span class="mb-4 fs-4 fw-bold text-secondary">{{ section.label }}</span>
           <div
-            v-for="(value, key) in criteria"
-            :key="key"
+            v-for="criteria in section.accessCriteria"
+            :key="criteria.name"
             class="input-group mb-3"
           >
-            <label class="me-2 fw-bold" :id="key">{{ key }}:</label>
-            <span>{{ value }}</span>
+            <label class="me-2 fw-bold">{{ criteria.label }}:</label>
+            <span>{{ negotiationCriteria[section.name][criteria.name] }}</span>
           </div>
         </div>
       </tab-content>
@@ -105,46 +105,38 @@ export default {
   },
   computed: {
     ...mapGetters({
-      accessCriteria: "getAccessCriteria",
-      request: "getRequest",
+        accessCriteria: "getAccessCriteria",
+        request: "getRequest",
     }),
     loading() {
-      if (this.accessCriteria !== undefined) {
-        this.initNegotiationCriteria();
-      }
-      return this.accessCriteria === undefined;
+        if (this.accessCriteria !== undefined) {
+            this.initNegotiationCriteria();
+         }
+        return this.accessCriteria === undefined;
     },
   },
   methods: {
     ...mapActions(["retrieveAccessCriteriaByRequestId", "createNegotiation"]),
     async startNegotiation() {
-      console.log(this.negotiationCriteria);
-      for (let section in this.negotiationCriteria) {
-        console.log(section);
-      }
-      //   const token = await this.$auth.getAccessToken();
-      //   this.createNegotiation({
-      //     data: this.negotiationCriteria,
-      //     token: token,
-      //   });
+        this.createNegotiation({
+            data: {
+                requests: [this.requestId],
+                payload: this.negotiationCriteria
+            }
+        });
     },
     initNegotiationCriteria() {
-      for (var section of this.accessCriteria.sections) {
-        console.log(criteria);
-        this.negotiationCriteria[section.title] = {};
-        for (var criteria of section.accessCriteria) {
-          console.log(criteria);
-          this.negotiationCriteria[section.title][criteria.name] = null;
+        for (var section of this.accessCriteria.sections) {
+            this.negotiationCriteria[section.name] = {};
+            for (var criteria of section.accessCriteria) {
+                this.negotiationCriteria[section.name][criteria.name] = null;
+            }
         }
-      }
-      console.log(this.negotiationCriteria);
     },
   },
   async mounted() {
-    const token = await this.$auth.getAccessToken();
     this.retrieveAccessCriteriaByRequestId({
-      token,
-      requestId: this.requestId,
+        requestId: this.requestId,
     });
   },
 };
@@ -158,5 +150,10 @@ export default {
 .required:after {
   content: "  *\00a0";
   color: red;
+}
+
+.form-step {
+    height: 26rem;
+    overflow-y: auto;
 }
 </style>
