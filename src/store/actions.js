@@ -49,16 +49,18 @@ export default {
                 commit('setNotification', `Negotiation created correctly with data ${response.data.id}`)
             })
     },
-    retrieveResearcherRoleNegotiations({commit}, {token}) {
-        axios.get(`${NEGOTIATION_PATH}/?userRole=RESEARCHER`, getBearerHeaders(token)).then((response) => {
+    retrieveResearcherRoleNegotiations({ state, commit }) {
+        axios.get(`${NEGOTIATION_PATH}/?userRole=RESEARCHER`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
             commit('setNegotiations', response.data)
         })
             .catch(() => {
                 commit('setNotification', 'Error getting request data from server')
             })
     },
-    retrieveBiobankerRoleNegotiations({commit}, {token}) {
-        axios.get(`${NEGOTIATION_PATH}/?userRole=BIOBANKER`, getBearerHeaders(token)).then((response) => {
+    retrieveBiobankerRoleNegotiations({ state, commit }) {
+        axios.get(`${NEGOTIATION_PATH}/?userRole=BIOBANKER`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
             commit('setNegotiations', response.data)
         })
             .catch(() => {

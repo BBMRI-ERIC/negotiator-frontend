@@ -18,12 +18,13 @@
         </thead>
         <tbody v-for="item in negotiations" :key='item'>
         <tr class="active-row">
-            <td v-for="field in headers" :key='field'>{{item[field]}}</td>
+            <td>{{ item.id }}</td>
+            <td>{{ item.payload.project.title }}</td>
             <td>
                 <span style="white-space: pre">
                     <button type="button" class="editButton" data-bs-toggle="modal" data-bs-target="#exampleModal" com>
                         <i class="fa fa-pencil"></i>
-                    Edit
+                    Interact
                 </button>
                 <button class="abandonButton" @click="abandonRequest">
                     <i class="fa fa-trash"></i>

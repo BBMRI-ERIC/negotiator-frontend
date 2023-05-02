@@ -1,5 +1,4 @@
 <template>
-  <navigation-bar />
   <div class="container">
     <NegotiationList :negotiations="negotiations"/>
   </div>
@@ -8,11 +7,9 @@
 
 import NegotiationList from "@/components/NegotiationList.vue";
 import {mapActions, mapGetters} from "vuex";
-import NavigationBar from "@/components/NavigationBar.vue";
 export default {
   name: "Researcher",
   components: {
-    NavigationBar,
     NegotiationList
   },
   methods: {
@@ -24,10 +21,8 @@ export default {
     })
   },
   async mounted() {
-    const token = await this.$auth.getAccessToken();
-    await this.retrieveResearcherRoleNegotiations({
-      token
-    });
+    await this.retrieveResearcherRoleNegotiations();
+    console.log(this.negotiations)
   },
 }
 </script>
