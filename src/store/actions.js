@@ -66,5 +66,12 @@ export default {
             .catch(() => {
                 commit('setNotification', 'Error getting request data from server')
             })
+    },
+    updateNegotiationStatus({ state, commit }, { negotiationId , event }) {
+        console.log(state.oidc.access_token)
+        axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`,{"a": "idk"}, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                commit('setNotification', `Negotiation updated correctly with data ${response.data.id}`)
+            })
     }
 }

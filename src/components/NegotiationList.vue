@@ -20,9 +20,10 @@
         <tr class="active-row">
             <td>{{ item.id }}</td>
             <td>{{ item.payload.project.title }}</td>
+            <td>{{ item.status }}</td>
             <td>
                 <span style="white-space: pre">
-                    <button type="button" class="editButton" data-bs-toggle="modal" data-bs-target="#exampleModal" com>
+                    <button type="button" class="editButton" @click="showModal = true; negotiation = item">
                         <i class="fa fa-pencil"></i>
                     Interact
                 </button>
@@ -44,15 +45,38 @@
             <li class="list-group-item list-group-item-action">Accepted <span class="badge badge-primary rounded-pill">0</span></li>
         </ul>
     </div>
-    <negotiation-modal id="exampleModal"/>
+    <div v-if="showModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="exampleModalLabel">{{ negotiation.payload.project.title }}</h1>
+                </div>
+                <div class="modal-body">
+                    {{ negotiation.payload }}
+                    {{ negotiation.status }}
+                </div>
+                <div class="modal-body">
+                    <label for="actions">Respond:</label>
+                    <select v-model="selectedItem">
+                        <option v-for="response in response_options" :value="response">{{ response }}</option>
+                    </select>
+                    <p>Selected item: {{ selectedItem }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="showModal = false">Close</button>
+                    <button type="button" class="btn btn-primary" @click="updateNegotiation">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-import NegotiationModal from "@/components/NegotiationModal.vue";
+
+import {mapActions} from "vuex";
 
 export default {
   name: "NegotiationsList",
-    components: {NegotiationModal},
   props: {
     negotiations: Array
   },
@@ -60,12 +84,24 @@ export default {
         return {
             headers: [
                 "id",
-                "title"
+                "title",
+                "status"
             ],
-            show: false
+            showModal: false,
+            negotiation: null,
+            response_options: ["APPROVE", "REJECT"],
+            selectedItem: ''
         }
     },
     methods: {
+        ...mapActions(["updateNegotiationStatus"]),
+        async updateNegotiation() {
+            await this.updateNegotiationStatus({
+                negotiationId: this.negotiation.id,
+                event: this.selectedItem
+            });
+            this.showModal = false
+        },
       abandonRequest() {
             if(confirm("Are you sure you want to abandon this request?")) {
                 console.log("deleting")
@@ -131,6 +167,38 @@ export default {
 .badge {
     vertical-align: middle;
     horiz-align: center;
+}
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-title {
+    font-size: large;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 </style>

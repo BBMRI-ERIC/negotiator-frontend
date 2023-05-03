@@ -25,10 +25,7 @@ export default {
         })
     },
     async mounted() {
-        const token = await this.$auth.getAccessToken();
-        await this.retrieveBiobankerRoleNegotiations({
-            token
-        });
+        await this.retrieveBiobankerRoleNegotiations();
     },
 }
 </script>
