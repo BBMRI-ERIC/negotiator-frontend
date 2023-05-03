@@ -1,5 +1,4 @@
 <template>
-    <navigation-bar />
     <div class="container">
         <NegotiationList :negotiations="negotiations"/>
     </div>
@@ -7,13 +6,11 @@
 
 <script>
 import NegotiationList from "@/components/NegotiationList.vue";
-import NavigationBar from "@/components/NavigationBar.vue";
 import {mapActions, mapGetters} from "vuex";
 
 export default {
     name: "Biobanker",
     components: {
-        NavigationBar,
         NegotiationList
     },
     methods: {
