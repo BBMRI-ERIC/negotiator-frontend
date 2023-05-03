@@ -48,5 +48,39 @@ export default {
             .then((response) => {
                 commit('setNotification', `Negotiation created correctly with data ${response.data.id}`)
             })
+    },
+    retrieveResearcherRoleNegotiations({ state, commit }) {
+        axios.get(`${NEGOTIATION_PATH}/?userRole=RESEARCHER`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+            commit('setNegotiations', response.data)
+        })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
+            })
+    },
+    retrieveBiobankerRoleNegotiations({ state, commit }) {
+        axios.get(`${NEGOTIATION_PATH}/?userRole=BIOBANKER`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+            commit('setNegotiations', response.data)
+        })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
+            })
+    },
+    updateNegotiationStatus({ state, commit }, { negotiationId , event }) {
+        console.log(state.oidc.access_token)
+        axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`,{"a": "idk"}, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                commit('setNotification', `Negotiation updated correctly with data ${response.data.id}`)
+            })
+    },
+    retrievePossibleEvents({ state, commit }, {negotiationId}) {
+        return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/events`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                return response.data
+            })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
+            })
     }
 }

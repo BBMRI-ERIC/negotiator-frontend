@@ -4,7 +4,7 @@ import HomePage from "../views/HomePage.vue";
 import Login from "@/components/Login.vue";
 import store from '@/store'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
-
+import Researcher from "@/views/Researcher.vue";
 
 
 const router = createRouter({
@@ -26,6 +26,11 @@ const router = createRouter({
             path: "/requests/:requestId",
             name: "request",
             component: HomePage,
+        },
+        {
+            path: "/researcher",
+            name: "researcher",
+            component: Researcher,
             meta: { isPublic: false }
         },
         {
