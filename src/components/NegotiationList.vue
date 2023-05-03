@@ -1,5 +1,4 @@
 <template>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <header>
     <h3>
@@ -24,11 +23,11 @@
             <td>
                 <span style="white-space: pre">
                     <button type="button" class="editButton" @click="interactModal(item)">
-                        <i class="fa fa-pencil"></i>
+                        <font-awesome-icon icon="fa-pencil" />
                     Interact
                 </button>
                 <button class="abandonButton" @click="abandonRequest">
-                    <i class="fa fa-trash"></i>
+                    <font-awesome-icon icon="fa fa-trash"></font-awesome-icon>
                     Abandon
                 </button>
                 </span>
@@ -74,9 +73,11 @@
 <script>
 
 import {mapActions} from "vuex";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default {
   name: "NegotiationsList",
+    components: {FontAwesomeIcon},
   props: {
     negotiations: Array
   },

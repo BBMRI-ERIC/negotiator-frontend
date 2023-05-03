@@ -6,10 +6,12 @@ import { sync } from 'vuex-router-sync'
 import "bootstrap"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import {faPencil, faSpinner, faTrash} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faSpinner)
+library.add(faPencil)
+library.add(faTrash)
 
 const app = createApp(App);
 
