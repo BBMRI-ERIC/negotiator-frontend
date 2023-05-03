@@ -23,7 +23,7 @@
             <td>{{ item.status }}</td>
             <td>
                 <span style="white-space: pre">
-                    <button type="button" class="editButton" @click="showModal = true; negotiation = item">
+                    <button type="button" class="editButton" @click="interactModal(item)">
                         <i class="fa fa-pencil"></i>
                     Interact
                 </button>
@@ -89,18 +89,31 @@ export default {
             ],
             showModal: false,
             negotiation: null,
-            response_options: ["APPROVE", "REJECT"],
+            response_options: [],
             selectedItem: ''
         }
     },
     methods: {
-        ...mapActions(["updateNegotiationStatus"]),
+        ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents"]),
         async updateNegotiation() {
             await this.updateNegotiationStatus({
                 negotiationId: this.negotiation.id,
                 event: this.selectedItem
             });
             this.showModal = false
+        },
+        interactModal(negotiation){
+            this.showModal = true;
+            this.negotiation = negotiation;
+            this.loadPossibleEvents();
+
+        },
+        loadPossibleEvents(){
+            this.retrievePossibleEvents({
+                negotiationId: this.negotiation.id
+            }).then(data => {
+                this.response_options = data;
+            })
         },
       abandonRequest() {
             if(confirm("Are you sure you want to abandon this request?")) {
