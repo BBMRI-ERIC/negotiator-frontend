@@ -1,5 +1,4 @@
 <template>
-    <navigation-bar />
     <div class="container">
         <NegotiationList :negotiations="negotiations"/>
     </div>
