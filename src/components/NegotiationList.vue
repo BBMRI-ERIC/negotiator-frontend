@@ -124,27 +124,28 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "src/assets/scss/bbmri";
 
-.editButton {background-color: #008CBA; border: none} /* Blue */
-.abandonButton {background-color: #f44336;border: none} /* Red */
+.editButton {background-color: $primary; border: none} /* Blue */
+.abandonButton {background-color: $danger ;border: none} /* Red */
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
     font-family: sans-serif;
     min-width: 700px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 20px $black;
 }
 .filter-header {
     margin-top: 25px;
-    background-color: #dee2e6;
-    color: black;
+    background-color: $light;
+    color: $black;
     text-transform: uppercase;
 }
 .styled-table thead tr {
-    background-color: #dee2e6;
-    color: black;
+    background-color: $light;
+    color: $black;
     text-transform: uppercase;
 }
 .styled-table th,
@@ -152,15 +153,15 @@ export default {
     padding: 12px 15px;
 }
 .styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid $light;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+    background-color: $light;
 }
 
 .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid $light;
 }
 .styled-table tbody tr.active-row {
     font-weight: bold;
@@ -175,7 +176,7 @@ export default {
     min-width: 200px;
     width: auto;
     border-collapse: collapse;
-    border: black 1px;
+    border: $black 1px;
 }
 .badge {
     vertical-align: middle;
@@ -189,27 +190,27 @@ export default {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.4)    ;
 }
 .modal-title {
     font-size: large;
 }
 .modal-content {
-    background-color: #fefefe;
+    background-color: $light;
     margin: 15% auto;
     padding: 20px;
-    border: 1px solid #888;
+    border: 1px solid gray;
     width: 80%;
 }
 .close {
-    color: #aaa;
+    color: gray;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 .close:hover,
 .close:focus {
-    color: black;
+    color: $black;
     text-decoration: none;
     cursor: pointer;
 }
