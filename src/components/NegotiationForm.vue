@@ -10,6 +10,18 @@
     </h4>
   </div>
   <div v-else>
+    <b-modal 
+      id="negotiation-feedback"
+      title="Negotiation Created"
+      v-model="notificationVisible"
+      hideHeader=true
+      hideFooter=true
+      class="text-center"
+      @hide.prevent>
+      <p class="my-4">Negotiation created correctly</p>
+      <p class="my-4">You can follow the status of this negotiation in your researcher page</p>
+      <b-button @click="closeNegotiation">Back to Negotiations</b-button>
+    </b-modal>
     <form-wizard
       @on-complete="startNegotiation"
       :start-index="0"
@@ -100,30 +112,41 @@ export default {
   },
   data() {
     return {
+      notificationVisible: false,
       negotiationCriteria: {},
+      accessCriteria: undefined
     };
   },
   computed: {
     ...mapGetters({
-        accessCriteria: "getAccessCriteria",
         request: "getRequest",
     }),
     loading() {
         if (this.accessCriteria !== undefined) {
             this.initNegotiationCriteria();
-         }
+        }
         return this.accessCriteria === undefined;
     },
   },
   methods: {
     ...mapActions(["retrieveAccessCriteriaByRequestId", "createNegotiation"]),
     async startNegotiation() {
-        this.createNegotiation({
+        await this.createNegotiation({
             data: {
                 requests: [this.requestId],
                 payload: this.negotiationCriteria
             }
+        }).then((negotiationId) => {
+            if (negotiationId) {
+                this.showNotification()
+            } 
         });
+    },
+    showNotification() {
+        this.notificationVisible = true;
+    },
+    closeNegotiation() {
+        this.$router.push("/researcher");
     },
     initNegotiationCriteria() {
         for (var section of this.accessCriteria.sections) {
@@ -135,8 +158,10 @@ export default {
     },
   },
   async mounted() {
-    this.retrieveAccessCriteriaByRequestId({
+    await this.retrieveAccessCriteriaByRequestId({
         requestId: this.requestId,
+    }).then((accessCriteria) => {
+        this.accessCriteria = accessCriteria
     });
   },
 };

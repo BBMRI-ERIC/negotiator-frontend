@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import OidcCallback from '@/components/OidcCallback.vue'
 import HomePage from "../views/HomePage.vue";
+import NegotiationPage from "../views/NegotiationPage.vue";
 import Login from "@/components/Login.vue";
 import store from '@/store'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
-import Researcher from "@/views/Researcher.vue";
+import Researcher from "@/views/ResearcherPage.vue";
 
 
 const router = createRouter({
@@ -25,7 +26,7 @@ const router = createRouter({
         {
             path: "/requests/:requestId",
             name: "request",
-            component: HomePage,
+            component: NegotiationPage,
         },
         {
             path: "/researcher",
