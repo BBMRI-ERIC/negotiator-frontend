@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
 const PROXY_TARGET = 'http://localhost:8081'
+const isDev = false
 
 export default defineConfig({
     plugins: [vue()],
@@ -14,11 +15,11 @@ export default defineConfig({
     },
     server: {
         port: 8080,
-        proxy: {
+        proxy: isDev ? {
             '^/api': {
                 target: PROXY_TARGET,
-                changeOrigin: true
-            }
-        }
+                changeOrigin: true,
+            },
+        } : undefined,
     }
 });
