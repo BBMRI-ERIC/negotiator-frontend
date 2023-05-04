@@ -1,30 +1,30 @@
 <template>
     <div class="container">
-        <div class="row table-responsive">
-            <div class="col-2 d-flex">
+        <div class="row table-responsive d-flex">
+            <div class="col-md-2">
                 <table id="tableComponent" class="table table-hover">
                     <thead>
                         <tr class="table-secondary">
-                            <th scope="col">
+                            <th>
                                 FILTER
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td scope="col">
+                            <td>
                                 All
                                 <span class="badge bg-primary rounded-pill float-end">{{ negotiations.length }}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td scope="col">
+                            <td>
                                 Year 2022
                                 <span class="badge bg-primary rounded-pill float-end">0</span>
                             </td>
                         </tr>
                         <tr>
-                            <td scope="col">
+                            <td>
                                 Accepted
                                 <span class="badge bg-primary rounded-pill float-end">0</span>
                             </td>
@@ -32,29 +32,29 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-10">
+            <div class="col-md-10">
                 <table id="tableComponent" class="table table-hover">
                     <thead>
                         <tr class="table-secondary">
                             <th scope="col" v-for="field in headers" :key=field>
                                 <span class="text-uppercase">{{ field }}</span>
                             </th>
-                            <th class="w-25"/>
+                            <th />
                         </tr>
                     </thead>
-                    <tbody class="table-striped" v-for="item in negotiations" :key=item>
-                        <tr>
-                            <td>{{ item.id }}</td>
-                            <td>{{ item.payload.project.title }}</td>
-                            <td>{{ item.status }}</td>
-                            <td class="w-25">
-                                <button type="button" class="btn btn-secondary btn-sm me-3" @click="interactModal(item)">
-                                    <font-awesome-icon icon="fa-pencil" /> 
-                                    Interact
+                    <tbody>
+                        <tr v-for="item in negotiations" :key=item.id>
+                            <td class="col-3">{{ item.id }}</td>
+                            <td class="col-5 col-xxl-4">{{ item.payload.project.title }}</td>
+                            <td class="col-2">{{ item.status }}</td>
+                            <td class="col-2 col-xxl-3">
+                                <button type="button" class="btn btn-secondary btn-sm me-2 mb-1" @click="interactModal(item)">
+                                    <font-awesome-icon icon="fa fa-pencil" fixed-width /> 
+                                    <span class="d-none d-xxl-inline-block ms-1">Interact</span>
                                 </button>
-                                <button type="button"  class="btn btn-danger btn-sm" @click="abandonRequest">
-                                    <font-awesome-icon icon="fa fa-trash" />
-                                    Abandon
+                                <button type="button" class="btn btn-danger btn-sm mb-1" @click="abandonRequest">
+                                    <font-awesome-icon icon="fa fa-trash" fixed-width />
+                                    <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
                                 </button>
                             </td>
                         </tr>
@@ -67,7 +67,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title" id="exampleModalLabel">{{ negotiation.payload.project.title }}</h1>
+                    <h1 class="modal-title">{{ negotiation.payload.project.title }}</h1>
                 </div>
                 <div class="modal-body">
                     {{ negotiation.payload }}
@@ -84,8 +84,8 @@
                     <p>Selected item: {{ selectedItem }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="showModal = false">Close</button>
-                    <button type="button" class="btn btn-primary" @click="updateNegotiation">Submit</button>
+                    <button type="button" class="btn btn-danger" @click="showModal=false">Close</button>
+                    <button type="button" class="btn btn-secondary" @click="updateNegotiation">Submit</button>
                 </div>
             </div>
         </div>
