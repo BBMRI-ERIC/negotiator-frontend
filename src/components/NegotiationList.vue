@@ -70,8 +70,8 @@
                     <h1 class="modal-title">{{ negotiation.payload.project.title }}</h1>
                 </div>
                 <div class="modal-body">
-                    {{ negotiation.payload }}
-                    {{ negotiation.status }}
+                    <span>Data: {{ negotiation.payload }}</span>
+                    <span>Status: {{ negotiation.status }}</span>
                 </div>
                 <div class="modal-body">
                     <label for="actions">Respond:</label>
@@ -119,10 +119,11 @@ export default {
     methods: {
         ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents"]),
         async updateNegotiation() {
-            await this.updateNegotiationStatus({
+            const updatedNegotiations = await this.updateNegotiationStatus({
                 negotiationId: this.negotiation.id,
                 event: this.selectedItem
             });
+            console.log(updatedNegotiations)
             this.showModal = false
         },
         interactModal(negotiation){
@@ -135,10 +136,10 @@ export default {
             this.retrievePossibleEvents({
                 negotiationId: this.negotiation.id
             }).then(data => {
-                this.response_options = data;
+                this.responseOptions = data;
             })
         },
-      abandonRequest() {
+        abandonRequest() {
             if(confirm("Are you sure you want to abandon this request?")) {
                 console.log("deleting")
             }

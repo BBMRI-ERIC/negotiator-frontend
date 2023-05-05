@@ -64,9 +64,14 @@ export default {
             })
     },
     updateNegotiationStatus({ state, commit }, { negotiationId , event }) {
-        axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`,{"a": "idk"}, getBearerHeaders(state.oidc.access_token))
+        return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`, {}, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 commit('setNotification', `Negotiation updated correctly with data ${response.data.id}`)
+                return response.data
+            })
+            .catch(() => {
+                commit('setNotification', 'Error updating negotiation status')
+                return null
             })
     },
     retrievePossibleEvents({ state, commit }, {negotiationId}) {
