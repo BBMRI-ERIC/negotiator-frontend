@@ -5,8 +5,7 @@ import NegotiationPage from "../views/NegotiationPage.vue";
 import Login from "@/components/Login.vue";
 import store from '@/store'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
-import Researcher from "@/views/ResearcherPage.vue";
-
+import ResearcherPage from "@/views/ResearcherPage.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,7 +30,15 @@ const router = createRouter({
         {
             path: "/researcher",
             name: "researcher",
-            component: Researcher,
+            component: ResearcherPage,
+            props: { role: 'RESEARCHER' },
+            meta: { isPublic: false }
+        },
+        {
+            path: "/biobanker",
+            name: "biobanker",
+            component: ResearcherPage,
+            props: { role: 'BIOBANKER' },
             meta: { isPublic: false }
         },
         {
