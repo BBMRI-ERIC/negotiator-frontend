@@ -99,7 +99,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default {
     name: "NegotiationsList",
-    components: {FontAwesomeIcon},
+    components: { FontAwesomeIcon },
     props: {
         negotiations: Array
     },

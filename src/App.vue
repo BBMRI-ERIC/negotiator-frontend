@@ -3,7 +3,7 @@
   <header>
     <navigation-bar/>
   </header>
-  <div class="container pt-4">
+  <div class="container pt-4 main-container" >
     <div v-if="notification !== undefined" class="row">
       <div col="12">
         <div
@@ -57,6 +57,10 @@ export default {
 </script>
 
 <style scoped>
+.main-container {
+  min-width: 25rem;
+}
+
 .box {
   inline-size: 300px;
 }
