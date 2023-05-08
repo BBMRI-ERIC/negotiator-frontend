@@ -55,7 +55,6 @@ export default {
     retrieveNegotiationsByRole({ state, commit }, { role }) {
         return axios.get(`${NEGOTIATION_PATH}/?userRole=${role}`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
-                console.log(response)
                 return response.data;
             })
             .catch(() => {

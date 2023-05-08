@@ -119,11 +119,10 @@ export default {
     methods: {
         ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents"]),
         async updateNegotiation() {
-            const updatedNegotiations = await this.updateNegotiationStatus({
+            await this.updateNegotiationStatus({
                 negotiationId: this.negotiation.id,
                 event: this.selectedItem
             });
-            console.log(updatedNegotiations)
             this.showModal = false
         },
         interactModal(negotiation){

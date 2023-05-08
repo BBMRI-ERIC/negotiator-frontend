@@ -30,7 +30,6 @@ export default {
         ...mapActions(["retrieveNegotiationsByRole"])
     },
     async mounted() {
-        console.log(this.role)
         this.negotiations = await this.retrieveNegotiationsByRole({ role: this.role })
     }
 }
