@@ -1,16 +1,19 @@
 # build stage
-FROM node:lts-alpine as build-stage
+FROM node:20.1.0-alpine as  build-stage
 WORKDIR /app
-COPY package.json ./
-RUN yarn install
 COPY . .
+RUN yarn install --ignore-engines
 RUN yarn build
+
 # production stage
 FROM bitnami/nginx:1.24 as production-stage
-EXPOSE 80
-USER 1000
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /app
+COPY --from=build-stage /app/dist .
+COPY start.sh .
+USER 0
+RUN chmod -R g+rwx /app
+USER 1001
+CMD ["./start.sh"]
 
 #FROM node:19-alpine
 #RUN apk update

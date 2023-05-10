@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Replacing env constants in JS"
-for file in assets/*.js*;
+for file in assets/index.*.js;
 do
   echo "Processing $file ...";
 
@@ -12,4 +12,4 @@ do
 
 done
 
-yarn run dev --host
+exec nginx -g 'daemon off;'
