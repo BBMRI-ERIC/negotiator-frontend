@@ -1,4 +1,4 @@
-FROM node:20.1.0-alpine as  build-stage
+FROM node:20.1.0 as  build-stage
 WORKDIR /app
 COPY . .
 RUN yarn install --network-timeout 1000000000  --ignore-engines
