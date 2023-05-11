@@ -1,7 +1,7 @@
 FROM node:20.1.0-alpine as  build-stage
 WORKDIR /app
 COPY . .
-RUN yarn install --ignore-engines --network-timeout 100000
+RUN yarn install --network-timeout 1000000000  --ignore-engines
 RUN yarn build
 
 FROM bitnami/nginx:1.24 as production-stage
