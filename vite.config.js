@@ -6,7 +6,6 @@ import Components from 'unplugin-vue-components/vite'
 import { BootstrapVueNextResolver } from 'unplugin-vue-components/resolvers'
 
 const PROXY_TARGET = 'http://localhost:8081'
-const isDev = false
 
 export default defineConfig({
     plugins: [
@@ -22,11 +21,11 @@ export default defineConfig({
     },
     server: {
         port: 8080,
-        proxy: isDev ? {
+        proxy: {
             '^/api': {
                 target: PROXY_TARGET,
                 changeOrigin: true,
             },
-        } : undefined,
+        }
     }
 });
