@@ -103,5 +103,18 @@ export default {
             .catch(() => {
                 commit('setNotification', 'Error getting request data from server')
             })
-    }
+    },
+    addMessageToNegotiation({ state }, { data }) {
+        console.log('adding message')
+        console.log(data)
+        return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                console.log('*************')
+                console.log(response)
+                return response.data.id
+            })
+            .catch(() => {
+                return "Failed"
+            })
+    },
 }
