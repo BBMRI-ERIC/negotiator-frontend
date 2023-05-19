@@ -73,8 +73,30 @@ export default {
                 return null
             })
     },
-    retrievePossibleEvents({ state, commit }, {negotiationId}) {
+    retrievePossibleEvents({ state, commit }, { negotiationId }) {
         return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/events`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                return response.data
+            })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
+            })
+    }, 
+    retrieveNegotiationById({ state, commit }, { negotiationId }) {
+        console.log('retrieving...')
+        console.log(negotiationId)
+        return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                return response.data
+            })
+            .catch(() => {
+                commit('setNotification', 'Error getting request data from server')
+            })
+    },
+    retrievePostsByNegotiationId({ state, commit }, { negotiationId }) {
+        console.log('retrieving...')
+        console.log(negotiationId)
+        return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/posts`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 return response.data
             })

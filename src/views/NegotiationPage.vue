@@ -1,41 +1,31 @@
 <template>
-    <negotiation-form
-        :requestId="$route.params.requestId"
-    ></negotiation-form>
+    <p>This is the negotiation {{ this.negotiationId }} details page</p>
 </template>
 
 <script>
-import NegotiationForm from "@/components/NegotiationForm.vue";
+import { mapActions } from "vuex";
 
 export default {
-  name: "home-page",
-  components: {
-    NegotiationForm,
-  }
-};
+    name: "negotiation-page",
+    props: {
+        negotiationId: String,
+
+    },
+    data() {
+        return {
+            negotiation: undefined, 
+            posts: undefined
+        };
+    },
+  methods: {
+    ...mapActions(["retrieveNegotiationById", "retrievePostsByNegotiationId"])
+  },
+    async mounted() {
+        this.negotiation = await this.retrieveNegotiationById({ negotiationId: this.negotiationId })
+        this.posts = await this.retrievePostsByNegotiationId({ negotiationId: this.negotiationId })
+        console.log(this.negotiation)
+        console.log(this.posts)
+    }
+}
+
 </script>
-
-<style scoped>
-.box {
-  inline-size: 300px;
-}
-
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>

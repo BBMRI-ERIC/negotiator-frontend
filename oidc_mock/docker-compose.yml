@@ -88,7 +88,7 @@ services:
               },
               {
                 "Type": "preferred_username",
-                "Value": "theBiobanker",
+                "Value": "TheBiobanker",
                 "ValueType": "string"
               },
               {

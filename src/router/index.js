@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import OidcCallback from '@/components/OidcCallback.vue'
 import HomePage from "../views/HomePage.vue";
+import NegotiationCreatePage from "../views/NegotiationCreatePage.vue";
 import NegotiationPage from "../views/NegotiationPage.vue";
 import Login from "@/components/Login.vue";
 import store from '@/store'
@@ -25,7 +26,7 @@ const router = createRouter({
         {
             path: "/requests/:requestId",
             name: "request",
-            component: NegotiationPage,
+            component: NegotiationCreatePage,
         },
         {
             path: "/researcher",
@@ -46,6 +47,12 @@ const router = createRouter({
             name: "login",
             component: Login,
             meta: { isPublic: true }
+        },
+        {
+            path: "/negotiations/:negotiationId",
+            name: "negotiation",
+            component: NegotiationPage,
+            props: true
         }
     ],
 });
