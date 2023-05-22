@@ -12,8 +12,14 @@
         <tr>
           <th scope="row">Status</th>
           <td>{{ this.negotiation.status }}</td>
-          <th scope="row">Last Update</th>
-          <td></td>
+          <th scope="row">Biobank</th>
+          <td>{{ this.negotiation.requests[0].resources[0].id }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Project</th>
+          <td>{{ this.negotiation.payload.project.title }} - {{ this.negotiation.payload.project.description }}</td>
+          <th scope="row">Collections</th>
+          <td><p v-for="i in this.negotiation.requests[0].resources[0].children" :key="i.id">{{ i.id }}</p></td>
         </tr>
       </tbody>
     </table>
@@ -21,8 +27,16 @@
     <div>
             <h3>Negotiation messages list</h3>
 
-            <ul  class="list-group list-group-vertical">
-                <li class="list-group-item" v-for="post in posts" :key="post.text" > {{ post.text }}</li>
+            <ul  class="list-group list-group-vertical "  v-for="post in posts" :key="post.text">
+                <li class="list-group-item-dark" style="height: 30px; padding: 5px 15px;">
+                    <p class="fst-italic fw-bold fs-6"> At {{ post.creationDate }}, Researcher wrote...</p>
+                </li>
+                <li class="list-group-item" > {{ post.text }}</li>
+                <ul  class="list-group list-group-flush" >
+                 <li class="list-group-item"></li>
+                 <li class="list-group-item"></li>
+                </ul>
+                
             </ul>
     </div>  
     <div id="add-new-message">
@@ -68,6 +82,8 @@ export default {
                 negotiationId: this.negotiation.id                
             }
         }).then((messageId) => {
+            console.log('This is the new message ID:')
+            this.$alert(messageId)
             if (messageId) {
                 this.showNotification("light", 
                     "Message added correctly")
@@ -82,5 +98,7 @@ export default {
         console.log(this.posts)
     }
 }
+    
+
 
 </script>

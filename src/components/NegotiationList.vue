@@ -43,9 +43,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!--tr v-for="item in negotiations" :key=item.id @click="$router.push({ name: 'negotiation', path: `/negotiations/${item.id}`, params: {'negotiationId': item.id} })"-->
-                        <tr v-for="item in negotiations" :key="item.id">
-                            <router-link :to="{ name: 'negotiation', params: { negotiationId: item.id } }">
+                        <tr v-for="item in negotiations" :key=item.id @click="$router.push({ name: 'negotiation', path: `/negotiations/${item.id}`, params: {'negotiationId': item.id} })">
+                        <!--tr v-for="item in negotiations" :key="item.id"-->
+                            <!--router-link :to="{ name: 'negotiation', params: { negotiationId: item.id } }"-->
                         <!--router-link v-for="item in negotiations" :key=item.id :to= "`/negotiations/${item.id}`" v-slot="{tr}" custom-->
                             <td class="col-3">{{ item.id }}</td>
                             <td class="col-5 col-xxl-4">{{ item.payload.project.title }}</td>
@@ -60,7 +60,7 @@
                                     <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
                                 </button>
                             </td>
-                        </router-link>
+                        <!--/router-link-->
                         </tr>
                     </tbody>
                 </table>
