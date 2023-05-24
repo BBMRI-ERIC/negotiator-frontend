@@ -1,6 +1,7 @@
 <template>
     <NegotiationList 
-        :negotiations="negotiations" />
+        :negotiations="negotiations" 
+        :role="role"/>
 </template>
 <script>
 

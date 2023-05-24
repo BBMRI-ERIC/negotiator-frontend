@@ -51,11 +51,11 @@
                             <td class="col-5 col-xxl-4">{{ item.payload.project.title }}</td>
                             <td class="col-2">{{ item.status }}</td>
                             <td class="col-2 col-xxl-3">
-                                <button type="button" class="btn btn-secondary btn-sm me-2 mb-1" @click="interactModal(item)">
+                                <button v-if="this.role=='BIOBANKER'" type="button" class="btn btn-secondary btn-sm me-2 mb-1" @click.stop="interactModal(item)">
                                     <font-awesome-icon icon="fa fa-pencil" fixed-width /> 
                                     <span class="d-none d-xxl-inline-block ms-1">Interact</span>
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm mb-1" @click="abandonRequest">
+                                <button type="button" class="btn btn-danger btn-sm mb-1" @click.stop="abandonRequest">
                                     <font-awesome-icon icon="fa fa-trash" fixed-width />
                                     <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
                                 </button>
@@ -105,7 +105,14 @@ export default {
     name: "NegotiationsList",
     components: { FontAwesomeIcon },
     props: {
-        negotiations: Array
+        negotiations: Array,
+        role: {
+            type: String,
+            required: true,
+            validator: function (value) {
+                return ['RESEARCHER', 'BIOBANKER'].includes(value)
+            }
+        }
     },
     data() {
         return {

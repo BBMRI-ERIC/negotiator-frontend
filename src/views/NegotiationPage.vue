@@ -24,22 +24,24 @@
       </tbody>
     </table>
     </div> 
-    <div>
+    <div v-if="this.negotiation.status=='APPROVED'">
             <h3>Negotiation messages list</h3>
-
             <ul  class="list-group list-group-vertical "  v-for="post in posts" :key="post.text">
                 <li class="list-group-item-dark" style="height: 30px; padding: 5px 15px;">
-                    <p class="fst-italic fw-bold fs-6"> At {{ post.creationDate }}, Researcher wrote...</p>
+                    <p class="fst-italic fw-bold fs-6"> At {{ post.creationDate }}, {{ post.poster.name }} from {{ post.poster.organization }} wrote...</p>
                 </li>
-                <li class="list-group-item" > {{ post.text }}</li>
+                <li class="list-group-item d-flex justify-content-between align-items-center" > {{ post.text }}
+                    <span v-if="post.poster.name!=this.negotiation.persons[0].name" class="badge bg-primary rounded-pill">New</span>
+                </li>
                 <ul  class="list-group list-group-flush" >
                  <li class="list-group-item"></li>
                  <li class="list-group-item"></li>
                 </ul>
                 
             </ul>
-    </div>  
-    <div id="add-new-message">
+    
+    
+    
     <br/>
             <h3>Add a new message for the negotiation</h3>
             <form @submit="message">
@@ -52,10 +54,12 @@
 
     </div>
 
+    <div v-else><h5> This negotiation has still to be approved. Wait fot a biobanker approval before interacting with the counterpart.</h5></div> 
+
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
     name: "negotiation-page",
@@ -74,6 +78,9 @@ export default {
     },
   methods: {
     ...mapActions(["retrieveNegotiationById", "retrievePostsByNegotiationId", "addMessageToNegotiation"]), 
+    computed: {
+    ...mapGetters(['oidcIsAuthenticated', 'oidcUser'])
+  },
     async addMessage() {
         await this.addMessageToNegotiation({        
             data: {
@@ -92,6 +99,7 @@ export default {
     },
   },
     async created() {
+       
         this.negotiation = await this.retrieveNegotiationById({ negotiationId: this.negotiationId })
         this.posts = await this.retrievePostsByNegotiationId({ negotiationId: this.negotiationId })
         console.log(this.negotiation)

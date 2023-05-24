@@ -63,7 +63,7 @@ export default {
             })
     },
     updateNegotiationStatus({ state, commit }, { negotiationId , event }) {
-        return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`, {}, getBearerHeaders(state.oidc.access_token))
+        return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 commit('setNotification', `Negotiation updated correctly with data ${response.data.id}`)
                 return response.data
@@ -74,7 +74,7 @@ export default {
             })
     },
     retrievePossibleEvents({ state, commit }, { negotiationId }) {
-        return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/events`, getBearerHeaders(state.oidc.access_token))
+        return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 return response.data
             })
