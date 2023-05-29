@@ -49,8 +49,8 @@ const router = createRouter({
             meta: { isPublic: true }
         },
         {
-            path: "/negotiations/:negotiationId",
-            name: "negotiation",
+            path: "/negotiations/:negotiationId/:userRole?",
+            name: "negotiation-page",
             component: NegotiationPage,
             props: true
         }

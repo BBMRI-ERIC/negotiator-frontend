@@ -117,4 +117,18 @@ export default {
                 return "Failed"
             })
     },
+
+    markMessageAsRead({ state }, { data }) {
+        console.log('adding message')
+        console.log(data)
+        return axios.put(`${NEGOTIATION_PATH}/${data.negotiationId}/posts/${data.postId}`, data, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                console.log('*************')
+                console.log(response)
+                return response.data.id
+            })
+            .catch(() => {
+                return "Failed"
+            })
+    },
 }
