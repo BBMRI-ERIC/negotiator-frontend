@@ -131,4 +131,15 @@ export default {
                 return "Failed"
             })
     },
+    getUnreadMessagesByRole({ state }, { data }) {
+        //the role shoud be complementary in relation of the one from the user 
+        let complementaryRole = data.Rolename == 'RESEARCHER' ? 'BIOBANKER' : 'RESEARCHER'
+        return axios.get(`${NEGOTIATION_PATH}/${data.negotiationId}/${complementaryRole}/posts`, getBearerHeaders(state.oidc.access_token))
+            .then((response) => {
+                return response.data
+            })
+            .catch(() => {
+                return "Failed"
+            })
+    },
 }

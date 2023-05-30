@@ -60,6 +60,10 @@
               <td class="col-5 col-xxl-4">{{ item.payload.project.title }}</td>
               <td class="col-2">{{ item.status }}</td>
               <td class="col-2 col-xxl-3">
+                <!--span
+                    class="badge bg-primary rounded-pill"
+                    >{{this.unreadMessages}} To read </span
+                -->
                 <button
                   v-if="this.role == 'BIOBANKER' && item.status == 'SUBMITTED'"
                   type="button"
@@ -77,6 +81,7 @@
                   <font-awesome-icon icon="fa fa-trash" fixed-width />
                   <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
                 </button>
+                
               </td>
               <!--/router-link-->
             </tr>
@@ -145,6 +150,7 @@ export default {
         return ["RESEARCHER", "BIOBANKER"].includes(value);
       },
     },
+    
   },
   data() {
     return {
@@ -153,10 +159,11 @@ export default {
       negotiation: [],
       responseOptions: [],
       selectedItem: "",
+      unreadMessages: 0
     };
   },
   methods: {
-    ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents"]),
+    ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents", "getUnreadMessagesByRole"]),
     async updateNegotiation() {
       await this.updateNegotiationStatus({
         negotiationId: this.negotiation.id,
@@ -180,6 +187,22 @@ export default {
       if (confirm("Are you sure you want to abandon this request?")) {
         console.log("deleting");
       }
+    },
+    getUnreadMessages(negotiationId, roleName) {
+        console.log('**********')
+        console.log(negotiationId)
+        console.log(roleName)
+        this.getUnreadMessagesByRole({
+        data: {
+          negotiationId: negotiationId,
+          roleName: roleName
+        },
+      }).then((data) => {
+        if (data) {
+            console.log(data)
+          return data.length;
+        }
+      });
     },
   },
 };
