@@ -1,118 +1,99 @@
 <template>
   <div>
-    <h3>Negotation details page</h3>
-    <table class="table table-bordered">
-      <tbody>
-        <tr>
-          <th scope="row">
-            ID
-          </th>
-          <td>{{ negotiation.id }}</td>
-          <th scope="row">
-            Created By
-          </th>
-          <td>{{ negotiation.persons[0].name }}</td>
-        </tr>
-        <tr>
-          <th scope="row">
-            Status
-          </th>
-          <td>{{ negotiation.status }}</td>
-          <th scope="row">
-            Biobank
-          </th>
-          <td>{{ negotiation.requests[0].resources[0].id }}</td>
-        </tr>
-        <tr>
-          <th scope="row">
-            Project
-          </th>
-          <td>
-            {{ negotiation.payload.project.title }} - {{ negotiation.payload.project.description }}
-          </td>
-          <th scope="row">
-            Collections
-          </th>
-          <td>
-            <p
-              v-for="i in negotiation.requests[0].resources[0].children"
-              :key="i.id"
-            >
-              {{ i.id }}
-            </p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div v-if="negotiation.status == 'APPROVED'">
-    <h3>Negotiation messages list</h3>
-    <ul
-      v-for="post in posts"
-      :key="post.text"
-      class="list-group list-group-vertical "
-    >
-      <li
-        class="list-group-item-dark"
-        style="height: 30px; padding: 5px 15px;"
+    <h4 class="mb-4">
+      {{ negotiation.payload.project.title.toUpperCase() }}
+    </h4>
+    <div class="table-responsive-md">
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th scope="row">
+              Requestor
+            </th>
+            <td>{{ requestor }}</td>
+            <th scope="row">
+              Resource Manager
+            </th>
+            <td>{{ resourceManager }}</td>
+          </tr>
+          <tr>
+            <th scope="row">
+              Status
+            </th>
+            <td>{{ negotiation.status }}</td>
+            <th scope="row">
+              Description
+            </th>
+            <td>
+              {{ negotiation.payload.project.title }} - {{ negotiation.payload.project.description }}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              Biobank
+            </th>
+            <td>{{ negotiation.requests[0].resources[0].id }}</td>
+            <th scope="row">
+              Collections
+            </th>
+            <td>
+              <p
+                v-for="i in negotiation.requests[0].resources[0].children"
+                :key="i.id"
+              >
+                {{ i.id }}
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-if="negotiation.status == 'APPROVED'">
+      <h3>Conversation</h3>
+      <div
+        v-for="post in posts"
+        :key="post.id" 
+        class="card mb-3"
       >
-        <p class="fst-italic fw-bold fs-6">
-          At {{ post.creationDate }}, {{ post.poster.name }} from {{
-            post.poster.organization }} wrote...
-        </p>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ post.text }}
-        <div>
-          <span
-            v-if="post.status == 'CREATED' && post.poster_role != userRole"
-            class="badge bg-primary rounded-pill"
-          >New</span>
-          <button
-            v-if="post.status == 'CREATED' && post.poster_role != userRole"
-            type="submit"
-            class="btn btn-secondary btn-sm"
-            @click="updateMessageStatus(post.id, post.text)"
-          >
-            Mark
-            as read
-          </button>
+        <div class="card-header d-flex">
+          <div class="me-auto">
+            {{ post.poster.name }} ({{ post.poster.organization }})
+          </div>
+          <div>{{ printDate(post.creationDate) }}</div>
         </div>
-      </li>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item" />
-        <li class="list-group-item" />
-      </ul>
-    </ul>
-    <h3>Add a new message for the negotiation</h3>
-    <form @submit="message">
-      <textarea
-        v-model="message.text"
-        class="form-control"
-        style="min-width: 100%"
-      />
-      <br>
-      <div class="wizard-footer-right">
+        <div class="card-body">
+          {{ post.text }}
+        </div>
+      </div>
+      <h3>Send a message</h3>
+      <form @submit="message">
+        <textarea
+          v-model="message.text"
+          class="form-control mb-3"
+          style="min-width: 100%"
+        />
         <button
           type="submit"
           class="btn btn-secondary"
           @click="addMessage"
         >
-          Add message
+          Send message
         </button>
-      </div>
-    </form>
-  </div>
-  <div v-else>
-    <h5>
-      This negotiation has still to be approved. Wait fot a biobanker approval before interacting with the
-      counterpart.
-    </h5>
+      </form>
+    </div>
+    <div v-else>
+      <h5>
+        This negotiation has still to be approved. Wait fot a biobanker approval before interacting with the
+        counterpart.
+      </h5>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { dateFormat, researcherRole, resourceManagerRole } from "../config/consts"
+import moment from "moment"
 
 export default {
   name: "NegotiationPage",
@@ -136,6 +117,14 @@ export default {
       }
     }
   },
+  computed: {
+    requestor() {
+      return this.getRole(researcherRole)
+    },
+    resourceManager() {
+      return this.getRole(resourceManagerRole)
+    }
+  },
   async created() {
     this.negotiation = await this.retrieveNegotiationById({ negotiationId: this.negotiationId })
     this.posts = await this.retrievePostsByNegotiationId({ negotiationId: this.negotiationId })
@@ -153,6 +142,13 @@ export default {
     ...mapActions(["retrieveNegotiationById", "retrievePostsByNegotiationId", "addMessageToNegotiation", "markMessageAsRead"]),
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
+    },
+    printDate: function (date) {
+      return moment(date).format(dateFormat)
+    },
+    getRole: function (role) {
+      const person = this.negotiation.persons.filter(person => person.role === role)[0]
+      return person.name || ""
     },
     async addMessage() {
       await this.addMessageToNegotiation({
@@ -187,7 +183,4 @@ export default {
     },
   }
 }
-
-
-
 </script>
