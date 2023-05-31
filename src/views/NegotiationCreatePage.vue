@@ -1,18 +1,18 @@
 <template>
-    <negotiation-form
-        :requestId="$route.params.requestId"
-    ></negotiation-form>
+  <negotiation-form
+    :request-id="$route.params.requestId"
+  />
 </template>
 
 <script>
-import NegotiationForm from "@/components/NegotiationForm.vue";
+import NegotiationForm from "@/components/NegotiationForm.vue"
 
 export default {
-  name: "home-page",
+  name: "HomePage",
   components: {
     NegotiationForm,
   }
-};
+}
 </script>
 
 <style scoped>

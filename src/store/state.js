@@ -1,3 +1,3 @@
 export default {
-    notification: undefined
+  notification: undefined
 }

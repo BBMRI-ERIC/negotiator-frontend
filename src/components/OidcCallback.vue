@@ -1,18 +1,12 @@
 <template>
-  <div>
-  </div>
+  <div />
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex"
 
 export default {
-  name: 'OidcCallback',
-  methods: {
-    ...mapActions([
-      'oidcSignInCallback'
-    ])
-  },
+  name: "OidcCallback",
   mounted () {
     this.oidcSignInCallback()
       .then((redirectPath) => {
@@ -20,8 +14,13 @@ export default {
       })
       .catch((err) => {
         console.error(err)
-        this.$router.push('/oidc-callback-error') // Handle errors any way you want
+        this.$router.push("/oidc-callback-error") // Handle errors any way you want
       })
+  },
+  methods: {
+    ...mapActions([
+      "oidcSignInCallback"
+    ])
   }
 }
 </script>

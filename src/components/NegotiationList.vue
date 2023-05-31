@@ -2,7 +2,10 @@
   <div class="container">
     <div class="row table-responsive d-flex">
       <div class="col-md-2">
-        <table id="tableComponent" class="table table-hover">
+        <table
+          id="tableComponent"
+          class="table table-hover"
+        >
           <thead>
             <tr class="table-secondary">
               <th>FILTER</th>
@@ -33,10 +36,17 @@
         </table>
       </div>
       <div class="col-md-10">
-        <table id="tableComponent" class="table table-hover">
+        <table
+          id="tableComponent"
+          class="table table-hover"
+        >
           <thead>
             <tr class="table-secondary">
-              <th scope="col" v-for="field in headers" :key="field">
+              <th
+                v-for="field in headers"
+                :key="field"
+                scope="col"
+              >
                 <span class="text-uppercase">{{ field }}</span>
               </th>
               <th />
@@ -49,28 +59,37 @@
               @click="
                 $router.push({
                   name: 'negotiation-page',
-                  params: { negotiationId: item.id, userRole: this.role },
+                  params: { negotiationId: item.id, userRole: role },
                 })
               "
             >
               <!--tr v-for="item in negotiations" :key="item.id"-->
               <!--router-link :to="{ name: 'negotiation', params: { negotiationId: item.id } }"-->
               <!--router-link v-for="item in negotiations" :key=item.id :to= "`/negotiations/${item.id}`" v-slot="{tr}" custom-->
-              <td class="col-3">{{ item.id }}</td>
-              <td class="col-5 col-xxl-4">{{ item.payload.project.title }}</td>
-              <td class="col-2">{{ item.status }}</td>
+              <td class="col-3">
+                {{ item.id }}
+              </td>
+              <td class="col-5 col-xxl-4">
+                {{ item.payload.project.title }}
+              </td>
+              <td class="col-2">
+                {{ item.status }}
+              </td>
               <td class="col-2 col-xxl-3">
                 <!--span
                     class="badge bg-primary rounded-pill"
                     >{{this.unreadMessages}} To read </span
                 -->
                 <button
-                  v-if="this.role == 'BIOBANKER' && item.status == 'SUBMITTED'"
+                  v-if="role == 'BIOBANKER' && item.status == 'SUBMITTED'"
                   type="button"
                   class="btn btn-secondary btn-sm me-2 mb-1"
                   @click.stop="interactModal(item)"
                 >
-                  <font-awesome-icon icon="fa fa-pencil" fixed-width />
+                  <font-awesome-icon
+                    icon="fa fa-pencil"
+                    fixed-width
+                  />
                   <span class="d-none d-xxl-inline-block ms-1">Interact</span>
                 </button>
                 <button
@@ -78,10 +97,12 @@
                   class="btn btn-danger btn-sm mb-1"
                   @click.stop="abandonRequest"
                 >
-                  <font-awesome-icon icon="fa fa-trash" fixed-width />
+                  <font-awesome-icon
+                    icon="fa fa-trash"
+                    fixed-width
+                  />
                   <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
                 </button>
-                
               </td>
               <!--/router-link-->
             </tr>
@@ -90,11 +111,16 @@
       </div>
     </div>
   </div>
-  <div v-if="showModal" class="modal">
+  <div
+    v-if="showModal"
+    class="modal"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title">{{ negotiation.payload.project.title }}</h1>
+          <h1 class="modal-title">
+            {{ negotiation.payload.project.title }}
+          </h1>
         </div>
         <div class="modal-body">
           <span>Data: {{ negotiation.payload }}</span>
@@ -135,19 +161,24 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { mapActions } from "vuex"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 
 export default {
   name: "NegotiationsList",
   components: { FontAwesomeIcon },
   props: {
-    negotiations: Array,
+    negotiations: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     role: {
       type: String,
       required: true,
       validator: function (value) {
-        return ["RESEARCHER", "BIOBANKER"].includes(value);
+        return ["RESEARCHER", "BIOBANKER"].includes(value)
       },
     },
     
@@ -160,7 +191,7 @@ export default {
       responseOptions: [],
       selectedItem: "",
       unreadMessages: 0
-    };
+    }
   },
   methods: {
     ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents", "getUnreadMessagesByRole"]),
@@ -168,44 +199,44 @@ export default {
       await this.updateNegotiationStatus({
         negotiationId: this.negotiation.id,
         event: this.selectedItem,
-      });
-      this.showModal = false;
+      })
+      this.showModal = false
     },
     interactModal(negotiation) {
-      this.showModal = true;
-      this.negotiation = negotiation;
-      this.loadPossibleEvents();
+      this.showModal = true
+      this.negotiation = negotiation
+      this.loadPossibleEvents()
     },
     loadPossibleEvents() {
       this.retrievePossibleEvents({
         negotiationId: this.negotiation.id,
       }).then((data) => {
-        this.responseOptions = data;
-      });
+        this.responseOptions = data
+      })
     },
     abandonRequest() {
       if (confirm("Are you sure you want to abandon this request?")) {
-        console.log("deleting");
+        console.log("deleting")
       }
     },
     getUnreadMessages(negotiationId, roleName) {
-        console.log('**********')
-        console.log(negotiationId)
-        console.log(roleName)
-        this.getUnreadMessagesByRole({
+      console.log("**********")
+      console.log(negotiationId)
+      console.log(roleName)
+      this.getUnreadMessagesByRole({
         data: {
           negotiationId: negotiationId,
           roleName: roleName
         },
       }).then((data) => {
         if (data) {
-            console.log(data)
-          return data.length;
+          console.log(data)
+          return data.length
         }
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -223,7 +254,7 @@ export default {
   font-size: large;
 }
 .modal-content {
-  background-color: $light;
+  background-color: "$light";
   margin: 15% auto;
   padding: 20px;
   border: 1px solid gray;
@@ -237,7 +268,7 @@ export default {
 }
 .close:hover,
 .close:focus {
-  color: $black;
+  color: "$black";
   text-decoration: none;
   cursor: pointer;
 }

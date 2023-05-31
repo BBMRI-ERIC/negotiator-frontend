@@ -1,10 +1,13 @@
 
 <template>
   <header>
-    <navigation-bar/>
+    <navigation-bar />
   </header>
-  <div class="container pt-4 main-container" >
-    <div v-if="notification !== undefined" class="row">
+  <div class="container pt-4 main-container">
+    <div
+      v-if="notification !== undefined"
+      class="row"
+    >
       <div col="12">
         <div
           class="alert alert-warning alert-dismissible fade show"
@@ -17,25 +20,25 @@
             data-bs-dismiss="alert"
             aria-label="Close"
             @click="resetNotification"
-          ></button>
+          />
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-1"></div>
+      <div class="col-1" />
       <div class="col-10">
-        <router-view :key="$route.path"/>
-    </div>
-      <div class="col-1"></div>
+        <router-view :key="$route.path" />
+      </div>
+      <div class="col-1" />
     </div>
   </div>
 </template>
 
 <script>
-import { RouterView } from "vue-router";
-import { mapGetters, mapMutations } from "vuex";
+import { RouterView } from "vue-router"
+import { mapGetters, mapMutations } from "vuex"
 
-import NavigationBar from "./components/NavigationBar.vue";
+import NavigationBar from "./components/NavigationBar.vue"
 
 export default {
   components: {
@@ -46,13 +49,11 @@ export default {
     ...mapGetters({ notification: "getNotification" })
   },
   methods: {
-    ...mapMutations(['setNotification']),
+    ...mapMutations(["setNotification"]),
     resetNotification () {
-        this.setNotification(undefined)
+      this.setNotification(undefined)
     }
-  }
-
-  
+  }  
 }
 </script>
 
