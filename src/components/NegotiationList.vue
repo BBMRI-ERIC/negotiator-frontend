@@ -220,9 +220,6 @@ export default {
       }
     },
     getUnreadMessages(negotiationId, roleName) {
-      console.log("**********")
-      console.log(negotiationId)
-      console.log(roleName)
       this.getUnreadMessagesByRole({
         data: {
           negotiationId: negotiationId,
@@ -230,7 +227,6 @@ export default {
         },
       }).then((data) => {
         if (data) {
-          console.log(data)
           return data.length
         }
       })

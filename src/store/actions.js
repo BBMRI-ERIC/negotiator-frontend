@@ -83,8 +83,6 @@ export default {
       })
   }, 
   retrieveNegotiationById({ state, commit }, { negotiationId }) {
-    console.log("retrieving...")
-    console.log(negotiationId)
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
         return response.data
@@ -94,8 +92,6 @@ export default {
       })
   },
   retrievePostsByNegotiationId({ state, commit }, { negotiationId }) {
-    console.log("retrieving...")
-    console.log(negotiationId)
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/posts`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
         return response.data
@@ -104,26 +100,20 @@ export default {
         commit("setNotification", "Error getting request data from server")
       })
   },
-  addMessageToNegotiation({ state }, { data }) {
-    console.log("adding message")
-    console.log(data)
+  addMessageToNegotiation({ state, commit }, { data }) {
     return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
-        console.log("*************")
-        console.log(response)
-        return response.data.id
+        console.log("message sent correctly")
+        console.log(response.data)
+        return response.data
       })
       .catch(() => {
-        return "Failed"
+        commit("setNotification", "Error sending message")
       })
   },
   markMessageAsRead({ state }, { data }) {
-    console.log("adding message")
-    console.log(data)
     return axios.put(`${NEGOTIATION_PATH}/${data.negotiationId}/posts/${data.postId}`, data, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
-        console.log("*************")
-        console.log(response)
         return response.data.id
       })
       .catch(() => {

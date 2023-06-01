@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4 class="mb-4">
-      {{ negotiation.payload.project.title.toUpperCase() }}
+      {{ negotiatio ? negotiation.payload.project.title.toUpperCase() : "" }}
     </h4>
     <div class="table-responsive-md">
       <table class="table table-bordered">
@@ -20,35 +20,35 @@
             <th scope="row">
               Status
             </th>
-            <td>{{ negotiation.status }}</td>
+            <td>{{ negotiation ? negotiation.status : "" }}</td>
             <th scope="row">
               Description
             </th>
             <td>
-              {{ negotiation.payload.project.title }} - {{ negotiation.payload.project.description }}
+              {{ negotiation ? negotiation.payload.project.description : "" }}
             </td>
           </tr>
           <tr>
             <th scope="row">
               Biobank
             </th>
-            <td>{{ negotiation.requests[0].resources[0].id }}</td>
+            <td>{{ biobank }}</td>
             <th scope="row">
               Collections
             </th>
             <td>
-              <p
-                v-for="i in negotiation.requests[0].resources[0].children"
+              <span
+                v-for="i in collections"
                 :key="i.id"
               >
                 {{ i.id }}
-              </p>
+              </span>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div v-if="negotiation.status == 'APPROVED'">
+    <div v-if="negotiation && negotiation.status == 'APPROVED'">
       <h3>Conversation</h3>
       <div
         v-for="post in posts"
@@ -59,14 +59,24 @@
           <div class="me-auto">
             {{ post.poster.name }} ({{ post.poster.organization }})
           </div>
-          <div>{{ printDate(post.creationDate) }}</div>
+          <div class="d-flex">
+            <span
+              v-if="post.status == 'CREATED' && post.poster_role != userRole"
+              class="badge bg-primary rounded-pill"
+            >
+              New
+            </span>
+            <div class="ms-2">
+              {{ printDate(post.creationDate) }}
+            </div>
+          </div>
         </div>
         <div class="card-body">
           {{ post.text }}
         </div>
       </div>
       <h3>Send a message</h3>
-      <form @submit="message">
+      <form @submit.prevent="addMessage">
         <textarea
           v-model="message.text"
           class="form-control mb-3"
@@ -75,7 +85,6 @@
         <button
           type="submit"
           class="btn btn-secondary"
-          @click="addMessage"
         >
           Send message
         </button>
@@ -110,7 +119,7 @@ export default {
   data() {
     return {
       negotiation: undefined,
-      posts: undefined,
+      posts: [],
       message: {
         text: "",
         resourceId: undefined
@@ -123,9 +132,15 @@ export default {
     },
     resourceManager() {
       return this.getRole(resourceManagerRole)
+    },
+    biobank() {
+      return this.negotiation ? this.negotiation.requests[0].resources[0].id : ""
+    },
+    collections() {
+      return this.negotiation ? this.negotiation.requests[0].resources[0].children : []
     }
   },
-  async created() {
+  async beforeMount() {
     this.negotiation = await this.retrieveNegotiationById({ negotiationId: this.negotiationId })
     this.posts = await this.retrievePostsByNegotiationId({ negotiationId: this.negotiationId })
     // assign the role of the poster to each message belonging to negotiation
@@ -137,6 +152,12 @@ export default {
         }
       }
     }
+    // console.log(this.posts)
+    // this.posts.forEach(post => {
+    //   if (post.status == "CREATED" && post.poster_role != "userRole") {
+    //     this.updateMessageStatus(post.id, post.text)
+    //   }
+    // })
   },
   methods: {
     ...mapActions(["retrieveNegotiationById", "retrievePostsByNegotiationId", "addMessageToNegotiation", "markMessageAsRead"]),
@@ -147,22 +168,26 @@ export default {
       return moment(date).format(dateFormat)
     },
     getRole: function (role) {
-      const person = this.negotiation.persons.filter(person => person.role === role)[0]
-      return person.name || ""
+      // check if the negotiation is already loaded from the backend
+      if (this.negotiation === undefined) {
+        return ""
+      } else {
+        // gets the first person with the required role
+        const person = this.negotiation.persons.filter(person => person.role === role)[0]
+        return person.name || ""
+      }
     },
     async addMessage() {
+      // send a message and add the newly created post 
       await this.addMessageToNegotiation({
         data: {
           resourceId: this.negotiation.requests[0].resources[0].id,
           text: this.message.text,
           negotiationId: this.negotiation.id
         }
-      }).then((messageId) => {
-        console.log("This is the new message ID:")
-        this.$alert(messageId)
-        if (messageId) {
-          this.showNotification("light",
-            "Message added correctly")
+      }).then((post) => {
+        if (post) {
+          this.posts.push(post)
         }
       })
     },
@@ -174,10 +199,6 @@ export default {
           negotiationId: this.negotiation.id,
           postId: inputMessageId,
           status: "READ"
-        }
-      }).then((messageId) => {
-        if (messageId) {
-          window.location.reload()
         }
       })
     },
