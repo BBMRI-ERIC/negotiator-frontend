@@ -49,6 +49,23 @@
       </table>
     </div>
     <div v-if="negotiation && negotiation.status == 'APPROVED'">
+      <h3>Send a message</h3>
+      <form
+        class="mb-4"
+        @submit.prevent="addMessage"
+      >
+        <textarea
+          v-model="message.text"
+          class="form-control mb-3"
+          style="min-width: 100%"
+        />
+        <button
+          type="submit"
+          class="btn btn-secondary"
+        >
+          Send message
+        </button>
+      </form>
       <h3>Conversation</h3>
       <div
         v-for="post in posts"
@@ -75,20 +92,6 @@
           {{ post.text }}
         </div>
       </div>
-      <h3>Send a message</h3>
-      <form @submit.prevent="addMessage">
-        <textarea
-          v-model="message.text"
-          class="form-control mb-3"
-          style="min-width: 100%"
-        />
-        <button
-          type="submit"
-          class="btn btn-secondary"
-        >
-          Send message
-        </button>
-      </form>
     </div>
     <div v-else>
       <h5>
@@ -153,7 +156,6 @@ export default {
         }
       }
     }
-    console.log(this.posts)
     this.posts.forEach(post => {
       if (post.status == MESSAGE_STATUS.SENT && post.poster_role != this.userRole) {
         this.updateMessageStatus(post.id, post.text)
@@ -188,6 +190,7 @@ export default {
         }
       }).then((post) => {
         if (post) {
+          post.poster_role = this.userRole
           this.posts.push(post)
         }
       })
