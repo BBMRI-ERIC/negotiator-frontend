@@ -59,7 +59,7 @@
               @click="
                 $router.push({
                   name: 'negotiation-page',
-                  params: { negotiationId: item.id, userRole: role },
+                  params: { negotiationId: item.id, userRole: userRole },
                 })
               "
             >
@@ -81,7 +81,7 @@
                     >{{this.unreadMessages}} To read </span
                 -->
                 <button
-                  v-if="role == 'BIOBANKER' && item.status == 'SUBMITTED'"
+                  v-if="userRole == availableRoles.REPRESENTATIVE && item.status == 'SUBMITTED'"
                   type="button"
                   class="btn btn-secondary btn-sm me-2 mb-1"
                   @click.stop="interactModal(item)"
@@ -163,6 +163,7 @@
 <script>
 import { mapActions } from "vuex"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import { ROLES } from "@/config/consts"
 
 export default {
   name: "NegotiationsList",
@@ -174,14 +175,13 @@ export default {
         return []
       }
     },
-    role: {
+    userRole: {
       type: String,
       required: true,
       validator: function (value) {
-        return ["RESEARCHER", "BIOBANKER"].includes(value)
+        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
       },
-    },
-    
+    }
   },
   data() {
     return {
@@ -190,8 +190,13 @@ export default {
       negotiation: [],
       responseOptions: [],
       selectedItem: "",
-      unreadMessages: 0
+      unreadMessages: 0,
+      availableRoles: ROLES
     }
+  },
+  mounted() {
+    console.log(this.availableRoles)
+    console.log(this.userRole)
   },
   methods: {
     ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents", "getUnreadMessagesByRole"]),
@@ -231,7 +236,7 @@ export default {
         }
       })
     },
-  },
+  }
 }
 </script>
 

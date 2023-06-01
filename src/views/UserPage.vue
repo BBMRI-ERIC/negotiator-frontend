@@ -1,13 +1,14 @@
 <template>
   <NegotiationList 
     :negotiations="negotiations" 
-    :role="role"
+    :user-role="userRole"
   />
 </template>
 <script>
 
 import NegotiationList from "@/components/NegotiationList.vue"
 import { mapActions } from "vuex"
+import { ROLES } from "@/config/consts.js"
 
 export default {
   components: {
@@ -15,11 +16,11 @@ export default {
   },
     
   props: {
-    role: {
+    userRole: {
       type: String,
       required: true,
       validator: function (value) {
-        return ["RESEARCHER", "BIOBANKER"].includes(value)
+        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
       }
     }
   },
@@ -29,7 +30,8 @@ export default {
     }
   },
   async mounted() {
-    this.negotiations = await this.retrieveNegotiationsByRole({ role: this.role })
+    console.log(this.userRole)
+    this.negotiations = await this.retrieveNegotiationsByRole({ userRole: this.userRole })
   },
   methods: {
     ...mapActions(["retrieveNegotiationsByRole"])

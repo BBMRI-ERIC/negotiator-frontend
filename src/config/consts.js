@@ -1,8 +1,8 @@
 const dateFormat = "LL - LT"
 
-const ROLE = {
+const ROLES = {
   RESEARCHER: "RESEARCHER",
-  BIOBANKER: "BIOBANKER"
+  REPRESENTATIVE: "REPRESENTATIVE"
 }
 
 const MESSAGE_STATUS = {
@@ -11,4 +11,4 @@ const MESSAGE_STATUS = {
 }
 
 
-export { dateFormat, ROLE, MESSAGE_STATUS }
+export { dateFormat, ROLES, MESSAGE_STATUS }

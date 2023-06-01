@@ -1,4 +1,5 @@
 import axios from "axios"
+import { ROLES } from "@/config/consts"
 
 let BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
@@ -52,8 +53,8 @@ export default {
         return null
       })
   },
-  retrieveNegotiationsByRole({ state, commit }, { role }) {
-    return axios.get(`${NEGOTIATION_PATH}/?userRole=${role}`, getBearerHeaders(state.oidc.access_token))
+  retrieveNegotiationsByRole({ state, commit }, { userRole }) {
+    return axios.get(`${NEGOTIATION_PATH}/?userRole=${userRole}`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
         return response.data
       })
@@ -122,7 +123,7 @@ export default {
   },
   getUnreadMessagesByRole({ state }, { data }) {
     //the role shoud be complementary in relation of the one from the user 
-    let complementaryRole = data.Rolename == "RESEARCHER" ? "BIOBANKER" : "RESEARCHER"
+    let complementaryRole = data.Rolename == ROLES.RESEARCHER ? ROLES.REPRESENTATIVE : ROLES.RESEARCHER
     return axios.get(`${NEGOTIATION_PATH}/${data.negotiationId}/${complementaryRole}/posts`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
         return response.data

@@ -104,7 +104,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { dateFormat, MESSAGE_STATUS, ROLE } from "../config/consts"
+import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
 import moment from "moment"
 
 export default {
@@ -132,10 +132,10 @@ export default {
   },
   computed: {
     requestor() {
-      return this.getRole(ROLE.RESEARCHER)
+      return this.getRole(ROLES.RESEARCHER)
     },
     resourceManager() {
-      return this.getRole(ROLE.BIOBANKER)
+      return this.getRole(ROLES.REPRESENTATIVE)
     },
     biobank() {
       return this.negotiation ? this.negotiation.requests[0].resources[0].id : ""
@@ -147,6 +147,7 @@ export default {
   async beforeMount() {
     this.negotiation = await this.retrieveNegotiationById({ negotiationId: this.negotiationId })
     this.posts = await this.retrievePostsByNegotiationId({ negotiationId: this.negotiationId })
+    
     // assign the role of the poster to each message belonging to negotiation
     let negotiation_persons = this.negotiation.persons
     for (let i = 0; i < negotiation_persons.length; i++) {
@@ -156,6 +157,7 @@ export default {
         }
       }
     }
+    
     this.posts.forEach(post => {
       if (post.status == MESSAGE_STATUS.SENT && post.poster_role != this.userRole) {
         this.updateMessageStatus(post.id, post.text)
