@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4 class="mb-4">
-      {{ negotiatio ? negotiation.payload.project.title.toUpperCase() : "" }}
+      {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
     </h4>
     <div class="table-responsive-md">
       <table class="table table-bordered">
@@ -61,7 +61,7 @@
           </div>
           <div class="d-flex">
             <span
-              v-if="post.status == 'CREATED' && post.poster_role != userRole"
+              v-if="post.status === messageStatus.SENT && post.poster_role != userRole"
               class="badge bg-primary rounded-pill"
             >
               New
@@ -101,7 +101,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { dateFormat, researcherRole, resourceManagerRole } from "../config/consts"
+import { dateFormat, MESSAGE_STATUS, ROLE } from "../config/consts"
 import moment from "moment"
 
 export default {
@@ -123,15 +123,16 @@ export default {
       message: {
         text: "",
         resourceId: undefined
-      }
+      },
+      messageStatus: MESSAGE_STATUS
     }
   },
   computed: {
     requestor() {
-      return this.getRole(researcherRole)
+      return this.getRole(ROLE.RESEARCHER)
     },
     resourceManager() {
-      return this.getRole(resourceManagerRole)
+      return this.getRole(ROLE.BIOBANKER)
     },
     biobank() {
       return this.negotiation ? this.negotiation.requests[0].resources[0].id : ""
@@ -152,12 +153,12 @@ export default {
         }
       }
     }
-    // console.log(this.posts)
-    // this.posts.forEach(post => {
-    //   if (post.status == "CREATED" && post.poster_role != "userRole") {
-    //     this.updateMessageStatus(post.id, post.text)
-    //   }
-    // })
+    console.log(this.posts)
+    this.posts.forEach(post => {
+      if (post.status == MESSAGE_STATUS.SENT && post.poster_role != this.userRole) {
+        this.updateMessageStatus(post.id, post.text)
+      }
+    })
   },
   methods: {
     ...mapActions(["retrieveNegotiationById", "retrievePostsByNegotiationId", "addMessageToNegotiation", "markMessageAsRead"]),
@@ -198,7 +199,7 @@ export default {
           text: inputMessageText,
           negotiationId: this.negotiation.id,
           postId: inputMessageId,
-          status: "READ"
+          status: MESSAGE_STATUS.READ
         }
       })
     },
