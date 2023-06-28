@@ -38,7 +38,7 @@
       <div class="col-md-10">
         <table
           id="tableComponent"
-          class="table table-hover"
+          class="table table-hover negotiation-list-table"
         >
           <thead>
             <tr class="table-secondary">
@@ -53,7 +53,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
+            <tr 
               v-for="item in negotiations"
               :key="item.id"
               @click="
@@ -210,6 +210,7 @@ export default {
     interactModal(negotiation) {
       this.showModal = true
       this.negotiation = negotiation
+      console.log(negotiation)
       this.loadPossibleEvents()
     },
     loadPossibleEvents() {
@@ -272,5 +273,8 @@ export default {
   color: "$black";
   text-decoration: none;
   cursor: pointer;
+}
+.negotiation-list-table tbody tr:hover > td {
+    cursor: pointer;
 }
 </style>

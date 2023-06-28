@@ -10,11 +10,11 @@
             <th scope="row">
               Requestor
             </th>
-            <td>{{ requestor }}</td>
-            <th scope="row">
+            <td colspan="4">{{ requestor }}</td>
+            <!--th scope="row">
               Resource Manager
             </th>
-            <td>{{ resourceManager }}</td>
+            <td>ND</td-->
           </tr>
           <tr>
             <th scope="row">
@@ -133,9 +133,6 @@ export default {
   computed: {
     requestor() {
       return this.getRole(ROLES.RESEARCHER)
-    },
-    resourceManager() {
-      return this.getRole(ROLES.REPRESENTATIVE)
     },
     biobank() {
       return this.negotiation ? this.negotiation.requests[0].resources[0].id : ""

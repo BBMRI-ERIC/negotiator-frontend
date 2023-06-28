@@ -86,6 +86,8 @@ export default {
   retrieveNegotiationById({ state, commit }, { negotiationId }) {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
+        console.log("*********")
+        console.log(response.data)
         return response.data
       })
       .catch(() => {
