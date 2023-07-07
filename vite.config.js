@@ -11,7 +11,7 @@ export default defineConfig({
     plugins: [
         vue(),
         Components({
-        resolvers: [BootstrapVueNextResolver()]
+            resolvers: [BootstrapVueNextResolver()]
         })
     ],
     resolve: {
@@ -25,7 +25,7 @@ export default defineConfig({
             '^/api': {
                 target: PROXY_TARGET,
                 changeOrigin: true,
-            },
+            }
         }
     }
 });

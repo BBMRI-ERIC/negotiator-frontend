@@ -3,7 +3,7 @@
   <header>
     <navigation-bar/>
   </header>
-  <div class="container pt-4">
+  <div class="container pt-4 main-container" >
     <div v-if="notification !== undefined" class="row">
       <div col="12">
         <div
@@ -22,11 +22,11 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <router-view />
+      <div class="col-1"></div>
+      <div class="col-10">
+        <router-view :key="$route.path"/>
     </div>
-      <div class="col-2"></div>
+      <div class="col-1"></div>
     </div>
   </div>
 </template>
@@ -57,6 +57,10 @@ export default {
 </script>
 
 <style scoped>
+.main-container {
+  min-width: 25rem;
+}
+
 .box {
   inline-size: 300px;
 }

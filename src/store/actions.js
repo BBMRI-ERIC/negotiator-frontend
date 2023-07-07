@@ -14,34 +14,34 @@ function getBearerHeaders(token) {
 
 
 export default {
-    retrieveRequestById({ state, commit }, { requestId }) {
-        axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidc.access_token))
-            .then((response) => commit('setCurrentRequest', response.data))
-    },
-    retrieveAccessCriteria({ state, commit }, { resourceId }) {
-        axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidc.access_token))
+    retrieveRequestById(store, { requestId }) {
+        return axios.get(`${REQUESTS_PATH}/${requestId}`)
             .then((response) => {
-                commit('setCurrentAccessCriteria', response.data)
+                // it handles the error when backend is unreachable but vite proxy strangely return 200
+                if (response.data == "") {
+                    return {
+                        code: 500
+                    }
+                } else {
+                    return response.data
+                }
             })
-            .catch((error) => {
-                console.log(`Error retrieving access criteria: ${error}`)
+            .catch((error) => {      
+                if (error.response) {
+                    return error.response.data
+                }
             })
     },
-    retrieveAccessCriteriaByRequestId({ state, commit }, { requestId }) {
-        return axios.get(`${REQUESTS_PATH}/${requestId}`, getBearerHeaders(state.oidc.access_token))
+    retrieveAccessCriteriaByResourceId({ state, commit }, { resourceId }) {
+        return axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
-                const resourceId = response.data.resources[0].id  // At the moment we only get criteria for the first biobank
-                return axios.get(`${ACCESS_CRITERIA_PATH}?resourceId=${resourceId}`, getBearerHeaders(state.oidc.access_token))
-                    .then((response) => {
-                        return response.data;
-                    })
-                    .catch(() => {
-                        commit('setNotification', 'Error getting request data from server')
-                    })
+                return response.data;
             })
             .catch(() => {
                 commit('setNotification', 'Error getting request data from server')
+                return null
             })
+
     },
     createNegotiation({ state }, { data }) {
         return axios.post(NEGOTIATION_PATH, data, getBearerHeaders(state.oidc.access_token))
@@ -52,29 +52,25 @@ export default {
                 return null
             })
     },
-    retrieveResearcherRoleNegotiations({ state, commit }) {
-        axios.get(`${NEGOTIATION_PATH}/?userRole=RESEARCHER`, getBearerHeaders(state.oidc.access_token))
+    retrieveNegotiationsByRole({ state, commit }, { role }) {
+        return axios.get(`${NEGOTIATION_PATH}/?userRole=${role}`, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
-            commit('setNegotiations', response.data)
-        })
-            .catch(() => {
-                commit('setNotification', 'Error getting request data from server')
+                return response.data;
             })
-    },
-    retrieveBiobankerRoleNegotiations({ state, commit }) {
-        axios.get(`${NEGOTIATION_PATH}/?userRole=BIOBANKER`, getBearerHeaders(state.oidc.access_token))
-            .then((response) => {
-            commit('setNegotiations', response.data)
-        })
             .catch(() => {
                 commit('setNotification', 'Error getting request data from server')
+                return []
             })
     },
     updateNegotiationStatus({ state, commit }, { negotiationId , event }) {
-        console.log(state.oidc.access_token)
-        axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`,{"a": "idk"}, getBearerHeaders(state.oidc.access_token))
+        return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/${event}`, {}, getBearerHeaders(state.oidc.access_token))
             .then((response) => {
                 commit('setNotification', `Negotiation updated correctly with data ${response.data.id}`)
+                return response.data
+            })
+            .catch(() => {
+                commit('setNotification', 'Error updating negotiation status')
+                return null
             })
     },
     retrievePossibleEvents({ state, commit }, {negotiationId}) {

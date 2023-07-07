@@ -12,20 +12,19 @@
   <div v-else>
     <b-modal 
       id="negotiation-feedback"
-      title="Negotiation Created"
+      :title="notificationHeader"
       v-model="notificationVisible"
-      hideHeader=true
       hideFooter=true
-      class="text-center"
+      :headerBgVariant="notificationVariant"
       @hide.prevent>
-      <p class="my-4">Negotiation created correctly</p>
-      <p class="my-4">You can follow the status of this negotiation in your researcher page</p>
+      <p class="my-4">{{ notificationBody }}</p>
       <b-button @click="closeNegotiation">Back to Negotiations</b-button>
     </b-modal>
     <form-wizard
       @on-complete="startNegotiation"
       :start-index="0"
       color="var(--bs-secondary)"
+      v-if="accessCriteria"
     >
       <tab-content
         v-for="section in accessCriteria.sections"
@@ -79,13 +78,13 @@
             v-if="props.activeTabIndex > 0"
             @click="props.prevTab()"
             type="button"
-            class="btn btn-primary"
+            class="btn btn-secondary"
           >
             Previous
           </button>
         </div>
         <div class="wizard-footer-right">
-          <button @click="props.nextTab()" class="btn btn-primary">
+          <button @click="props.nextTab()" class="btn btn-secondary">
             {{ props.isLastStep ? "Start Negotiation" : "Next" }}
           </button>
         </div>
@@ -95,7 +94,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import { FormWizard, TabContent } from "vue3-form-wizard";
 import "vue3-form-wizard/dist/style.css";
 
@@ -112,24 +111,26 @@ export default {
   },
   data() {
     return {
-      notificationVisible: false,
-      negotiationCriteria: {},
-      accessCriteria: undefined
+        notificationVariant: "light",
+        notificationHeader: "",
+        notificationBody: "",
+        negotiationCriteria: {},
+        accessCriteria: undefined,
     };
   },
   computed: {
-    ...mapGetters({
-        request: "getRequest",
-    }),
+    notificationVisible() {
+        return this.notificationHeader !== ""
+    },
     loading() {
         if (this.accessCriteria !== undefined) {
             this.initNegotiationCriteria();
         }
-        return this.accessCriteria === undefined;
+        return this.accessCriteria === undefined && !this.notificationVisible;
     },
   },
   methods: {
-    ...mapActions(["retrieveAccessCriteriaByRequestId", "createNegotiation"]),
+    ...mapActions(["retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
     async startNegotiation() {
         await this.createNegotiation({
             data: {
@@ -138,12 +139,16 @@ export default {
             }
         }).then((negotiationId) => {
             if (negotiationId) {
-                this.showNotification()
+                this.showNotification("light", 
+                    "Negotiation Created Correctly", 
+                    "You can follow the status of this negotiation in your researcher page")
             } 
         });
     },
-    showNotification() {
-        this.notificationVisible = true;
+    showNotification(variant, header, body) {
+        this.notificationVariant = variant
+        this.notificationHeader = header
+        this.notificationBody = body
     },
     closeNegotiation() {
         this.$router.push("/researcher");
@@ -158,20 +163,30 @@ export default {
     },
   },
   async mounted() {
-    await this.retrieveAccessCriteriaByRequestId({
+    const result = await this.retrieveRequestById({
         requestId: this.requestId,
-    }).then((accessCriteria) => {
-        this.accessCriteria = accessCriteria
-    });
+    })
+    if (result.code) {        
+        if (result.code == 404) {
+            this.showNotification("danger", "Error", "Request not found")
+        } else {
+            this.showNotification("danger", "Error", "Error retrieving the request")
+        }
+    } else if (result.negotiationId) {    
+        // if the negotiationId is present it means that the request is already associated to a negotiation
+        this.showNotification("danger", "Error", "Request already associated to a negotiation")
+    } else {
+        await this.retrieveAccessCriteriaByResourceId({
+            resourceId: result.resources[0].id
+        }).then((accessCriteria) => {
+            this.accessCriteria = accessCriteria
+        });
+    }
   },
 };
 </script>
 
 <style scoped>
-.wizard-icon-container {
-  background-color: "blue" !important;
-}
-
 .required:after {
   content: "  *\00a0";
   color: red;
