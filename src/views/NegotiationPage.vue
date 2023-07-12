@@ -48,7 +48,7 @@
         </tbody>
       </table>
     </div>
-    <div v-if="negotiation && negotiation.status == 'APPROVED'">
+    <div v-if="negotiation && negotiation.postsEnabled">
       <h3>Send a message</h3>
       <form
         class="mb-4"
