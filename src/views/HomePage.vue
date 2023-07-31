@@ -53,14 +53,22 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "HomePage",
+  computed: {
+    ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
+  },
+  beforeMount() {
+    if (this.oidcIsAuthenticated) {
+      this.$router.push("/researcher")
+    }
+  },
   methods: {
     ...mapActions([
       "authenticateOidc"
-    ])
+    ])    
   }
 }
 </script>
