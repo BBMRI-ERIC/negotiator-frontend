@@ -1,4 +1,3 @@
-
 export default {
-    getNotification: state => state.notification
+  getNotification: state => state.notification
 }

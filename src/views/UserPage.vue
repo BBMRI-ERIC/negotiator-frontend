@@ -1,36 +1,40 @@
 <template>
-    <NegotiationList 
-        :negotiations="negotiations" />
+  <NegotiationList 
+    :negotiations="negotiations" 
+    :user-role="userRole"
+  />
 </template>
 <script>
 
-import NegotiationList from "@/components/NegotiationList.vue";
-import { mapActions } from "vuex";
+import NegotiationList from "@/components/NegotiationList.vue"
+import { mapActions } from "vuex"
+import { ROLES } from "@/config/consts.js"
 
 export default {
-    data() {
-        return {
-            negotiations: []
-        }
-    },
-    components: {
-        NegotiationList
-    },
+  components: {
+    NegotiationList
+  },
     
-    props: {
-        role: {
-            type: String,
-            required: true,
-            validator: function (value) {
-                return ['RESEARCHER', 'BIOBANKER'].includes(value)
-            }
-        }
-    },
-    methods: {
-        ...mapActions(["retrieveNegotiationsByRole"])
-    },
-    async mounted() {
-        this.negotiations = await this.retrieveNegotiationsByRole({ role: this.role })
+  props: {
+    userRole: {
+      type: String,
+      required: true,
+      validator: function (value) {
+        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
+      }
     }
+  },
+  data() {
+    return {
+      negotiations: []
+    }
+  },
+  async mounted() {
+    console.log(this.userRole)
+    this.negotiations = await this.retrieveNegotiationsByRole({ userRole: this.userRole })
+  },
+  methods: {
+    ...mapActions(["retrieveNegotiationsByRole"])
+  }
 }
 </script>
