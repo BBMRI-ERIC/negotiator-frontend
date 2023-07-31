@@ -7,7 +7,6 @@ import Login from "@/views/LoginPage.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
-import { ROLES } from "@/config/consts"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

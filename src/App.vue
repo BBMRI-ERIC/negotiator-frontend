@@ -8,7 +8,7 @@
       v-if="notification !== undefined"
       class="row"
     >
-      <div col="12">
+      <div class="col-12">
         <div
           class="alert alert-warning alert-dismissible fade show"
           role="alert"
