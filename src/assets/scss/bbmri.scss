@@ -9,4 +9,10 @@ $theme-colors: (
 
 $body-color: #3c3c3d;
 
+$default-text-color: white;
+
 @import "node_modules/bootstrap/scss/bootstrap";
+
+.btn-primary {
+    color: white;
+}

@@ -24,7 +24,10 @@
         id="menu-navbar"
         class="collapse navbar-collapse"
       >
-        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+        <ul 
+          v-if="oidcIsAuthenticated"
+          class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"  
+        >
           <li class="nav-item">
             <router-link
               class="nav-link active"
@@ -48,16 +51,16 @@
         >
           Welcome back {{ oidcUser.name }}
         </span>
-        <button
+        <!-- <button
           v-if="!oidcIsAuthenticated"
           class="btn btn-outline-primary me-2"
           aria-current="page"
           @click.stop.prevent="authenticateOidc"
         >
           Login
-        </button>
+        </button> -->
         <button
-          v-else
+          v-if="oidcIsAuthenticated"
           class="btn btn-outline-secondary me-2"
           aria-current="page"
           @click.stop.prevent="signOutOidc"
