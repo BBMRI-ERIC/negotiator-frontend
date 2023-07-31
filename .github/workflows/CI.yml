@@ -45,8 +45,6 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
         platforms: linux/arm64, linux/amd64
         push: true
         labels: ${{ steps.meta.outputs.labels }}
