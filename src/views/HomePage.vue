@@ -16,7 +16,9 @@
           class="card text-center bg-light"
         >
           <div class="card-body">
-            <h1 class="display-6">Sign In:</h1>
+            <h1 class="display-6">
+              Sign In:
+            </h1>
             <figure>
               <a
                 href="#"

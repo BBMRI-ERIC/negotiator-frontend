@@ -181,10 +181,6 @@ export default {
       availableRoles: ROLES
     }
   },
-  mounted() {
-    console.log(this.availableRoles)
-    console.log(this.userRole)
-  },
   methods: {
     ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents", "getUnreadMessagesByRole"]),
     async updateNegotiation() {
@@ -197,7 +193,6 @@ export default {
     interactModal(negotiation) {
       this.showModal = true
       this.negotiation = negotiation
-      console.log(negotiation)
       this.loadPossibleEvents()
     },
     loadPossibleEvents() {

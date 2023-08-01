@@ -5,6 +5,7 @@ let BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
+const USER_PATH = `${BASE_API_PATH}/users/roles`
 function getBearerHeaders(token) {
   return {
     headers: {
@@ -86,8 +87,6 @@ export default {
   retrieveNegotiationById({ state, commit }, { negotiationId }) {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
-        console.log("*********")
-        console.log(response.data)
         return response.data
       })
       .catch(() => {
@@ -106,8 +105,6 @@ export default {
   addMessageToNegotiation({ state, commit }, { data }) {
     return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
-        console.log("message sent correctly")
-        console.log(response.data)
         return response.data
       })
       .catch(() => {
@@ -134,4 +131,14 @@ export default {
         return "Failed"
       })
   },
+  retrieveUserRoles({ state, commit }) {
+    return axios.get(USER_PATH, getBearerHeaders(state.oidc.access_token))
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error sending message")      
+      })
+    
+  }
 }

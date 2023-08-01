@@ -20,21 +20,21 @@ export default {
       type: String,
       required: true,
       validator: function (value) {
-        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
+        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE, ROLES.ADMINISTRATOR].includes(value)
       }
     }
   },
   data() {
     return {
-      negotiations: []
+      negotiations: [],
+      roles: []
     }
   },
   async mounted() {
-    console.log(this.userRole)
     this.negotiations = await this.retrieveNegotiationsByRole({ userRole: this.userRole })
   },
   methods: {
-    ...mapActions(["retrieveNegotiationsByRole"])
+    ...mapActions(["retrieveNegotiationsByRole", "retrieveUserRoles"])
   }
 }
 </script>
