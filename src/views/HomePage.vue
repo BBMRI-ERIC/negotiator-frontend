@@ -39,7 +39,7 @@
           >website</a>.
         </div>
         <div class="text-center mb-5">
-          Need help? <a href="mailto:negotiator@helpdesk.eu">Contact us</a>.
+          Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
         </div>
         <img
           class="mt-5"
