@@ -1,8 +1,8 @@
 <template>
-  <h5 class="display-4 text-center">
+  <h1 class="display-4 text-center">
     Welcome to the <b>BBMRI-ERIC Negotiator</b>
-  </h5>
-  <p class="display-7 text-center">
+  </h1>
+  <p class="display-6 text-center">
     Provides an efficient communication platform for biobankers and researchers requesting samples and/or data.
   </p>
   <div class="container mt-5">
@@ -16,7 +16,9 @@
           class="card text-center bg-light"
         >
           <div class="card-body">
-            <h5>Sign In:</h5>
+            <h1 class="display-6">
+              Sign In:
+            </h1>
             <figure>
               <a
                 href="#"
@@ -53,7 +55,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "HomePage",

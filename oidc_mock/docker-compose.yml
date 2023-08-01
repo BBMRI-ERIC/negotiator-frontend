@@ -102,6 +102,43 @@ services:
                 "ValueType": "json"
               }
             ]
+          },
+          {
+            "SubjectId":"1002@bbmri.eu",
+            "Username":"admin",
+            "Password":"admin",
+            "Claims": [
+              {
+                "Type": "name",
+                "Value": "Alice Administrator",
+                "ValueType": "string"
+              },
+              {
+                "Type": "given_name",
+                "Value": "Alice",
+                "ValueType": "string"
+              },
+              {
+                "Type": "family_name",
+                "Value": "Administrator",
+                "ValueType": "string"
+              },
+              {
+                "Type": "preferred_username",
+                "Value": "TheAdministrator",
+                "ValueType": "string"
+              },
+              {
+                "Type": "email",
+                "Value": "alice.administrator@gmail.com",
+                "ValueType": "string"
+              },
+              {
+                "Type": "eduperson_entitlement",
+                "Value": "[\"urn:geant:bbmri-eric.eu:group:bbmri:negotiator_v3:admins#perun.bbmri-eric.eu\"]",
+                "ValueType": "json"
+              }
+            ]
           }
         ]
       CLIENTS_CONFIGURATION_PATH: /config/clients.json

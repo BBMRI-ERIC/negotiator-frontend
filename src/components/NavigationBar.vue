@@ -4,6 +4,7 @@
       <img
         src="../assets/images/logo.svg"
         width="125"
+        class="me-2"
       >
       <button
         class="navbar-toggler"
@@ -20,10 +21,23 @@
         class="collapse navbar-collapse"
       >
         <ul 
-          v-if="oidcIsAuthenticated"
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"  
         >
-          <li class="nav-item">
+          <li 
+            v-if="isAdmin"
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active"
+              to="/admin"
+            >
+              Administrator
+            </router-link>
+          </li>
+          <li 
+            v-if="isResearcher"
+            class="nav-item"
+          >
             <router-link
               class="nav-link active"
               to="/researcher"
@@ -31,7 +45,10 @@
               Researcher
             </router-link>
           </li>
-          <li class="nav-item">
+          <li
+            v-if="isRepresentative"
+            class="nav-item"
+          >
             <router-link
               class="nav-link active"
               to="/biobanker"
@@ -64,13 +81,33 @@ import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "NavigationBar",
+  data() {
+    return {
+      roles: []
+    }
+  },
   computed: {
-    ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
+    ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
+    isAdmin() {
+      return this.roles.includes("ADMIN")
+    },
+    isResearcher() {
+      return this.roles.includes("RESEARCHER")
+    },
+    isRepresentative() {
+      return this.roles.includes("REPRESENTATIVE")
+    }
+  },
+  watch: {
+    async oidcIsAuthenticated () {
+      this.roles = await this.retrieveUserRoles()
+    }
   },
   methods: {
     ...mapActions([
       "signOutOidc",
-      "authenticateOidc"
+      "authenticateOidc",
+      "retrieveUserRoles"
     ])
   }
 }

@@ -22,12 +22,6 @@
             </tr>
             <tr>
               <td>
-                Year 2022
-                <span class="badge bg-primary rounded-pill float-end">0</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
                 Accepted
                 <span class="badge bg-primary rounded-pill float-end">0</span>
               </td>
@@ -63,9 +57,6 @@
                 })
               "
             >
-              <!--tr v-for="item in negotiations" :key="item.id"-->
-              <!--router-link :to="{ name: 'negotiation', params: { negotiationId: item.id } }"-->
-              <!--router-link v-for="item in negotiations" :key=item.id :to= "`/negotiations/${item.id}`" v-slot="{tr}" custom-->
               <td class="col-3">
                 {{ item.id }}
               </td>
@@ -76,12 +67,8 @@
                 {{ item.status }}
               </td>
               <td class="col-2 col-xxl-3">
-                <!--span
-                    class="badge bg-primary rounded-pill"
-                    >{{this.unreadMessages}} To read </span
-                -->
                 <button
-                  v-if="userRole == availableRoles.REPRESENTATIVE && item.status == 'SUBMITTED'"
+                  v-if="(userRole == availableRoles.REPRESENTATIVE || userRole == availableRoles.ADMINISTRATOR) && item.status == 'SUBMITTED'"
                   type="button"
                   class="btn btn-secondary btn-sm me-2 mb-1"
                   @click.stop="interactModal(item)"
@@ -93,6 +80,7 @@
                   <span class="d-none d-xxl-inline-block ms-1">Interact</span>
                 </button>
                 <button
+                  v-if="userRole == availableRoles.RESEARCHER && item.status == 'SUBMITTED'"
                   type="button"
                   class="btn btn-danger btn-sm mb-1"
                   @click.stop="abandonRequest"
@@ -104,7 +92,6 @@
                   <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
                 </button>
               </td>
-              <!--/router-link-->
             </tr>
           </tbody>
         </table>
@@ -194,10 +181,6 @@ export default {
       availableRoles: ROLES
     }
   },
-  mounted() {
-    console.log(this.availableRoles)
-    console.log(this.userRole)
-  },
   methods: {
     ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents", "getUnreadMessagesByRole"]),
     async updateNegotiation() {
@@ -210,7 +193,6 @@ export default {
     interactModal(negotiation) {
       this.showModal = true
       this.negotiation = negotiation
-      console.log(negotiation)
       this.loadPossibleEvents()
     },
     loadPossibleEvents() {
