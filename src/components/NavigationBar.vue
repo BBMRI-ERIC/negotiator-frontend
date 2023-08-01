@@ -1,15 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a
-        class="navbar-brand"
-        href="/"
+      <img
+        src="../assets/images/logo.svg"
+        width="125"
       >
-        <img
-          src="../assets/images/logo.svg"
-          width="125"
-        >
-      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -51,14 +46,6 @@
         >
           Welcome back {{ oidcUser.name }}
         </span>
-        <!-- <button
-          v-if="!oidcIsAuthenticated"
-          class="btn btn-outline-primary me-2"
-          aria-current="page"
-          @click.stop.prevent="authenticateOidc"
-        >
-          Login
-        </button> -->
         <button
           v-if="oidcIsAuthenticated"
           class="btn btn-outline-secondary me-2"

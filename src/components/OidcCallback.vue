@@ -10,11 +10,7 @@ export default {
   mounted () {
     this.oidcSignInCallback()
       .then((redirectPath) => {
-        if (redirectPath == "/") {
-          this.$router.push("/researcher")
-        } else {
-          this.$router.push(redirectPath)
-        }
+        this.$router.push(redirectPath)
       })
       .catch((err) => {
         console.error(err)
