@@ -2,52 +2,21 @@
   <div>
     <h4 class="mb-4">
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
+      <button
+        type="button"
+        class="btn btn-secondary float-end"
+        @click.stop="interactModal(negotiation)"
+      >
+        Update negotiation
+      </button>
     </h4>
-    <div class="table-responsive-md">
-      <table class="table table-bordered">
-        <tbody>
-          <tr>
-            <th scope="row">
-              Requestor
-            </th>
-            <td colspan="4">{{ requestor }}</td>
-            <!--th scope="row">
-              Resource Manager
-            </th>
-            <td>ND</td-->
-          </tr>
-          <tr>
-            <th scope="row">
-              Status
-            </th>
-            <td>{{ negotiation ? negotiation.status : "" }}</td>
-            <th scope="row">
-              Description
-            </th>
-            <td>
-              {{ negotiation ? negotiation.payload.project.description : "" }}
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">
-              Biobank
-            </th>
-            <td>{{ biobank }}</td>
-            <th scope="row">
-              Collections
-            </th>
-            <td>
-              <span
-                v-for="i in collections"
-                :key="i.id"
-              >
-                {{ i.id }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <h6 class="mb-6">
+      Negotiation ID: {{ negotiation ? negotiation.id : "" }}
+    </h6>
+    <div class="mb-6">
+      <span>Data: {{ negotiation.payload }}</span>
+      <span>Status: {{ negotiation.status }}</span>
+    </div>    
     <div v-if="negotiation && negotiation.postsEnabled">
       <h3>Send a message</h3>
       <form
@@ -61,12 +30,12 @@
         />
         <button
           type="submit"
-          class="btn btn-secondary"
+          class="btn btn-secondary float-end"
         >
           Send message
         </button>
       </form>
-      <h3>Conversation</h3>
+      <h3>Comments</h3>
       <div
         v-for="post in posts"
         :key="post.id" 
@@ -74,7 +43,7 @@
       >
         <div class="card-header d-flex">
           <div class="me-auto">
-            {{ post.poster.name }} ({{ post.poster.organization }})
+            {{ post.poster.name }}
           </div>
           <div class="d-flex">
             <span
@@ -98,6 +67,33 @@
         This negotiation has still to be approved. Wait fot a biobanker approval before interacting with the
         counterpart.
       </h5>
+    </div>
+  </div>
+  <div
+    v-if="showModal"
+    class="modal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title">
+            This is the modal window title 
+          </h1>
+        </div>
+        <div class="modal-body">
+          <span>Data: {{ negotiation.payload }}</span>
+          <span>Status: {{ negotiation.status }}</span>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            @click="showModal = false"
+          >
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -127,7 +123,8 @@ export default {
         text: "",
         resourceId: undefined
       },
-      messageStatus: MESSAGE_STATUS
+      messageStatus: MESSAGE_STATUS,
+      showModal: false
     }
   },
   computed: {
@@ -205,6 +202,51 @@ export default {
         }
       })
     },
+    
+    
+    interactModal(negotiation) {
+      this.showModal = true
+      console.log(this.showModal)
+      this.negotiation = negotiation
+      console.log(negotiation)
+    },
   }
 }
 </script>
+<style scoped>
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-title {
+  font-size: large;
+}
+.modal-content {
+  background-color: "$light";
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid gray;
+  width: 80%;
+}
+.close {
+  color: gray;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.close:hover,
+.close:focus {
+  color: "$black";
+  text-decoration: none;
+  cursor: pointer;
+}
+.negotiation-list-table tbody tr:hover > td {
+    cursor: pointer;
+}
+</style>
