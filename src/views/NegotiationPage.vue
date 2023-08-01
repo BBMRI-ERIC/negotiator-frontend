@@ -11,17 +11,45 @@
       </button>
     </h4>
     <hr class="mt-10 mb-10">
-    <h6 class="mb-6">
-      Negotiation ID: {{ negotiation ? negotiation.id : "" }}
-    </h6>
+    <div
+      class="input-group mb-3"
+    >
+      <label class="me-2 fw-bold">Negotiation ID:</label>
+      <span> {{ negotiation ? negotiation.id : "" }}</span>
+    </div>
+    
     <hr class="mt-10 mb-10">
-    <div class="mb-6">
-      <span>Negotiation Payload info:</span>
-      <vue-json-pretty :data="negotiation.payload" />
-      <hr class="mt-10 mb-10">
-      <span>Negotiation Status: {{ negotiation.status }}</span>
-      <hr class="mt-10 mb-50">
-    </div>    
+
+    <div
+      v-for="(element, key) in negotiation.payload"
+      :key="element"
+      class="border input-group p-3 mb-3"
+    >
+      <span class="mb-3 fs-5 fw-bold text-secondary">
+        {{ key.toUpperCase() }}</span>
+      <div
+        v-for="(subelement, subelementkey) in element"
+        :key="subelement"
+        class="input-group mb-3"
+      >
+        <label class="me-2 fw-bold">{{ subelementkey }}:</label>
+        <span> {{ subelement }}</span>
+      </div>
+    </div>
+    <div
+      class="border input-group p-3 mb-3"
+    >
+      <span class="mb-3 fs-5 fw-bold text-secondary">
+        RESOURCE STATUS</span>
+      <div
+        v-for="(element, key) in negotiation.resourceStatus"
+        :key="element"
+        class="input-group mb-3"
+      >
+        <label class="me-2 fw-bold">{{ key }}:</label>
+        <span> {{ element }}</span>
+      </div>
+    </div>
     <div v-if="negotiation && negotiation.postsEnabled">
       <h3>Send a message</h3>
       <form
@@ -43,7 +71,7 @@
       <h3>Comments</h3>
       <div
         v-for="post in posts"
-        :key="post.id" 
+        :key="post.id"
         class="card mb-3"
       >
         <div class="card-header d-flex">
@@ -52,7 +80,10 @@
           </div>
           <div class="d-flex">
             <span
-              v-if="post.status === messageStatus.SENT && post.poster_role != userRole"
+              v-if="
+                post.status === messageStatus.SENT &&
+                  post.poster_role != userRole
+              "
               class="badge bg-primary rounded-pill"
             >
               New
@@ -69,8 +100,8 @@
     </div>
     <div v-else>
       <h5>
-        This negotiation has still to be approved. Wait for a biobanker approval before interacting with the
-        counterpart.
+        This negotiation has still to be approved. Wait for a biobanker approval
+        before interacting with the counterpart.
       </h5>
     </div>
   </div>
@@ -82,7 +113,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title">
-            This is the modal window title 
+            This is the modal window title
           </h1>
         </div>
         <div class="modal-footer">
@@ -103,23 +134,18 @@
 import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
 import moment from "moment"
-import VueJsonPretty from "vue-json-pretty"
-import "vue-json-pretty/lib/styles.css"
 
 export default {
   name: "NegotiationPage",
-  components: {
-    VueJsonPretty,
-  },
   props: {
     negotiationId: {
       type: String,
-      default: undefined
+      default: undefined,
     },
     userRole: {
       type: String,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
   data() {
     return {
@@ -127,10 +153,10 @@ export default {
       posts: [],
       message: {
         text: "",
-        resourceId: undefined
+        resourceId: undefined,
       },
       messageStatus: MESSAGE_STATUS,
-      showModal: false
+      showModal: false,
     }
   },
   computed: {
@@ -138,16 +164,24 @@ export default {
       return this.getRole(ROLES.RESEARCHER)
     },
     biobank() {
-      return this.negotiation ? this.negotiation.requests[0].resources[0].id : ""
+      return this.negotiation
+        ? this.negotiation.requests[0].resources[0].id
+        : ""
     },
     collections() {
-      return this.negotiation ? this.negotiation.requests[0].resources[0].children : []
-    }
+      return this.negotiation
+        ? this.negotiation.requests[0].resources[0].children
+        : []
+    },
   },
   async beforeMount() {
-    this.negotiation = await this.retrieveNegotiationById({ negotiationId: this.negotiationId })
-    this.posts = await this.retrievePostsByNegotiationId({ negotiationId: this.negotiationId })
-    
+    this.negotiation = await this.retrieveNegotiationById({
+      negotiationId: this.negotiationId,
+    })
+    this.posts = await this.retrievePostsByNegotiationId({
+      negotiationId: this.negotiationId,
+    })
+
     // assign the role of the poster to each message belonging to negotiation
     let negotiation_persons = this.negotiation.persons
     for (let i = 0; i < negotiation_persons.length; i++) {
@@ -157,17 +191,25 @@ export default {
         }
       }
     }
-    
-    this.posts.forEach(post => {
-      if (post.status == MESSAGE_STATUS.SENT && post.poster_role != this.userRole) {
+
+    this.posts.forEach((post) => {
+      if (
+        post.status == MESSAGE_STATUS.SENT &&
+        post.poster_role != this.userRole
+      ) {
         this.updateMessageStatus(post.id, post.text)
       }
     })
   },
   methods: {
-    ...mapActions(["retrieveNegotiationById", "retrievePostsByNegotiationId", "addMessageToNegotiation", "markMessageAsRead"]),
+    ...mapActions([
+      "retrieveNegotiationById",
+      "retrievePostsByNegotiationId",
+      "addMessageToNegotiation",
+      "markMessageAsRead",
+    ]),
     computed: {
-      ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
+      ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
@@ -178,18 +220,20 @@ export default {
         return ""
       } else {
         // gets the first person with the required role
-        const person = this.negotiation.persons.filter(person => person.role === role)[0]
+        const person = this.negotiation.persons.filter(
+          (person) => person.role === role
+        )[0]
         return person.name || ""
       }
     },
     async addMessage() {
-      // send a message and add the newly created post 
+      // send a message and add the newly created post
       await this.addMessageToNegotiation({
         data: {
           resourceId: this.negotiation.requests[0].resources[0].id,
           text: this.message.text,
-          negotiationId: this.negotiation.id
-        }
+          negotiationId: this.negotiation.id,
+        },
       }).then((post) => {
         if (post) {
           post.poster_role = this.userRole
@@ -204,19 +248,18 @@ export default {
           text: inputMessageText,
           negotiationId: this.negotiation.id,
           postId: inputMessageId,
-          status: MESSAGE_STATUS.READ
-        }
+          status: MESSAGE_STATUS.READ,
+        },
       })
     },
-    
-    
+
     interactModal(negotiation) {
       this.showModal = true
       console.log(this.showModal)
       this.negotiation = negotiation
       console.log(negotiation)
     },
-  }
+  },
 }
 </script>
 <style scoped>
@@ -253,6 +296,6 @@ export default {
   cursor: pointer;
 }
 .negotiation-list-table tbody tr:hover > td {
-    cursor: pointer;
+  cursor: pointer;
 }
 </style>
