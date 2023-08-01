@@ -4,6 +4,7 @@
       <img
         src="../assets/images/logo.svg"
         width="125"
+        class="me-2"
       >
       <button
         class="navbar-toggler"
@@ -23,6 +24,14 @@
           v-if="oidcIsAuthenticated"
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"  
         >
+          <li class="nav-item">
+            <router-link
+              class="nav-link active"
+              to="/admin"
+            >
+              Administrator
+            </router-link>
+          </li>
           <li class="nav-item">
             <router-link
               class="nav-link active"
