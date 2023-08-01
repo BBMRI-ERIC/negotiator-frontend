@@ -10,12 +10,17 @@
         Update negotiation
       </button>
     </h4>
+    <hr class="mt-10 mb-10">
     <h6 class="mb-6">
       Negotiation ID: {{ negotiation ? negotiation.id : "" }}
     </h6>
+    <hr class="mt-10 mb-10">
     <div class="mb-6">
-      <span>Data: {{ negotiation.payload }}</span>
-      <span>Status: {{ negotiation.status }}</span>
+      <span>Negotiation Payload info:</span>
+      <vue-json-pretty :data="negotiation.payload" />
+      <hr class="mt-10 mb-10">
+      <span>Negotiation Status: {{ negotiation.status }}</span>
+      <hr class="mt-10 mb-50">
     </div>    
     <div v-if="negotiation && negotiation.postsEnabled">
       <h3>Send a message</h3>
@@ -64,7 +69,7 @@
     </div>
     <div v-else>
       <h5>
-        This negotiation has still to be approved. Wait fot a biobanker approval before interacting with the
+        This negotiation has still to be approved. Wait for a biobanker approval before interacting with the
         counterpart.
       </h5>
     </div>
@@ -79,10 +84,6 @@
           <h1 class="modal-title">
             This is the modal window title 
           </h1>
-        </div>
-        <div class="modal-body">
-          <span>Data: {{ negotiation.payload }}</span>
-          <span>Status: {{ negotiation.status }}</span>
         </div>
         <div class="modal-footer">
           <button
@@ -102,9 +103,14 @@
 import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
 import moment from "moment"
+import VueJsonPretty from "vue-json-pretty"
+import "vue-json-pretty/lib/styles.css"
 
 export default {
   name: "NegotiationPage",
+  components: {
+    VueJsonPretty,
+  },
   props: {
     negotiationId: {
       type: String,
