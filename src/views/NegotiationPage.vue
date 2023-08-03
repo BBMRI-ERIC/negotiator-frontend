@@ -7,7 +7,7 @@
         class="btn btn-secondary float-end"
         @click.stop="interactModal(negotiation)"
       >
-        Update negotiation
+        Change state
       </button>
     </h4>
     <hr class="mt-10 mb-10">
@@ -44,66 +44,33 @@
       <div
         v-for="(element, key) in negotiation.resourceStatus"
         :key="element"
-        class="input-group mb-3"
+        class="input-group mb-3 d-flex"
       >
-        <label class="me-2 fw-bold">{{ key }}:</label>
-        <span> {{ element }}</span>
-      </div>
-    </div>
-    <div v-if="negotiation && negotiation.postsEnabled">
-      <h3>Send a message</h3>
-      <form
-        class="mb-4"
-        @submit.prevent="addMessage"
-      >
-        <textarea
-          v-model="message.text"
-          class="form-control mb-3"
-          style="min-width: 100%"
-        />
-        <button
-          type="submit"
-          class="btn btn-secondary float-end"
-        >
-          Send message
-        </button>
-      </form>
-      <h3>Comments</h3>
-      <div
-        v-for="post in posts"
-        :key="post.id"
-        class="card mb-3"
-      >
-        <div class="card-header d-flex">
-          <div class="me-auto">
-            {{ post.poster.name }}
-          </div>
-          <div class="d-flex">
-            <span
-              v-if="
-                post.status === messageStatus.SENT &&
-                  post.poster_role != userRole
-              "
-              class="badge bg-primary rounded-pill"
-            >
-              New
-            </span>
-            <div class="ms-2">
-              {{ printDate(post.creationDate) }}
-            </div>
-          </div>
+        <div class="me-auto p-2">
+          <label class="me-2 fw-bold">{{ key }}:</label>
+          <span> {{ element }}
+          </span>
         </div>
-        <div class="card-body">
-          {{ post.text }}
+        <div class="d-flex align-items-end flex-column">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm me-2 mb-1"
+            @click.stop="interactPrivatePostModal(key)"
+          >
+            <font-awesome-icon
+              icon="fa fa-pencil"
+              fixed-width
+            />
+            Private posts
+          </button>
         </div>
       </div>
     </div>
-    <div v-else>
-      <h5>
-        This negotiation has still to be approved. Wait for a biobanker approval
-        before interacting with the counterpart.
-      </h5>
-    </div>
+    <NegotiationPosts 
+      :negotiation="negotiation"
+      :user-role="userRole"
+      scope="public"
+    />
   </div>
   <div
     v-if="showModal"
@@ -128,15 +95,49 @@
       </div>
     </div>
   </div>
+  <div
+    v-if="showPrivatePostModal"
+    class="modal"
+  >
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title">
+            Resource ID: {{ privatePostResourceId }}
+          </h1>
+        </div>
+        <div class="modal-body">
+          <NegotiationPosts 
+            :negotiation="negotiation"
+            :user-role="userRole"
+            scope="private"
+            :resource-id="privatePostResourceId"
+          />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            @click="showPrivatePostModal = false"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
 import moment from "moment"
+import  NegotiationPosts  from "@/components/NegotiationPosts.vue"
 
 export default {
   name: "NegotiationPage",
+  components: { NegotiationPosts, 
+  },
   props: {
     negotiationId: {
       type: String,
@@ -157,6 +158,8 @@ export default {
       },
       messageStatus: MESSAGE_STATUS,
       showModal: false,
+      showPrivatePostModal: false,
+      privatePostResourceId: undefined
     }
   },
   computed: {
@@ -177,29 +180,7 @@ export default {
   async beforeMount() {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
-    })
-    this.posts = await this.retrievePostsByNegotiationId({
-      negotiationId: this.negotiationId,
-    })
-
-    // assign the role of the poster to each message belonging to negotiation
-    let negotiation_persons = this.negotiation.persons
-    for (let i = 0; i < negotiation_persons.length; i++) {
-      for (let j = 0; j < this.posts.length; j++) {
-        if (negotiation_persons[i].name == this.posts[j].poster.name) {
-          this.posts[j].poster_role = negotiation_persons[i].role
-        }
-      }
-    }
-
-    this.posts.forEach((post) => {
-      if (
-        post.status == MESSAGE_STATUS.SENT &&
-        post.poster_role != this.userRole
-      ) {
-        this.updateMessageStatus(post.id, post.text)
-      }
-    })
+    }) 
   },
   methods: {
     ...mapActions([
@@ -226,38 +207,15 @@ export default {
         return person.name || ""
       }
     },
-    async addMessage() {
-      // send a message and add the newly created post
-      await this.addMessageToNegotiation({
-        data: {
-          resourceId: this.negotiation.requests[0].resources[0].id,
-          text: this.message.text,
-          negotiationId: this.negotiation.id,
-        },
-      }).then((post) => {
-        if (post) {
-          post.poster_role = this.userRole
-          this.posts.push(post)
-        }
-      })
-    },
-    async updateMessageStatus(inputMessageId, inputMessageText) {
-      await this.markMessageAsRead({
-        data: {
-          resourceId: this.negotiation.requests[0].resources[0].id,
-          text: inputMessageText,
-          negotiationId: this.negotiation.id,
-          postId: inputMessageId,
-          status: MESSAGE_STATUS.READ,
-        },
-      })
-    },
-
+    
     interactModal(negotiation) {
       this.showModal = true
-      console.log(this.showModal)
       this.negotiation = negotiation
-      console.log(negotiation)
+    },
+
+    interactPrivatePostModal(resourceId) {
+      this.showPrivatePostModal = true
+      this.privatePostResourceId = resourceId
     },
   },
 }
@@ -283,6 +241,7 @@ export default {
   border: 1px solid gray;
   width: 80%;
 }
+
 .close {
   color: gray;
   float: right;
