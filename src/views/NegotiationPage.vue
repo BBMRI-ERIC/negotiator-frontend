@@ -3,11 +3,21 @@
     <h4 class="mb-4">
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       <button
+        v-if="(userRole == availableRoles.ADMINISTRATOR) && negotiation.status == 'SUBMITTED'"
+        type="button"
+        class="btn btn-danger ms-3 float-end"
+        @click="updateNegotiation('DECLINE')"
+      >
+        Decline
+      </button>
+
+      <button
+        v-if="(userRole == availableRoles.ADMINISTRATOR) && negotiation.status == 'SUBMITTED'"
         type="button"
         class="btn btn-secondary float-end"
-        @click.stop="interactModal(negotiation)"
+        @click="updateNegotiation('APPROVE')"
       >
-        Change state
+        Approve
       </button>
     </h4>
     <hr class="mt-10 mb-10">
@@ -83,29 +93,53 @@
       scope="public"
     />
   </div>
-  <div
-    v-if="showModal"
+  <!--div
+    v-if="showNegotiationApprovalModal"
     class="modal"
   >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title">
-            This is the modal window title
+            {{ negotiation.payload.project.title }}
           </h1>
+        </div>
+        <div class="modal-body">
+          <span>Data: {{ negotiation.payload }}</span>
+          <span>Status: {{ negotiation.status }}</span>
+        </div>
+        <div class="modal-body">
+          <label for="actions">Respond:</label>
+          <select v-model="selectedItem">
+            <option
+              v-for="response in responseOptions"
+              :key="response"
+              :value="response"
+            >
+              {{ response }}
+            </option>
+          </select>
+          <p>Selected item: {{ selectedItem }}</p>
         </div>
         <div class="modal-footer">
           <button
             type="button"
             class="btn btn-danger"
-            @click="showModal = false"
+            @click="showNegotiationApprovalModal = false"
           >
             Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="updateNegotiation"
+          >
+            Submit
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </div-->
   <div
     v-if="showPrivatePostModal"
     class="modal"
@@ -213,11 +247,13 @@ export default {
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
+      showNegotiationApprovalModal: false,
       showModal: false,
       showPrivatePostModal: false,
       showLifecycleModal: false,
       privatePostResourceId: undefined,
-      lifecycleResourceId: undefined
+      lifecycleResourceId: undefined,
+      availableRoles: ROLES
     }
   },
   computed: {
@@ -246,7 +282,9 @@ export default {
       "retrievePostsByNegotiationId",
       "addMessageToNegotiation",
       "markMessageAsRead",
+      "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
+      "updateNegotiationStatus",
       "updateResourceStatus",
     ]),
     computed: {
@@ -255,6 +293,13 @@ export default {
     printDate: function (date) {
       return moment(date).format(dateFormat)
     },
+    async updateNegotiation(action) {
+      await this.updateNegotiationStatus({
+        negotiationId: this.negotiation.id,
+        event: action
+      })
+      this.showNegotiationApprovalModal = false
+    },
     async updateResource() {
       await this.updateResourceStatus({
         negotiationId: this.negotiation.id,
@@ -262,14 +307,6 @@ export default {
         event: this.selectedItem,
       })
       this.showLifecycleModal = false
-    },
-    loadPossibleEvents() {
-      this.retrievePossibleEventsForResource({
-        negotiationId: this.negotiation.id,
-        resourceId: this.lifecycleResourceId,
-      }).then((data) => {
-        this.responseOptions = data
-      })
     },
     getRole: function (role) {
       // check if the negotiation is already loaded from the backend
@@ -283,10 +320,18 @@ export default {
         return person.name || ""
       }
     },
+    loadPossibleEvents() {
+      this.retrievePossibleEvents({
+        negotiationId: this.negotiation.id,
+      }).then((data) => {
+        this.responseOptions = data
+      })
+    },
     
-    interactModal(negotiation) {
-      this.showModal = true
+    interactNegotiationApprovalModal(negotiation) {
+      this.showNegotiationApprovalModal = true
       this.negotiation = negotiation
+      this.loadPossibleEvents()
     },
 
     interactPrivatePostModal(resourceId) {

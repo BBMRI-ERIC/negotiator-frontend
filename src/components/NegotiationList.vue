@@ -68,18 +68,6 @@
               </td>
               <td class="col-2 col-xxl-3">
                 <button
-                  v-if="(userRole == availableRoles.REPRESENTATIVE || userRole == availableRoles.ADMINISTRATOR) && item.status == 'SUBMITTED'"
-                  type="button"
-                  class="btn btn-secondary btn-sm me-2 mb-1"
-                  @click.stop="interactModal(item)"
-                >
-                  <font-awesome-icon
-                    icon="fa fa-pencil"
-                    fixed-width
-                  />
-                  <span class="d-none d-xxl-inline-block ms-1">Interact</span>
-                </button>
-                <button
                   v-if="userRole == availableRoles.RESEARCHER && item.status == 'SUBMITTED'"
                   type="button"
                   class="btn btn-danger btn-sm mb-1"
@@ -98,57 +86,9 @@
       </div>
     </div>
   </div>
-  <div
-    v-if="showModal"
-    class="modal"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title">
-            {{ negotiation.payload.project.title }}
-          </h1>
-        </div>
-        <div class="modal-body">
-          <span>Data: {{ negotiation.payload }}</span>
-          <span>Status: {{ negotiation.status }}</span>
-        </div>
-        <div class="modal-body">
-          <label for="actions">Respond:</label>
-          <select v-model="selectedItem">
-            <option
-              v-for="response in responseOptions"
-              :key="response"
-              :value="response"
-            >
-              {{ response }}
-            </option>
-          </select>
-          <p>Selected item: {{ selectedItem }}</p>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="showModal = false"
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="updateNegotiation"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
-import { mapActions } from "vuex"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 import { ROLES } from "@/config/consts"
 
@@ -173,51 +113,15 @@ export default {
   data() {
     return {
       headers: ["id", "title", "status"],
-      showModal: false,
       negotiation: [],
-      responseOptions: [],
-      selectedItem: "",
-      unreadMessages: 0,
       availableRoles: ROLES
     }
   },
   methods: {
-    ...mapActions(["updateNegotiationStatus", "retrievePossibleEvents", "getUnreadMessagesByRole"]),
-    async updateNegotiation() {
-      await this.updateNegotiationStatus({
-        negotiationId: this.negotiation.id,
-        event: this.selectedItem,
-      })
-      this.showModal = false
-    },
-    interactModal(negotiation) {
-      this.showModal = true
-      this.negotiation = negotiation
-      this.loadPossibleEvents()
-    },
-    loadPossibleEvents() {
-      this.retrievePossibleEvents({
-        negotiationId: this.negotiation.id,
-      }).then((data) => {
-        this.responseOptions = data
-      })
-    },
     abandonRequest() {
       if (confirm("Are you sure you want to abandon this request?")) {
         console.log("deleting")
       }
-    },
-    getUnreadMessages(negotiationId, roleName) {
-      this.getUnreadMessagesByRole({
-        data: {
-          negotiationId: negotiationId,
-          roleName: roleName
-        },
-      }).then((data) => {
-        if (data) {
-          return data.length
-        }
-      })
     },
   }
 }
