@@ -2,13 +2,35 @@
   <div>
     <h4 class="mb-4">
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
-      <button
-        type="button"
-        class="btn btn-secondary float-end"
-        @click.stop="interactModal(negotiation)"
-      >
-        Change state
-      </button>
+      <div class="dropdown float-end">
+        <button
+          id="dropdownMenuButton1"
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Select an Action
+        </button>
+        <ul
+          class="dropdown-menu"
+          aria-labelledby="dropdownMenuButton1"
+        >
+          <li
+            v-for="response in responseOptions"
+            :key="response"
+            :value="response"
+          >
+            <button
+              class="dropdown-item"
+              type="button"
+              @click="updateNegotiation(response)"
+            >
+              {{ response }}
+            </button>
+          </li>
+        </ul>
+      </div>
     </h4>
     <hr class="mt-10 mb-10">
     <div
@@ -82,29 +104,6 @@
       :user-role="userRole"
       scope="public"
     />
-  </div>
-  <div
-    v-if="showModal"
-    class="modal"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title">
-            This is the modal window title
-          </h1>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="showModal = false"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
   <div
     v-if="showPrivatePostModal"
@@ -213,11 +212,13 @@ export default {
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
+      showNegotiationApprovalModal: false,
       showModal: false,
       showPrivatePostModal: false,
       showLifecycleModal: false,
       privatePostResourceId: undefined,
-      lifecycleResourceId: undefined
+      lifecycleResourceId: undefined,
+      availableRoles: ROLES
     }
   },
   computed: {
@@ -239,6 +240,7 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
+    this.loadPossibleEvents()
   },
   methods: {
     ...mapActions([
@@ -246,7 +248,9 @@ export default {
       "retrievePostsByNegotiationId",
       "addMessageToNegotiation",
       "markMessageAsRead",
+      "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
+      "updateNegotiationStatus",
       "updateResourceStatus",
     ]),
     computed: {
@@ -255,6 +259,13 @@ export default {
     printDate: function (date) {
       return moment(date).format(dateFormat)
     },
+    async updateNegotiation(action) {
+      await this.updateNegotiationStatus({
+        negotiationId: this.negotiation.id,
+        event: action
+      })
+      this.showNegotiationApprovalModal = false
+    },
     async updateResource() {
       await this.updateResourceStatus({
         negotiationId: this.negotiation.id,
@@ -262,14 +273,6 @@ export default {
         event: this.selectedItem,
       })
       this.showLifecycleModal = false
-    },
-    loadPossibleEvents() {
-      this.retrievePossibleEventsForResource({
-        negotiationId: this.negotiation.id,
-        resourceId: this.lifecycleResourceId,
-      }).then((data) => {
-        this.responseOptions = data
-      })
     },
     getRole: function (role) {
       // check if the negotiation is already loaded from the backend
@@ -283,10 +286,18 @@ export default {
         return person.name || ""
       }
     },
+    loadPossibleEvents() {
+      this.retrievePossibleEvents({
+        negotiationId: this.negotiation.id,
+      }).then((data) => {
+        this.responseOptions = data
+      })
+    },
     
-    interactModal(negotiation) {
-      this.showModal = true
+    interactNegotiationApprovalModal(negotiation) {
+      this.showNegotiationApprovalModal = true
       this.negotiation = negotiation
+      this.loadPossibleEvents()
     },
 
     interactPrivatePostModal(resourceId) {
