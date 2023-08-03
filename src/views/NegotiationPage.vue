@@ -2,23 +2,35 @@
   <div>
     <h4 class="mb-4">
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
-      <button
-        v-if="(userRole == availableRoles.ADMINISTRATOR) && negotiation.status == 'SUBMITTED'"
-        type="button"
-        class="btn btn-danger ms-3 float-end"
-        @click="updateNegotiation('DECLINE')"
-      >
-        Decline
-      </button>
-
-      <button
-        v-if="(userRole == availableRoles.ADMINISTRATOR) && negotiation.status == 'SUBMITTED'"
-        type="button"
-        class="btn btn-secondary float-end"
-        @click="updateNegotiation('APPROVE')"
-      >
-        Approve
-      </button>
+      <div class="dropdown float-end">
+        <button
+          id="dropdownMenuButton1"
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Select an Action
+        </button>
+        <ul
+          class="dropdown-menu"
+          aria-labelledby="dropdownMenuButton1"
+        >
+          <li
+            v-for="response in responseOptions"
+            :key="response"
+            :value="response"
+          >
+            <button
+              class="dropdown-item"
+              type="button"
+              @click="updateNegotiation(response)"
+            >
+              {{ response }}
+            </button>
+          </li>
+        </ul>
+      </div>
     </h4>
     <hr class="mt-10 mb-10">
     <div
@@ -93,53 +105,6 @@
       scope="public"
     />
   </div>
-  <!--div
-    v-if="showNegotiationApprovalModal"
-    class="modal"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title">
-            {{ negotiation.payload.project.title }}
-          </h1>
-        </div>
-        <div class="modal-body">
-          <span>Data: {{ negotiation.payload }}</span>
-          <span>Status: {{ negotiation.status }}</span>
-        </div>
-        <div class="modal-body">
-          <label for="actions">Respond:</label>
-          <select v-model="selectedItem">
-            <option
-              v-for="response in responseOptions"
-              :key="response"
-              :value="response"
-            >
-              {{ response }}
-            </option>
-          </select>
-          <p>Selected item: {{ selectedItem }}</p>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="showNegotiationApprovalModal = false"
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="updateNegotiation"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  </div-->
   <div
     v-if="showPrivatePostModal"
     class="modal"
@@ -275,6 +240,7 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
+    this.loadPossibleEvents()
   },
   methods: {
     ...mapActions([
