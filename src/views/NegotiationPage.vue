@@ -7,7 +7,7 @@
         class="btn btn-secondary float-end"
         @click.stop="interactModal(negotiation)"
       >
-        Update negotiation
+        Change state
       </button>
     </h4>
     <hr class="mt-10 mb-10">
@@ -99,11 +99,11 @@
     v-if="showPrivatePostModal"
     class="modal"
   >
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title">
-            This is the private posts modal window title for {{ privatePostResourceId }}
+            Resource ID: {{ privatePostResourceId }}
           </h1>
         </div>
         <div class="modal-body">
@@ -241,6 +241,7 @@ export default {
   border: 1px solid gray;
   width: 80%;
 }
+
 .close {
   color: gray;
   float: right;
