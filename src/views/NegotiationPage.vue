@@ -54,7 +54,18 @@
         <div class="d-flex align-items-end flex-column">
           <button
             type="button"
-            class="btn btn-secondary btn-sm me-2 mb-1"
+            class="btn btn-secondary btn-sm me-2 mb-1 order-first"
+            @click.stop="interactLifecycleModal(key)"
+          >
+            <font-awesome-icon
+              icon="fa fa-pencil"
+              fixed-width
+            />
+            Update State
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm me-2 mb-1 order-last"
             @click.stop="interactPrivatePostModal(key)"
           >
             <font-awesome-icon
@@ -126,6 +137,49 @@
       </div>
     </div>
   </div>
+  <div
+    v-if="showLifecycleModal"
+    class="modal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title">
+            Resource ID: {{ lifecycleResourceId }}
+          </h1>
+        </div>
+        <div class="modal-body">
+          <label for="actions">Respond:</label>
+          <select v-model="selectedItem">
+            <option
+              v-for="response in responseOptions"
+              :key="response"
+              :value="response"
+            >
+              {{ response }}
+            </option>
+          </select>
+          <p>Selected item: {{ selectedItem }}</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            @click="showLifecycleModal = false"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="updateResource"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -156,10 +210,14 @@ export default {
         text: "",
         resourceId: undefined,
       },
+      responseOptions: [],
+      selectedItem: "",
       messageStatus: MESSAGE_STATUS,
       showModal: false,
       showPrivatePostModal: false,
-      privatePostResourceId: undefined
+      showLifecycleModal: false,
+      privatePostResourceId: undefined,
+      lifecycleResourceId: undefined
     }
   },
   computed: {
@@ -188,12 +246,30 @@ export default {
       "retrievePostsByNegotiationId",
       "addMessageToNegotiation",
       "markMessageAsRead",
+      "retrievePossibleEventsForResource",
+      "updateResourceStatus",
     ]),
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
+    },
+    async updateResource() {
+      await this.updateResourceStatus({
+        negotiationId: this.negotiation.id,
+        resourceId: this.lifecycleResourceId,
+        event: this.selectedItem,
+      })
+      this.showLifecycleModal = false
+    },
+    loadPossibleEvents() {
+      this.retrievePossibleEventsForResource({
+        negotiationId: this.negotiation.id,
+        resourceId: this.lifecycleResourceId,
+      }).then((data) => {
+        this.responseOptions = data
+      })
     },
     getRole: function (role) {
       // check if the negotiation is already loaded from the backend
@@ -216,6 +292,11 @@ export default {
     interactPrivatePostModal(resourceId) {
       this.showPrivatePostModal = true
       this.privatePostResourceId = resourceId
+    },
+    interactLifecycleModal(resourceId) {
+      this.showLifecycleModal = true
+      this.lifecycleResourceId = resourceId
+      this.loadPossibleEvents()
     },
   },
 }
