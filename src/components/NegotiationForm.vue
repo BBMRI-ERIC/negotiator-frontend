@@ -57,6 +57,14 @@
             :required="criteria.required"
           />
           <input
+            v-else-if="criteria.type === 'file'"
+            accept=".pdf"
+            class="form-control"
+            :required="criteria.required"
+            :type="criteria.type"
+            @change="handleFileUpload($event, section.name, criteria.name)"
+          >
+          <input
             v-else
             v-model="negotiationCriteria[section.name][criteria.name]"
             :type="criteria.type"
@@ -179,6 +187,9 @@ export default {
             "You can follow the status of this negotiation in your researcher page")
         } 
       })
+    },
+    handleFileUpload(event, section, criteria) {
+      this.negotiationCriteria[section][criteria] = event.target.files[0]
     },
     showNotification(variant, header, body) {
       this.notificationVariant = variant

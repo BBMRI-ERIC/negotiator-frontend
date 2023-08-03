@@ -45,12 +45,26 @@ export default {
 
   },
   createNegotiation({ state }, { data }) {
-    return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
+    const formData = new FormData()
+    
+    formData.append("file", data["payload"]["ethics-vote"]["ethics-vote-attachment"])
+
+    const uploadFileHeaders = {headers : getBearerHeaders(state.oidc.access_token)}
+    uploadFileHeaders["Content-type"] = "multipart/form-data"
+    return axios.post("/api/v3/attachments", 
+      formData, uploadFileHeaders)
       .then((response) => {
-        return response.data.id
-      })
-      .catch(() => {
-        return null
+        const attachmentId = response.data.id
+        data.attachments = [{
+          id: attachmentId
+        }]
+        return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
+          .then((response) => {
+            return response.data.id
+          })
+          .catch(() => {
+            return null
+          })
       })
   },
   retrieveNegotiationsByRole({ state, commit }, { userRole }) {
