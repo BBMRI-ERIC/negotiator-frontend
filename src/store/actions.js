@@ -63,6 +63,7 @@ export default {
         })
       data.attachments = attachmentsIds
     }
+    data.files = undefined
 
     return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
