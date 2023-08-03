@@ -86,7 +86,12 @@
             class="input-group mb-3"
           >
             <label class="me-2 fw-bold">{{ criteria.label }}:</label>
-            <span>{{ negotiationCriteria[section.name][criteria.name] }}</span>
+            <span v-if="isAttachment(negotiationCriteria[section.name][criteria.name])">
+              {{ negotiationCriteria[section.name][criteria.name].name }}
+            </span>
+            <span v-else>
+              {{ negotiationCriteria[section.name][criteria.name] }}
+            </span>
           </div>
         </div>
       </tab-content>
@@ -138,7 +143,6 @@ export default {
       notificationBody: "",
       negotiationCriteria: {},
       accessCriteria: undefined,
-      files: []
     }
   },
   computed: {
@@ -180,7 +184,6 @@ export default {
         data: {
           requests: [this.requestId],
           payload: this.negotiationCriteria,
-          files: this.files
         }
       }).then((negotiationId) => {
         if (negotiationId) {
@@ -190,8 +193,11 @@ export default {
         } 
       })
     },
-    handleFileUpload(event) {
-      this.files.push(event.target.files[0])
+    isAttachment(value) {
+      return value instanceof File || value instanceof Object
+    },
+    handleFileUpload(event, section, criteria) {
+      this.negotiationCriteria[section][criteria] = event.target.files[0]
     },
     showNotification(variant, header, body) {
       this.notificationVariant = variant

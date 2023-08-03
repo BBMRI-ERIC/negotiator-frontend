@@ -45,26 +45,30 @@ export default {
 
   },
   async createNegotiation({ state, commit }, { data }) {
-    if (data.files.length > 0) {
-      const formData = new FormData()
-      formData.append("file", data.files[0])
-      const uploadFileHeaders = getBearerHeaders(state.oidc.access_token)
-
-      uploadFileHeaders["Content-type"] = "multipart/form-data"
-      const attachmentsIds = await axios.post("/api/v3/attachments", formData, uploadFileHeaders)
-        .then((response) => {
-          return [{
-            id: response.data.id
-          }]
-        })
-        .catch(() => {
-          commit("setNotification", "There was an error saving the attachment")
-          return null
-        })
-      data.attachments = attachmentsIds
+    data.attachments = []
+    for (const [sectionName, criteriaList] of Object.entries(data.payload)) {
+      for (const [criteriaName, criteriaValue] of Object.entries(criteriaList)) {
+        if (criteriaValue instanceof File) {
+          const formData = new FormData()
+          formData.append("file", criteriaValue)
+          const uploadFileHeaders = getBearerHeaders(state.oidc.access_token)
+          uploadFileHeaders["Content-type"] = "multipart/form-data"
+          
+          const attachmentsIds = await axios.post("/api/v3/attachments", formData, uploadFileHeaders)
+            .then((response) => {
+              return response.data
+            })
+            .catch(() => {
+              commit("setNotification", "There was an error saving the attachment")
+              return null
+            })
+          
+          data.payload[sectionName][criteriaName] = attachmentsIds
+          data.attachments.push(attachmentsIds)
+        }
+      }
     }
-    data.files = undefined
-
+    console.log(data)
     return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data.id
