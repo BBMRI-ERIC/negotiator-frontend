@@ -44,28 +44,34 @@ export default {
       })
 
   },
-  createNegotiation({ state }, { data }) {
-    const formData = new FormData()
-    
-    formData.append("file", data["payload"]["ethics-vote"]["ethics-vote-attachment"])
+  async createNegotiation({ state, commit }, { data }) {
+    if (data.files.length > 0) {
+      const formData = new FormData()
+      formData.append("file", data.files[0])
+      const uploadFileHeaders = getBearerHeaders(state.oidc.access_token)
 
-    const uploadFileHeaders = {headers : getBearerHeaders(state.oidc.access_token)}
-    uploadFileHeaders["Content-type"] = "multipart/form-data"
-    return axios.post("/api/v3/attachments", 
-      formData, uploadFileHeaders)
+      uploadFileHeaders["Content-type"] = "multipart/form-data"
+      const attachmentsIds = await axios.post("/api/v3/attachments", formData, uploadFileHeaders)
+        .then((response) => {
+          return [{
+            id: response.data.id
+          }]
+        })
+        .catch(() => {
+          commit("setNotification", "There was an error saving the attachment")
+          return null
+        })
+      data.attachments = attachmentsIds
+    }
+
+    return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
-        const attachmentId = response.data.id
-        data.attachments = [{
-          id: attachmentId
-        }]
-        return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
-          .then((response) => {
-            return response.data.id
-          })
-          .catch(() => {
-            return null
-          })
+        return response.data.id
       })
+      .catch(() => {
+        commit("setNotification", "There was an error saving the Negotiation")
+      })
+
   },
   retrieveNegotiationsByRole({ state, commit }, { userRole }) {
     return axios.get(`${NEGOTIATION_PATH}`, {headers : getBearerHeaders(state.oidc.access_token), params : {userRole : userRole}})

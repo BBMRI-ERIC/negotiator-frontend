@@ -138,6 +138,7 @@ export default {
       notificationBody: "",
       negotiationCriteria: {},
       accessCriteria: undefined,
+      files: []
     }
   },
   computed: {
@@ -178,7 +179,8 @@ export default {
       await this.createNegotiation({
         data: {
           requests: [this.requestId],
-          payload: this.negotiationCriteria
+          payload: this.negotiationCriteria,
+          files: this.files
         }
       }).then((negotiationId) => {
         if (negotiationId) {
@@ -188,8 +190,8 @@ export default {
         } 
       })
     },
-    handleFileUpload(event, section, criteria) {
-      this.negotiationCriteria[section][criteria] = event.target.files[0]
+    handleFileUpload(event) {
+      this.files.push(event.target.files[0])
     },
     showNotification(variant, header, body) {
       this.notificationVariant = variant
