@@ -83,7 +83,27 @@ export default {
       .catch(() => {
         commit("setNotification", "Error getting request data from server")
       })
-  }, 
+  },
+  retrievePossibleEventsForResource({ state, commit }, { negotiationId, resourceId }) {
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle`, getBearerHeaders(state.oidc.access_token))
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+      })
+  },
+  updateResourceStatus({ state, commit }, { negotiationId , resourceId, event }) {
+    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, getBearerHeaders(state.oidc.access_token))
+      .then((response) => {
+        commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error updating negotiation status")
+        return null
+      })
+  },
   retrieveNegotiationById({ state, commit }, { negotiationId }) {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
