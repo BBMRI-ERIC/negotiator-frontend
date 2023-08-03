@@ -46,9 +46,9 @@
     <div
       v-for="(element, key) in negotiation.payload"
       :key="element"
-      class="border rounded-2 input-group ps-3 pe-3 pb-3 pt-2 mb-3"
+      class="border rounded-2 input-group p-3 mb-3"
     >
-      <span class="mb-2 fs-5 fw-bold text-secondary">
+      <span class="mb-3 fs-5 fw-bold text-secondary">
         {{ key.toUpperCase() }}</span>
       <div
         v-for="(subelement, subelementkey) in element"

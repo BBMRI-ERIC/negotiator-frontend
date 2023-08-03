@@ -77,9 +77,9 @@
         <div
           v-for="section in accessCriteria.sections"
           :key="section.name"
-          class="border rounded-2 input-group ps-3 pe-3 pb-3 pt-2 mb-2 mb-3"
+          class="border rounded-2 input-group p-3 mb-2 mb-3"
         >
-          <span class="mb-4 fs-4 fw-bold text-secondary">{{ section.label }}</span>
+          <span class="mb-3 fs-4 fw-bold text-secondary">{{ section.label.toUpperCase() }}</span>
           <div
             v-for="criteria in section.accessCriteria"
             :key="criteria.name"
