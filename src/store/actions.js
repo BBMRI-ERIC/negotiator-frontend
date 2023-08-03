@@ -68,7 +68,6 @@ export default {
         }
       }
     }
-    console.log(data)
     return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data.id
@@ -128,8 +127,13 @@ export default {
         return null
       })
   },
+<<<<<<< HEAD
   retrieveNegotiationById({ state, commit }, { negotiationId }) {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, {headers : getBearerHeaders(state.oidc.access_token)})
+=======
+  async retrieveNegotiationById({ state, commit }, { negotiationId }) {
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
+>>>>>>> 9ea582b (feat: adds attachmnet visualization in negotiation page)
       .then((response) => {
         return response.data
       })

@@ -38,7 +38,7 @@
         v-for="section in accessCriteria.sections"
         :key="section.name"
         :title="section.label"
-        class="form-step border rounded px-2 py-3 mb-2"
+        class="form-step border rounded-2 px-2 py-3 mb-2"
       >
         <div
           v-for="criteria in section.accessCriteria"
@@ -77,13 +77,13 @@
         <div
           v-for="section in accessCriteria.sections"
           :key="section.name"
-          class="border input-group p-3 mb-3"
+          class="border rounded-2 input-group ps-3 pe-3 pb-3 pt-2 mb-2 mb-3"
         >
           <span class="mb-4 fs-4 fw-bold text-secondary">{{ section.label }}</span>
           <div
             v-for="criteria in section.accessCriteria"
             :key="criteria.name"
-            class="input-group mb-3"
+            class="input-group mb-2"
           >
             <label class="me-2 fw-bold">{{ criteria.label }}:</label>
             <span v-if="isAttachment(negotiationCriteria[section.name][criteria.name])">

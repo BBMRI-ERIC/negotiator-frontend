@@ -46,21 +46,26 @@
     <div
       v-for="(element, key) in negotiation.payload"
       :key="element"
-      class="border input-group p-3 mb-3"
+      class="border rounded-2 input-group ps-3 pe-3 pb-3 pt-2 mb-3"
     >
-      <span class="mb-3 fs-5 fw-bold text-secondary">
+      <span class="mb-2 fs-5 fw-bold text-secondary">
         {{ key.toUpperCase() }}</span>
       <div
         v-for="(subelement, subelementkey) in element"
         :key="subelement"
-        class="input-group mb-3"
+        class="input-group mb-2"
       >
         <label class="me-2 fw-bold">{{ subelementkey }}:</label>
-        <span> {{ subelement }}</span>
+        <span v-if="isAttachment(subelement)">
+          {{ subelement.name }}
+        </span>
+        <span v-else>
+          {{ subelement }}
+        </span>
       </div>
     </div>
     <div
-      class="border input-group p-3 mb-3"
+      class="border rounded-2 input-group p-3 mb-3"
     >
       <span class="mb-3 fs-5 fw-bold text-secondary">
         RESOURCE STATUS</span>
@@ -155,7 +160,7 @@
     </div>
   </div>
   <div
-    v-if="showLifecycleModal"
+    v-show="showLifecycleModal"
     class="modal"
   >
     <div class="modal-dialog">
@@ -264,9 +269,11 @@ export default {
     }
   },
   async beforeMount() {
+    console.log("Mounting")
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
+    console.log("Got negotiation")
     this.loadPossibleEvents()
   },
   methods: {
@@ -282,6 +289,9 @@ export default {
     ]),
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
+    },
+    isAttachment(value) {
+      return value instanceof Object
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
@@ -327,14 +337,7 @@ export default {
       }).then((data) => {
         this.responseOptions = data
       })
-    },
-    
-    interactNegotiationApprovalModal(negotiation) {
-      this.showNegotiationApprovalModal = true
-      this.negotiation = negotiation
-      this.loadPossibleEvents()
-    },
-
+    },    
     interactPrivatePostModal(resourceId) {
       this.showPrivatePostModal = true
       this.privatePostResourceId = resourceId
