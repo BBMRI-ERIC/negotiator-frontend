@@ -4,7 +4,7 @@
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       <div class="dropdown float-end">
         <button
-          v-if="(userRole == availableRoles.ADMINISTRATOR) && negotiation.status == 'SUBMITTED'"
+          v-if="userRole === 'ADMIN'"
           id="dropdownMenuButton1"
           class="btn btn-secondary dropdown-toggle"
           type="button"
@@ -76,6 +76,7 @@
         </div>
         <div class="d-flex align-items-end flex-column">
           <button
+            v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING'"
             type="button"
             class="btn btn-secondary btn-sm me-2 mb-1 order-first"
             @click.stop="interactLifecycleModal(key)"
@@ -105,6 +106,22 @@
       :user-role="userRole"
       scope="public"
     />
+  </div>
+  <div
+    v-else
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div
+        class="spinner-border d-flex justify-content-center "
+        role="status"
+      />
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          Loading ...
+        </h4>
+      </div>
+    </div>
   </div>
   <div
     v-if="showPrivatePostModal"
@@ -177,22 +194,6 @@
             Submit
           </button>
         </div>
-      </div>
-    </div>
-  </div>
-  <div
-    v-else
-    class="d-flex justify-content-center flex-row"
-  >
-    <div class="d-flex justify-content-center">
-      <div   
-        class="spinner-border d-flex justify-content-center "
-        role="status"
-      />
-      <div class="d-flex justify-content-center">
-        <h4 class="mb-3 ms-3">
-          Loading ...
-        </h4>
       </div>
     </div>
   </div>
@@ -312,9 +313,17 @@ export default {
         return person.name || ""
       }
     },
+    loadPossibleEventsForResource() {
+      this.retrievePossibleEventsForResource({
+        negotiationId: this.negotiation.id,
+        resourceId: this.lifecycleResourceId
+      }).then((data) => {
+        this.responseOptions = data
+      })
+    },
     loadPossibleEvents() {
       this.retrievePossibleEvents({
-        negotiationId: this.negotiation.id,
+        negotiationId: this.negotiation.id
       }).then((data) => {
         this.responseOptions = data
       })
@@ -333,7 +342,7 @@ export default {
     interactLifecycleModal(resourceId) {
       this.showLifecycleModal = true
       this.lifecycleResourceId = resourceId
-      this.loadPossibleEvents()
+      this.loadPossibleEventsForResource()
     },
   },
 }
