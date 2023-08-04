@@ -181,7 +181,7 @@
     </div>
   </div>
   <div
-    v-if="!isNegotiationLoaded"
+    v-else
     class="d-flex justify-content-center flex-row"
   >
     <div class="d-flex justify-content-center">
