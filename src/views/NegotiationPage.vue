@@ -4,6 +4,7 @@
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       <div class="dropdown float-end">
         <button
+          v-if="(userRole == availableRoles.ADMINISTRATOR) && negotiation.status == 'SUBMITTED'"
           id="dropdownMenuButton1"
           class="btn btn-secondary dropdown-toggle"
           type="button"
