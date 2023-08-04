@@ -185,8 +185,7 @@
     class="d-flex justify-content-center flex-row"
   >
     <div class="d-flex justify-content-center">
-      <div
-    
+      <div   
         class="spinner-border d-flex justify-content-center "
         role="status"
       />
@@ -256,9 +255,8 @@ export default {
         : []
     },
   },
-  
   watch: {
-    negotiation(n){
+    negotiation(n) {
       if(n) {
         this.isNegotiationLoaded = n
       }
