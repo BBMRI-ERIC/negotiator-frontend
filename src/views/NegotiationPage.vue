@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isNegotiationLoaded">
     <h4 class="mb-4">
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       <div class="dropdown float-end">
@@ -180,6 +180,23 @@
       </div>
     </div>
   </div>
+  <div
+    v-if="!isNegotiationLoaded"
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div
+    
+        class="spinner-border d-flex justify-content-center "
+        role="status"
+      />
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          Loading ...
+        </h4>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -210,6 +227,7 @@ export default {
         text: "",
         resourceId: undefined,
       },
+      isNegotiationLoaded:false,
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
@@ -222,6 +240,7 @@ export default {
       availableRoles: ROLES
     }
   },
+  
   computed: {
     requestor() {
       return this.getRole(ROLES.RESEARCHER)
@@ -236,6 +255,14 @@ export default {
         ? this.negotiation.requests[0].resources[0].children
         : []
     },
+  },
+  
+  watch: {
+    negotiation(n){
+      if(n) {
+        this.isNegotiationLoaded = n
+      }
+    }
   },
   async beforeMount() {
     this.negotiation = await this.retrieveNegotiationById({
