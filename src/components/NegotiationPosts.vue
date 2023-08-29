@@ -94,8 +94,10 @@ export default {
   },
   
   async beforeMount() {
+    console.log(this.scope.toUpperCase())
     this.posts = await this.retrievePostsByNegotiationId({
       negotiationId: this.negotiation.id,
+      type: this.scope.toUpperCase()
     })
 
     // assign the role of the poster to each message belonging to negotiation
@@ -142,12 +144,15 @@ export default {
       }
     },
     async addMessage() {
+      console.log(this.scope.toUpperCase())
       // send a message and add the newly created post
       await this.addMessageToNegotiation({
         data: {
           resourceId: this.negotiation.requests[0].resources[0].id,
           text: this.message.text,
           negotiationId: this.negotiation.id,
+          type: this.scope.toUpperCase()
+          
         },
       }).then((post) => {
         if (post) {
@@ -164,6 +169,7 @@ export default {
           negotiationId: this.negotiation.id,
           postId: inputMessageId,
           status: MESSAGE_STATUS.READ,
+          type: this.scope.toUpperCase()
         },
       })
     },

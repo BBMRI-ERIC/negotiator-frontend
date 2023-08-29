@@ -113,8 +113,8 @@ export default {
         commit("setNotification", "Error getting request data from server")
       })
   },
-  retrievePostsByNegotiationId({ state, commit }, { negotiationId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/posts`, getBearerHeaders(state.oidc.access_token))
+  retrievePostsByNegotiationId({ state, commit }, { negotiationId, type }) {
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/posts?type=${type}`, getBearerHeaders(state.oidc.access_token))
       .then((response) => {
         return response.data
       })
