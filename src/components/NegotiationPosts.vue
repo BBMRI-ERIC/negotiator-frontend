@@ -103,6 +103,7 @@ export default {
 
     // assign the role of the poster to each message belonging to negotiation
     let negotiation_persons = this.negotiation.persons
+    
     for (let i = 0; i < negotiation_persons.length; i++) {
       for (let j = 0; j < this.posts.length; j++) {
         if (negotiation_persons[i].name == this.posts[j].poster.name) {
@@ -145,11 +146,10 @@ export default {
       }
     },
     async addMessage() {
-      console.log(this.scope.toUpperCase())
       // send a message and add the newly created post
       await this.addMessageToNegotiation({
         data: {
-          resourceId: this.resourceId, //this.negotiation.requests[0].resources[0].id,
+          resourceId: this.resourceId,
           text: this.message.text,
           negotiationId: this.negotiation.id,
           type: this.scope.toUpperCase()
@@ -165,7 +165,7 @@ export default {
     async updateMessageStatus(inputMessageId, inputMessageText) {
       await this.markMessageAsRead({
         data: {
-          resourceId: this.resourceId, //this.negotiation.requests[0].resources[0].id,
+          resourceId: this.resourceId,
           text: inputMessageText,
           negotiationId: this.negotiation.id,
           postId: inputMessageId,
