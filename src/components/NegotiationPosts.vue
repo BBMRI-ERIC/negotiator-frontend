@@ -28,15 +28,6 @@
           {{ post.poster.name }}
         </div>
         <div class="d-flex">
-          <span
-            v-if="
-              post.status === messageStatus.SENT &&
-                post.poster_role != userRole
-            "
-            class="badge bg-primary rounded-pill"
-          >
-            New
-          </span>
           <div class="ms-2">
             {{ printDate(post.creationDate) }}
           </div>
@@ -99,26 +90,6 @@ export default {
       negotiationId: this.negotiation.id,
       type: this.scope.toUpperCase(),
       resourceId: this.resourceId
-    })
-
-    // assign the role of the poster to each message belonging to negotiation
-    let negotiation_persons = this.negotiation.persons
-    
-    for (let i = 0; i < negotiation_persons.length; i++) {
-      for (let j = 0; j < this.posts.length; j++) {
-        if (negotiation_persons[i].name == this.posts[j].poster.name) {
-          this.posts[j].poster_role = negotiation_persons[i].role
-        }
-      }
-    }
-
-    this.posts.forEach((post) => {
-      if (
-        post.status == MESSAGE_STATUS.SENT &&
-        post.poster_role != this.userRole
-      ) {
-        this.updateMessageStatus(post.id, post.text)
-      }
     })
   },
   methods: {
