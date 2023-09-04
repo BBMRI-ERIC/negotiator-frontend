@@ -153,7 +153,7 @@ export default {
       })
   },
   retrieveUserRoles({ state, commit }) {
-    return axios.get(USER_PATH, getBearerHeaders(state.oidc.access_token))
+    return axios.get(USER_PATH, {headers : getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
