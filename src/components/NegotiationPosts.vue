@@ -25,7 +25,7 @@
     >
       <div class="card-header d-flex">
         <div class="me-auto">
-          {{ post.poster.name }}
+          {{ post.createdBy.name }}
         </div>
         <div class="d-flex">
           <div class="ms-2">
@@ -85,7 +85,6 @@ export default {
   },
   
   async beforeMount() {
-    console.log(this.scope.toUpperCase())
     this.posts = await this.retrievePostsByNegotiationId({
       negotiationId: this.negotiation.id,
       type: this.scope.toUpperCase(),

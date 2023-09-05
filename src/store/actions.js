@@ -6,11 +6,11 @@ const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
 const USER_PATH = `${BASE_API_PATH}/users/roles`
+
 function getBearerHeaders(token) {
   return {
     Authorization: `Bearer ${token}`
   }
-  
 }
 
 
@@ -34,7 +34,7 @@ export default {
       })
   },
   retrieveAccessCriteriaByResourceId({ state, commit }, { resourceId }) {
-    return axios.get(`${ACCESS_CRITERIA_PATH}`, {headers : getBearerHeaders(state.oidc.access_token), params : {resourceId :resourceId}})
+    return axios.get(`${ACCESS_CRITERIA_PATH}`, {headers : getBearerHeaders(state.oidc.access_token), params : {resourceId : resourceId}})
       .then((response) => {
         return response.data
       })
@@ -113,7 +113,7 @@ export default {
       })
   },
   retrievePostsByNegotiationId({ state, commit }, { negotiationId, type, resourceId }) {
-    let url = resourceId ? `${NEGOTIATION_PATH}/${negotiationId}/posts?` : `${NEGOTIATION_PATH}/${negotiationId}/posts?type=${type}`
+    let url = `${NEGOTIATION_PATH}/${negotiationId}/posts`
     let params = resourceId ? {type: type, resource: resourceId} : {type : type}
     return axios.get(url, {headers : getBearerHeaders(state.oidc.access_token), params: params})
       .then((response) => {
