@@ -43,7 +43,6 @@
               >
                 <span class="text-uppercase">{{ field }}</span>
               </th>
-              <th />
             </tr>
           </thead>
           <tbody>
@@ -66,20 +65,6 @@
               <td class="col-2">
                 {{ item.status }}
               </td>
-              <td class="col-2 col-xxl-3">
-                <button
-                  v-if="userRole == availableRoles.RESEARCHER && item.status == 'SUBMITTED'"
-                  type="button"
-                  class="btn btn-danger btn-sm mb-1"
-                  @click.stop="abandonRequest"
-                >
-                  <font-awesome-icon
-                    icon="fa fa-trash"
-                    fixed-width
-                  />
-                  <span class="d-none d-xxl-inline-block ms-1">Abandon</span>
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -89,12 +74,10 @@
 </template>
 
 <script>
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 import { ROLES } from "@/config/consts"
 
 export default {
   name: "NegotiationsList",
-  components: { FontAwesomeIcon },
   props: {
     negotiations: {
       type: Array,
