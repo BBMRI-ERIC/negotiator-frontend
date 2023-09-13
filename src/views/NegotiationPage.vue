@@ -6,12 +6,21 @@
         <button
           v-if="userRole === 'ADMIN'"
           id="dropdownMenuButton1"
-          class="btn btn-secondary dropdown-toggle"
+          class="btn btn-secondary dropdown-toggle me-3"
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
           Select an Action
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          @click="
+            $router.go(-1)
+          "
+        >
+          Back to Negotiations List
         </button>
         <ul
           class="dropdown-menu"
