@@ -40,8 +40,20 @@
                 v-for="field in headers"
                 :key="field"
                 scope="col"
+                @click="sort(field)"
               >
-                <span class="text-uppercase">{{ field }}</span>
+                <div>
+                  <span class="text-uppercase">{{ field }}</span>
+
+                  <span
+                    v-if="sorting[field].order == 'asc'"
+                    class="arrow asc"
+                  />
+                  <span
+                    v-if="sorting[field].order == 'desc'"
+                    class="arrow dsc"
+                  />
+                </div>
               </th>
             </tr>
           </thead>
@@ -97,7 +109,21 @@ export default {
     return {
       headers: ["id", "title", "status"],
       negotiation: [],
-      availableRoles: ROLES
+      availableRoles: ROLES,
+      sorting : { "id": {
+        "func": this.compareById, 
+        "order": ""
+      }, 
+      "title": {
+        "func": this.compareByTitle, 
+        "order": ""
+      }, 
+      "status": {
+        "func": this.compareByTitle, 
+        "order": ""
+      }, 
+      }, 
+      previuosSortingColumn: ""
     }
   },
   methods: {
@@ -106,7 +132,44 @@ export default {
         console.log("deleting")
       }
     },
-  }
+    compareByTitle(a, b) {
+      console.log("called")
+      if (a.payload.project.title < b.payload.project.title) {
+        return this.sorting.title.order == "desc" ? 1 : -1
+      }
+      if (a.payload.project.title > b.payload.project.title) {
+        return this.sorting.title.order == "desc" ? -1 : 1 
+      }
+      return 0
+    },
+    compareById(a, b) {
+      
+      if (a.id < b.id) {
+        return this.sorting.id.order == "desc" ? 1 : -1
+      }
+      if (a.id > b.id) {
+        return this.sorting.id.order == "desc" ? -1 : 1 
+      }
+      return 0
+    },
+    sort(column){
+      if(this.previuosSortingColumn!= "" &&  this.previuosSortingColumn!= column){
+        // change of sorting column, reset the order of the previous one 
+        this.sorting[this.previuosSortingColumn].order = ""
+      }
+      if (this.sorting[column].order == "" || this.sorting[column].order == "desc"){
+        this.sorting[column].order = "asc"
+      }
+      else{
+        this.sorting[column].order = "desc"
+      }
+      let sortedNegotiations = this.negotiations
+
+      this.previuosSortingColumn = column 
+      return sortedNegotiations.sort(this.sorting[column]["func"])
+    }
+  }, 
+  
 }
 </script>
 
@@ -146,4 +209,16 @@ export default {
 .negotiation-list-table tbody tr:hover > td {
     cursor: pointer;
 }
+.arrow.asc {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #000402;
+}
+
+.arrow.dsc {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #000000;
+}
+
 </style>
