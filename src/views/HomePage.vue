@@ -29,7 +29,7 @@
                 >
                   <img
                     class="login-icon"
-                    src="src/assets/images/ls-aai-logo.png"
+                    src="../assets/images/ls-aai-logo.png"
                     alt="icon"
                   >
                   <strong>Life Science Login</strong>
