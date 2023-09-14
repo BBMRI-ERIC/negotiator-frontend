@@ -1,55 +1,58 @@
 <template>
-  <h1 class="display-4 text-center">
-    Welcome to the <b>BBMRI-ERIC Negotiator</b>
+  <h1
+    class="text-center"
+    style="padding-top: 30px; align-self: center"
+  >
+    <b>BBMRI-ERIC NEGOTIATOR</b>
   </h1>
-  <p class="display-6 text-center">
-    Provides an efficient communication platform for biobankers and researchers requesting samples and/or data.
-  </p>
-  <div class="container mt-5">
+  <div
+    class="container"
+  >
     <div
-      class="row"
-      style="height: 500px;"
+      class="col-10"
     >
-      <div class="col-4" />
-      <div class="col-4">
-        <div
-          class="card text-center bg-light"
-        >
-          <div class="card-body">
-            <h1 class="display-6">
-              Sign In:
-            </h1>
-            <figure>
-              <a
-                href="#"
-                @click.stop.prevent="authenticateOidc"
-              >
-                <img
-                  style="width: 100%;"
-                  class="img-responsive"
-                  src="../assets/images/ls-aai-login.svg"
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-subtitle text-center ">
+            Choose how to log in
+          </h2>
+          <div
+            class="row col-lg-12"
+            style="display: table; padding-left: 10px;  padding-bottom: 30px;"
+          >
+            <div>
+              <div class="list-group">
+                <a
+                  class="btn btn-block list-group-item"
+                  href="#"
                   @click.stop.prevent="authenticateOidc"
                 >
-              </a>
-            </figure>
-          </div>       
-        </div>
-        <div class="text-center mt-3 mb-2">
-          New to LS-AAI? Visit their <a
-            target="_blank"
-            href="https://lifescience-ri.eu/ls-login.html"
-          >website</a>.
-        </div>
-        <div class="text-center mb-5">
-          Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+                  <img
+                    class="login-icon"
+                    src="src/assets/images/ls-aai-logo.png"
+                    alt="icon"
+                  >
+                  <strong>Life Science Login</strong>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
         <img
-          class="mt-5"
           src="../assets/images/bbmri-logo.png"
-          width="150%"
+          alt="bbmri-logo"
+          style="max-height: 50px; max-width: 50%; align-self: center;"
         >
       </div>
-      <div class="col-4" />
+      <div class="text-center mt-3 mb-2">
+        Not familiar with LS Login? Visit their <a
+          target="_blank"
+          href="https://lifescience-ri.eu/ls-login.html"
+        >website</a>.
+      </div>
+      <div class="text-center mb-5">
+        Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+      </div>
     </div>
   </div>
 </template>
@@ -74,3 +77,53 @@ export default {
   }
 }
 </script>
+<style scoped>
+.container {
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  padding-top: 50px;
+  height: 100%;
+}
+.card {
+  padding-top: 10px;
+  padding-bottom: 30px;
+  height: 100%;
+  border-radius: 10px; /* Add rounded corners to the card */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Add a shadow */
+}
+h1 {
+  font-family: Calibri, Arial, sans-serif;
+  color: rgb(233,87,19);
+  font-weight: bolder;
+  font-size: 60px;
+}
+h2 {
+  font-family: Calibri, Arial, sans-serif;
+  color: rgb(0,66,128);
+  font-weight: bold;
+  padding-bottom: 20px;
+}
+.list-group  {
+  text-align: left;
+  border: 1px;
+}
+.list-group:hover {
+  border: lightgray;
+  background: lightgray;
+}
+.login-icon {
+  max-height: 40px;
+  max-width: 40px;
+  padding: 6px;
+  border-right: 2px solid rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top:1px;
+  bottom: 1px;
+  left: 5px;
+  right: 5px;
+}
+.btn-block {
+  width: 100%;
+}
+</style>
