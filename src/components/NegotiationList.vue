@@ -1,5 +1,28 @@
 <template>
   <div class="container">
+    <div
+      v-for="item in negotiations"
+      :key="item.id"
+    >
+      <NegotiationCard
+        :negotiation-id="item.id"
+        :negotiation-title="item.payload.project.title"
+        :negotiation-status="item.status"
+        :negotiation-resources="['res1', 'res2', 'res3']" 
+        :negotiation-submitter="item.persons[0].name"
+        @click="
+          $router.push({
+            name: 'negotiation-page',
+            params: { negotiationId: item.id, userRole: userRole },
+          })
+        "
+      />
+    </div> 
+  </div>
+</template>
+
+<!--template>
+  <div class="container">
     <div class="row table-responsive d-flex">
       <div class="col-md-2">
         <table
@@ -83,13 +106,16 @@
       </div>
     </div>
   </div>
-</template>
+</template-->
 
 <script>
 import { ROLES } from "@/config/consts"
+import  NegotiationCard  from "@/components/NegotiationCard.vue"
 
 export default {
   name: "NegotiationsList",
+  components: { NegotiationCard, 
+  },
   props: {
     negotiations: {
       type: Array,
