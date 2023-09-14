@@ -42,14 +42,15 @@
         </div>
         <div class="text-center mb-5">
           Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
-        </div>
+        </div>    
+      </div>
+      <div class="text-center">
         <img
           class="mt-5"
           src="../assets/images/bbmri-logo.png"
-          width="150%"
+          style="width:70%; height:70%"
         >
       </div>
-      <div class="col-4" />
     </div>
   </div>
 </template>
