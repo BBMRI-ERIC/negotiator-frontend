@@ -1,11 +1,12 @@
-import axios from "axios"
 import { ROLES } from "@/config/consts"
+import axios from "axios"
 
 let BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
 const USER_PATH = `${BASE_API_PATH}/users/roles`
+const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
 
 function getBearerHeaders(token) {
   return {
@@ -34,7 +35,7 @@ export default {
       })
   },
   retrieveAccessCriteriaByResourceId({ state, commit }, { resourceId }) {
-    return axios.get(`${ACCESS_CRITERIA_PATH}`, {headers : getBearerHeaders(state.oidc.access_token), params : {resourceId : resourceId}})
+    return axios.get(`${ACCESS_CRITERIA_PATH}`, {headers: getBearerHeaders(state.oidc.access_token), params: {resourceId: resourceId}})
       .then((response) => {
         return response.data
       })
@@ -51,7 +52,8 @@ export default {
         if (criteriaValue instanceof File) {
           const formData = new FormData()
           formData.append("file", criteriaValue)
-          const uploadFileHeaders = getBearerHeaders(state.oidc.access_token)
+          const uploadFileHeaders = { headers: getBearerHeaders(state.oidc.access_token) }
+            
           uploadFileHeaders["Content-type"] = "multipart/form-data"
           
           const attachmentsIds = await axios.post("/api/v3/attachments", formData, uploadFileHeaders)
@@ -68,7 +70,7 @@ export default {
         }
       }
     }
-    return axios.post(NEGOTIATION_PATH, data, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.post(NEGOTIATION_PATH, data, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data.id
       })
@@ -78,7 +80,7 @@ export default {
 
   },
   retrieveNegotiationsByRole({ state, commit }, { userRole }) {
-    return axios.get(`${NEGOTIATION_PATH}`, {headers : getBearerHeaders(state.oidc.access_token), params : {userRole : userRole}})
+    return axios.get(`${NEGOTIATION_PATH}`, {headers: getBearerHeaders(state.oidc.access_token), params: {userRole: userRole}})
       .then((response) => {
         return response.data
       })
@@ -88,7 +90,7 @@ export default {
       })
   },
   updateNegotiationStatus({ state, commit }, { negotiationId , event }) {
-    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
         return response.data
@@ -99,7 +101,7 @@ export default {
       })
   },
   retrievePossibleEvents({ state, commit }, { negotiationId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle`, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle`, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
@@ -108,7 +110,7 @@ export default {
       })
   },
   retrievePossibleEventsForResource({ state, commit }, { negotiationId, resourceId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle`, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle`, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
@@ -117,7 +119,7 @@ export default {
       })
   },
   updateResourceStatus({ state, commit }, { negotiationId , resourceId, event }) {
-    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
         return response.data
@@ -127,13 +129,8 @@ export default {
         return null
       })
   },
-<<<<<<< HEAD
-  retrieveNegotiationById({ state, commit }, { negotiationId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, {headers : getBearerHeaders(state.oidc.access_token)})
-=======
   async retrieveNegotiationById({ state, commit }, { negotiationId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, getBearerHeaders(state.oidc.access_token))
->>>>>>> 9ea582b (feat: adds attachmnet visualization in negotiation page)
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
@@ -143,8 +140,8 @@ export default {
   },
   retrievePostsByNegotiationId({ state, commit }, { negotiationId, type, resourceId }) {
     let url = `${NEGOTIATION_PATH}/${negotiationId}/posts`
-    let params = resourceId ? {type: type, resource: resourceId} : {type : type}
-    return axios.get(url, {headers : getBearerHeaders(state.oidc.access_token), params: params})
+    let params = resourceId ? {type: type, resource: resourceId} : {type: type}
+    return axios.get(url, {headers: getBearerHeaders(state.oidc.access_token), params: params})
       .then((response) => {
         return response.data
       })
@@ -153,7 +150,7 @@ export default {
       })
   },
   addMessageToNegotiation({ state, commit }, { data }) {
-    return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
@@ -162,7 +159,7 @@ export default {
       })
   },
   markMessageAsRead({ state }, { data }) {
-    return axios.put(`${NEGOTIATION_PATH}/${data.negotiationId}/posts/${data.postId}`, data, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.put(`${NEGOTIATION_PATH}/${data.negotiationId}/posts/${data.postId}`, data, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data.id
       })
@@ -173,7 +170,7 @@ export default {
   getUnreadMessagesByRole({ state }, { data }) {
     //the role shoud be complementary in relation of the one from the user 
     let complementaryRole = data.Rolename == ROLES.RESEARCHER ? ROLES.REPRESENTATIVE : ROLES.RESEARCHER
-    return axios.get(`${NEGOTIATION_PATH}/${data.negotiationId}/${complementaryRole}/posts`, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.get(`${NEGOTIATION_PATH}/${data.negotiationId}/${complementaryRole}/posts`, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
@@ -182,13 +179,28 @@ export default {
       })
   },
   retrieveUserRoles({ state, commit }) {
-    return axios.get(USER_PATH, {headers : getBearerHeaders(state.oidc.access_token)})
+    return axios.get(USER_PATH, {headers: getBearerHeaders(state.oidc.access_token)})
       .then((response) => {
         return response.data
       })
       .catch(() => {
         commit("setNotification", "Error sending message")      
       })
-    
+  },
+  downloadAttachment({ state }, { id, name }) {
+    axios.get(`${ATTACHMENTS_PATH}/${id}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+      .then((response) => {
+        const href = window.URL.createObjectURL(response.data)
+
+        const anchorElement = document.createElement("a")
+        anchorElement.href = href
+        anchorElement.download = name
+
+        document.body.appendChild(anchorElement)
+        anchorElement.click()
+
+        document.body.removeChild(anchorElement)
+        window.URL.revokeObjectURL(href)
+      })
   }
 }

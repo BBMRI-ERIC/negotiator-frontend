@@ -58,6 +58,13 @@
         <label class="me-2 fw-bold">{{ subelementkey }}:</label>
         <span v-if="isAttachment(subelement)">
           {{ subelement.name }}
+          <font-awesome-icon
+            v-if="isAttachment(subelement)"
+            class="ms-1 cursor-pointer"
+            icon="fa fa-download"
+            fixed-width
+            @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
+          />
         </span>
         <span v-else>
           {{ subelement }}
@@ -83,13 +90,9 @@
           <button
             v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING'"
             type="button"
-            class="btn btn-secondary btn-sm me-2 mb-1 order-first"
+            class="btn btn-secondary btn-sm me-2 mb-2 order-first"
             @click.stop="interactLifecycleModal(key)"
           >
-            <font-awesome-icon
-              icon="fa fa-pencil"
-              fixed-width
-            />
             Update State
           </button>
           <button
@@ -97,10 +100,6 @@
             class="btn btn-secondary btn-sm me-2 mb-1 order-last"
             @click.stop="interactPrivatePostModal(key)"
           >
-            <font-awesome-icon
-              icon="fa fa-pencil"
-              fixed-width
-            />
             Private posts
           </button>
         </div>
@@ -205,10 +204,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
-import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
+import NegotiationPosts from "@/components/NegotiationPosts.vue"
+import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import  NegotiationPosts  from "@/components/NegotiationPosts.vue"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NegotiationPage",
@@ -232,20 +231,18 @@ export default {
         text: "",
         resourceId: undefined,
       },
-      isNegotiationLoaded:false,
+      isNegotiationLoaded: false,
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
       showNegotiationApprovalModal: false,
-      showModal: false,
       showPrivatePostModal: false,
       showLifecycleModal: false,
       privatePostResourceId: undefined,
       lifecycleResourceId: undefined,
       availableRoles: ROLES
     }
-  },
-  
+  },  
   computed: {
     requestor() {
       return this.getRole(ROLES.RESEARCHER)
@@ -269,11 +266,9 @@ export default {
     }
   },
   async beforeMount() {
-    console.log("Mounting")
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
-    console.log("Got negotiation")
     this.loadPossibleEvents()
   },
   methods: {
@@ -286,6 +281,7 @@ export default {
       "retrievePossibleEventsForResource",
       "updateNegotiationStatus",
       "updateResourceStatus",
+      "downloadAttachment"
     ]),
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
@@ -346,7 +342,7 @@ export default {
       this.showLifecycleModal = true
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource()
-    },
+    }
   },
 }
 </script>
@@ -370,21 +366,5 @@ export default {
   padding: 20px;
   border: 1px solid gray;
   width: 80%;
-}
-
-.close {
-  color: gray;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-.close:hover,
-.close:focus {
-  color: "$black";
-  text-decoration: none;
-  cursor: pointer;
-}
-.negotiation-list-table tbody tr:hover > td {
-  cursor: pointer;
 }
 </style>
