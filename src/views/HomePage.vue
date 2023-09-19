@@ -86,6 +86,7 @@ export default {
   justify-content: center; /* Horizontally center */
   align-items: center; /* Vertically center */
   padding-top: 50px;
+  margin-top: 100px;
   height: 100%;
 }
 .card {
