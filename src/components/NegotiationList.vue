@@ -1,23 +1,105 @@
 <template>
   <div class="container">
-    <div
-      v-for="item in negotiations"
-      :key="item.id"
-    >
-      <NegotiationCard
-        :negotiation-id="item.id"
-        :negotiation-title="item.payload.project.title"
-        :negotiation-status="item.status"
-        :negotiation-resources="['res1', 'res2', 'res3']" 
-        :negotiation-submitter="item.persons[0].name"
-        @click="
-          $router.push({
-            name: 'negotiation-page',
-            params: { negotiationId: item.id, userRole: userRole },
-          })
-        "
-      />
-    </div> 
+    <div class="row">
+        <div class="col-md-2 w-25">
+          <div class="card mb-2">
+          <div class="card-header">
+            Sort by
+          </div>
+          <div class="card-body">
+            <div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Title
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+  <label class="form-check-label" for="flexRadioDefault2">
+    Status 
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+  <label class="form-check-label" for="flexRadioDefault2">
+    Date of creation
+  </label>
+</div>
+            
+          </div>
+        </div>  
+        <!--select name="sorting" @change="sort($event.target.value)" class="form-select form-control">
+          <option>---- Sort by  ----</option>
+          <option value="title">Title</option>
+          <option value="id">Identifier</option>
+          <option value="creationDate">Creation Date </option>
+          <option value="status">Status </option>
+        </select!--> 
+        <div class="card mb-2">
+          <div class="card-header">
+            Filter by status
+          </div>
+          <div class="card-body">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                SUBMITTED
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+              <label class="form-check-label" for="flexCheckChecked">
+                ONGOING
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+              <label class="form-check-label" for="flexCheckChecked">
+                ABORTED
+              </label>
+            </div>
+          </div>
+        </div>  
+        <div class="card">
+          <div class="card-header">
+            Filter by date
+          </div>
+          <div class="card-body">
+            <div class="d-flex align-items-center  mb-2">
+              <label for="startDate">Start: </label>
+              <input id="startDate" class="form-control" type="date" />
+              <span id="startDateSelected"></span>
+            </div>
+            <div class="d-flex align-items-center">
+              <label for="endDate">End:</label>
+              <input id="endDate" class="form-control" type="date" />
+              <span id="endDateSelected"></span>
+            </div>
+          </div>
+        </div>              
+      </div>
+      <div class="col">
+        <div
+          v-for="item in negotiations"
+          :key="item.id"
+        >
+          <NegotiationCard
+            :negotiation-id="item.id"
+            :negotiation-title="item.payload.project.title"
+            :negotiation-status="item.status"
+            :negotiation-resources="['res1', 'res2', 'res3']" 
+            :negotiation-submitter="item.persons[0].name"
+            :negotiation-creation-date="formatDate(item.creationDate)"
+            @click="
+              $router.push({
+                name: 'negotiation-page',
+                params: { negotiationId: item.id, userRole: userRole },
+              })
+            "
+          />
+        </div> 
+      </div>
+    </div>
   </div>
 </template>
 
@@ -111,6 +193,7 @@
 <script>
 import { ROLES } from "@/config/consts"
 import  NegotiationCard  from "@/components/NegotiationCard.vue"
+import moment from "moment"
 
 export default {
   name: "NegotiationsList",
@@ -138,15 +221,15 @@ export default {
       availableRoles: ROLES,
       sorting : { "id": {
         "func": this.compareById, 
-        "order": ""
+        "order": "asc"
       }, 
       "title": {
         "func": this.compareByTitle, 
-        "order": ""
+        "order": "asc"
       }, 
       "status": {
         "func": this.compareByTitle, 
-        "order": ""
+        "order": "asc"
       }, 
       }, 
       previuosSortingColumn: ""
@@ -179,20 +262,27 @@ export default {
       return 0
     },
     sort(column){
-      if(this.previuosSortingColumn!= "" &&  this.previuosSortingColumn!= column){
-        // change of sorting column, reset the order of the previous one 
-        this.sorting[this.previuosSortingColumn].order = ""
-      }
-      if (this.sorting[column].order == "" || this.sorting[column].order == "desc"){
-        this.sorting[column].order = "asc"
-      }
-      else{
-        this.sorting[column].order = "desc"
-      }
+      //if(this.previuosSortingColumn!= "" &&  this.previuosSortingColumn!= column){
+      // change of sorting column, reset the order of the previous one 
+      //  this.sorting[this.previuosSortingColumn].order = ""
+      //}
+      //if (this.sorting[column].order == "" || this.sorting[column].order == "desc"){
+      //  this.sorting[column].order = "asc"
+      // }
+      //else{
+      //  this.sorting[column].order = "desc"
+      //}
       let sortedNegotiations = this.negotiations
 
-      this.previuosSortingColumn = column 
+      //this.previuosSortingColumn = column 
       return sortedNegotiations.sort(this.sorting[column]["func"])
+    },
+
+    onChange(e) {
+      console.log(e.target.value)
+    }, 
+    formatDate(date){
+      return moment(date).format("MM/DD/YYYY hh:mm")
     }
   }, 
   
