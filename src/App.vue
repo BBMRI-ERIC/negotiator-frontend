@@ -1,7 +1,7 @@
 
 <template>
   <header>
-    <navigation-bar v-if="hideNavBar" />
+    <navigation-bar />
   </header>
   <div class="container pt-4 main-container">
     <div
@@ -46,10 +46,7 @@ export default {
     NavigationBar
   },
   computed: {
-    ...mapGetters({ notification: "getNotification" }),
-    hideNavBar() {
-      return !(this.$route.path === "/")
-    }
+    ...mapGetters({ notification: "getNotification" })
   },
   methods: {
     ...mapMutations(["setNotification"]),

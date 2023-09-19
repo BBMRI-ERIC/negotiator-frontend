@@ -1,5 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav
+    v-if="!hideNavBar"
+    class="navbar navbar-expand-lg navbar-light bg-light"
+  >
     <div class="container-fluid">
       <img
         src="../assets/images/logo.svg"
@@ -96,6 +99,9 @@ export default {
     },
     isRepresentative() {
       return this.roles.includes("REPRESENTATIVE")
+    },
+    hideNavBar() {
+      return (this.$route.path === "/")
     }
   },
   watch: {
