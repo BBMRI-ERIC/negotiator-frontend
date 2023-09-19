@@ -1,31 +1,60 @@
 <template>
   <div class="container">
     <div class="row">
-        <div class="col-md-2 w-25">
-          <div class="card mb-2">
+      <div class="col-md-2 w-25">
+        <div class="card mb-2">
           <div class="card-header">
             Sort by
           </div>
           <div class="card-body">
             <div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
-    Title
-  </label>
-</div>
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-  <label class="form-check-label" for="flexRadioDefault2">
-    Status 
-  </label>
-</div>
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-  <label class="form-check-label" for="flexRadioDefault2">
-    Date of creation
-  </label>
-</div>
-            
+              <input
+                id="title"
+                class="form-check-input"
+                type="radio"
+                name="sort"
+                value="title"
+                @change="sort($event.target.value)"
+              >
+              <label
+                class="form-check-label"
+                for="title"
+              >
+                Title
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                id="status"
+                class="form-check-input"
+                type="radio"
+                name="sort"
+                value="status"
+                @change="sort($event.target.value)"
+              >
+              <label
+                class="form-check-label"
+                for="status"
+              >
+                Status 
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                id="creationDate"
+                class="form-check-input"
+                type="radio"
+                name="sort"
+                value="creationDate"
+                @change="sort($event.target.value)"
+              >
+              <label
+                class="form-check-label"
+                for="creationDate"
+              >
+                Date of creation
+              </label>
+            </div>
           </div>
         </div>  
         <!--select name="sorting" @change="sort($event.target.value)" class="form-select form-control">
@@ -41,20 +70,44 @@
           </div>
           <div class="card-body">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-              <label class="form-check-label" for="flexCheckDefault">
+              <input
+                id="submitted"
+                class="form-check-input"
+                type="checkbox"
+                value="submitted"
+              >
+              <label
+                class="form-check-label"
+                for="submitted"
+              >
                 SUBMITTED
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-              <label class="form-check-label" for="flexCheckChecked">
+              <input
+                id="ongoing"
+                class="form-check-input"
+                type="checkbox"
+                value="ongoing"
+              >
+              <label
+                class="form-check-label"
+                for="ongoing"
+              >
                 ONGOING
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-              <label class="form-check-label" for="flexCheckChecked">
+              <input
+                id="aborted"
+                class="form-check-input"
+                type="checkbox"
+                value="aborted"
+              >
+              <label
+                class="form-check-label"
+                for="aborted"
+              >
                 ABORTED
               </label>
             </div>
@@ -67,13 +120,21 @@
           <div class="card-body">
             <div class="d-flex align-items-center  mb-2">
               <label for="startDate">Start: </label>
-              <input id="startDate" class="form-control" type="date" />
-              <span id="startDateSelected"></span>
+              <input
+                id="startDate"
+                class="form-control"
+                type="date"
+              >
+              <span id="startDateSelected" />
             </div>
             <div class="d-flex align-items-center">
               <label for="endDate">End:</label>
-              <input id="endDate" class="form-control" type="date" />
-              <span id="endDateSelected"></span>
+              <input
+                id="endDate"
+                class="form-control"
+                type="date"
+              >
+              <span id="endDateSelected" />
             </div>
           </div>
         </div>              
@@ -220,16 +281,20 @@ export default {
       negotiation: [],
       availableRoles: ROLES,
       sorting : { "id": {
-        "func": this.compareById, 
+        "func": this.sortById, 
         "order": "asc"
       }, 
       "title": {
-        "func": this.compareByTitle, 
+        "func": this.sortByTitle, 
         "order": "asc"
       }, 
       "status": {
-        "func": this.compareByTitle, 
+        "func": this.sortByStatus, 
         "order": "asc"
+      }, 
+      "creationDate": {
+        "func": this.sortByCreationDate, 
+        "order": "desc"
       }, 
       }, 
       previuosSortingColumn: ""
@@ -241,8 +306,8 @@ export default {
         console.log("deleting")
       }
     },
-    compareByTitle(a, b) {
-      console.log("called")
+    sortByTitle(a, b) {
+      console.log("called sort by title")
       if (a.payload.project.title < b.payload.project.title) {
         return this.sorting.title.order == "desc" ? 1 : -1
       }
@@ -251,8 +316,8 @@ export default {
       }
       return 0
     },
-    compareById(a, b) {
-      
+    sortById(a, b) {
+      console.log("called sort by Id")
       if (a.id < b.id) {
         return this.sorting.id.order == "desc" ? 1 : -1
       }
@@ -261,7 +326,33 @@ export default {
       }
       return 0
     },
+    sortByStatus(a, b) {
+      console.log("called sort by status")
+      if (a.status < b.status) {
+        return this.sorting.status.order == "desc" ? 1 : -1
+      }
+      if (a.status > b.status) {
+        return this.sorting.status.order == "desc" ? -1 : 1 
+      }
+      return 0
+    },
+
+    sortByCreationDate(a, b){
+      console.log("called sort by creationDate")
+      console.log(a.creationDate)
+      console.log(b.creationDate)
+      if (a.creationDate < b.creationDate) {
+        return this.sorting.creationDate.order == "desc" ? a.creationDate.localeCompare(b.creationDate) :  b.creationDate.localeCompare(a.creationDate) 
+      }
+      if (a.creationDate > b.creationDate) {
+        return this.sorting.creationDate.order == "desc" ? b.creationDate.localeCompare(a.creationDate) : a.creationDate.localeCompare(b.creationDate) 
+      }
+      return 0
+
+    },
+
     sort(column){
+      console.log(column)
       //if(this.previuosSortingColumn!= "" &&  this.previuosSortingColumn!= column){
       // change of sorting column, reset the order of the previous one 
       //  this.sorting[this.previuosSortingColumn].order = ""
@@ -277,12 +368,8 @@ export default {
       //this.previuosSortingColumn = column 
       return sortedNegotiations.sort(this.sorting[column]["func"])
     },
-
-    onChange(e) {
-      console.log(e.target.value)
-    }, 
     formatDate(date){
-      return moment(date).format("MM/DD/YYYY hh:mm")
+      return moment(date).format("MM/DD/YYYY HH:mm")
     }
   }, 
   
