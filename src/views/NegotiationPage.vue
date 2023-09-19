@@ -1,47 +1,60 @@
 <template>
-  <div v-if="isNegotiationLoaded">
-    <h4 class="mb-4">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    @click="
+      $router.go(-1)
+    "
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      class="bi bi-arrow-left-square-fill"
+      viewBox="0 0 16 16"
+    >
+      <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z" />
+    </svg>
+    Go back
+  </button>
+  <div
+    v-if="isNegotiationLoaded"
+    style="margin-top: 20px"
+  >
+    <h1>
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
-      <div class="dropdown float-end">
-        <button
-          v-if="userRole === 'ADMIN'"
-          id="dropdownMenuButton1"
-          class="btn btn-secondary dropdown-toggle me-3"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
+    </h1>
+    <div class="dropdown float-end">
+      <button
+        v-if="userRole === 'ADMIN'"
+        id="dropdownMenuButton1"
+        class="btn btn-secondary dropdown-toggle me-3"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Select an Action
+      </button>
+      <ul
+        class="dropdown-menu"
+        aria-labelledby="dropdownMenuButton1"
+      >
+        <li
+          v-for="response in responseOptions"
+          :key="response"
+          :value="response"
         >
-          Select an Action
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          @click="
-            $router.go(-1)
-          "
-        >
-          Back to Negotiations List
-        </button>
-        <ul
-          class="dropdown-menu"
-          aria-labelledby="dropdownMenuButton1"
-        >
-          <li
-            v-for="response in responseOptions"
-            :key="response"
-            :value="response"
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="updateNegotiation(response)"
           >
-            <button
-              class="dropdown-item"
-              type="button"
-              @click="updateNegotiation(response)"
-            >
-              {{ response }}
-            </button>
-          </li>
-        </ul>
-      </div>
-    </h4>
+            {{ response }}
+          </button>
+        </li>
+      </ul>
+    </div>
     <hr class="mt-10 mb-10">
     <div
       class="input-group mb-3"
@@ -72,12 +85,34 @@
       class="border input-group p-3 mb-3"
     >
       <span class="mb-3 fs-5 fw-bold text-secondary">
-        RESOURCE STATUS</span>
+        BIOBANKS</span>
+
+
       <div
         v-for="(element, key) in negotiation.resourceStatus"
         :key="element"
         class="input-group mb-3 d-flex"
       >
+        <p>
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseExample"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+          >
+            {{ key }}
+          </button>
+        </p>
+        <div
+          id="collapseExample"
+          class="collapse"
+        >
+          <div class="card card-body">
+            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+          </div>
+        </div>
         <div class="me-auto p-2">
           <label class="me-2 fw-bold">{{ key }}:</label>
           <span> {{ element }}
@@ -251,18 +286,17 @@ export default {
   },
   
   computed: {
-    requestor() {
-      return this.getRole(ROLES.RESEARCHER)
-    },
-    biobank() {
-      return this.negotiation
-        ? this.negotiation.requests[0].resources[0].id
-        : ""
-    },
-    collections() {
-      return this.negotiation
-        ? this.negotiation.requests[0].resources[0].children
-        : []
+    organizations() {
+      const organizationNames = []
+
+      for (const request of this.negotiation.requests) {
+        for (const resource of request.resources) {
+          console.log(resource)
+          const organizationName = resource.organization.name
+          organizationNames.push(organizationName)
+        }
+      }
+      return organizationNames
     },
   },
   watch: {
@@ -310,18 +344,6 @@ export default {
       })
       this.showLifecycleModal = false
     },
-    getRole: function (role) {
-      // check if the negotiation is already loaded from the backend
-      if (this.negotiation === undefined) {
-        return ""
-      } else {
-        // gets the first person with the required role
-        const person = this.negotiation.persons.filter(
-          (person) => person.role === role
-        )[0]
-        return person.name || ""
-      }
-    },
     loadPossibleEventsForResource() {
       this.retrievePossibleEventsForResource({
         negotiationId: this.negotiation.id,
@@ -337,13 +359,6 @@ export default {
         this.responseOptions = data
       })
     },
-    
-    interactNegotiationApprovalModal(negotiation) {
-      this.showNegotiationApprovalModal = true
-      this.negotiation = negotiation
-      this.loadPossibleEvents()
-    },
-
     interactPrivatePostModal(resourceId) {
       this.showPrivatePostModal = true
       this.privatePostResourceId = resourceId
@@ -377,19 +392,13 @@ export default {
   border: 1px solid gray;
   width: 80%;
 }
+h1 {
+  font-family: Calibri, Arial, sans-serif;
+  color: rgb(233,87,19);
+  font-weight: bolder;
+  font-size: 60px;
+}
 
-.close {
-  color: gray;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-.close:hover,
-.close:focus {
-  color: "$black";
-  text-decoration: none;
-  cursor: pointer;
-}
 .negotiation-list-table tbody tr:hover > td {
   cursor: pointer;
 }
