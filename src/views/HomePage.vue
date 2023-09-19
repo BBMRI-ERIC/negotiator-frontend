@@ -1,10 +1,4 @@
 <template>
-  <h1
-    class="text-center"
-    style="padding-top: 30px; align-self: center"
-  >
-    <b>BBMRI-ERIC NEGOTIATOR</b>
-  </h1>
   <div
     class="container"
   >
@@ -12,13 +6,19 @@
       class="col-10"
     >
       <div class="card">
+        <h1
+          class="text-center card-title"
+          style="padding-top: 30px; padding-bottom: 20px; align-self: center"
+        >
+          <b>BBMRI-ERIC® NEGOTIATOR</b>
+        </h1>
         <div class="card-body">
           <h2 class="card-subtitle text-center ">
             Choose how to log in
           </h2>
           <div
             class="row col-lg-12"
-            style="display: table; padding-left: 10px;  padding-bottom: 30px;"
+            style="display: table; padding-left: 10px;  padding-bottom: 20px; padding-top: 5px"
           >
             <div>
               <div class="list-group">
@@ -44,7 +44,10 @@
           style="max-height: 50px; max-width: 50%; align-self: center;"
         >
       </div>
-      <div class="text-center mt-3 mb-2">
+      <div
+        class="text-center mt-3 mb-2"
+        style="margin-top: 40px; padding-top: 20px"
+      >
         Not familiar with LS Login? Visit their <a
           target="_blank"
           href="https://lifescience-ri.eu/ls-login.html"
@@ -94,15 +97,15 @@ export default {
 }
 h1 {
   font-family: Calibri, Arial, sans-serif;
-  color: rgb(233,87,19);
+  color: rgb(0,66,128);
   font-weight: bolder;
   font-size: 60px;
 }
 h2 {
   font-family: Calibri, Arial, sans-serif;
-  color: rgb(0,66,128);
+  color: rgb(233,87,19);
   font-weight: bold;
-  padding-bottom: 20px;
+  padding-bottom: 40px;
 }
 .list-group  {
   text-align: left;
