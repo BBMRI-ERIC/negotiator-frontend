@@ -72,9 +72,11 @@
             <div class="form-check">
               <input
                 id="submitted"
+                v-model="submittedSelection"
                 class="form-check-input"
                 type="checkbox"
                 value="submitted"
+                @change="updateFilter('status', 'SUBMITTED', submittedSelection)"
               >
               <label
                 class="form-check-label"
@@ -86,9 +88,11 @@
             <div class="form-check">
               <input
                 id="ongoing"
+                v-model="ongoingSelection"
                 class="form-check-input"
                 type="checkbox"
                 value="ongoing"
+                @change="updateFilter('status', 'ONGOING', ongoingSelection)"
               >
               <label
                 class="form-check-label"
@@ -100,9 +104,11 @@
             <div class="form-check">
               <input
                 id="aborted"
+                v-model="abortedSelection"
                 class="form-check-input"
                 type="checkbox"
                 value="aborted"
+                @change="updateFilter('status', 'ABORTED', abortedSelection)"
               >
               <label
                 class="form-check-label"
@@ -141,7 +147,7 @@
       </div>
       <div class="col">
         <div
-          v-for="item in negotiations"
+          v-for="item in filteredNegotiations"
           :key="item.id"
         >
           <NegotiationCard
@@ -256,6 +262,7 @@ import { ROLES } from "@/config/consts"
 import  NegotiationCard  from "@/components/NegotiationCard.vue"
 import moment from "moment"
 
+
 export default {
   name: "NegotiationsList",
   components: { NegotiationCard, 
@@ -273,6 +280,7 @@ export default {
       validator: function (value) {
         return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
       },
+
     }
   },
   data() {
@@ -297,8 +305,39 @@ export default {
         "order": "desc"
       }, 
       }, 
-      previuosSortingColumn: ""
+      previuosSortingColumn: "", 
+      filters: {
+        "status": [],
+        "daterange": {
+          "start":"",
+          "end":""
+        }
+      },
     }
+  }, 
+  computed: {
+    filteredNegotiations: function(){
+      console.log("Computing filtered negotiations" )
+      console.log(this.filters.status.length)
+      if (this.filters.status.length == 0 && this.filters.daterange.start == "" && this.filters.daterange.end == ""){
+        console.log("no filters")
+        return this.negotiations //no filters applied 
+      } 
+      else if(this.filters.status.length>0){
+        console.log("Filter applied")
+        console.log(this.filters)
+        console.log(this.negotiations)
+        //return this.negotiations.filter(function(negotiation){
+        // return negotiation.status === "ONGOING" //this.filters["status"]
+        //return this.filters["status"].includes(negotiation.status)
+        return this.negotiations.filter(item => this.filters["status"].includes(item.status))
+      }
+      console.log("zero")
+      return 0
+      
+    }
+
+
   },
   methods: {
     abandonRequest() {
@@ -370,8 +409,28 @@ export default {
     },
     formatDate(date){
       return moment(date).format("MM/DD/YYYY HH:mm")
+    }, 
+    updateFilter(filterName, filterValue, selection){
+      console.log("Update of filter:"+filterName)
+      console.log("for value:"+filterValue)
+      console.log("selected:"+selection)
+
+      if(selection){
+        this.filters[filterName].push(filterValue)
+      }
+      else{
+        console.log("removing value"+filterValue)
+        this.filters[filterName].splice(this.filters[filterName].indexOf(filterValue), 1)
+      }
+      console.log(this.filters)
+      //let filteredNegotiations = this.negotiations.filter(function(negotiation){
+      //  return negotiation.status === "ONGOING" //this.filters["status"]
+      //})
+      //console.log("Filtered")
+      //console.log(filteredNegotiations)
+      //return filteredNegotiations
     }
-  }, 
+  }
   
 }
 </script>
