@@ -124,7 +124,7 @@
                 v-model="selectedStartDate"
                 class="form-control"
                 type="date"
-                @input="updateFilter('startDate', selectedStartDate)"
+                @input="updateFilter('dateStart', selectedStartDate)"
               >
               <span id="startDateSelected" />
             </div>
@@ -135,7 +135,7 @@
                 v-model="selectedEndDate"
                 class="form-control"
                 type="date"
-                @input="updateFilter('endDate', selectedEndDate)"
+                @input="updateFilter('dateEnd', selectedEndDate)"
               >
               <span id="endDateSelected" />
             </div>
@@ -225,8 +225,6 @@ export default {
   }, 
   computed: {
     filteredNegotiations: function(){
-      console.log("Computing filtered negotiations" )
-      console.log(this.filters.status.length)
       let filterConditions = []
       if (this.filters.status.length > 0){
         filterConditions.push(item => this.filters["status"].includes(item.status))
@@ -234,14 +232,14 @@ export default {
       if(this.filters.dateStart != ""){
         const startDate = new Date(this.filters["dateStart"])
         filterConditions.push(item => {
-          const eventDate = new Date(item.date)
+          const eventDate = new Date(item.creationDate)
           return eventDate >= startDate
         })     
       }
       if(this.filters.dateEnd != ""){
         const endDate = new Date(this.filters["dateEnd"])
         filterConditions.push(item => {
-          const eventDate = new Date(item.date)
+          const eventDate = new Date(item.creationDate)
           return eventDate <= endDate
         })     
       }
@@ -259,7 +257,6 @@ export default {
       }
     },
     sortByTitle(a, b) {
-      console.log("called sort by title")
       if (a.payload.project.title < b.payload.project.title) {
         return this.sorting.title.order == "desc" ? 1 : -1
       }
@@ -269,7 +266,6 @@ export default {
       return 0
     },
     sortById(a, b) {
-      console.log("called sort by Id")
       if (a.id < b.id) {
         return this.sorting.id.order == "desc" ? 1 : -1
       }
@@ -279,7 +275,6 @@ export default {
       return 0
     },
     sortByStatus(a, b) {
-      console.log("called sort by status")
       if (a.status < b.status) {
         return this.sorting.status.order == "desc" ? 1 : -1
       }
@@ -290,9 +285,6 @@ export default {
     },
 
     sortByCreationDate(a, b){
-      console.log("called sort by creationDate")
-      console.log(a.creationDate)
-      console.log(b.creationDate)
       const dateA = new Date(a.creationDate)
       const dateB = new Date(b.creationDate)
       return this.sorting.creationDate.order == "desc" ? dateB-dateA : dateA-dateB
@@ -300,31 +292,24 @@ export default {
     },
 
     sort(column){
-      console.log(column)
       let sortedNegotiations = this.negotiations
       return sortedNegotiations.sort(this.sorting[column]["func"])
     },
     formatDate(date){
-      return moment(date).format("MM/DD/YYYY HH:mm")
+      return moment(date).format("YYYY/MM/DD HH:mm")
     }, 
     updateFilter(filterName, filterValue, selection){
-      console.log("Update of filter:"+filterName)
-      console.log("for value:"+filterValue)
-      console.log("selected:"+selection)
-
       if(filterName == "status"){
         if(selection){
           this.filters[filterName].push(filterValue)
         }
         else{
-          console.log("removing value"+filterValue)
           this.filters[filterName].splice(this.filters[filterName].indexOf(filterValue), 1)
         }
       }
       else {
-        this.filters.filterName = filterValue
+        this.filters[filterName] = filterValue
       }
-      console.log(this.filters)
     }
   }
   

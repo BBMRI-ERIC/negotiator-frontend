@@ -3,27 +3,19 @@
     <h5 class="card-header">
       {{ negotiationTitle }}
       <span class="badge rounded-pill bg-primary float-end">
-          {{ negotiationStatus }}
+        {{ negotiationStatus }}
       </span>
     </h5>
     <div class="card-body">
-        
-        <h6 class="card-subtitle mb-2 text-muted">Negotiation ID: {{ negotiationId }}</h6>
-        <h6 class="card-subtitle mb-2 text-muted">Created on: {{ negotiationCreationDate }}</h6>
-        <h6 class="card-subtitle mb-2 text-muted">Created by: {{ negotiationSubmitter }}</h6>
-        <!--br/>
-        INVOLVED RESOURCES
-        </li>
-        
-        <li class="list-group-item">
-      <div class="column table-responsive d-flex"
-        v-for="res in negotiationResources"
-        :key="res"
-      >
-       <span class="badge rounded-pill bg-primary">
-        {{ res }}
-       </span>
-    </div-->
+      <h6 class="card-subtitle mb-2 text-muted">
+        Negotiation ID: {{ negotiationId }}
+      </h6>
+      <h6 class="card-subtitle mb-2 text-muted">
+        Created on: {{ negotiationCreationDate }}
+      </h6>
+      <h6 class="card-subtitle mb-2 text-muted">
+        Created by: {{ negotiationSubmitter }}
+      </h6>
     </div>
   </div>
 </template>
