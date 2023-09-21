@@ -73,7 +73,7 @@
             <span> {{ negotiation ? negotiation.status : "" }}</span>
           </li>
         </ul>
-        <div class="dropdown mt-3">
+        <div class="dropdown mt-3 mb-3">
           <button
             v-if="userRole === 'ADMIN'"
             id="dropdownMenuButton1"
@@ -102,6 +102,52 @@
               </button>
             </li>
           </ul>
+        </div>
+        <p>
+          <button
+            class="btn btn-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseExample"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+          >
+            <i class="bi bi-card-list" />
+            Collections
+          </button>
+        </p>
+        <div
+          id="collapseExample"
+          class="collapse"
+        >
+          <div class="card card-body">
+            <ul>
+              <li
+                v-for="(element, key) in negotiation.resourceStatus"
+                :key="element"
+              >
+                <div class="me-auto p-2">
+                  <label class="me-2 fw-bold">{{ key }}</label>
+                  <span> {{ element }}
+                    <button
+                      v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING' && isRepresentativeForResource(key)"
+                      class="btn btn-secondary btn-sm me-2 mb-1  float-end order-first"
+                      @click.stop="interactLifecycleModal(key)"
+                    >
+                      <i class="bi-gear" />
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-sm me-2 mb-1 float-end"
+                      @click.stop="interactPrivatePostModal(key)"
+                    >
+                      <i class="bi-chat-fill" />
+                    </button>
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -252,8 +298,18 @@ export default {
 
       for (const request of this.negotiation.requests) {
         for (const resource of request.resources) {
-          console.log(resource)
-          const organizationName = resource.organization.name
+          const organizationName = resource.id
+          organizationNames.push(organizationName)
+        }
+      }
+      return organizationNames
+    },
+    resourcesIds() {
+      const organizationNames = []
+
+      for (const request of this.negotiation.requests) {
+        for (const resource of request.resources) {
+          const organizationName = resource.id
           organizationNames.push(organizationName)
         }
       }
@@ -285,6 +341,7 @@ export default {
     ...mapActions([
       "retrieveNegotiationById",
       "retrievePostsByNegotiationId",
+      "retrieveUserRoles",
       "addMessageToNegotiation",
       "markMessageAsRead",
       "retrievePossibleEvents",
@@ -295,6 +352,11 @@ export default {
     capitalize(word) {
       const lower = word.toLowerCase()
       return word.charAt(0).toUpperCase() + lower.slice(1)
+    },
+    async isRepresentativeForResource(resourceId) {
+      const roles = await this.retrieveUserRoles()
+      return !!roles.includes(resourceId)
+
     },
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
