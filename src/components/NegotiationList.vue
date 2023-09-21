@@ -128,8 +128,10 @@
               <label for="startDate">Start: </label>
               <input
                 id="startDate"
+                v-model="selectedStartDate"
                 class="form-control"
                 type="date"
+                @input="updateFilter('startDate', selectedStartDate)"
               >
               <span id="startDateSelected" />
             </div>
@@ -137,8 +139,10 @@
               <label for="endDate">End:</label>
               <input
                 id="endDate"
+                v-model="selectedEndDate"
                 class="form-control"
                 type="date"
+                @input="updateFilter('endDate', selectedEndDate)"
               >
               <span id="endDateSelected" />
             </div>
@@ -308,10 +312,8 @@ export default {
       previuosSortingColumn: "", 
       filters: {
         "status": [],
-        "daterange": {
-          "start":"",
-          "end":""
-        }
+        "dateStart": "",
+        "dateEnd" : ""
       },
     }
   }, 
@@ -319,23 +321,43 @@ export default {
     filteredNegotiations: function(){
       console.log("Computing filtered negotiations" )
       console.log(this.filters.status.length)
-      if (this.filters.status.length == 0 && this.filters.daterange.start == "" && this.filters.daterange.end == ""){
-        console.log("no filters")
-        return this.negotiations //no filters applied 
-      } 
-      else if(this.filters.status.length>0){
-        console.log("Filter applied")
-        console.log(this.filters)
-        console.log(this.negotiations)
-        //return this.negotiations.filter(function(negotiation){
-        // return negotiation.status === "ONGOING" //this.filters["status"]
-        //return this.filters["status"].includes(negotiation.status)
-        return this.negotiations.filter(item => this.filters["status"].includes(item.status))
+      let filterConditions = []
+      if (this.filters.status.length > 0){
+        filterConditions.push(item => this.filters["status"].includes(item.status))
       }
-      console.log("zero")
-      return 0
-      
+      if(this.filters.dateStart != ""){
+        const startDate = new Date(this.filters["dateStart"])
+        filterConditions.push(item => {
+          const eventDate = new Date(item.date)
+          return eventDate >= startDate
+        })     
+      }
+      if(this.filters.dateEnd != ""){
+        const endDate = new Date(this.filters["dateEnd"])
+        filterConditions.push(item => {
+          const eventDate = new Date(item.date)
+          return eventDate <= endDate
+        })     
+      }
+
+      return filterConditions.length == 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
+
+
+      //if (this.filters.status.length == 0 && this.filters.daterange.start == "" && this.filters.daterange.end == ""){
+      //  console.log("no filters")
+      //  return this.negotiations //no filters applied 
+      //} 
+      //else if(this.filters.status.length>0 && this.filters.daterange.start == "" && this.filters.daterange.end == ""){
+      // only status filter is applied
+      //  console.log("Filter applied")
+      //  console.log(this.filters)
+      //  console.log(this.negotiations)
+      //return this.negotiations.filter(function(negotiation){
+      // return negotiation.status === "ONGOING" //this.filters["status"]
+      //return this.filters["status"].includes(negotiation.status)
+      //  return this.negotiations.filter(item => this.filters["status"].includes(item.status))
     }
+    
 
 
   },
@@ -415,13 +437,21 @@ export default {
       console.log("for value:"+filterValue)
       console.log("selected:"+selection)
 
-      if(selection){
-        this.filters[filterName].push(filterValue)
+      if(filterName == "status"){
+        if(selection){
+          this.filters[filterName].push(filterValue)
+        }
+        else{
+          console.log("removing value"+filterValue)
+          this.filters[filterName].splice(this.filters[filterName].indexOf(filterValue), 1)
+        }
+      
+
       }
-      else{
-        console.log("removing value"+filterValue)
-        this.filters[filterName].splice(this.filters[filterName].indexOf(filterValue), 1)
+      else {
+        this.filters.filterName = filterValue
       }
+      
       console.log(this.filters)
       //let filteredNegotiations = this.negotiations.filter(function(negotiation){
       //  return negotiation.status === "ONGOING" //this.filters["status"]
