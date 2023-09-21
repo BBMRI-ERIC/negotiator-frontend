@@ -25,127 +25,88 @@
     <h1>
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
     </h1>
-    <div class="dropdown float-end">
-      <button
-        v-if="userRole === 'ADMIN'"
-        id="dropdownMenuButton1"
-        class="btn btn-secondary dropdown-toggle me-3"
-        type="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Select an Action
-      </button>
-      <ul
-        class="dropdown-menu"
-        aria-labelledby="dropdownMenuButton1"
-      >
-        <li
-          v-for="response in responseOptions"
-          :key="response"
-          :value="response"
-        >
-          <button
-            class="dropdown-item"
-            type="button"
-            @click="updateNegotiation(response)"
+    <hr class="mt-10 mb-10">
+    <div class="row">
+      <div class="col-8">
+        <ul class="border mt-3">
+          <li
+            v-for="(element, key) in negotiation.payload"
+            :key="element"
+            class="list-group-item  border-bottom"
           >
-            {{ response }}
-          </button>
-        </li>
-      </ul>
-    </div>
-    <hr class="mt-10 mb-10">
-    <div
-      class="input-group mb-3"
-    >
-      <label class="me-2 fw-bold">Negotiation ID:</label>
-      <span> {{ negotiation ? negotiation.id : "" }}</span>
-    </div>
-    
-    <hr class="mt-10 mb-10">
-
-    <div
-      v-for="(element, key) in negotiation.payload"
-      :key="element"
-      class="border input-group p-3 mb-3"
-    >
-      <span class="mb-3 fs-5 fw-bold text-secondary">
-        {{ key.toUpperCase() }}</span>
-      <div
-        v-for="(subelement, subelementkey) in element"
-        :key="subelement"
-        class="input-group mb-3"
-      >
-        <label class="me-2 fw-bold">{{ subelementkey }}:</label>
-        <span> {{ subelement }}</span>
+            <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+              {{ key.toUpperCase() }}</span>
+            <div
+              v-for="(subelement, subelementkey) in element"
+              :key="subelement"
+              class="mt-3"
+            >
+              <label
+                class="me-2 ml=fw-bold"
+                style="font-weight: bold"
+              >{{ subelementkey.toUpperCase() }}:</label>
+              <span> {{ subelement }}</span>
+            </div>
+          </li>
+        </ul>
       </div>
-    </div>
-    <div
-      class="border input-group p-3 mb-3"
-    >
-      <span class="mb-3 fs-5 fw-bold text-secondary">
-        BIOBANKS</span>
-
-
       <div
-        v-for="(element, key) in negotiation.resourceStatus"
-        :key="element"
-        class="input-group mb-3 d-flex"
+        class="col-4"
       >
-        <p>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <div class="fw-bold text-secondary">
+              Creator:
+            </div>
+            <div>{{ creatorName }}</div>
+          </li>
+          <li class="list-group-item">
+            <div class="fw-bold text-secondary">
+              Negotiation ID:
+            </div>
+            <span> {{ negotiation ? negotiation.id : "" }}</span>
+          </li>
+          <li class="list-group-item">
+            <div class="fw-bold text-secondary">
+              Status:
+            </div>
+            <span> {{ negotiation ? negotiation.status : "" }}</span>
+          </li>
+        </ul>
+        <div class="dropdown mt-3">
           <button
-            class="btn btn-primary"
+            v-if="userRole === 'ADMIN'"
+            id="dropdownMenuButton1"
+            class="btn btn-secondary dropdown-toggle me-3"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseExample"
+            data-bs-toggle="dropdown"
             aria-expanded="false"
-            aria-controls="collapseExample"
           >
-            {{ key }}
+            Select an Action
           </button>
-        </p>
-        <div
-          id="collapseExample"
-          class="collapse"
-        >
-          <div class="card card-body">
-            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-          </div>
-        </div>
-        <div class="me-auto p-2">
-          <label class="me-2 fw-bold">{{ key }}:</label>
-          <span> {{ element }}
-          </span>
-        </div>
-        <div class="d-flex align-items-end flex-column">
-          <button
-            v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING'"
-            type="button"
-            class="btn btn-secondary btn-sm me-2 mb-1 order-first"
-            @click.stop="interactLifecycleModal(key)"
+          <ul
+            class="dropdown-menu"
+            aria-labelledby="dropdownMenuButton1"
           >
-            <font-awesome-icon
-              icon="fa fa-pencil"
-              fixed-width
-            />
-            Update State
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary btn-sm me-2 mb-1 order-last"
-            @click.stop="interactPrivatePostModal(key)"
-          >
-            <font-awesome-icon
-              icon="fa fa-pencil"
-              fixed-width
-            />
-            Private posts
-          </button>
+            <li
+              v-for="response in responseOptions"
+              :key="response"
+              :value="response"
+            >
+              <button
+                class="dropdown-item"
+                type="button"
+                @click="updateNegotiation(response)"
+              >
+                {{ response }}
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-    <NegotiationPosts 
+    <NegotiationPosts
+      class="col-8"
       :negotiation="negotiation"
       :user-role="userRole"
       scope="public"
@@ -298,6 +259,14 @@ export default {
       }
       return organizationNames
     },
+    creatorName() {
+      for (const person of this.negotiation.persons) {
+        if (person.role === "RESEARCHER") {
+          return person.name
+        }
+      }
+      return ""
+    },
   },
   watch: {
     negotiation(n) {
@@ -323,6 +292,10 @@ export default {
       "updateNegotiationStatus",
       "updateResourceStatus",
     ]),
+    capitalize(word) {
+      const lower = word.toLowerCase()
+      return word.charAt(0).toUpperCase() + lower.slice(1)
+    },
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     },
@@ -384,6 +357,12 @@ export default {
 }
 .modal-title {
   font-size: large;
+}
+.list-group-item {
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-bottom: lightgray 1px solid;
 }
 .modal-content {
   background-color: "$light";

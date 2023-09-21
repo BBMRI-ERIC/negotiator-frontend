@@ -1,22 +1,5 @@
 <template>
   <div v-if="negotiation && negotiation.postsEnabled">
-    <h3>Send a {{ scope }} message</h3>
-    <form
-      class="mb-4"
-      @submit.prevent="addMessage"
-    >
-      <textarea
-        v-model="message.text"
-        class="form-control mb-3"
-        style="min-width: 100%"
-      />
-      <button
-        type="submit"
-        class="btn btn-secondary float-end"
-      >
-        Send message
-      </button>
-    </form>
     <h3>Comments</h3>
     <div
       v-for="post in posts"
@@ -37,11 +20,28 @@
         {{ post.text }}
       </div>
     </div>
+    <h3>Send a {{ scope }} message</h3>
+    <form
+      class="mb-4"
+      @submit.prevent="addMessage"
+    >
+      <textarea
+        v-model="message.text"
+        class="form-control mb-3"
+        style="min-width: 100%"
+      />
+      <button
+        type="submit"
+        class="btn btn-secondary float-end"
+      >
+        Send message
+      </button>
+    </form>
   </div>
   <div v-else>
     <h5>
-      This negotiation has still to be approved. Wait for a biobanker approval
-      before interacting with the counterpart.
+      Your request is waiting for approval by our team. No need to keep refreshing the page,
+      you will be notified of any changes via email.
     </h5>
   </div>
 </template>
@@ -97,6 +97,9 @@ export default {
       "addMessageToNegotiation",
       "markMessageAsRead",
     ]),
+    resetForm() {
+      this.message = ""
+    },
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     },
@@ -131,6 +134,7 @@ export default {
           this.posts.push(post)
         }
       })
+      this.resetForm()
     },
     async updateMessageStatus(inputMessageId, inputMessageText) {
       await this.markMessageAsRead({
