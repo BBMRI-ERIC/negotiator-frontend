@@ -6,16 +6,7 @@
       $router.go(-1)
     "
   >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      class="bi bi-arrow-left-square-fill"
-      viewBox="0 0 16 16"
-    >
-      <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z" />
-    </svg>
+    <i class="bi-arrow-left" />
     Go back
   </button>
   <div
@@ -56,9 +47,9 @@
         <ul class="list-group">
           <li class="list-group-item">
             <div class="fw-bold text-secondary">
-              Creator:
+              Author:
             </div>
-            <div>{{ creatorName }}</div>
+            <div>{{ authorName }}</div>
           </li>
           <li class="list-group-item">
             <div class="fw-bold text-secondary">
@@ -70,7 +61,66 @@
             <div class="fw-bold text-secondary">
               Status:
             </div>
-            <span> {{ negotiation ? negotiation.status : "" }}</span>
+            <span> {{ negotiation ? negotiation.status : "" }}
+              <strong
+                class="float-end"
+                type="button"
+                role="button"
+                @click="showConfirmationDialog"
+              >
+                <i class="bi bi-trash" />
+                Abandon
+              </strong>
+            </span>
+          </li>
+          <li class="list-group-item">
+            <div class="fw-bold text-secondary">
+              Collections:
+            </div>
+            <p
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseExample"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            >
+              <i class="bi bi-card-list" />
+              total ({{ numberOfCollections }})
+            </p>
+            <div
+              id="collapseExample"
+              class="collapse"
+            >
+              <div class="card card-body border-0">
+                <ul>
+                  <li
+                    v-for="collection in collections"
+                    :key="collection"
+                  >
+                    <div class="me-auto p-2">
+                      <label class="me-2 fw-bold small">{{ collection }}</label>
+                      <span>
+                        {{ getStatusForCollection(collection) }}
+                        <button
+                          v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING' && isRepresentativeForResource(key)"
+                          class="btn btn-secondary btn-sm me-2 mb-1  float-end order-first"
+                          @click.stop="interactLifecycleModal(key)"
+                        >
+                          <i class="bi-gear" />
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-secondary btn-sm me-2 mb-1 float-end"
+                          @click.stop="interactPrivatePostModal(key)"
+                        >
+                          <i class="bi-chat-fill" />
+                        </button>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </li>
         </ul>
         <div class="dropdown mt-3 mb-3">
@@ -102,52 +152,6 @@
               </button>
             </li>
           </ul>
-        </div>
-        <p>
-          <button
-            class="btn btn-secondary"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseExample"
-            aria-expanded="false"
-            aria-controls="collapseExample"
-          >
-            <i class="bi bi-card-list" />
-            Collections
-          </button>
-        </p>
-        <div
-          id="collapseExample"
-          class="collapse"
-        >
-          <div class="card card-body">
-            <ul>
-              <li
-                v-for="(element, key) in negotiation.resourceStatus"
-                :key="element"
-              >
-                <div class="me-auto p-2">
-                  <label class="me-2 fw-bold">{{ key }}</label>
-                  <span> {{ element }}
-                    <button
-                      v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING' && isRepresentativeForResource(key)"
-                      class="btn btn-secondary btn-sm me-2 mb-1  float-end order-first"
-                      @click.stop="interactLifecycleModal(key)"
-                    >
-                      <i class="bi-gear" />
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                      @click.stop="interactPrivatePostModal(key)"
-                    >
-                      <i class="bi-chat-fill" />
-                    </button>
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>
@@ -205,6 +209,7 @@
       </div>
     </div>
   </div>
+
   <div
     v-if="showLifecycleModal"
     class="modal"
@@ -248,6 +253,10 @@
       </div>
     </div>
   </div>
+  <confirmation-modal
+    v-if="showConfirmationModal"
+    @close-confirmation-modal="showConfirmationDialog"
+  />
 </template>
 
 <script>
@@ -255,10 +264,12 @@ import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
 import moment from "moment"
 import  NegotiationPosts  from "@/components/NegotiationPosts.vue"
+import ConfirmationModal from "@/components/ConfirmationModal.vue"
 
 export default {
   name: "NegotiationPage",
-  components: { NegotiationPosts, 
+  components: {
+    ConfirmationModal, NegotiationPosts,
   },
   props: {
     negotiationId: {
@@ -278,12 +289,13 @@ export default {
         text: "",
         resourceId: undefined,
       },
+      roles: [],
       isNegotiationLoaded:false,
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
       showNegotiationApprovalModal: false,
-      showModal: false,
+      showConfirmationModal: false,
       showPrivatePostModal: false,
       showLifecycleModal: false,
       privatePostResourceId: undefined,
@@ -304,6 +316,27 @@ export default {
       }
       return organizationNames
     },
+    collections() {
+      const collections = []
+
+      for (const request of this.negotiation.requests) {
+        for (const resource of request.resources) {
+          const collection = resource.id
+          collections.push(collection)
+        }
+      }
+      return collections
+    },
+    numberOfCollections() {
+      let counter = 0
+      for (const request of this.negotiation.requests) {
+        for (const resource of request.resources) {
+          counter++
+        }
+      }
+      return counter
+
+    },
     resourcesIds() {
       const organizationNames = []
 
@@ -315,7 +348,7 @@ export default {
       }
       return organizationNames
     },
-    creatorName() {
+    authorName() {
       for (const person of this.negotiation.persons) {
         if (person.role === "RESEARCHER") {
           return person.name
@@ -336,6 +369,7 @@ export default {
       negotiationId: this.negotiationId,
     }) 
     this.loadPossibleEvents()
+    this.roles = await this.retrieveUserRoles()
   },
   methods: {
     ...mapActions([
@@ -349,14 +383,19 @@ export default {
       "updateNegotiationStatus",
       "updateResourceStatus",
     ]),
-    capitalize(word) {
-      const lower = word.toLowerCase()
-      return word.charAt(0).toUpperCase() + lower.slice(1)
+    showConfirmationDialog() {
+      this.showConfirmationModal = !this.showConfirmationModal
     },
     async isRepresentativeForResource(resourceId) {
-      const roles = await this.retrieveUserRoles()
-      return !!roles.includes(resourceId)
+      return !!this.roles.includes(resourceId)
 
+    },
+    getStatusForCollection(collectionId) {
+      if (this.negotiation.resourceStatus && typeof this.negotiation.resourceStatus === "object") {
+        return this.negotiation.resourceStatus[collectionId] || ""
+      } else {
+        return ""
+      }
     },
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
@@ -410,12 +449,10 @@ export default {
 .modal {
   display: block;
   position: fixed;
-  z-index: 1;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
 }
 .modal-title {
   font-size: large;
