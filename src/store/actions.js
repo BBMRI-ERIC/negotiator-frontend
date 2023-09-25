@@ -64,7 +64,6 @@ export default {
               commit("setNotification", "There was an error saving the attachment")
               return null
             })
-          
           data.payload[sectionName][criteriaName] = attachmentsIds
           data.attachments.push(attachmentsIds)
         }
