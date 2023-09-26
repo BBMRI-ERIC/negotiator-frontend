@@ -38,7 +38,7 @@
         v-for="section in accessCriteria.sections"
         :key="section.name"
         :title="section.label"
-        class="form-step border rounded px-2 py-3 mb-2"
+        class="form-step border rounded-2 px-2 py-3 mb-2"
       >
         <div
           v-for="criteria in section.accessCriteria"
@@ -57,6 +57,14 @@
             :required="criteria.required"
           />
           <input
+            v-else-if="criteria.type === 'file'"
+            accept=".pdf"
+            class="form-control"
+            :required="criteria.required"
+            :type="criteria.type"
+            @change="handleFileUpload($event, section.name, criteria.name)"
+          >
+          <input
             v-else
             v-model="negotiationCriteria[section.name][criteria.name]"
             :type="criteria.type"
@@ -69,16 +77,21 @@
         <div
           v-for="section in accessCriteria.sections"
           :key="section.name"
-          class="border input-group p-3 mb-3"
+          class="border rounded-2 input-group p-3 mb-2 mb-3"
         >
-          <span class="mb-4 fs-4 fw-bold text-secondary">{{ section.label }}</span>
+          <span class="mb-3 fs-4 fw-bold text-secondary">{{ section.label.toUpperCase() }}</span>
           <div
             v-for="criteria in section.accessCriteria"
             :key="criteria.name"
-            class="input-group mb-3"
+            class="input-group mb-2"
           >
             <label class="me-2 fw-bold">{{ criteria.label }}:</label>
-            <span>{{ negotiationCriteria[section.name][criteria.name] }}</span>
+            <span v-if="isAttachment(negotiationCriteria[section.name][criteria.name])">
+              {{ negotiationCriteria[section.name][criteria.name].name }}
+            </span>
+            <span v-else>
+              {{ negotiationCriteria[section.name][criteria.name] }}
+            </span>
           </div>
         </div>
       </tab-content>
@@ -170,7 +183,7 @@ export default {
       await this.createNegotiation({
         data: {
           requests: [this.requestId],
-          payload: this.negotiationCriteria
+          payload: this.negotiationCriteria,
         }
       }).then((negotiationId) => {
         if (negotiationId) {
@@ -179,6 +192,12 @@ export default {
             "You can follow the status of this negotiation in your researcher page")
         } 
       })
+    },
+    isAttachment(value) {
+      return value instanceof File || value instanceof Object
+    },
+    handleFileUpload(event, section, criteria) {
+      this.negotiationCriteria[section][criteria] = event.target.files[0]
     },
     showNotification(variant, header, body) {
       this.notificationVariant = variant

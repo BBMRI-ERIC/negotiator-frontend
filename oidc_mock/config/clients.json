@@ -7,7 +7,7 @@
     "AllowAccessTokensViaBrowser": true,
     "RedirectUris": ["http://localhost:8080/logged-in"],
     "AllowedScopes": ["openid", "profile", "email", "permissions"],
-    "IdentityTokenLifetime": 3600,
+    "IdentityTokenLifetime": 36000,
     "AccessTokenLifetime": 3600,
     "ClientClaimsPrefix": ""
   }

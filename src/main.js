@@ -4,7 +4,7 @@ import router from "./router"
 import store from "./store"
 import { sync } from "vuex-router-sync"
 import { library } from "@fortawesome/fontawesome-svg-core"
-import { faPencil, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faDownload, faPencil, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css"
@@ -13,6 +13,7 @@ import "bootstrap"
 library.add(faSpinner)
 library.add(faPencil)
 library.add(faTrash)
+library.add(faDownload)
 
 const app = createApp(App)
 

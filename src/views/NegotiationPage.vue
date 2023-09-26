@@ -46,21 +46,33 @@
     <div
       v-for="(element, key) in negotiation.payload"
       :key="element"
-      class="border input-group p-3 mb-3"
+      class="border rounded-2 input-group p-3 mb-3"
     >
       <span class="mb-3 fs-5 fw-bold text-secondary">
         {{ key.toUpperCase() }}</span>
       <div
         v-for="(subelement, subelementkey) in element"
         :key="subelement"
-        class="input-group mb-3"
+        class="input-group mb-2"
       >
         <label class="me-2 fw-bold">{{ subelementkey }}:</label>
-        <span> {{ subelement }}</span>
+        <span v-if="isAttachment(subelement)">
+          {{ subelement.name }}
+          <font-awesome-icon
+            v-if="isAttachment(subelement)"
+            class="ms-1 cursor-pointer"
+            icon="fa fa-download"
+            fixed-width
+            @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
+          />
+        </span>
+        <span v-else>
+          {{ subelement }}
+        </span>
       </div>
     </div>
     <div
-      class="border input-group p-3 mb-3"
+      class="border rounded-2 input-group p-3 mb-3"
     >
       <span class="mb-3 fs-5 fw-bold text-secondary">
         RESOURCE STATUS</span>
@@ -78,13 +90,9 @@
           <button
             v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING'"
             type="button"
-            class="btn btn-secondary btn-sm me-2 mb-1 order-first"
+            class="btn btn-secondary btn-sm me-2 mb-2 order-first"
             @click.stop="interactLifecycleModal(key)"
           >
-            <font-awesome-icon
-              icon="fa fa-pencil"
-              fixed-width
-            />
             Update State
           </button>
           <button
@@ -92,10 +100,6 @@
             class="btn btn-secondary btn-sm me-2 mb-1 order-last"
             @click.stop="interactPrivatePostModal(key)"
           >
-            <font-awesome-icon
-              icon="fa fa-pencil"
-              fixed-width
-            />
             Private posts
           </button>
         </div>
@@ -155,7 +159,7 @@
     </div>
   </div>
   <div
-    v-if="showLifecycleModal"
+    v-show="showLifecycleModal"
     class="modal"
   >
     <div class="modal-dialog">
@@ -200,10 +204,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
-import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
+import NegotiationPosts from "@/components/NegotiationPosts.vue"
+import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import  NegotiationPosts  from "@/components/NegotiationPosts.vue"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NegotiationPage",
@@ -227,20 +231,18 @@ export default {
         text: "",
         resourceId: undefined,
       },
-      isNegotiationLoaded:false,
+      isNegotiationLoaded: false,
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
       showNegotiationApprovalModal: false,
-      showModal: false,
       showPrivatePostModal: false,
       showLifecycleModal: false,
       privatePostResourceId: undefined,
       lifecycleResourceId: undefined,
       availableRoles: ROLES
     }
-  },
-  
+  },  
   computed: {
     requestor() {
       return this.getRole(ROLES.RESEARCHER)
@@ -279,9 +281,13 @@ export default {
       "retrievePossibleEventsForResource",
       "updateNegotiationStatus",
       "updateResourceStatus",
+      "downloadAttachment"
     ]),
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
+    },
+    isAttachment(value) {
+      return value instanceof Object
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
@@ -327,14 +333,7 @@ export default {
       }).then((data) => {
         this.responseOptions = data
       })
-    },
-    
-    interactNegotiationApprovalModal(negotiation) {
-      this.showNegotiationApprovalModal = true
-      this.negotiation = negotiation
-      this.loadPossibleEvents()
-    },
-
+    },    
     interactPrivatePostModal(resourceId) {
       this.showPrivatePostModal = true
       this.privatePostResourceId = resourceId
@@ -343,7 +342,7 @@ export default {
       this.showLifecycleModal = true
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource()
-    },
+    }
   },
 }
 </script>
@@ -367,21 +366,5 @@ export default {
   padding: 20px;
   border: 1px solid gray;
   width: 80%;
-}
-
-.close {
-  color: gray;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-.close:hover,
-.close:focus {
-  color: "$black";
-  text-decoration: none;
-  cursor: pointer;
-}
-.negotiation-list-table tbody tr:hover > td {
-  cursor: pointer;
 }
 </style>
