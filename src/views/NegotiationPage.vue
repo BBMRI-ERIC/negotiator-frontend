@@ -41,6 +41,50 @@
           </li>
         </ul>
       </div>
+    </h4>
+    <hr class="mt-10 mb-10">
+    <div
+      class="input-group mb-3"
+    >
+      <label class="me-2 fw-bold">Negotiation ID:</label>
+      <span> {{ negotiation ? negotiation.id : "" }}</span>
+    </div>
+    
+    <hr class="mt-10 mb-10">
+
+    <div
+      v-for="(element, key) in negotiation.payload"
+      :key="element"
+      class="border rounded-2 input-group p-3 mb-3"
+    >
+      <span class="mb-3 fs-5 fw-bold text-secondary">
+        {{ key.toUpperCase() }}</span>
+      <div
+        v-for="(subelement, subelementkey) in element"
+        :key="subelement"
+        class="input-group mb-2"
+      >
+        <label class="me-2 fw-bold">{{ subelementkey }}:</label>
+        <span v-if="isAttachment(subelement)">
+          {{ subelement.name }}
+          <font-awesome-icon
+            v-if="isAttachment(subelement)"
+            class="ms-1 cursor-pointer"
+            icon="fa fa-download"
+            fixed-width
+            @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
+          />
+        </span>
+        <span v-else>
+          {{ subelement }}
+        </span>
+      </div>
+    </div>
+    <div
+      class="border rounded-2 input-group p-3 mb-3"
+    >
+      <span class="mb-3 fs-5 fw-bold text-secondary">
+        RESOURCE STATUS</span>
       <div
         class="col-4"
       >
@@ -211,7 +255,7 @@
   </div>
 
   <div
-    v-if="showLifecycleModal"
+    v-show="showLifecycleModal"
     class="modal"
   >
     <div class="modal-dialog">
@@ -260,11 +304,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
-import { dateFormat, MESSAGE_STATUS, ROLES } from "@/config/consts"
+import NegotiationPosts from "@/components/NegotiationPosts.vue"
+import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import  NegotiationPosts  from "@/components/NegotiationPosts.vue"
-import ConfirmationModal from "@/components/ConfirmationModal.vue"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NegotiationPage",
@@ -291,6 +335,7 @@ export default {
       },
       roles: [],
       isNegotiationLoaded:false,
+      isNegotiationLoaded: false,
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
@@ -302,8 +347,7 @@ export default {
       lifecycleResourceId: undefined,
       availableRoles: ROLES
     }
-  },
-  
+  },  
   computed: {
     organizations() {
       const organizationNames = []
@@ -382,6 +426,7 @@ export default {
       "retrievePossibleEventsForResource",
       "updateNegotiationStatus",
       "updateResourceStatus",
+      "downloadAttachment"
     ]),
     showConfirmationDialog() {
       this.showConfirmationModal = !this.showConfirmationModal
@@ -399,6 +444,9 @@ export default {
     },
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
+    },
+    isAttachment(value) {
+      return value instanceof Object
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
@@ -441,7 +489,7 @@ export default {
       this.showLifecycleModal = true
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource()
-    },
+    }
   },
 }
 </script>
@@ -476,7 +524,6 @@ h1 {
   font-weight: bolder;
   font-size: 60px;
 }
-
 .negotiation-list-table tbody tr:hover > td {
   cursor: pointer;
 }

@@ -30,6 +30,11 @@ module.exports = {
     "semi": [
       "error",
       "never"
+    ],
+    "key-spacing": [
+      "error", { 
+        "beforeColon": false 
+      }
     ]
   }
 }
