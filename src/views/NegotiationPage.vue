@@ -16,7 +16,6 @@
     <h1>
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
     </h1>
-    <hr class="mt-10 mb-10">
     <div class="row">
       <div class="col-8">
         <ul class="border mt-3">
@@ -36,55 +35,76 @@
                 class="me-2 ml=fw-bold"
                 style="font-weight: bold"
               >{{ subelementkey.toUpperCase() }}:</label>
-              <span> {{ subelement }}</span>
+              <span v-if="isAttachment(subelement)">
+                {{ subelement.name }}
+                <font-awesome-icon
+                  v-if="isAttachment(subelement)"
+                  class="ms-1 cursor-pointer"
+                  icon="fa fa-download"
+                  fixed-width
+                  @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
+                />
+              </span>
+              <span v-else>
+                {{ subelement }}
+              </span>
+            </div>
+          </li>
+          <li class="list-group-item ">
+            <p
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseExample"
+              aria-expanded="false"
+              aria-controls="collapseExample"
+            >
+              <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+                <i class="bi bi-card-list" />
+                Collections ({{ numberOfCollections }})
+              </span>
+            </p>
+            <div
+              id="collapseExample"
+              class="collapse"
+            >
+              <div class="card card-body border-0">
+                <ul>
+                  <li
+                    v-for="collection in collections"
+                    :key="collection"
+                  >
+                    <div class="me-auto p-2">
+                      <label class="me-2 fw-bold small">{{ collection }}</label>
+                      <span>
+                        {{ getStatusForCollection(collection) }}
+                        <button
+                          v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING' && isRepresentativeForResource(collection)"
+                          class="btn btn-secondary btn-sm me-2 mb-1  float-end order-first"
+                          @click.stop="interactLifecycleModal(collection)"
+                        >
+                          <i class="bi-gear" />
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-secondary btn-sm me-2 mb-1 float-end"
+                          @click.stop="interactPrivatePostModal(key)"
+                        >
+                          <i class="bi-chat-fill" />
+                        </button>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
           </li>
         </ul>
+        <NegotiationPosts
+          :negotiation="negotiation"
+          :user-role="userRole"
+          scope="public"
+        />
       </div>
-    </h4>
-    <hr class="mt-10 mb-10">
-    <div
-      class="input-group mb-3"
-    >
-      <label class="me-2 fw-bold">Negotiation ID:</label>
-      <span> {{ negotiation ? negotiation.id : "" }}</span>
-    </div>
-    
-    <hr class="mt-10 mb-10">
-
-    <div
-      v-for="(element, key) in negotiation.payload"
-      :key="element"
-      class="border rounded-2 input-group p-3 mb-3"
-    >
-      <span class="mb-3 fs-5 fw-bold text-secondary">
-        {{ key.toUpperCase() }}</span>
-      <div
-        v-for="(subelement, subelementkey) in element"
-        :key="subelement"
-        class="input-group mb-2"
-      >
-        <label class="me-2 fw-bold">{{ subelementkey }}:</label>
-        <span v-if="isAttachment(subelement)">
-          {{ subelement.name }}
-          <font-awesome-icon
-            v-if="isAttachment(subelement)"
-            class="ms-1 cursor-pointer"
-            icon="fa fa-download"
-            fixed-width
-            @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
-          />
-        </span>
-        <span v-else>
-          {{ subelement }}
-        </span>
-      </div>
-    </div>
-    <div
-      class="border rounded-2 input-group p-3 mb-3"
-    >
-      <span class="mb-3 fs-5 fw-bold text-secondary">
-        RESOURCE STATUS</span>
       <div
         class="col-4"
       >
@@ -116,55 +136,6 @@
                 Abandon
               </strong>
             </span>
-          </li>
-          <li class="list-group-item">
-            <div class="fw-bold text-secondary">
-              Collections:
-            </div>
-            <p
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseExample"
-              aria-expanded="false"
-              aria-controls="collapseExample"
-            >
-              <i class="bi bi-card-list" />
-              total ({{ numberOfCollections }})
-            </p>
-            <div
-              id="collapseExample"
-              class="collapse"
-            >
-              <div class="card card-body border-0">
-                <ul>
-                  <li
-                    v-for="collection in collections"
-                    :key="collection"
-                  >
-                    <div class="me-auto p-2">
-                      <label class="me-2 fw-bold small">{{ collection }}</label>
-                      <span>
-                        {{ getStatusForCollection(collection) }}
-                        <button
-                          v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING' && isRepresentativeForResource(key)"
-                          class="btn btn-secondary btn-sm me-2 mb-1  float-end order-first"
-                          @click.stop="interactLifecycleModal(key)"
-                        >
-                          <i class="bi-gear" />
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                          @click.stop="interactPrivatePostModal(key)"
-                        >
-                          <i class="bi-chat-fill" />
-                        </button>
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </li>
         </ul>
         <div class="dropdown mt-3 mb-3">
@@ -199,12 +170,6 @@
         </div>
       </div>
     </div>
-    <NegotiationPosts
-      class="col-8"
-      :negotiation="negotiation"
-      :user-role="userRole"
-      scope="public"
-    />
   </div>
   <div
     v-else
@@ -222,6 +187,8 @@
       </div>
     </div>
   </div>
+  <hr class="mt-10 mb-10">
+
   <div
     v-if="showPrivatePostModal"
     class="modal"
@@ -300,6 +267,7 @@
   <confirmation-modal
     v-if="showConfirmationModal"
     @close-confirmation-modal="showConfirmationDialog"
+    @abandon-negotiation="updateNegotiation('ABANDON')"
   />
 </template>
 
@@ -307,8 +275,8 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import  NegotiationPosts  from "@/components/NegotiationPosts.vue"
 import { mapActions, mapGetters } from "vuex"
+import ConfirmationModal from "@/components/ConfirmationModal.vue"
 
 export default {
   name: "NegotiationPage",
@@ -334,7 +302,6 @@ export default {
         resourceId: undefined,
       },
       roles: [],
-      isNegotiationLoaded:false,
       isNegotiationLoaded: false,
       responseOptions: [],
       selectedItem: "",

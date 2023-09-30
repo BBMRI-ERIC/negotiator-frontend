@@ -74,7 +74,6 @@ export default {
   },
   data() {
     return {
-      // negotiation: undefined,
       posts: [],
       message: {
         text: "",
@@ -98,7 +97,7 @@ export default {
       "markMessageAsRead",
     ]),
     resetForm() {
-      this.message = ""
+      this.message.text = ""
     },
     computed: {
       ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
@@ -135,19 +134,7 @@ export default {
         }
       })
       this.resetForm()
-    },
-    async updateMessageStatus(inputMessageId, inputMessageText) {
-      await this.markMessageAsRead({
-        data: {
-          resourceId: this.resourceId,
-          text: inputMessageText,
-          negotiationId: this.negotiation.id,
-          postId: inputMessageId,
-          status: MESSAGE_STATUS.READ,
-          type: this.scope.toUpperCase()
-        },
-      })
-    },
+    }
   },
 }
 </script>

@@ -12,12 +12,17 @@
           <p>
             This is means that you will not be able to access this negotiation again.
           </p>
-          <div class="modal-footer">
+          <div class="modal-footer justify-content-center">
             <button
-              class="btn-danger"
               @click="closeModal"
             >
-              Close
+              No
+            </button>
+            <button
+              class="btn-secondary"
+              @click="closeModal; $emit('abandon-negotiation')"
+            >
+              Yes
             </button>
           </div>
         </div>
@@ -28,7 +33,7 @@
 
 <script>
 export default {
-  emits: ["close-confirmation-modal"],
+  emits: ["close-confirmation-modal", "abandon-negotiation"],
   methods: {
     closeModal() {
       this.$emit("close-confirmation-modal")
