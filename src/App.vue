@@ -32,6 +32,22 @@
       <div class="col-1" />
     </div>
   </div>
+  <div class="container">
+    <div class="col-12">
+      <footer>
+        <hr class="mt-10 mb-10">
+        <div class="row">
+          <div class="col text-center">
+            <p>&copy; 2023 BBMRI-ERIC</p>
+          </div>
+          <div class="col text-center">
+            <i class="bi bi-github" />
+            <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -60,6 +76,9 @@ export default {
 <style scoped>
 .main-container {
   min-width: 25rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .box {
@@ -82,6 +101,11 @@ header {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
+  }
+  footer {
+    padding: 10px;
+    bottom: 0;
+    width: 100%;
   }
 }
 </style>

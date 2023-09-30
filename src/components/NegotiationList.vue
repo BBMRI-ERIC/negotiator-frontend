@@ -1,7 +1,47 @@
 <template>
+  <hr class="mt-10 mb-10">
   <div class="container">
     <div class="row">
-      <div class="col-md-2 w-25">
+      <div
+        class="col-9"
+        style="display: flex; justify-content: center"
+      >
+        <ul
+          v-if="negotiations.length > 0"
+          class="col-12"
+        >
+          <li
+            v-for="item in filteredNegotiations"
+            :key="item.id"
+          >
+            <NegotiationCard
+              :negotiation-id="item.id"
+              :negotiation-title="item.payload.project.title"
+              :negotiation-status="item.status"
+              :negotiation-resources="['res1', 'res2', 'res3']"
+              :negotiation-submitter="item.persons[0].name"
+              :negotiation-creation-date="formatDate(item.creationDate)"
+              @click="
+                $router.push({
+                  name: 'negotiation-page',
+                  params: { negotiationId: item.id, userRole: userRole },
+                })
+              "
+            />
+          </li>
+        </ul>
+        <div
+          v-else
+        >
+          <h1 class="align-items-center">
+            No Negotiations found
+          </h1>
+        </div>
+      </div>
+      <div
+        class="
+          col-3"
+      >
         <div class="card mb-2">
           <div class="card-header">
             Sort by
@@ -140,28 +180,7 @@
               <span id="endDateSelected" />
             </div>
           </div>
-        </div>              
-      </div>
-      <div class="col">
-        <div
-          v-for="item in filteredNegotiations"
-          :key="item.id"
-        >
-          <NegotiationCard
-            :negotiation-id="item.id"
-            :negotiation-title="item.payload.project.title"
-            :negotiation-status="item.status"
-            :negotiation-resources="['res1', 'res2', 'res3']" 
-            :negotiation-submitter="item.persons[0].name"
-            :negotiation-creation-date="formatDate(item.creationDate)"
-            @click="
-              $router.push({
-                name: 'negotiation-page',
-                params: { negotiationId: item.id, userRole: userRole },
-              })
-            "
-          />
-        </div> 
+        </div>
       </div>
     </div>
   </div>
@@ -198,7 +217,7 @@ export default {
       headers: ["id", "title", "status"],
       negotiation: [],
       availableRoles: ROLES,
-      sorting : { "id": {
+      sorting: { "id": {
         "func": this.sortById, 
         "order": "asc"
       }, 
@@ -219,7 +238,7 @@ export default {
       filters: {
         "status": [],
         "dateStart": "",
-        "dateEnd" : ""
+        "dateEnd": ""
       },
     }
   }, 
@@ -317,51 +336,10 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-.modal-title {
-  font-size: large;
-}
-.modal-content {
-  background-color: "$light";
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid gray;
-  width: 80%;
-}
-.close {
-  color: gray;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-.close:hover,
-.close:focus {
-  color: "$black";
-  text-decoration: none;
-  cursor: pointer;
-}
 .negotiation-list-table tbody tr:hover > td {
     cursor: pointer;
 }
-.arrow.asc {
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #000402;
+ul li:hover {
+  cursor: pointer;
 }
-
-.arrow.dsc {
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid #000000;
-}
-
 </style>

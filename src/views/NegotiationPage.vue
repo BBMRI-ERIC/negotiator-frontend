@@ -187,7 +187,6 @@
       </div>
     </div>
   </div>
-  <hr class="mt-10 mb-10">
 
   <div
     v-if="showPrivatePostModal"
