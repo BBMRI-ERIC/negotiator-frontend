@@ -31,7 +31,7 @@
             class="nav-item"
           >
             <router-link
-              class="nav-link active"
+              class="nav-link active nav-option"
               to="/admin"
             >
               Administrator
@@ -42,10 +42,11 @@
             class="nav-item"
           >
             <router-link
-              class="nav-link active"
+              class="nav-link active nav-option"
               to="/researcher"
             >
-              Researcher
+              <i class="bi bi-folder2" />
+              Requests
             </router-link>
           </li>
           <li
@@ -53,10 +54,11 @@
             class="nav-item"
           >
             <router-link
-              class="nav-link active"
+              class="nav-link active nav-option"
               to="/biobanker"
             >
-              Biobanker
+              <i class="bi bi-hospital" />
+              Biobank
             </router-link>
           </li>
         </ul>
@@ -124,6 +126,9 @@ nav {
     width: 100%;
     font-size: 1rem;
     text-align: left;
+}
+.nav-item:hover .nav-option:hover {
+  color: #e95713;
 }
 </style>
 

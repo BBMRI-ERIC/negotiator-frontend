@@ -41,6 +41,9 @@
             <p>&copy; 2023 BBMRI-ERIC</p>
           </div>
           <div class="col text-center">
+            <img src="src/assets/images/logo.svg">
+          </div>
+          <div class="col text-center">
             <i class="bi bi-github" />
             <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
           </div>
