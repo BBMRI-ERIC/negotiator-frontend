@@ -34,6 +34,7 @@
               class="nav-link active nav-option"
               to="/admin"
             >
+              <i class="bi bi-house-gear" />
               Administrator
             </router-link>
           </li>
