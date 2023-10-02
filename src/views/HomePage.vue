@@ -1,61 +1,61 @@
 <template>
   <div
-    class="container"
+    class="container text-center h-100"
   >
-    <div
-      class="col-10"
-    >
-      <div class="card">
-        <h1
-          class="text-center card-title"
-          style="padding-top: 30px; padding-bottom: 20px; align-self: center"
-        >
-          <b>BBMRI-ERIC® NEGOTIATOR</b>
-        </h1>
-        <div class="card-body">
-          <h2 class="card-subtitle text-center ">
-            Choose how to log in
-          </h2>
-          <div
-            class="row col-lg-12"
-            style="display: table; padding-left: 10px;  padding-bottom: 20px; padding-top: 5px"
+    <div class="row mt-5"> 
+      <div class="col-1" />
+      <div
+        class="col-sm-10"
+      >
+        <div class="card shadow-lg pt-5 p-3">
+          <h1
+            class="text-center card-title text-secondary fw-bold mb-4"
           >
-            <div>
-              <div class="list-group">
-                <a
-                  class="btn btn-block list-group-item"
-                  href="#"
-                  @click.stop.prevent="authenticateOidc"
+            <b>BBMRI-ERIC® NEGOTIATOR</b>
+          </h1>
+          <div class="card-body">
+            <h2 class="card-subtitle text-center text-primary fw-bold pb-5">
+              Choose how to log in
+            </h2>
+            <div
+              class="d-grid mx-3"
+            >
+              <button
+                class="btn btn-outline-light"
+                @click.stop.prevent="authenticateOidc"
+              >
+                <img
+                  width="34"
+                  height="28"
+                  class="float-start border-end border-2 pe-2"
+                  src="../assets/images/ls-aai-logo.png"
+                  alt="icon"
                 >
-                  <img
-                    class="login-icon"
-                    src="../assets/images/ls-aai-logo.png"
-                    alt="icon"
-                  >
-                  <strong>Life Science Login</strong>
-                </a>
-              </div>
+                <span class="fw-bold align-self-center pe-4">
+                  Life Science Login</span>
+              </button>
             </div>
           </div>
+          <img
+            src="../assets/images/bbmri-logo.png"
+            class="w-25 align-self-center mt-4 me-2"
+            style="min-width: 50px;"
+            alt="bbmri-logo"
+          >
         </div>
-        <img
-          src="../assets/images/bbmri-logo.png"
-          alt="bbmri-logo"
-          style="max-height: 50px; max-width: 50%; align-self: center;"
+        <div
+          class="text-center mt-5 mb-2"
         >
+          Not familiar with LS Login? Visit their <a
+            target="_blank"
+            href="https://lifescience-ri.eu/ls-login.html"
+          >website</a>.
+        </div>
+        <div class="text-center mb-5">
+          Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+        </div>
       </div>
-      <div
-        class="text-center mt-3 mb-2"
-        style="margin-top: 40px; padding-top: 20px"
-      >
-        Not familiar with LS Login? Visit their <a
-          target="_blank"
-          href="https://lifescience-ri.eu/ls-login.html"
-        >website</a>.
-      </div>
-      <div class="text-center mb-5">
-        Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
-      </div>
+      <div class="col-1" />
     </div>
   </div>
 </template>
@@ -81,53 +81,12 @@ export default {
 }
 </script>
 <style scoped>
-.container {
-  display: flex; /* Use flexbox */
-  justify-content: center; /* Horizontally center */
-  align-items: center; /* Vertically center */
-  padding-top: 50px;
-  margin-top: 100px;
-  height: 100%;
-}
-.card {
-  padding-top: 10px;
-  padding-bottom: 30px;
-  height: 100%;
-  border-radius: 10px; /* Add rounded corners to the card */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Add a shadow */
-}
 h1 {
   font-family: Calibri, Arial, sans-serif;
-  color: rgb(0,66,128);
-  font-weight: bolder;
-  font-size: 60px;
+  font-size: 3.5rem;
 }
+
 h2 {
   font-family: Calibri, Arial, sans-serif;
-  color: rgb(233,87,19);
-  font-weight: bold;
-  padding-bottom: 40px;
-}
-.list-group  {
-  text-align: left;
-  border: 1px;
-}
-.list-group:hover {
-  border: lightgray;
-  background: lightgray;
-}
-.login-icon {
-  max-height: 40px;
-  max-width: 40px;
-  padding: 6px;
-  border-right: 2px solid rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top:1px;
-  bottom: 1px;
-  left: 5px;
-  right: 5px;
-}
-.btn-block {
-  width: 100%;
 }
 </style>

@@ -129,7 +129,7 @@ nav {
     text-align: left;
 }
 .nav-item:hover .nav-option:hover {
-  color: #e95713;
+    color: var(--bs-primary) ;
 }
 </style>
 
