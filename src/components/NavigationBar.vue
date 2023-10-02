@@ -1,6 +1,5 @@
 <template>
   <nav
-    v-if="!hideNavBar"
     class="navbar navbar-expand-lg navbar-light bg-light"
   >
     <div class="container-fluid">
@@ -83,7 +82,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NavigationBar",
@@ -102,9 +101,6 @@ export default {
     },
     isRepresentative() {
       return this.roles.includes("REPRESENTATIVE")
-    },
-    hideNavBar() {
-      return (this.$route.path === "/")
     }
   },
   watch: {
