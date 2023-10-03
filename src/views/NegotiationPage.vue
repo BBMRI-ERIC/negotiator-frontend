@@ -19,7 +19,7 @@
 
   <update-status-modal
     id="updateStatusModal"
-    :title="lifecycleResourceId"
+    :resource-id="lifecycleResourceId"
     :options="responseOptions"
     @selected="updateResource"
   />

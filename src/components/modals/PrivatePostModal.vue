@@ -1,38 +1,26 @@
 <template>
-  <div
+  <NegotiationModal
     :id="id"
-    class="modal fade"
-    tabindex="-1"
-    aria-labelledby="{{id}}Label"
-    aria-hidden="true"
+    :title="`Resource: ${resourceId}`"
   >
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">
-            Resource ID: {{ resourceId }}
-          </h4>
-        </div>
-        <div class="modal-body">
-          <NegotiationPosts 
-            :negotiation="negotiation"
-            :user-role="userRole"
-            scope="private"
-            :resource-id="resourceId"
-          />
-        </div>
-        <div class="modal-footer justify-content-center bg-primary">
-          <button
-            type="button"
-            class="btn btn-info"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> 
+    <template #body>
+      <NegotiationPosts 
+        :negotiation="negotiation"
+        :user-role="userRole"
+        scope="private"
+        :resource-id="resourceId"
+      />
+    </template>
+    <template #footer>
+      <button
+        type="button"
+        class="btn btn-info"
+        data-bs-dismiss="modal"
+      >
+        Close
+      </button>
+    </template>
+  </NegotiationModal>
 </template>
 
 <script>

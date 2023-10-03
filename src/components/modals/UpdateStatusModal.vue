@@ -1,55 +1,43 @@
 <template>
-  <div
+  <NegotiationModal
     :id="id"
-    class="modal fade"
-    tabindex="-1"
-    aria-labelledby="{{id}}Label"
-    aria-hidden="true"
+    :title="`Resource: ${resourceId}`"
   >
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header justify-content-center">
-          <h4 class="modal-title">
-            {{ title }}
-          </h4>
-        </div>
-        <div class="modal-body">
-          <label
-            class="form-label"
-          >Select new status: </label>
-          <select
-            v-model="selectedItem"
-            class="form-select"
-          >
-            <option
-              v-for="response in options"
-              :key="response"
-              :value="response"
-            >
-              {{ response }}
-            </option>
-          </select>
-        </div>
-        <div class="modal-footer justify-content-center bg-primary">
-          <button
-            type="button"
-            class="btn btn-info"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-            @click="emitSelected"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+    <template #body>
+      <label
+        class="form-label"
+      >Select new status: </label>
+      <select
+        v-model="selectedItem"
+        class="form-select"
+      >
+        <option
+          v-for="response in options"
+          :key="response"
+          :value="response"
+        >
+          {{ response }}
+        </option>
+      </select>
+    </template>
+    <template #footer>
+      <button
+        type="button"
+        class="btn btn-info"
+        data-bs-dismiss="modal"
+      >
+        Close
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-bs-dismiss="modal"
+        @click="emitSelected"
+      >
+        Submit
+      </button>
+    </template>
+  </NegotiationModal>
 </template>
 
 <script>
@@ -59,7 +47,7 @@ export default {
       type: String,
       required: true
     },
-    title: {
+    resourceId: {
       type: String,
       required: true
     },
