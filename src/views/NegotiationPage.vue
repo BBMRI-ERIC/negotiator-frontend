@@ -87,7 +87,7 @@
                         <button
                           type="button"
                           class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                          @click.stop="interactPrivatePostModal(key)"
+                          @click.stop="interactPrivatePostModal(collection)"
                         >
                           <i class="bi-chat-fill" />
                         </button>

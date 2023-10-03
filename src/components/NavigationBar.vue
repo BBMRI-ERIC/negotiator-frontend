@@ -1,5 +1,6 @@
 <template>
   <nav
+    v-if="showNavBar"
     class="navbar navbar-expand-lg navbar-light bg-light"
   >
     <div class="container-fluid">
@@ -46,7 +47,7 @@
               to="/researcher"
             >
               <i class="bi bi-folder2" />
-              Requests
+              Negotiations
             </router-link>
           </li>
           <li
@@ -101,6 +102,9 @@ export default {
     },
     isRepresentative() {
       return this.roles.includes("REPRESENTATIVE")
+    },
+    showNavBar() {
+      return (this.$route.path !== "/")
     }
   },
   watch: {

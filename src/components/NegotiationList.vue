@@ -33,7 +33,7 @@
         <div
           v-else
         >
-          <h1 class="align-items-center">
+          <h1 class="text-center">
             No Negotiations found
           </h1>
         </div>
