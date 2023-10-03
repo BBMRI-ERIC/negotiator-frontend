@@ -9,7 +9,14 @@
     <i class="bi-arrow-left" />
     Go back
   </button>
-  
+
+  <confirmation-modal
+    id="abandonModal"
+    title="Are you sure you want to abandon this Negotiation?"
+    text="Confirming, you will not be able to access this negotiation again."
+    @confirm="updateNegotiation('ABANDON')"
+  />
+
   <div
     v-if="isNegotiationLoaded"
     class="mt-4"
@@ -131,7 +138,8 @@
                 class="float-end"
                 type="button"
                 role="button"
-                @click="showConfirmationDialog"
+                data-bs-toggle="modal"
+                data-bs-target="#abandonModal"
               >
                 <i class="bi bi-trash" />
                 Abandon
@@ -265,11 +273,6 @@
       </div>
     </div>
   </div>
-  <confirmation-modal
-    v-if="showConfirmationModal"
-    @close-confirmation-modal="showConfirmationDialog"
-    @abandon-negotiation="updateNegotiation('ABANDON')"
-  />
 </template>
 
 <script>
@@ -307,8 +310,6 @@ export default {
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
-      showNegotiationApprovalModal: false,
-      showConfirmationModal: false,
       showPrivatePostModal: false,
       showLifecycleModal: false,
       privatePostResourceId: undefined,
@@ -396,9 +397,6 @@ export default {
       "updateResourceStatus",
       "downloadAttachment"
     ]),
-    showConfirmationDialog() {
-      this.showConfirmationModal = !this.showConfirmationModal
-    },
     async isRepresentativeForResource(resourceId) {
       return !!this.roles.includes(resourceId)
 
@@ -424,7 +422,6 @@ export default {
         negotiationId: this.negotiation.id,
         event: action
       })
-      this.showNegotiationApprovalModal = false
     },
     async updateResource() {
       await this.updateResourceStatus({
@@ -463,37 +460,16 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-  display: block;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-}
-.modal-title {
-  font-size: large;
-}
 .list-group-item {
   padding: 10px;
   margin-top: 5px;
   border: none;
   border-bottom: lightgray 1px solid;
 }
-.modal-content {
-  background-color: "$light";
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid gray;
-  width: 80%;
-}
 h1 {
   font-family: Calibri, Arial, sans-serif;
   color: var(--bs-primary);
   font-weight: bolder;
   font-size: 60px;
-}
-.negotiation-list-table tbody tr:hover > td {
-  cursor: pointer;
 }
 </style>

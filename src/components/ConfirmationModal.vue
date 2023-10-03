@@ -1,14 +1,20 @@
 
 <template>
-  <div class="modal">
-    <div class="modal-dialog">
+  <div
+    :id="id"
+    class="modal fade"
+    tabindex="-1"
+    aria-labelledby="{{id}}Label"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <h3 class="modal-header">
-          Are you sure you want to abandon this Negotiation?
-        </h3>
+        <h4 class="modal-header">
+          {{ title }}
+        </h4>
         <div class="modal-body">
           <p>
-            This is means that you will not be able to access this negotiation again.
+            {{ text }}
           </p>
         </div>
         <div class="modal-footer justify-content-center bg-primary">
@@ -16,28 +22,43 @@
             type="button"
             class="btn btn-info"
             data-bs-dismiss="modal"
-            @click="closeModal"
           >
             Cancel
           </button>
           <button
             type="button"
             class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            @click="emitConfirm"
           >
             Confirm
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </div> 
 </template>
 
 <script>
 export default {
-  emits: ["close-confirmation-modal", "abandon-negotiation"],
+  props: {
+    id: {
+      type: String,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    text: {
+      type: String,
+      required: true
+    }
+  },
+  emits: ["confirm"],
   methods: {
-    closeModal() {
-      this.$emit("close-confirmation-modal")
+    emitConfirm () {
+      this.$emit("confirm")
     }
   }
 }
