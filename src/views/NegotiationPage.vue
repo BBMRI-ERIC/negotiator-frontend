@@ -17,6 +17,13 @@
     @confirm="updateNegotiation('ABANDON')"
   />
 
+  <update-status-modal
+    id="updateStatusModal"
+    :title="lifecycleResourceId"
+    :options="responseOptions"
+    @selected="updateResource"
+  />
+
   <div
     v-if="isNegotiationLoaded"
     class="mt-4"
@@ -86,8 +93,12 @@
                       <span>
                         {{ getStatusForCollection(collection) }}
                         <button
-                          v-if="userRole === 'REPRESENTATIVE' && negotiation.status === 'ONGOING' && isRepresentativeForResource(collection)"
-                          class="btn btn-secondary btn-sm me-2 mb-1  float-end order-first"
+                          v-if="userRole === 'REPRESENTATIVE' 
+                            && negotiation.status === 'ONGOING'
+                            && isRepresentativeForResource(collection)"
+                          class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
+                          data-bs-toggle="modal"
+                          data-bs-target="#updateStatusModal"
                           @click.stop="interactLifecycleModal(collection)"
                         >
                           <i class="bi-gear" />
@@ -229,63 +240,20 @@
       </div>
     </div>
   </div>
-
-  <div
-    v-show="showLifecycleModal"
-    class="modal"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title">
-            Resource ID: {{ lifecycleResourceId }}
-          </h1>
-        </div>
-        <div class="modal-body">
-          <label for="actions">Respond:</label>
-          <select v-model="selectedItem">
-            <option
-              v-for="response in responseOptions"
-              :key="response"
-              :value="response"
-            >
-              {{ response }}
-            </option>
-          </select>
-          <p>Selected item: {{ selectedItem }}</p>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="showLifecycleModal = false"
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="updateResource"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
+import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
+import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
 import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
-import ConfirmationModal from "@/components/ConfirmationModal.vue"
 
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, NegotiationPosts,
+    ConfirmationModal, UpdateStatusModal, NegotiationPosts,
   },
   props: {
     negotiationId: {
@@ -311,7 +279,6 @@ export default {
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
       showPrivatePostModal: false,
-      showLifecycleModal: false,
       privatePostResourceId: undefined,
       lifecycleResourceId: undefined,
       availableRoles: ROLES
@@ -423,13 +390,12 @@ export default {
         event: action
       })
     },
-    async updateResource() {
+    async updateResource(status) {
       await this.updateResourceStatus({
         negotiationId: this.negotiation.id,
         resourceId: this.lifecycleResourceId,
-        event: this.selectedItem,
+        event: status,
       })
-      this.showLifecycleModal = false
     },
     loadPossibleEventsForResource() {
       this.retrievePossibleEventsForResource({
@@ -451,7 +417,6 @@ export default {
       this.privatePostResourceId = resourceId
     },
     interactLifecycleModal(resourceId) {
-      this.showLifecycleModal = true
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource()
     }
