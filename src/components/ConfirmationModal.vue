@@ -14,12 +14,13 @@
           </p>
           <div class="modal-footer justify-content-center">
             <button
+              class="btn btn-secondary"
               @click="closeModal"
             >
               No
             </button>
             <button
-              class="btn-secondary"
+              class="btn btn-danger"
               @click="closeModal; $emit('abandon-negotiation')"
             >
               Yes
@@ -51,13 +52,5 @@ export default {
   margin: 100px auto;
   border-radius: 10px;
   z-index: 1;
-}
-.btn-danger {
-  background-color: red;
-  border: 1px solid red;
-  color: white;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
 }
 </style>

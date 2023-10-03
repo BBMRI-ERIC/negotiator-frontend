@@ -32,7 +32,9 @@
   </div>
   <div class="container">
     <div class="col-12">
-      <footer>
+      <footer
+        class="bottom-0 p-0 w-100"
+      >
         <hr class="mt-10 mb-10">
         <div class="row">
           <div class="col text-center">
@@ -95,11 +97,6 @@ header {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
-  }
-  footer {
-    padding: 10px;
-    bottom: 0;
-    width: 100%;
   }
 }
 </style>
