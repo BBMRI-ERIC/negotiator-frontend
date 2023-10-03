@@ -1,31 +1,31 @@
 
 <template>
-  <div
-    class="modal"
-  >
+  <div class="modal">
     <div class="modal-dialog">
       <div class="modal-content">
-        <h1 class="modal-header">
+        <h3 class="modal-header">
           Are you sure you want to abandon this Negotiation?
-        </h1>
+        </h3>
         <div class="modal-body">
           <p>
             This is means that you will not be able to access this negotiation again.
           </p>
-          <div class="modal-footer justify-content-center">
-            <button
-              class="btn btn-secondary"
-              @click="closeModal"
-            >
-              No
-            </button>
-            <button
-              class="btn btn-danger"
-              @click="closeModal; $emit('abandon-negotiation')"
-            >
-              Yes
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer justify-content-center bg-primary">
+          <button
+            type="button"
+            class="btn btn-info"
+            data-bs-dismiss="modal"
+            @click="closeModal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+          >
+            Confirm
+          </button>
         </div>
       </div>
     </div>
@@ -41,16 +41,4 @@ export default {
     }
   }
 }
-
-
 </script>
-
-<style scoped>
-.modal {
-  width: 400px;
-  padding: 20px;
-  margin: 100px auto;
-  border-radius: 10px;
-  z-index: 1;
-}
-</style>

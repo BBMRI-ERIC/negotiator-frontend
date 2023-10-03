@@ -3,7 +3,7 @@
   <div class="container">
     <div class="row">
       <div
-        class="col-9 d-flex"
+        class="col-9 d-flex justify-content-center"
       >
         <div
           v-if="negotiations.length > 0"
@@ -30,9 +30,9 @@
         <div
           v-else
         >
-          <h1 class="text-center">
+          <h2 class="text-center">
             No Negotiations found
-          </h1>
+          </h2>
         </div>
       </div>
       <div
