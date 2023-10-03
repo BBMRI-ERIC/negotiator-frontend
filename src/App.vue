@@ -3,7 +3,7 @@
   <header>
     <navigation-bar />
   </header>
-  <div class="container pt-4 main-container">
+  <div class="container min-vh-100 d-flex flex-column pt-4">
     <div
       v-if="notification !== undefined"
       class="row"
@@ -75,13 +75,6 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  min-width: 25rem;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
 .box {
   inline-size: 300px;
 }
