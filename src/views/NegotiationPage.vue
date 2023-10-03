@@ -9,9 +9,10 @@
     <i class="bi-arrow-left" />
     Go back
   </button>
+  
   <div
     v-if="isNegotiationLoaded"
-    style="margin-top: 20px"
+    class="mt-4"
   >
     <h1>
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
@@ -22,7 +23,7 @@
           <li
             v-for="(element, key) in negotiation.payload"
             :key="element"
-            class="list-group-item  border-bottom"
+            class="list-group-item border-bottom"
           >
             <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
               {{ key.toUpperCase() }}</span>
@@ -171,6 +172,7 @@
       </div>
     </div>
   </div>
+  
   <div
     v-else
     class="d-flex justify-content-center flex-row"
@@ -459,6 +461,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .modal {
   display: block;
@@ -486,7 +489,7 @@ export default {
 }
 h1 {
   font-family: Calibri, Arial, sans-serif;
-  color: rgb(233,87,19);
+  color: var(--bs-primary);
   font-weight: bolder;
   font-size: 60px;
 }

@@ -1,35 +1,32 @@
 <template>
-  <hr class="mt-10 mb-10">
+  <hr class="my-4">
   <div class="container">
     <div class="row">
       <div
-        class="col-9"
-        style="display: flex; justify-content: center"
+        class="col-9 d-flex"
       >
-        <ul
+        <div
           v-if="negotiations.length > 0"
           class="col-12"
         >
-          <li
+          <NegotiationCard
             v-for="item in filteredNegotiations"
             :key="item.id"
-          >
-            <NegotiationCard
-              :negotiation-id="item.id"
-              :negotiation-title="item.payload.project.title"
-              :negotiation-status="item.status"
-              :negotiation-resources="['res1', 'res2', 'res3']"
-              :negotiation-submitter="item.persons[0].name"
-              :negotiation-creation-date="formatDate(item.creationDate)"
-              @click="
-                $router.push({
-                  name: 'negotiation-page',
-                  params: { negotiationId: item.id, userRole: userRole },
-                })
-              "
-            />
-          </li>
-        </ul>
+            :negotiation-id="item.id"
+            :negotiation-title="item.payload.project.title"
+            :negotiation-status="item.status"
+            :negotiation-resources="['res1', 'res2', 'res3']"
+            :negotiation-submitter="item.persons[0].name"
+            :negotiation-creation-date="formatDate(item.creationDate)"
+            class="cursor-pointer"
+            @click="
+              $router.push({
+                name: 'negotiation-page',
+                params: { negotiationId: item.id, userRole: userRole },
+              })
+            "
+          />
+        </div>
         <div
           v-else
         >
@@ -187,8 +184,8 @@
 </template>
 
 <script>
+import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
-import  NegotiationCard  from "@/components/NegotiationCard.vue"
 import moment from "moment"
 
 
@@ -243,19 +240,19 @@ export default {
     }
   }, 
   computed: {
-    filteredNegotiations: function(){
+    filteredNegotiations: function() {
       let filterConditions = []
-      if (this.filters.status.length > 0){
+      if (this.filters.status.length > 0) {
         filterConditions.push(item => this.filters["status"].includes(item.status))
       }
-      if(this.filters.dateStart != ""){
+      if (this.filters.dateStart != "") {
         const startDate = new Date(this.filters["dateStart"])
         filterConditions.push(item => {
           const eventDate = new Date(item.creationDate)
           return eventDate >= startDate
         })     
       }
-      if(this.filters.dateEnd != ""){
+      if (this.filters.dateEnd != "") {
         const endDate = new Date(this.filters["dateEnd"])
         filterConditions.push(item => {
           const eventDate = new Date(item.creationDate)
@@ -334,12 +331,3 @@ export default {
   
 }
 </script>
-
-<style scoped>
-.negotiation-list-table tbody tr:hover > td {
-    cursor: pointer;
-}
-ul li:hover {
-  cursor: pointer;
-}
-</style>
