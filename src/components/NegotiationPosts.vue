@@ -1,6 +1,6 @@
 <template>
   <div v-if="negotiation && negotiation.postsEnabled">
-    <h3>Comments</h3>
+    <h5>Comments</h5>
     <div
       v-for="post in posts"
       :key="post.id"
@@ -20,7 +20,11 @@
         {{ post.text }}
       </div>
     </div>
-    <h3>Send a {{ scope }} message</h3>
+    <hr
+      v-if="posts.length === 0"
+      class="my-3"
+    >
+    <h5>Send a {{ scope }} message</h5>
     <form
       class="mb-4"
       @submit.prevent="addMessage"
@@ -37,12 +41,6 @@
         Send message
       </button>
     </form>
-  </div>
-  <div v-else>
-    <h5>
-      Your request is waiting for approval by our team. No need to keep refreshing the page,
-      you will be notified of any changes via email.
-    </h5>
   </div>
 </template>
 

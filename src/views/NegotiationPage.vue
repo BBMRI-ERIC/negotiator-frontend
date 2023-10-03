@@ -24,11 +24,19 @@
     @selected="updateResource"
   />
 
+  <private-post-modal
+    v-if="negotiation"
+    id="privatePostModal"
+    :resource-id="privatePostResourceId"
+    :negotiation="negotiation"
+    :user-role="userRole"
+  />
+
   <div
     v-if="isNegotiationLoaded"
     class="mt-4"
   >
-    <h1>
+    <h1 class="text-primary fw-bold">
       {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
     </h1>
     <div class="row">
@@ -104,9 +112,12 @@
                           <i class="bi-gear" />
                         </button>
                         <button
+                          v-if="negotiation && negotiation.postsEnabled"
                           type="button"
                           class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                          @click.stop="interactPrivatePostModal(collection)"
+                          data-bs-target="#privatePostModal"
+                          data-bs-toggle="modal"
+                          @click.prevent="interactPrivatePostModal(collection)"
                         >
                           <i class="bi-chat-fill" />
                         </button>
@@ -119,10 +130,16 @@
           </li>
         </ul>
         <NegotiationPosts
+          v-if="negotiation && negotiation.postsEnabled"
           :negotiation="negotiation"
           :user-role="userRole"
           scope="public"
         />
+        <div v-else>
+          <h5>
+            Your request is waiting for approval by our team. You will be notified of any changes via email.
+          </h5>
+        </div>
       </div>
       <div
         class="col-4"
@@ -208,44 +225,13 @@
       </div>
     </div>
   </div>
-
-  <div
-    v-if="showPrivatePostModal"
-    class="modal"
-  >
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title">
-            Resource ID: {{ privatePostResourceId }}
-          </h1>
-        </div>
-        <div class="modal-body">
-          <NegotiationPosts 
-            :negotiation="negotiation"
-            :user-role="userRole"
-            scope="private"
-            :resource-id="privatePostResourceId"
-          />
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="showPrivatePostModal = false"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
+import PrivatePostModal from "@/components/modals/PrivatePostModal.vue"
 import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
@@ -253,7 +239,7 @@ import { mapActions, mapGetters } from "vuex"
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, UpdateStatusModal, NegotiationPosts,
+    ConfirmationModal, UpdateStatusModal, PrivatePostModal, NegotiationPosts,
   },
   props: {
     negotiationId: {
@@ -348,7 +334,9 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
-    this.loadPossibleEvents()
+    this.responseOptions = await this.retrievePossibleEvents({
+      negotiationId: this.negotiation.id
+    })
     this.roles = await this.retrieveUserRoles()
   },
   methods: {
@@ -405,15 +393,7 @@ export default {
         this.responseOptions = data
       })
     },
-    loadPossibleEvents() {
-      this.retrievePossibleEvents({
-        negotiationId: this.negotiation.id
-      }).then((data) => {
-        this.responseOptions = data
-      })
-    },
     interactPrivatePostModal(resourceId) {
-      this.showPrivatePostModal = true
       this.privatePostResourceId = resourceId
     },
     interactLifecycleModal(resourceId) {
@@ -433,8 +413,5 @@ export default {
 }
 h1 {
   font-family: Calibri, Arial, sans-serif;
-  color: var(--bs-primary);
-  font-weight: bolder;
-  font-size: 60px;
 }
 </style>

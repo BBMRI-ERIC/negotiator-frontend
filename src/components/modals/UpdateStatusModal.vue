@@ -1,4 +1,3 @@
-
 <template>
   <div
     :id="id"
@@ -9,13 +8,27 @@
   >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <h4 class="modal-header">
-          {{ title }}
-        </h4>
+        <div class="modal-header justify-content-center">
+          <h4 class="modal-title">
+            {{ title }}
+          </h4>
+        </div>
         <div class="modal-body">
-          <p>
-            {{ text }}
-          </p>
+          <label
+            class="form-label"
+          >Select new status: </label>
+          <select
+            v-model="selectedItem"
+            class="form-select"
+          >
+            <option
+              v-for="response in options"
+              :key="response"
+              :value="response"
+            >
+              {{ response }}
+            </option>
+          </select>
         </div>
         <div class="modal-footer justify-content-center bg-primary">
           <button
@@ -23,20 +36,20 @@
             class="btn btn-info"
             data-bs-dismiss="modal"
           >
-            Cancel
+            Close
           </button>
           <button
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
-            @click="emitConfirm"
+            @click="emitSelected"
           >
-            Confirm
+            Submit
           </button>
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 </template>
 
 <script>
@@ -53,12 +66,21 @@ export default {
     text: {
       type: String,
       required: true
+    },
+    options: {
+      type: Array,
+      required: true
     }
   },
-  emits: ["confirm"],
+  emits: ["selected"],
+  data() {
+    return {
+      selectedItem: "",
+    }
+  },
   methods: {
-    emitConfirm () {
-      this.$emit("confirm")
+    emitSelected () {
+      this.$emit("selected", this.selectedItem)
     }
   }
 }
