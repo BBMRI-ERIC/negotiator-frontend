@@ -1,5 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav
+    v-if="oidcIsAuthenticated"
+    class="navbar navbar-expand-lg navbar-light bg-light"
+  >
     <div class="container-fluid">
       <img
         src="../assets/images/logo.svg"
@@ -28,9 +31,10 @@
             class="nav-item"
           >
             <router-link
-              class="nav-link active"
+              class="nav-link active nav-option"
               to="/admin"
             >
+              <i class="bi bi-house-gear" />
               Administrator
             </router-link>
           </li>
@@ -39,10 +43,11 @@
             class="nav-item"
           >
             <router-link
-              class="nav-link active"
+              class="nav-link active nav-option"
               to="/researcher"
             >
-              Researcher
+              <i class="bi bi-folder2" />
+              Requests
             </router-link>
           </li>
           <li
@@ -50,10 +55,11 @@
             class="nav-item"
           >
             <router-link
-              class="nav-link active"
+              class="nav-link active nav-option"
               to="/biobanker"
             >
-              Biobanker
+              <i class="bi bi-hospital" />
+              Biobank
             </router-link>
           </li>
         </ul>
@@ -77,7 +83,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NavigationBar",
@@ -118,6 +124,9 @@ nav {
     width: 100%;
     font-size: 1rem;
     text-align: left;
+}
+.nav-item:hover .nav-option:hover {
+    color: var(--bs-primary) ;
 }
 </style>
 

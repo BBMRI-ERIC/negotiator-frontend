@@ -3,7 +3,7 @@
   <header>
     <navigation-bar />
   </header>
-  <div class="container pt-4 main-container">
+  <div class="container min-vh-100 d-flex flex-column pt-4">
     <div
       v-if="notification !== undefined"
       class="row"
@@ -25,11 +25,30 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-1" />
-      <div class="col-10">
+      <div class="col-12">
         <router-view :key="$route.path" />
       </div>
-      <div class="col-1" />
+    </div>
+  </div>
+  <div class="container">
+    <div class="col-12">
+      <footer
+        class="bottom-0 p-0 w-100"
+      >
+        <hr class="mt-10 mb-10">
+        <div class="row">
+          <div class="col text-center">
+            <p>&copy; 2023 BBMRI-ERIC</p>
+          </div>
+          <div class="col text-center">
+            <img src="../src/assets/images/logo.svg">
+          </div>
+          <div class="col text-center">
+            <i class="bi bi-github" />
+            <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
+          </div>
+        </div>
+      </footer>
     </div>
   </div>
 </template>
@@ -58,10 +77,6 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  min-width: 25rem;
-}
-
 .box {
   inline-size: 300px;
 }

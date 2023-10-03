@@ -1,71 +1,72 @@
 {
-    "name": "negotiator-v3-frontend",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "preview": "vite preview --port 4173",
-        "test:unit": "vitest --environment jsdom",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  "name": "negotiator-v3-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "test:unit": "vitest --environment jsdom",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.2.0",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/vue-fontawesome": "^3.0.2",
+    "@popperjs/core": "^2.11.6",
+    "@vue/test-utils": "^2.2.7",
+    "axios": "^1.1.3",
+    "bootstrap": "^5.2.2",
+    "bootstrap-icons": "^1.11.1",
+    "bootstrap-vue-next": "^0.8.10",
+    "core-js": "^3.8.3",
+    "dotenv": "^16.0.3",
+    "http-server": "^14.1.1",
+    "moment": "^2.29.4",
+    "oidc-client-ts": "^2.1.0",
+    "sass-loader": "^13.2.0",
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.5",
+    "vue3-form-wizard": "^0.1.8",
+    "vuex": "^4.0.2",
+    "vuex-oidc": "^4.0.2",
+    "vuex-router-sync": "^5.0.0",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vitejs/plugin-vue": "^3.0.3",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "jsdom": "^21.0.0",
+    "sass": "^1.56.0",
+    "unplugin-vue-components": "^0.24.1",
+    "vite": "^3.0.9",
+    "vitest": "^0.23.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
     },
-    "dependencies": {
-        "@fortawesome/fontawesome-free": "^6.2.0",
-        "@fortawesome/fontawesome-svg-core": "^6.2.0",
-        "@fortawesome/free-solid-svg-icons": "^6.2.0",
-        "@fortawesome/vue-fontawesome": "^3.0.2",
-        "@popperjs/core": "^2.11.6",
-        "@vue/test-utils": "^2.2.7",
-        "axios": "^1.1.3",
-        "bootstrap": "^5.2.2",
-        "bootstrap-vue-next": "^0.8.10",
-        "core-js": "^3.8.3",
-        "dotenv": "^16.0.3",
-        "http-server": "^14.1.1",
-        "moment": "^2.29.4",
-        "oidc-client-ts": "^2.1.0",
-        "sass-loader": "^13.2.0",
-        "vue": "^3.2.47",
-        "vue-router": "^4.1.5",
-        "vue3-form-wizard": "^0.1.8",
-        "vuex": "^4.0.2",
-        "vuex-oidc": "^4.0.2",
-        "vuex-router-sync": "^5.0.0",
-        "yarn": "^1.22.19"
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
     },
-    "devDependencies": {
-        "@babel/core": "^7.12.16",
-        "@babel/eslint-parser": "^7.12.16",
-        "@vitejs/plugin-vue": "^3.0.3",
-        "@vue/cli-plugin-babel": "~5.0.0",
-        "@vue/cli-plugin-eslint": "~5.0.0",
-        "@vue/cli-service": "~5.0.0",
-        "eslint": "^7.32.0",
-        "eslint-plugin-vue": "^8.0.3",
-        "jsdom": "^21.0.0",
-        "sass": "^1.56.0",
-        "unplugin-vue-components": "^0.24.1",
-        "vite": "^3.0.9",
-        "vitest": "^0.23.0"
-    },
-    "eslintConfig": {
-        "root": true,
-        "env": {
-            "node": true
-        },
-        "extends": [
-            "plugin:vue/vue3-essential",
-            "eslint:recommended"
-        ],
-        "parserOptions": {
-            "parser": "@babel/eslint-parser"
-        },
-        "rules": {}
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not dead",
-        "not ie 11"
-    ]
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
 }

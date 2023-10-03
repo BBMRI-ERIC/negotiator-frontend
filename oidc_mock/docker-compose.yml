@@ -135,7 +135,7 @@ services:
               },
               {
                 "Type": "eduperson_entitlement",
-                "Value": "[\"urn:geant:bbmri-eric.eu:group:bbmri:negotiator_v3:admins#perun.bbmri-eric.eu\"]",
+                "Value": "[\"urn:geant:bbmri-eric.eu:group:bbmri:negotiator_v3:admins#perun.bbmri-eric.eu\", \"urn:geant:bbmri-eric.eu:group:bbmri:collections:BBMRI-ERIC%20Directory:bbmri-eric:ID:CZ_MMCI:collection:LTS#perun.bbmri-eric.eu\", \"urn:geant:bbmri-eric.eu:group:bbmri:collections:BBMRI-ERIC%20Directory#perun.bbmri-eric.eu\", \"urn:geant:bbmri-eric.eu:group:bbmri:negotiator_v3:researchers#perun.bbmri-eric.eu\"]",
                 "ValueType": "json"
               }
             ]

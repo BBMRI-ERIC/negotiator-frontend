@@ -4,7 +4,8 @@ $theme-colors: (
     "danger": #dc3545,
     "warning": #e95713,
     "info": #017ffd,
-    "light": #e7e7e7
+    "light": #e7e7e7,
+    "dark": #3c3c3d
 );
 
 $body-color: #3c3c3d;
@@ -15,6 +16,10 @@ $default-text-color: white;
 
 .btn-primary {
     color: white;
+}
+
+.btn-outline-light {
+    color: $dark;
 }
 
 .cursor-pointer {
