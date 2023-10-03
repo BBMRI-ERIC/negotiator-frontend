@@ -1,8 +1,8 @@
 <template>
   <div
-    class="container text-center h-100"
+    class="container-fluid d-flex justify-content-center align-items-center vh-100"
   >
-    <div class="row mt-5"> 
+    <div class="row mt-5">
       <div class="col-1" />
       <div
         class="col-sm-10"
