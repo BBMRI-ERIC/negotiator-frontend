@@ -43,11 +43,11 @@
     </h1>
     <div class="row">
       <div class="col-8">
-        <ul class="border mt-3">
+        <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li
             v-for="(element, key) in negotiation.payload"
             :key="element"
-            class="list-group-item border-bottom"
+            class="list-group-item border-bottom p-3"
           >
             <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
               {{ key.toUpperCase() }}</span>
@@ -57,8 +57,7 @@
               class="mt-3"
             >
               <label
-                class="me-2 ml=fw-bold"
-                style="font-weight: bold"
+                class="me-2 fw-bold"
               >{{ subelementkey.toUpperCase() }}:</label>
               <span v-if="isAttachment(subelement)">
                 {{ subelement.name }}
@@ -75,59 +74,57 @@
               </span>
             </div>
           </li>
-          <li class="list-group-item ">
+          <li class="list-group-item p-3">
             <p
               type="button"
               data-bs-toggle="collapse"
-              data-bs-target="#collapseExample"
+              data-bs-target="#collectionsList"
               aria-expanded="false"
-              aria-controls="collapseExample"
+              aria-controls="collectionsList"
             >
               <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
                 <i class="bi bi-card-list" />
-                Collections ({{ numberOfCollections }})
+                COLLECTIONS ({{ numberOfCollections }})
               </span>
             </p>
             <div
-              id="collapseExample"
+              id="collectionsList"
               class="collapse"
             >
-              <div class="card card-body border-0">
-                <ul>
-                  <li
-                    v-for="collection in collections"
-                    :key="collection"
-                  >
-                    <div class="me-auto p-2">
-                      <label class="me-2 fw-bold small">{{ collection }}</label>
-                      <span>
-                        {{ getStatusForCollection(collection) }}
-                        <button
-                          v-if="userRole === 'REPRESENTATIVE' 
-                            && negotiation.status === 'ONGOING'
-                            && isRepresentativeForResource(collection)"
-                          class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
-                          data-bs-toggle="modal"
-                          data-bs-target="#updateStatusModal"
-                          @click.stop="interactLifecycleModal(collection)"
-                        >
-                          <i class="bi-gear" />
-                        </button>
-                        <button
-                          v-if="negotiation && negotiation.postsEnabled"
-                          type="button"
-                          class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                          data-bs-target="#privatePostModal"
-                          data-bs-toggle="modal"
-                          @click.prevent="interactPrivatePostModal(collection)"
-                        >
-                          <i class="bi-chat-fill" />
-                        </button>
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+              <ul>
+                <li
+                  v-for="collection in collections"
+                  :key="collection"
+                >
+                  <div class="me-auto p-2">
+                    <label class="me-2 fw-bold small">{{ collection }}</label>
+                    <span>
+                      {{ getStatusForCollection(collection) }}
+                      <button
+                        v-if="userRole === 'REPRESENTATIVE' 
+                          && negotiation.status === 'ONGOING'
+                          && isRepresentativeForResource(collection)"
+                        class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
+                        data-bs-toggle="modal"
+                        data-bs-target="#updateStatusModal"
+                        @click.stop="interactLifecycleModal(collection)"
+                      >
+                        <i class="bi-gear" />
+                      </button>
+                      <button
+                        v-if="negotiation && negotiation.postsEnabled"
+                        type="button"
+                        class="btn btn-secondary btn-sm me-2 mb-1 float-end"
+                        data-bs-target="#privatePostModal"
+                        data-bs-toggle="modal"
+                        @click.prevent="interactPrivatePostModal(collection)"
+                      >
+                        <i class="bi-chat-fill" />
+                      </button>
+                    </span>
+                  </div>
+                </li>
+              </ul>
             </div>
           </li>
         </ul>
@@ -146,20 +143,20 @@
       <div
         class="col-4"
       >
-        <ul class="list-group">
-          <li class="list-group-item">
+        <ul class="list-group list-group-flush my-3">
+          <li class="list-group-item p-2">
             <div class="fw-bold text-secondary">
               Author:
             </div>
             <div>{{ authorName }}</div>
           </li>
-          <li class="list-group-item">
+          <li class="list-group-item p-2">
             <div class="fw-bold text-secondary">
               Negotiation ID:
             </div>
             <span> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
-          <li class="list-group-item">
+          <li class="list-group-item p-2">
             <div class="fw-bold text-secondary">
               Status:
             </div>
@@ -407,12 +404,6 @@ export default {
 </script>
 
 <style scoped>
-.list-group-item {
-  padding: 10px;
-  margin-top: 5px;
-  border: none;
-  border-bottom: lightgray 1px solid;
-}
 h1 {
   font-family: Calibri, Arial, sans-serif;
 }
