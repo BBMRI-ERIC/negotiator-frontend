@@ -1,5 +1,5 @@
 <template>
-  <NegotiationModal
+  <NegotiatorModal
     :id="id"
     :title="title"
   >
@@ -25,14 +25,15 @@
         Confirm
       </button>
     </template>
-  </NegotiationModal>
+  </NegotiatorModal>
 </template>
 
 <script>
-import NegotiationModal from "./NegotiationModal.vue"
+
+import NegotiatorModal from "./NegotiatorModal.vue"
 
 export default {
-  components: { NegotiationModal },
+  components: { NegotiatorModal },
   props: {
     id: {
       type: String,

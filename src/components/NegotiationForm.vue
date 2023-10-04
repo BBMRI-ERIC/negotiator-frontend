@@ -1,4 +1,17 @@
 <template>
+  <button
+    ref="openModal"
+    hidden
+    data-bs-toggle="modal"
+    data-bs-target="#feedbackModal"
+  />
+  <feedback-modal
+    id="feedbackModal"
+    :title="notificationTitle"
+    :text="notificationText"
+    dismiss-button-text="Back to HomePage"
+    @dismiss="backToHomePage"
+  />
   <div
     v-if="loading"
     class="d-flex align-items-center justify-content-center"
@@ -13,21 +26,6 @@
     </h4>
   </div>
   <div v-else>
-    <b-modal 
-      id="negotiation-feedback"
-      v-model="notificationVisible"
-      :title="notificationHeader"
-      hide-footer="true"
-      :header-bg-variant="notificationVariant"
-      @hide.prevent
-    >
-      <p class="my-4">
-        {{ notificationBody }}
-      </p>
-      <b-button @click="closeNegotiation">
-        Back to Negotiations
-      </b-button>
-    </b-modal>
     <form-wizard
       v-if="accessCriteria"
       :start-index="0"
@@ -120,15 +118,17 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import FeedbackModal from "@/components/modals/FeedbackModal.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
+import { mapActions } from "vuex"
 
 export default {
   name: "NegotiationForm",
   components: {
     FormWizard,
     TabContent,
+    FeedbackModal
   },
   props: {
     requestId: {
@@ -138,22 +138,18 @@ export default {
   },
   data() {
     return {
-      notificationVariant: "light",
-      notificationHeader: "",
-      notificationBody: "",
+      notificationTitle: "",
+      notificationText: "",
       negotiationCriteria: {},
       accessCriteria: undefined,
     }
   },
   computed: {
-    notificationVisible() {
-      return this.notificationHeader !== ""
-    },
     loading() {
       if (this.accessCriteria !== undefined) {
         this.initNegotiationCriteria()
       }
-      return this.accessCriteria === undefined && !this.notificationVisible
+      return this.accessCriteria === undefined
     },
   },
   async mounted() {
@@ -162,13 +158,12 @@ export default {
     })
     if (result.code) {        
       if (result.code == 404) {
-        this.showNotification("danger", "Error", "Request not found")
+        this.showNotification("Error", "Request not found")
       } else {
-        this.showNotification("danger", "Error", "Error retrieving the request")
+        this.showNotification("Error", "Cannot contact the server to get request information")
       }
     } else if (result.negotiationId) {    
-      // if the negotiationId is present it means that the request is already associated to a negotiation
-      this.showNotification("danger", "Error", "Request already associated to a negotiation")
+      this.showNotification("Error", "Request already submitted")
     } else {
       await this.retrieveAccessCriteriaByResourceId({
         resourceId: result.resources[0].id
@@ -187,7 +182,7 @@ export default {
         }
       }).then((negotiationId) => {
         if (negotiationId) {
-          this.showNotification("light", 
+          this.showNotification(
             "Negotiation Created Correctly", 
             "You can follow the status of this negotiation in your researcher page")
         } 
@@ -199,13 +194,13 @@ export default {
     handleFileUpload(event, section, criteria) {
       this.negotiationCriteria[section][criteria] = event.target.files[0]
     },
-    showNotification(variant, header, body) {
-      this.notificationVariant = variant
-      this.notificationHeader = header
-      this.notificationBody = body
+    showNotification(header, body) {
+      this.$refs.openModal.click()
+      this.notificationTitle = header
+      this.notificationText = body
     },
-    closeNegotiation() {
-      this.$router.push("/researcher")
+    backToHomePage() {
+      this.$router.push("/")
     },
     initNegotiationCriteria() {
       for (var section of this.accessCriteria.sections) {

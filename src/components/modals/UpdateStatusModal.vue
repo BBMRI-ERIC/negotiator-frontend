@@ -1,5 +1,5 @@
 <template>
-  <NegotiationModal
+  <NegotiatorModal
     :id="id"
     :title="`Resource: ${resourceId}`"
   >
@@ -37,7 +37,7 @@
         Submit
       </button>
     </template>
-  </NegotiationModal>
+  </NegotiatorModal>
 </template>
 
 <script>

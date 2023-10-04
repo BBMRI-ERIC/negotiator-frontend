@@ -21,6 +21,7 @@
     id="updateStatusModal"
     :resource-id="lifecycleResourceId"
     :options="responseOptions"
+    :visible="updateStatusVisible"
     @selected="updateResource"
   />
 
@@ -30,6 +31,7 @@
     :resource-id="privatePostResourceId"
     :negotiation="negotiation"
     :user-role="userRole"
+    :visible="privatePostVisible"
   />
 
   <div
@@ -325,7 +327,7 @@ export default {
   },
   watch: {
     negotiation(n) {
-      if(n) {
+      if (n) {
         this.isNegotiationLoaded = n
       }
     }
