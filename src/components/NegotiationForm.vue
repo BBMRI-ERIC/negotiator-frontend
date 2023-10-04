@@ -16,14 +16,13 @@
     v-if="loading"
     class="d-flex align-items-center justify-content-center"
   >
-    <h4>
-      Loading
-      <font-awesome-icon
-        class="ms-2"
-        icon="fa fa-spinner"
-        spin-pulse
-      />
+    <h4 class="me-2">
+      Loading...
     </h4>
+    <div
+      class="spinner-border"
+      role="status"
+    />
   </div>
   <div v-else>
     <form-wizard
