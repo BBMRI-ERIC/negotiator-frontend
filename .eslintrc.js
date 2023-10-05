@@ -32,9 +32,11 @@ module.exports = {
       "never"
     ],
     "key-spacing": [
-      "error", { 
-        "beforeColon": false 
-      }
+      "error", { "beforeColon": false }
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
     ]
   }
 }

@@ -3,93 +3,57 @@
   <div class="container">
     <div class="row">
       <div
-        class="col-9 d-flex"
+        class="col-9"
       >
-        <div
-          v-if="negotiations.length > 0"
-          class="col-12"
+        <NegotiationCard
+          v-for="fn in filteredNegotiations"
+          :id="fn.id"
+          :key="fn.id"
+          :title="fn.payload.project.title"
+          :status="fn.status"
+          :submitter="fn.persons.filter(p => p.role === 'RESEARCHER')[0].name"
+          :creation-date="formatDate(fn.creationDate)"
+          class="cursor-pointer"
+          @click="
+            $router.push({
+              name: 'negotiation-page',
+              params: { negotiationId: fn.id, userRole: userRole },
+            })
+          "
+        />
+        <h2
+          v-if="negotiations.length == 0"
+          class="text-center"
         >
-          <NegotiationCard
-            v-for="item in filteredNegotiations"
-            :key="item.id"
-            :negotiation-id="item.id"
-            :negotiation-title="item.payload.project.title"
-            :negotiation-status="item.status"
-            :negotiation-resources="['res1', 'res2', 'res3']"
-            :negotiation-submitter="item.persons[0].name"
-            :negotiation-creation-date="formatDate(item.creationDate)"
-            class="cursor-pointer"
-            @click="
-              $router.push({
-                name: 'negotiation-page',
-                params: { negotiationId: item.id, userRole: userRole },
-              })
-            "
-          />
-        </div>
-        <div
-          v-else
-        >
-          <h1 class="text-center">
-            No Negotiations found
-          </h1>
-        </div>
+          No Negotiations found
+        </h2>
       </div>
       <div
-        class="
-          col-3"
+        class="col-3"
       >
         <div class="card mb-2">
           <div class="card-header">
             Sort by
           </div>
           <div class="card-body">
-            <div class="form-check">
+            <div
+              v-for="(value, name) in sortAttrs"
+              :key="name"
+              class="form-check"
+            >
               <input
-                id="title"
+                :id="name"
                 class="form-check-input"
                 type="radio"
                 name="sort"
-                value="title"
+                :value="name"
                 @change="sort($event.target.value)"
               >
               <label
                 class="form-check-label"
-                for="title"
+                :for="name"
               >
-                Title
-              </label>
-            </div>
-            <div class="form-check">
-              <input
-                id="status"
-                class="form-check-input"
-                type="radio"
-                name="sort"
-                value="status"
-                @change="sort($event.target.value)"
-              >
-              <label
-                class="form-check-label"
-                for="status"
-              >
-                Status 
-              </label>
-            </div>
-            <div class="form-check">
-              <input
-                id="creationDate"
-                class="form-check-input"
-                type="radio"
-                name="sort"
-                value="creationDate"
-                @change="sort($event.target.value)"
-              >
-              <label
-                class="form-check-label"
-                for="creationDate"
-              >
-                Date of creation
+                {{ value.label }}
               </label>
             </div>
           </div>
@@ -154,8 +118,11 @@
             Filter by date
           </div>
           <div class="card-body">
-            <div class="d-flex align-items-center  mb-2">
-              <label for="startDate">Start: </label>
+            <div class="d-flex align-items-center mb-2">
+              <label
+                class="pe-2 w-25"
+                for="startDate"
+              >Start:</label>
               <input
                 id="startDate"
                 v-model="selectedStartDate"
@@ -163,10 +130,12 @@
                 type="date"
                 @input="updateFilter('dateStart', selectedStartDate)"
               >
-              <span id="startDateSelected" />
             </div>
             <div class="d-flex align-items-center">
-              <label for="endDate">End:</label>
+              <label
+                for="endDate"
+                class="pe-2 w-25"
+              >End:</label>
               <input
                 id="endDate"
                 v-model="selectedEndDate"
@@ -174,7 +143,6 @@
                 type="date"
                 @input="updateFilter('dateEnd', selectedEndDate)"
               >
-              <span id="endDateSelected" />
             </div>
           </div>
         </div>
@@ -211,27 +179,24 @@ export default {
   },
   data() {
     return {
-      headers: ["id", "title", "status"],
-      negotiation: [],
       availableRoles: ROLES,
-      sorting: { "id": {
-        "func": this.sortById, 
-        "order": "asc"
-      }, 
-      "title": {
-        "func": this.sortByTitle, 
-        "order": "asc"
-      }, 
-      "status": {
-        "func": this.sortByStatus, 
-        "order": "asc"
-      }, 
-      "creationDate": {
-        "func": this.sortByCreationDate, 
-        "order": "desc"
-      }, 
-      }, 
-      previuosSortingColumn: "", 
+      sortAttrs: {
+        "title": {
+          label: "Title",
+          sortTransformation: (value) => value.payload.project.title,
+          sortOrder: "asc"
+        },
+        "status": {
+          label: "Status",
+          sortTransformation: (value) => value.status,
+          sortOrder: "asc"
+        },
+        "creationDate": {
+          label: "Date of creation",
+          sortTransformation: (value) => new Date(value.creationDate),
+          sortOrder: "desc"
+        } 
+      },      
       filters: {
         "status": [],
         "dateStart": "",
@@ -260,56 +225,23 @@ export default {
         })     
       }
       return filterConditions.length == 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
-
     }
-    
-
-
   },
   methods: {
-    abandonRequest() {
-      if (confirm("Are you sure you want to abandon this request?")) {
-        console.log("deleting")
-      }
-    },
-    sortByTitle(a, b) {
-      if (a.payload.project.title < b.payload.project.title) {
-        return this.sorting.title.order == "desc" ? 1 : -1
-      }
-      if (a.payload.project.title > b.payload.project.title) {
-        return this.sorting.title.order == "desc" ? -1 : 1 
-      }
-      return 0
-    },
-    sortById(a, b) {
-      if (a.id < b.id) {
-        return this.sorting.id.order == "desc" ? 1 : -1
-      }
-      if (a.id > b.id) {
-        return this.sorting.id.order == "desc" ? -1 : 1 
-      }
-      return 0
-    },
-    sortByStatus(a, b) {
-      if (a.status < b.status) {
-        return this.sorting.status.order == "desc" ? 1 : -1
-      }
-      if (a.status > b.status) {
-        return this.sorting.status.order == "desc" ? -1 : 1 
-      }
-      return 0
-    },
-
-    sortByCreationDate(a, b){
-      const dateA = new Date(a.creationDate)
-      const dateB = new Date(b.creationDate)
-      return this.sorting.creationDate.order == "desc" ? dateB-dateA : dateA-dateB
-
-    },
-
     sort(column){
       let sortedNegotiations = this.negotiations
-      return sortedNegotiations.sort(this.sorting[column]["func"])
+
+      return sortedNegotiations.sort((a, b) => {
+        a = this.sortAttrs[column].sortTransformation(a)
+        b = this.sortAttrs[column].sortTransformation(b)
+        if (a < b) {
+          return this.sortAttrs[column].sortOrder == "desc" ? 1 : -1
+        }
+        if (a > b) {
+          return this.sortAttrs[column].sortOrder == "desc" ? -1 : 1 
+        }
+        return 0
+      })
     },
     formatDate(date){
       return moment(date).format("YYYY/MM/DD HH:mm")

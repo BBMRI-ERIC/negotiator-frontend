@@ -1,20 +1,20 @@
 <template>
   <div class="card mb-2">
     <h5 class="card-header">
-      {{ negotiationTitle }}
+      {{ title }}
       <span class="badge rounded-pill bg-primary float-end">
-        {{ negotiationStatus }}
+        {{ status }}
       </span>
     </h5>
     <div class="card-body">
       <h6 class="card-subtitle mb-2 text-muted">
-        Negotiation ID: {{ negotiationId }}
+        Negotiation ID: {{ id }}
       </h6>
       <h6 class="card-subtitle mb-2 text-muted">
-        Created on: {{ negotiationCreationDate }}
+        Created on: {{ creationDate }}
       </h6>
       <h6 class="card-subtitle mb-2 text-muted">
-        Created by: {{ negotiationSubmitter }}
+        Created by: {{ submitter }}
       </h6>
     </div>
   </div>
@@ -25,31 +25,26 @@
 export default {
   name: "NegotiationCard",
   props: {
-    negotiationId: {
+    id: {
       type: String,
       default: ""
     }, 
-    negotiationTitle: {
+    title: {
       type: String,
       default: ""
     }, 
-    negotiationStatus: {
+    status: {
       type: String,
       default: ""
     },
-    negotiationSubmitter: {
+    submitter: {
       type: String,
       default: ""
     },
-    negotiationResources: {
-      type: Object,
-      default: undefined
-    },
-    negotiationCreationDate: {
+    creationDate: {
       type: Date,
       default: undefined
-    },
-
+    }
   }
 }
 </script>
