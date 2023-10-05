@@ -126,8 +126,11 @@
             Filter by date
           </div>
           <div class="card-body">
-            <div class="d-flex align-items-center  mb-2">
-              <label for="startDate">Start: </label>
+            <div class="d-flex align-items-center mb-2">
+              <label
+                class="pe-2 w-25"
+                for="startDate"
+              >Start:</label>
               <input
                 id="startDate"
                 v-model="selectedStartDate"
@@ -135,10 +138,12 @@
                 type="date"
                 @input="updateFilter('dateStart', selectedStartDate)"
               >
-              <span id="startDateSelected" />
             </div>
             <div class="d-flex align-items-center">
-              <label for="endDate">End:</label>
+              <label
+                for="endDate"
+                class="pe-2 w-25"
+              >End:</label>
               <input
                 id="endDate"
                 v-model="selectedEndDate"
@@ -146,7 +151,6 @@
                 type="date"
                 @input="updateFilter('dateEnd', selectedEndDate)"
               >
-              <span id="endDateSelected" />
             </div>
           </div>
         </div>
@@ -183,7 +187,7 @@ export default {
   },
   data() {
     return {
-      headers: ["id", "title", "status"],
+      availableRoles: ROLES,
       sortAttrs: {
         "title": {
           label: "Title",
@@ -200,7 +204,6 @@ export default {
           sortTransformation: (value) => new Date(value.creationDate),
           sortOrder: "desc"
         }},      
-      availableRoles: ROLES, 
       filters: {
         "status": [],
         "dateStart": "",
