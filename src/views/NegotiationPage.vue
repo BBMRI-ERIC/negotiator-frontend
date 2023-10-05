@@ -206,8 +206,7 @@
         </div>
       </div>
     </div>
-  </div>
-  
+  </div>  
   <div
     v-else
     class="d-flex justify-content-center flex-row"
