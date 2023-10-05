@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions } from "vuex"
 import { dateFormat, MESSAGE_STATUS } from "@/config/consts"
 import moment from "moment"
 
@@ -96,9 +96,6 @@ export default {
     ]),
     resetForm() {
       this.message.text = ""
-    },
-    computed: {
-      ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)

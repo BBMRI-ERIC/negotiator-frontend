@@ -1,47 +1,47 @@
 <template>
-  <button
-    type="button"
-    class="btn btn-secondary"
-    @click="
-      $router.go(-1)
-    "
-  >
-    <i class="bi-arrow-left" />
-    Go back
-  </button>
-
-  <confirmation-modal
-    id="abandonModal"
-    title="Are you sure you want to abandon this Negotiation?"
-    text="Confirming, you will not be able to access this negotiation again."
-    @confirm="updateNegotiation('ABANDON')"
-  />
-
-  <update-status-modal
-    id="updateStatusModal"
-    :resource-id="lifecycleResourceId"
-    :options="responseOptions"
-    :visible="updateStatusVisible"
-    @selected="updateResource"
-  />
-
-  <private-post-modal
-    v-if="negotiation"
-    id="privatePostModal"
-    :resource-id="privatePostResourceId"
-    :negotiation="negotiation"
-    :user-role="userRole"
-    :visible="privatePostVisible"
-  />
-
   <div
-    v-if="isNegotiationLoaded"
-    class="mt-4"
+    v-if="!loading"
   >
-    <h1 class="text-primary fw-bold">
-      {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
-    </h1>
-    <div class="row">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      @click="
+        $router.go(-1)
+      "
+    >
+      <i class="bi-arrow-left" />
+      Go back
+    </button>
+
+    <confirmation-modal
+      id="abandonModal"
+      title="Are you sure you want to abandon this Negotiation?"
+      text="Confirming, you will not be able to access this negotiation again."
+      @confirm="updateNegotiation('ABANDON')"
+    />
+
+    <update-status-modal
+      id="updateStatusModal"
+      :resource-id="lifecycleResourceId"
+      :options="responseOptions"
+      :visible="updateStatusVisible"
+      @selected="updateResource"
+    />
+
+    <private-post-modal
+      v-for="collection in collections"
+      :id="`privatePostModal${getElementIdFromCollectionId(collection)}`"
+      :key="collection"
+      :resource-id="collection"
+      :negotiation="negotiation"
+      :user-role="userRole"
+      :visible="privatePostVisible"
+    />
+
+    <div class="row mt-4">
+      <h1 class="text-primary fw-bold">
+        {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
+      </h1>
       <div class="col-8">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li
@@ -115,7 +115,7 @@
                         v-if="negotiation && negotiation.postsEnabled"
                         type="button"
                         class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                        data-bs-target="#privatePostModal"
+                        :data-bs-target="`#privatePostModal${getElementIdFromCollectionId(collection)}`"
                         data-bs-toggle="modal"
                         @click.prevent="interactPrivatePostModal(collection)"
                       >
@@ -233,7 +233,7 @@ import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
 import PrivatePostModal from "@/components/modals/PrivatePostModal.vue"
 import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import { mapActions, mapGetters } from "vuex"
+import { mapActions } from "vuex"
 
 export default {
   name: "NegotiationPage",
@@ -259,7 +259,6 @@ export default {
         resourceId: undefined,
       },
       roles: [],
-      isNegotiationLoaded: false,
       responseOptions: [],
       selectedItem: "",
       messageStatus: MESSAGE_STATUS,
@@ -270,48 +269,18 @@ export default {
     }
   },  
   computed: {
-    organizations() {
-      const organizationNames = []
-
-      for (const request of this.negotiation.requests) {
-        for (const resource of request.resources) {
-          const organizationName = resource.id
-          organizationNames.push(organizationName)
-        }
-      }
-      return organizationNames
-    },
     collections() {
       const collections = []
 
       for (const request of this.negotiation.requests) {
         for (const resource of request.resources) {
-          const collection = resource.id
-          collections.push(collection)
+          collections.push(resource.id)
         }
       }
       return collections
     },
     numberOfCollections() {
-      let counter = 0
-      for (const request of this.negotiation.requests) {
-        for (const resource of request.resources) {
-          counter++
-        }
-      }
-      return counter
-
-    },
-    resourcesIds() {
-      const organizationNames = []
-
-      for (const request of this.negotiation.requests) {
-        for (const resource of request.resources) {
-          const organizationName = resource.id
-          organizationNames.push(organizationName)
-        }
-      }
-      return organizationNames
+      return this.collections.length
     },
     authorName() {
       for (const person of this.negotiation.persons) {
@@ -321,12 +290,8 @@ export default {
       }
       return ""
     },
-  },
-  watch: {
-    negotiation(n) {
-      if (n) {
-        this.isNegotiationLoaded = n
-      }
+    loading() {
+      return this.negotiation === undefined
     }
   },
   async beforeMount() {
@@ -343,8 +308,6 @@ export default {
       "retrieveNegotiationById",
       "retrievePostsByNegotiationId",
       "retrieveUserRoles",
-      "addMessageToNegotiation",
-      "markMessageAsRead",
       "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
       "updateNegotiationStatus",
@@ -361,9 +324,6 @@ export default {
       } else {
         return ""
       }
-    },
-    computed: {
-      ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     },
     isAttachment(value) {
       return value instanceof Object
@@ -398,6 +358,9 @@ export default {
     interactLifecycleModal(resourceId) {
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource()
+    },
+    getElementIdFromCollectionId(collection) {
+      return collection.replaceAll(":", "_")
     }
   },
 }
