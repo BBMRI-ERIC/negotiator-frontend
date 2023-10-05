@@ -203,7 +203,8 @@ export default {
           label: "Date of creation",
           sortTransformation: (value) => new Date(value.creationDate),
           sortOrder: "desc"
-        }},      
+        } 
+      },      
       filters: {
         "status": [],
         "dateStart": "",
