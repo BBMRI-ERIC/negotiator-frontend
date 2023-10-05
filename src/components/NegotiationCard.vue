@@ -41,10 +41,6 @@ export default {
       type: String,
       default: ""
     },
-    resources: {
-      type: Object,
-      default: undefined
-    },
     creationDate: {
       type: Date,
       default: undefined

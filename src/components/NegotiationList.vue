@@ -3,41 +3,33 @@
   <div class="container">
     <div class="row">
       <div
-        class="col-9 d-flex justify-content-center"
+        class="col-9"
       >
-        <div
-          v-if="negotiations.length > 0"
-          class="col-12"
+        <NegotiationCard
+          v-for="fn in filteredNegotiations"
+          :id="fn.id"
+          :key="fn.id"
+          :title="fn.payload.project.title"
+          :status="fn.status"
+          :submitter="fn.persons.filter(p => p.role === 'RESEARCHER')[0].name"
+          :creation-date="formatDate(fn.creationDate)"
+          class="cursor-pointer"
+          @click="
+            $router.push({
+              name: 'negotiation-page',
+              params: { negotiationId: fn.id, userRole: userRole },
+            })
+          "
+        />
+        <h2
+          v-if="negotiations.length == 0"
+          class="text-center"
         >
-          <NegotiationCard
-            v-for="item in filteredNegotiations"
-            :id="item.id"
-            :key="item.id"
-            :title="item.payload.project.title"
-            :status="item.status"
-            :resources="['res1', 'res2', 'res3']"
-            :submitter="item.persons[0].name"
-            :creation-date="formatDate(item.creationDate)"
-            class="cursor-pointer"
-            @click="
-              $router.push({
-                name: 'negotiation-page',
-                params: { negotiationId: item.id, userRole: userRole },
-              })
-            "
-          />
-        </div>
-        <div
-          v-else
-        >
-          <h2 class="text-center">
-            No Negotiations found
-          </h2>
-        </div>
+          No Negotiations found
+        </h2>
       </div>
       <div
-        class="
-          col-3"
+        class="col-3"
       >
         <div class="card mb-2">
           <div class="card-header">
