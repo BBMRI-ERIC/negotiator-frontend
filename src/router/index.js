@@ -42,11 +42,6 @@ const router = createRouter({
     props: { userRole: "ADMIN" },
     meta: { isPublic: false }
   }, {
-    path: "/login",
-    name: "login",
-    component: Login,
-    meta: { isPublic: true }
-  }, {
     path: "/negotiations/:negotiationId/:userRole",
     name: "negotiation-page",
     component: NegotiationPage,
