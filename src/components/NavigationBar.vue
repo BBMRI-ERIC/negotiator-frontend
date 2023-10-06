@@ -35,7 +35,7 @@
               to="/admin"
             >
               <i class="bi bi-house-gear" />
-              Administrator
+              Review requests
             </router-link>
           </li>
           <li 
@@ -47,7 +47,7 @@
               to="/researcher"
             >
               <i class="bi bi-folder2" />
-              Requests
+              Your negotiations
             </router-link>
           </li>
           <li
@@ -59,7 +59,7 @@
               to="/biobanker"
             >
               <i class="bi bi-hospital" />
-              Biobank
+              Your biobank
             </router-link>
           </li>
         </ul>

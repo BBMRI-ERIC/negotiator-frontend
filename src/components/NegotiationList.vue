@@ -76,7 +76,7 @@
                 class="form-check-label"
                 for="submitted"
               >
-                SUBMITTED
+                Submitted
               </label>
             </div>
             <div class="form-check">
@@ -86,29 +86,29 @@
                 class="form-check-input"
                 type="checkbox"
                 value="ongoing"
-                @change="updateFilter('status', 'ONGOING', ongoingSelection)"
+                @change="updateFilter('status', 'IN_PROGRESS', ongoingSelection)"
               >
               <label
                 class="form-check-label"
                 for="ongoing"
               >
-                ONGOING
+                In progress
               </label>
             </div>
             <div class="form-check">
               <input
-                id="aborted"
-                v-model="abortedSelection"
+                id="abandoned"
+                v-model="abandonedSelection"
                 class="form-check-input"
                 type="checkbox"
-                value="aborted"
-                @change="updateFilter('status', 'ABORTED', abortedSelection)"
+                value="abandoned"
+                @change="updateFilter('status', 'ABANDONED', abandonedSelection)"
               >
               <label
                 class="form-check-label"
-                for="aborted"
+                for="abandoned"
               >
-                ABORTED
+                Abandoned
               </label>
             </div>
           </div>
