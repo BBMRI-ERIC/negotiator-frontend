@@ -95,13 +95,13 @@ export default {
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     isAdmin() {
-      return this.roles.includes("ADMIN")
+      return this.roles.includes("ROLE_ADMIN")
     },
     isResearcher() {
-      return this.roles.includes("RESEARCHER")
+      return this.roles.includes("ROLE_RESEARCHER")
     },
     isRepresentative() {
-      return this.roles.includes("REPRESENTATIVE")
+      return this.roles.includes("ROLE_REPRESENTATIVE")
     }
   },
   watch: {
