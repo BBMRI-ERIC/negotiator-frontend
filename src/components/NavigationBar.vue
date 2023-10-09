@@ -84,6 +84,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { ROLES } from "@/config/consts"
 
 export default {
   name: "NavigationBar",
@@ -95,13 +96,14 @@ export default {
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     isAdmin() {
-      return this.roles.includes("ROLE_ADMIN")
+      return this.roles.includes(ROLES.ADMINISTRATOR)
     },
     isResearcher() {
-      return this.roles.includes("ROLE_RESEARCHER")
+      return this.roles.includes(ROLES.RESEARCHER)
     },
     isRepresentative() {
-      return this.roles.includes("ROLE_REPRESENTATIVE")
+      return this.roles.includes(ROLES.REPRESENTATIVE)
+>>>>>>> 254941d (feat: changes roles' strings all over the code to use constants)
     }
   },
   watch: {

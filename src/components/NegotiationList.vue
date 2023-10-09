@@ -11,7 +11,7 @@
           :key="fn.id"
           :title="fn.payload.project.title"
           :status="fn.status"
-          :submitter="fn.persons.filter(p => p.role === 'ROLE_RESEARCHER')[0].name"
+          :submitter="fn.persons.filter(p => p.role === availableRoles.RESEARCHER)[0].name"
           :creation-date="formatDate(fn.creationDate)"
           class="cursor-pointer"
           @click="
