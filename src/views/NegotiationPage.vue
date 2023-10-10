@@ -161,6 +161,7 @@
             </div>
             <span> {{ negotiation ? negotiation.status : "" }}
               <strong
+                v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
                 type="button"
                 role="button"
