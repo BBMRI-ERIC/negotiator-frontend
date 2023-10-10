@@ -101,9 +101,8 @@
                     <span>
                       {{ getStatusForCollection(collection) }}
                       <button
-                        v-if="userRole === 'REPRESENTATIVE' 
-                          && negotiation.status === 'ONGOING'
-                          && isRepresentativeForResource(collection)"
+                        v-if="(userRole === 'REPRESENTATIVE'
+                          && isRepresentativeForResource(collection)) || loadPossibleEventsForSpecificResource(collection)"
                         class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
                         data-bs-toggle="modal"
                         data-bs-target="#updateStatusModal"
@@ -162,6 +161,7 @@
             </div>
             <span> {{ negotiation ? negotiation.status : "" }}
               <strong
+                v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
                 type="button"
                 role="button"
@@ -314,7 +314,8 @@ export default {
       "downloadAttachment"
     ]),
     async isRepresentativeForResource(resourceId) {
-      return !!this.roles.includes(resourceId)
+      console.log(this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId))
+      return !!this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId)
 
     },
     getStatusForCollection(collectionId) {
@@ -350,6 +351,19 @@ export default {
       }).then((data) => {
         this.responseOptions = data
       })
+    },
+    async loadPossibleEventsForSpecificResource(resourceId) {
+      if (this.userRole !== "RESEARCHER"){
+        return false
+      }
+      let response
+      this.retrievePossibleEventsForResource({
+        negotiationId: this.negotiation.id,
+        resourceId: resourceId
+      }).then((data) => {
+        response = data
+      })
+      return response.length > 0
     },
     interactPrivatePostModal(resourceId) {
       this.privatePostResourceId = resourceId

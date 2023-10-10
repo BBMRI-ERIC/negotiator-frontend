@@ -35,7 +35,7 @@
               to="/admin"
             >
               <i class="bi bi-house-gear" />
-              Administrator
+              Review requests
             </router-link>
           </li>
           <li 
@@ -47,7 +47,7 @@
               to="/researcher"
             >
               <i class="bi bi-folder2" />
-              Requests
+              Your negotiations
             </router-link>
           </li>
           <li
@@ -59,7 +59,7 @@
               to="/biobanker"
             >
               <i class="bi bi-hospital" />
-              Biobank
+              Your biobank
             </router-link>
           </li>
         </ul>
@@ -95,13 +95,13 @@ export default {
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
     isAdmin() {
-      return this.roles.includes("ADMIN")
+      return this.roles.includes("ROLE_ADMIN")
     },
     isResearcher() {
-      return this.roles.includes("RESEARCHER")
+      return this.roles.includes("ROLE_RESEARCHER")
     },
     isRepresentative() {
-      return this.roles.includes("REPRESENTATIVE")
+      return this.roles.includes("ROLE_REPRESENTATIVE")
     }
   },
   watch: {
