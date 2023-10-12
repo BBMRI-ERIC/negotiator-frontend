@@ -15,7 +15,7 @@ const prodSettings = {
   redirectUri: "REDIRECT_URI_PLACEHOLDER",
   postLogoutRedirectUri: "LOGOUT_URI_PLACEHOLDER",
   responseType: "code",
-  scope: "openid profile email offline_access eduperson_entitlement negotiator_api",
+  scope: "openid profile email offline_access eduperson_entitlement",
   automaticSilentRenew: true
 }
 
