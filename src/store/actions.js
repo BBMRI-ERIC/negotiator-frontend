@@ -133,9 +133,9 @@ export default {
         commit("setNotification", "Error getting request data from server")
       })
   },
-  retrievePostsByNegotiationId({ state, commit }, { negotiationId, type, resourceId }) {
+  retrievePostsByNegotiationId({ state, commit }, { negotiationId, resourceId }) {
     let url = `${NEGOTIATION_PATH}/${negotiationId}/posts`
-    let params = resourceId ? { type: type, resource: resourceId } : { type: type }
+    let params = resourceId ? { resource: resourceId } : { }
     return axios.get(url, { headers: getBearerHeaders(state.oidc.access_token), params: params })
       .then((response) => {
         return response.data
@@ -145,6 +145,7 @@ export default {
       })
   },
   addMessageToNegotiation({ state, commit }, { data }) {
+    console.log(data)
     return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
