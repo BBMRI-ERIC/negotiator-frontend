@@ -8,7 +8,16 @@
     >
       <div class="card-header d-flex">
         <div class="me-auto">
-          {{ post.createdBy.name }}
+          <span
+            class="badge rounded-pill"
+            :class="getAuthorPostColor(post)"
+          >
+            {{ getAuthorName(post) }}
+          </span> to
+          <span
+            class="badge rounded-pill"
+            :class="getRecipientPostColor(post)"
+          >{{ getRecipientName(post) }}</span>
         </div>
         <div class="d-flex">
           <div class="ms-2">
@@ -24,28 +33,53 @@
       v-if="posts.length === 0"
       class="my-3"
     >
-    <h5>Send a {{ scope }} message</h5>
+    <h5>Send a message</h5>
     <form
       class="mb-4"
-      @submit.prevent="addMessage"
+      @submit.prevent="sendMessage"
     >
       <textarea
-        v-model="message.text"
+        v-model="message"
         class="form-control mb-3"
-        style="min-width: 100%"
       />
-      <button
-        type="submit"
-        class="btn btn-secondary float-end"
-      >
-        Send message
-      </button>
+      <div class="d-flex flex-row-reverse">
+        <button
+          type="submit"
+          :disabled="!readyToSend"
+          class="btn btn-secondary ms-2"
+        >
+          Send message
+        </button>
+        <select
+          id="recipient"
+          v-model="recipientId"
+          class="form-select w-25"
+        >
+          <option
+            disabled
+            selected
+            value=""
+          >
+            -- Select recipient --
+          </option>
+          <option value="Everyone">
+            Everyone
+          </option>
+          <option 
+            v-for="recipient in recipients"
+            :key="recipient.id"
+            :value="recipient.id"
+          >
+            {{ recipient.name }}
+          </option>
+        </select>
+      </div>
     </form>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS } from "@/config/consts"
 import moment from "moment"
 
@@ -60,34 +94,46 @@ export default {
       type: String,
       default: undefined,
     },
-    scope: {
-      type: String,
-      default: undefined,
+    recipients: {
+      type: Array,
+      default(rawProps) { // eslint-disable-line no-unused-vars
+        return []
+      }
     },
-    resourceId: {
-      type: String,
-      default: null,
-    },
+    resources: {
+      type: Array,
+      default(rawProps) { // eslint-disable-line no-unused-vars
+        return []
+      }
+    }
 
   },
   data() {
     return {
       posts: [],
-      message: {
-        text: "",
-        resourceId: undefined,
-      },
-      messageStatus: MESSAGE_STATUS
+      message: "",
+      recipientId: "",
+      messageStatus: MESSAGE_STATUS,
     }
   },
-  
+  computed: {
+    ...mapGetters(["oidcUser"]),
+    readyToSend() {
+      return this.message !== "" && this.recipientId !== ""
+    }
+  },  
   async beforeMount() {
     this.posts = await this.retrievePostsByNegotiationId({
-      negotiationId: this.negotiation.id,
-      type: this.scope.toUpperCase(),
-      resourceId: this.resourceId
+      negotiationId: this.negotiation.id
     })
-  },
+
+    this.recipientsById = this.recipients.reduce(
+      (obj, item) => Object.assign(obj, { [item.id]: { name: item.name, type: item.type } }), {})
+    
+    this.resourcesById = this.resources.reduce(
+      (obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
+    
+  },    
   methods: {
     ...mapActions([
       "retrievePostsByNegotiationId",
@@ -95,41 +141,81 @@ export default {
       "markMessageAsRead",
     ]),
     resetForm() {
-      this.message.text = ""
+      this.message = ""
+      this.recipientId = ""
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
     },
-    getRole: function (role) {
-      // check if the negotiation is already loaded from the backend
-      if (this.negotiation === undefined) {
-        return ""
-      } else {
-        // gets the first person with the required role
-        const person = this.negotiation.persons.filter(
-          (person) => person.role === role
-        )[0]
-        return person.name || ""
+    async sendMessage() {
+      if (!this.readyToSend) {
+        return
       }
-    },
-    async addMessage() {
+
+      var recipientType = null
+      if (this.recipientId !== "Everyone") {
+        recipientType = this.recipientsById[this.recipientId].type
+      }
+
       // send a message and add the newly created post
       await this.addMessageToNegotiation({
         data: {
-          resourceId: this.resourceId,
-          text: this.message.text,
+          resourceId: recipientType === "RESOURCE" ? this.recipientId : null,
+          personRecipientSubject: recipientType === "PERSON" ? this.recipientId : null,
+          text: this.message,
           negotiationId: this.negotiation.id,
-          type: this.scope.toUpperCase()
-          
+          type: this.recipientId === "Everyone" ? "PUBLIC" : "PRIVATE"          
         },
       }).then((post) => {
         if (post) {
-          post.poster_role = this.userRole
           this.posts.push(post)
         }
       })
       this.resetForm()
+    },
+    transformId(id) {
+      return id.replaceAll(":", "_")
+    },
+    getAuthorPostColor(post) {
+      if (post.createdBy.authSubject === this.oidcUser.sub) {
+        return {
+          "bg-secondary": true
+        }
+      }
+      else {
+        return {
+          "bg-primary": true
+        }
+      }
+    },
+    getAuthorName(post) {
+      return post.createdBy.authSubject === this.oidcUser.sub ? "You" : post.createdBy.name
+    },
+    getRecipientPostColor(post) {
+      if (post.type === "PUBLIC") {
+        return {
+          "bg-info": true
+        }
+      }
+      else if (post.personRecipient !== undefined && post.personRecipient.authSubject === this.oidcUser.sub) {
+        return {
+          "bg-secondary": true
+        }
+      } else {
+        return {
+          "bg-primary": true
+        }
+      }
+    },
+    getRecipientName(post) {
+      if (post.resourceId !== undefined) {
+        return this.resourcesById[post.resourceId].name
+      } else if (post.personRecipient !== undefined) {
+        return post.personRecipient.authSubject === this.oidcUser.sub ? "You" : post.personRecipient.name
+      } else {
+        return "Everyone"
+      }
     }
-  },
+  }
 }
 </script>

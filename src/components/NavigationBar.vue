@@ -103,7 +103,6 @@ export default {
     },
     isRepresentative() {
       return this.roles.includes(ROLES.REPRESENTATIVE)
->>>>>>> 254941d (feat: changes roles' strings all over the code to use constants)
     }
   },
   watch: {

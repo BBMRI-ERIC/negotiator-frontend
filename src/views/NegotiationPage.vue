@@ -28,16 +28,6 @@
       @selected="updateResource"
     />
 
-    <private-post-modal
-      v-for="collection in collections"
-      :id="`privatePostModal${getElementIdFromCollectionId(collection)}`"
-      :key="collection"
-      :resource-id="collection"
-      :negotiation="negotiation"
-      :user-role="userRole"
-      :visible="privatePostVisible"
-    />
-
     <div class="row mt-4">
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
@@ -78,47 +68,37 @@
             <p
               type="button"
               data-bs-toggle="collapse"
-              data-bs-target="#collectionsList"
+              data-bs-target="#resourcesList"
               aria-expanded="false"
-              aria-controls="collectionsList"
+              aria-controls="resourcesList"
             >
               <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
                 <i class="bi bi-card-list" />
-                COLLECTIONS ({{ numberOfCollections }})
+                COLLECTIONS ({{ numberOfResources }})
               </span>
             </p>
             <div
-              id="collectionsList"
+              id="resourcesList"
               class="collapse"
             >
               <ul>
                 <li
-                  v-for="collection in collections"
-                  :key="collection"
+                  v-for="resource in resources"
+                  :key="resource.id"
                 >
                   <div class="me-auto p-2">
-                    <label class="me-2 fw-bold small">{{ collection }}</label>
+                    <label class="me-2 fw-bold small">{{ resource.name }}</label>
                     <span>
-                      {{ getStatusForCollection(collection) }}
+                      {{ getStatusForCollection(resource.id) }}
                       <button
                         v-if="(userRole === availableRoles.REPRESENTATIVE
-                          && isRepresentativeForResource(collection)) || loadPossibleEventsForSpecificResource(collection)"
+                          && isRepresentativeForResource(resource.id)) || loadPossibleEventsForSpecificResource(resource.id)"
                         class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
                         data-bs-toggle="modal"
                         data-bs-target="#updateStatusModal"
-                        @click.stop="interactLifecycleModal(collection)"
+                        @click.stop="interactLifecycleModal(resource.id)"
                       >
                         <i class="bi-gear" />
-                      </button>
-                      <button
-                        v-if="negotiation && negotiation.postsEnabled"
-                        type="button"
-                        class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                        :data-bs-target="`#privatePostModal${getElementIdFromCollectionId(collection)}`"
-                        data-bs-toggle="modal"
-                        @click.prevent="interactPrivatePostModal(collection)"
-                      >
-                        <i class="bi-chat-fill" />
                       </button>
                     </span>
                   </div>
@@ -131,7 +111,8 @@
           v-if="negotiation && negotiation.postsEnabled"
           :negotiation="negotiation"
           :user-role="userRole"
-          scope="public"
+          :resources="resources"
+          :recipients="postsRecipients"
         />
         <div v-else>
           <h5>
@@ -147,7 +128,7 @@
             <div class="fw-bold text-secondary">
               Author:
             </div>
-            <div>{{ authorName }}</div>
+            <div>{{ author.name }}</div>
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-secondary">
@@ -229,15 +210,14 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
-import PrivatePostModal from "@/components/modals/PrivatePostModal.vue"
 import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, UpdateStatusModal, PrivatePostModal, NegotiationPosts,
+    ConfirmationModal, UpdateStatusModal, NegotiationPosts,
   },
   props: {
     negotiationId: {
@@ -268,23 +248,30 @@ export default {
     }
   },  
   computed: {
-    collections() {
-      const collections = []
-
+    ...mapGetters(["oidcUser"]),
+    resources() {
+      const resources = []
       for (const request of this.negotiation.requests) {
         for (const resource of request.resources) {
-          collections.push(resource.id)
+          resources.push(resource)
         }
       }
-      return collections
+      return resources
     },
-    numberOfCollections() {
-      return this.collections.length
+    numberOfResources() {
+      return this.resources.length
     },
-    authorName() {
+    postsRecipients() {
+      if (this.userRole === ROLES.RESEARCHER) {
+        return this.resources.map(res => { return { id: res.id, name: res.name, type: "RESOURCE" } })
+      } else {
+        return [{ id: this.author.authSubject, name: this.author.name, type: "PERSON" }]
+      }
+    },
+    author() {
       for (const person of this.negotiation.persons) {
         if (person.role === this.availableRoles.RESEARCHER) {
-          return person.name
+          return person
         }
       }
       return ""
@@ -314,13 +301,12 @@ export default {
       "downloadAttachment"
     ]),
     async isRepresentativeForResource(resourceId) {
-      console.log(this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId))
       return !!this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId)
 
     },
-    getStatusForCollection(collectionId) {
+    getStatusForCollection(resourceId) {
       if (this.negotiation.resourceStatus && typeof this.negotiation.resourceStatus === "object") {
-        return this.negotiation.resourceStatus[collectionId] || ""
+        return this.negotiation.resourceStatus[resourceId] || ""
       } else {
         return ""
       }
@@ -371,9 +357,6 @@ export default {
     interactLifecycleModal(resourceId) {
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource()
-    },
-    getElementIdFromCollectionId(collection) {
-      return collection.replaceAll(":", "_")
     }
   },
 }
