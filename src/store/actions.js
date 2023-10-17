@@ -145,7 +145,6 @@ export default {
       })
   },
   addMessageToNegotiation({ state, commit }, { data }) {
-    console.log(data)
     return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data

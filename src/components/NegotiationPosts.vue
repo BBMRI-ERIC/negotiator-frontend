@@ -100,7 +100,7 @@ export default {
         return []
       }
     },
-    resources: {
+    organizations: {
       type: Array,
       default(rawProps) { // eslint-disable-line no-unused-vars
         return []
@@ -112,7 +112,7 @@ export default {
     return {
       posts: [],
       message: "",
-      recipientId: "",
+      recipientId: null,
       messageStatus: MESSAGE_STATUS,
     }
   },
@@ -120,19 +120,20 @@ export default {
     ...mapGetters(["oidcUser"]),
     readyToSend() {
       return this.message !== "" && this.recipientId !== ""
+    },
+    recipientsById() {
+      return this.recipients.reduce(
+        (obj, item) => Object.assign(obj, { [item.id]: { name: item.name, type: item.type } }), {})
+    },
+    organizationsById() { 
+      return this.organizations.reduce(
+        (obj, item) => Object.assign(obj, { [item.externalId]: { name: item.name } }), {})    
     }
   },  
   async beforeMount() {
     this.posts = await this.retrievePostsByNegotiationId({
       negotiationId: this.negotiation.id
     })
-
-    this.recipientsById = this.recipients.reduce(
-      (obj, item) => Object.assign(obj, { [item.id]: { name: item.name, type: item.type } }), {})
-    
-    this.resourcesById = this.resources.reduce(
-      (obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
-    
   },    
   methods: {
     ...mapActions([
@@ -151,17 +152,11 @@ export default {
       if (!this.readyToSend) {
         return
       }
-
-      var recipientType = null
-      if (this.recipientId !== "Everyone") {
-        recipientType = this.recipientsById[this.recipientId].type
-      }
-
+    
       // send a message and add the newly created post
       await this.addMessageToNegotiation({
         data: {
-          resourceId: recipientType === "RESOURCE" ? this.recipientId : null,
-          personRecipientSubject: recipientType === "PERSON" ? this.recipientId : null,
+          organizationId: this.recipientId != "Everyone" ? this.recipientId : null,
           text: this.message,
           negotiationId: this.negotiation.id,
           type: this.recipientId === "Everyone" ? "PUBLIC" : "PRIVATE"          
@@ -197,7 +192,7 @@ export default {
           "bg-info": true
         }
       }
-      else if (post.personRecipient !== undefined && post.personRecipient.authSubject === this.oidcUser.sub) {
+      else if (post.personRecipient !== undefined && post.personRecipient.authSubject === this.oidcUser.sub) {        
         return {
           "bg-secondary": true
         }
@@ -208,8 +203,8 @@ export default {
       }
     },
     getRecipientName(post) {
-      if (post.resourceId !== undefined) {
-        return this.resourcesById[post.resourceId].name
+      if (post.organizationId !== undefined) {
+        return this.organizationsById[post.organizationId].name
       } else if (post.personRecipient !== undefined) {
         return post.personRecipient.authSubject === this.oidcUser.sub ? "You" : post.personRecipient.name
       } else {
