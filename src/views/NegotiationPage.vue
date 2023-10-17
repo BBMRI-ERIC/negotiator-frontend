@@ -23,7 +23,7 @@
     <update-status-modal
       id="updateStatusModal"
       :resource-id="lifecycleResourceId"
-      :options="responseOptions"
+      :options="currentResourceEvents"
       :visible="updateStatusVisible"
       @selected="updateResource"
     />
@@ -87,12 +87,11 @@
                   :key="resource.id"
                 >
                   <div class="me-auto p-2">
-                    <label class="me-2 fw-bold small">{{ resource.name }}</label>
+                    <label class="me-2 fw-bold small">{{ resource.name }} ({{ resource.organization.name }}) </label>
                     <span>
-                      {{ getStatusForCollection(resource.id) }}
+                      {{ resource.status }}
                       <button
-                        v-if="(userRole === availableRoles.REPRESENTATIVE
-                          && isRepresentativeForResource(resource.id)) || loadPossibleEventsForSpecificResource(resource.id)"
+                        v-if="userRole === availableRoles.REPRESENTATIVE && isRepresentativeForResource(resource.id)"
                         class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
                         data-bs-toggle="modal"
                         data-bs-target="#updateStatusModal"
@@ -112,6 +111,7 @@
           :negotiation="negotiation"
           :user-role="userRole"
           :resources="resources"
+          :organizations="organizations"
           :recipients="postsRecipients"
         />
         <div v-else>
@@ -210,7 +210,7 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
-import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
+import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
 
@@ -232,17 +232,8 @@ export default {
   data() {
     return {
       negotiation: undefined,
-      posts: [],
-      message: {
-        text: "",
-        resourceId: undefined,
-      },
       roles: [],
       responseOptions: [],
-      selectedItem: "",
-      messageStatus: MESSAGE_STATUS,
-      showPrivatePostModal: false,
-      privatePostResourceId: undefined,
       lifecycleResourceId: undefined,
       availableRoles: ROLES
     }
@@ -250,22 +241,25 @@ export default {
   computed: {
     ...mapGetters(["oidcUser"]),
     resources() {
-      const resources = []
-      for (const request of this.negotiation.requests) {
-        for (const resource of request.resources) {
-          resources.push(resource)
-        }
-      }
-      return resources
+      return this.negotiation.resources
+    },
+    organizations() {
+      return this.resources.map(resource => resource.organization)
     },
     numberOfResources() {
       return this.resources.length
     },
+    representativeResources() {
+      return this.resources.filter(resource => this.isRepresentativeForResource(resource.id))
+    },
+    representativeOrganizations() {
+      return this.representativeResources.map(resource => resource.organization)
+    },
     postsRecipients() {
       if (this.userRole === ROLES.RESEARCHER) {
-        return this.resources.map(res => { return { id: res.id, name: res.name, type: "RESOURCE" } })
+        return this.organizations.map(org => { return { id: org.externalId, name: org.name, type: "RESOURCE" } })
       } else {
-        return [{ id: this.author.authSubject, name: this.author.name, type: "PERSON" }]
+        return this.representativeOrganizations.map(org => { return { id: org.externalId, name: org.name, type: "RESOURCE" } })
       }
     },
     author() {
@@ -329,33 +323,18 @@ export default {
         event: status,
       })
     },
-    loadPossibleEventsForResource() {
-      this.retrievePossibleEventsForResource({
-        negotiationId: this.negotiation.id,
-        resourceId: this.lifecycleResourceId
-      }).then((data) => {
-        this.responseOptions = data
-      })
-    },
-    async loadPossibleEventsForSpecificResource(resourceId) {
-      if (this.userRole !== ROLES.RESEARCHER){
-        return false
-      }
-      let response
-      this.retrievePossibleEventsForResource({
+    async loadPossibleEventsForResource(resourceId) {
+      this.currentResourceEvents = await this.retrievePossibleEventsForResource({
         negotiationId: this.negotiation.id,
         resourceId: resourceId
       }).then((data) => {
-        response = data
+        return data
       })
-      return response.length > 0
-    },
-    interactPrivatePostModal(resourceId) {
-      this.privatePostResourceId = resourceId
+      
     },
     interactLifecycleModal(resourceId) {
       this.lifecycleResourceId = resourceId
-      this.loadPossibleEventsForResource()
+      this.loadPossibleEventsForResource(resourceId)
     }
   },
 }
