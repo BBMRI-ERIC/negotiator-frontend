@@ -2,7 +2,7 @@ import { ROLES } from "@/config/consts"
 import axios from "axios"
 
 let BASE_API_PATH = "/api/v3"
-const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria/`
+const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
 const USER_PATH = `${BASE_API_PATH}/users/roles`
