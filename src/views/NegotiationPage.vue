@@ -91,9 +91,72 @@
                 <i class="bi bi-card-list" />
                 COLLECTIONS ({{ numberOfResources }})
               </span>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm me-md-2 float-end"
+              >
+                Update selected
+              </button>
             </p>
             <div
               id="resourcesList"
+              v-for="key in Object.keys(groupedResources)"
+              :key="key"
+              class="card mb-2"
+            >
+              <div class="card-header">
+                <div class="form-check">
+                  <input
+                    id="flexCheckDefault"
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    
+                    @change="changeSelection(key)"
+                  >
+                  <label
+                    class="form-check-label text-primary fw-bold ml-2"
+                    for="flexCheckDefault"
+                  >
+                    {{ groupedResources[key][0].organization.name }}
+                  </label>
+                  <button
+                    v-if="(userRole === 'REPRESENTATIVE'
+                      && isRepresentativeForResource(collection)) || loadPossibleEventsForSpecificResource(collection)"
+                    class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateStatusModal"
+                    @click.stop="interactLifecycleModal(collection)"
+                  >
+                    <i class="bi-gear" />
+                  </button>
+                </div>
+              </div>
+
+              <div
+                v-for="collection in groupedResources[key]"
+                :key="collection"
+                class="card-body"
+              >
+                <div class="form-check">
+                  <input
+                    id="flexCheckDefault"
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    v-model = "selected[collection.id]"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="flexCheckDefault"
+                  >
+                    {{ collection.id }}
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!--div
+              id="collectionsList"
               class="collapse"
             >
               <ul>
@@ -118,7 +181,7 @@
                   </div>
                 </li>
               </ul>
-            </div>
+            </div-->
           </li>
         </ul>
         <NegotiationPosts
@@ -252,7 +315,9 @@ export default {
       responseOptions: [],
       lifecycleResourceId: undefined,
       availableRoles: ROLES,
-      currentResourceEvents: []
+      currentResourceEvents: [],
+      groupedResources: undefined,
+      selected: {}
     }
   },  
   computed: {
@@ -316,6 +381,22 @@ export default {
       negotiationId: this.negotiation.id
     })
     this.roles = await this.retrieveUserRoles()
+    this.groupedResources = this.groupResourcesByOrganization(this.negotiation.allResources)
+    console.log(this.groupedResources)
+    //initialize checkboxes selection 
+    let keys = Object.keys(this.groupedResources)
+    console.log(keys)
+    for (let i=0; i<keys.length; i++){
+      console.log("$$$$$")
+      console.log(keys[i])
+      this.selected[keys[i]] = false
+      for (const collection in this.groupedResources[keys[i]]){
+        console.log(this.groupedResources[keys[i]][collection].id)
+        this.selected[this.groupedResources[keys[i]][collection].id] = false
+      }
+    }
+    console.log("#########")
+    console.log(this.selected)
   },
   methods: {
     ...mapActions([
@@ -370,6 +451,32 @@ export default {
     interactLifecycleModal(resourceId) {
       this.lifecycleResourceId = resourceId
       this.loadPossibleEventsForResource(resourceId)
+    },
+    getElementIdFromCollectionId(collection) {
+      return collection.replaceAll(":", "_")
+    },
+    groupResourcesByOrganization(resources){
+      const groupedResources = {}
+      resources.forEach(item => {
+        const key = item.organization.externalId
+        console.log(key)
+        if (!groupedResources[key]) {
+          groupedResources[key] = []
+        }
+        groupedResources[key].push(item)
+      })
+      return groupedResources
+    },
+    changeSelection(key){
+      console.log("*****BeforeSelection*********")
+      console.log(this.selected)
+      this.selected[key] = !this.selected[key]
+      console.log("*****AfterSelection*********")
+      console.log(this.selected)
+      for (const collection in this.groupedResources[key]){
+        console.log(this.groupedResources[key][collection].id)
+        this.selected[this.groupedResources[key][collection].id] = !this.selected[this.groupedResources[key][collection].id]
+      }
     }
   },
 }
