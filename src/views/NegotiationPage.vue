@@ -120,16 +120,6 @@
                   >
                     {{ groupedResources[key][0].organization.name }}
                   </label>
-                  <button
-                    v-if="(userRole === 'REPRESENTATIVE'
-                      && isRepresentativeForResource(collection)) || loadPossibleEventsForSpecificResource(collection)"
-                    class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
-                    data-bs-toggle="modal"
-                    data-bs-target="#updateStatusModal"
-                    @click.stop="interactLifecycleModal(collection)"
-                  >
-                    <i class="bi-gear" />
-                  </button>
                 </div>
               </div>
 
@@ -141,10 +131,10 @@
                 <div class="form-check">
                   <input
                     id="flexCheckDefault"
+                    v-model="selected[collection.id]"
                     class="form-check-input"
                     type="checkbox"
                     value=""
-                    v-model = "selected[collection.id]"
                   >
                   <label
                     class="form-check-label"
@@ -152,6 +142,21 @@
                   >
                     {{ collection.id }}
                   </label>
+                  
+                  <span class="badge rounded-pill bg-primary">
+                    {{ getStatusForCollection(collection.id) }}
+                  </span>
+                  
+                  <button
+                    v-if="(userRole === availableRoles.REPRESENTATIVE
+                      && isRepresentativeForResource(collection.id)) || loadPossibleEventsForSpecificResource(collection.id)"
+                    class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateStatusModal"
+                    @click.stop="interactLifecycleModal(collection.id)"
+                  >
+                    <i class="bi-gear" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -371,15 +376,18 @@ export default {
     }
   },
   async beforeMount() {
+    console.log("Start before mount")
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
     this.attachments = await this.retrieveAttachmentsByNegotiationId({
       negotiationId: this.negotiation.id
     })
+    console.log("retieve events")
     this.responseOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
+    console.log("retieve roles")
     this.roles = await this.retrieveUserRoles()
     this.groupedResources = this.groupResourcesByOrganization(this.negotiation.allResources)
     console.log(this.groupedResources)
