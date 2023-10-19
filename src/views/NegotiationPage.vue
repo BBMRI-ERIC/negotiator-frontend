@@ -314,8 +314,7 @@ export default {
       "downloadAttachment"
     ]),
     async isRepresentativeForResource(resourceId) {
-      return !!this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId)
-
+      return !!this.roles.includes(`${ROLES.REPRESENTATIVE}_${resourceId}`)
     },
     getStatusForCollection(collectionId) {
       if (this.negotiation.resourceStatus && typeof this.negotiation.resourceStatus === "object") {
