@@ -101,7 +101,7 @@
                     <span>
                       {{ getStatusForCollection(collection) }}
                       <button
-                        v-if="(userRole === 'REPRESENTATIVE'
+                        v-if="(userRole === availableRoles.REPRESENTATIVE
                           && isRepresentativeForResource(collection)) || loadPossibleEventsForSpecificResource(collection)"
                         class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
                         data-bs-toggle="modal"
@@ -176,7 +176,7 @@
         </ul>
         <div class="dropdown mt-3 mb-3">
           <button
-            v-if="userRole === 'ADMIN'"
+            v-if="userRole === availableRoles.ADMINISTRATOR"
             id="dropdownMenuButton1"
             class="btn btn-secondary dropdown-toggle me-3"
             type="button"
@@ -283,7 +283,7 @@ export default {
     },
     authorName() {
       for (const person of this.negotiation.persons) {
-        if (person.role === "RESEARCHER") {
+        if (person.role === ROLES.RESEARCHER) {
           return person.name
         }
       }
@@ -314,7 +314,6 @@ export default {
       "downloadAttachment"
     ]),
     async isRepresentativeForResource(resourceId) {
-      console.log(this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId))
       return !!this.roles.includes("ROLE_REPRESENTATIVE_" + resourceId)
 
     },
@@ -353,7 +352,7 @@ export default {
       })
     },
     async loadPossibleEventsForSpecificResource(resourceId) {
-      if (this.userRole !== "RESEARCHER"){
+      if (this.userRole !== ROLES.RESEARCHER){
         return false
       }
       let response
