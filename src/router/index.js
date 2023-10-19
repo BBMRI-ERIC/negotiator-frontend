@@ -6,6 +6,7 @@ import NegotiationPage from "../views/NegotiationPage.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
+import { ROLES } from "@/config/consts"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,19 +28,19 @@ const router = createRouter({
     path: "/researcher",
     name: "researcher",
     component: UserPage,
-    props: { userRole: "RESEARCHER" },
+    props: { userRole: ROLES.RESEARCHER },
     meta: { isPublic: false }
   }, {
     path: "/biobanker",
     name: "biobanker",
     component: UserPage,
-    props: { userRole: "REPRESENTATIVE" },
+    props: { userRole: ROLES.REPRESENTATIVE },
     meta: { isPublic: false }
   }, {
     path: "/admin",
     name: "admin",
     component: UserPage,
-    props: { userRole: "ADMIN" },
+    props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false }
   }, {
     path: "/negotiations/:negotiationId/:userRole",
