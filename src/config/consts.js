@@ -11,5 +11,10 @@ const MESSAGE_STATUS = {
   READ: "READ"
 }
 
+const POST_TYPE = {
+  PUBLIC: "PUBLIC",
+  PRIVATE: "PRIVATE"
+}
 
-export { MESSAGE_STATUS, ROLES, dateFormat }
+
+export { MESSAGE_STATUS, ROLES, POST_TYPE, dateFormat }

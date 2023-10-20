@@ -111,7 +111,7 @@
           :negotiation="negotiation"
           :user-role="userRole"
           :resources="resources"
-          :organizations="organizations"
+          :organizations="organizationsById"
           :recipients="postsRecipients"
         />
         <div v-else>
@@ -244,7 +244,21 @@ export default {
       return this.negotiation.resources
     },
     organizations() {
-      return this.resources.map(resource => resource.organization)
+      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name }})
+    },
+    organizationsById() {
+      return this.resources.reduce((organizations, resource) => {
+        if (resource.organization.externalId in organizations) {
+          organizations[resource.organization.externalId].resources.push(
+            resource)
+        } else {
+          organizations[resource.organization.externalId] = {
+            name: resource.organization.name,
+            resources: [resource] 
+          }
+        }
+        return organizations
+      }, {})
     },
     numberOfResources() {
       return this.resources.length
@@ -257,9 +271,9 @@ export default {
     },
     postsRecipients() {
       if (this.userRole === ROLES.RESEARCHER) {
-        return this.organizations.map(org => { return { id: org.externalId, name: org.name, type: "RESOURCE" } })
+        return this.organizations.map(org => { return { id: org.externalId, name: org.name } })
       } else {
-        return this.representativeOrganizations.map(org => { return { id: org.externalId, name: org.name, type: "RESOURCE" } })
+        return this.representativeOrganizations.map(org => { return { id: org.externalId, name: org.name } })
       }
     },
     author() {

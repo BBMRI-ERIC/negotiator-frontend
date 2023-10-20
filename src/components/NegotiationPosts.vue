@@ -9,8 +9,7 @@
       <div class="card-header d-flex">
         <div class="me-auto">
           <span
-            class="badge rounded-pill"
-            :class="getAuthorPostColor(post)"
+            class="badge rounded-pill bg-secondary"
           >
             {{ getAuthorName(post) }}
           </span> to
@@ -80,7 +79,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import { dateFormat, MESSAGE_STATUS } from "@/config/consts"
+import { dateFormat, MESSAGE_STATUS, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 
 export default {
@@ -94,6 +93,7 @@ export default {
       type: String,
       default: undefined,
     },
+    // Array of possible recipients for messages.
     recipients: {
       type: Array,
       default(rawProps) { // eslint-disable-line no-unused-vars
@@ -101,18 +101,17 @@ export default {
       }
     },
     organizations: {
-      type: Array,
+      type: Object,
       default(rawProps) { // eslint-disable-line no-unused-vars
-        return []
+        return {}
       }
     }
-
   },
   data() {
     return {
       posts: [],
       message: "",
-      recipientId: null,
+      recipientId: "",
       messageStatus: MESSAGE_STATUS,
     }
   },
@@ -123,11 +122,7 @@ export default {
     },
     recipientsById() {
       return this.recipients.reduce(
-        (obj, item) => Object.assign(obj, { [item.id]: { name: item.name, type: item.type } }), {})
-    },
-    organizationsById() { 
-      return this.organizations.reduce(
-        (obj, item) => Object.assign(obj, { [item.externalId]: { name: item.name } }), {})    
+        (obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
     }
   },  
   async beforeMount() {
@@ -159,7 +154,7 @@ export default {
           organizationId: this.recipientId != "Everyone" ? this.recipientId : null,
           text: this.message,
           negotiationId: this.negotiation.id,
-          type: this.recipientId === "Everyone" ? "PUBLIC" : "PRIVATE"          
+          type: this.recipientId === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
         },
       }).then((post) => {
         if (post) {
@@ -171,40 +166,19 @@ export default {
     transformId(id) {
       return id.replaceAll(":", "_")
     },
-    getAuthorPostColor(post) {
-      if (post.createdBy.authSubject === this.oidcUser.sub) {
-        return {
-          "bg-secondary": true
-        }
-      }
-      else {
-        return {
-          "bg-primary": true
-        }
-      }
-    },
     getAuthorName(post) {
-      return post.createdBy.authSubject === this.oidcUser.sub ? "You" : post.createdBy.name
+      if (post.createdBy.authSubject === this.oidcUser.sub) {
+        return "You"
+      } else {
+        return `${post.createdBy.name}`
+      }
     },
     getRecipientPostColor(post) {
-      if (post.type === "PUBLIC") {
-        return {
-          "bg-info": true
-        }
-      }
-      else if (post.personRecipient !== undefined && post.personRecipient.authSubject === this.oidcUser.sub) {        
-        return {
-          "bg-secondary": true
-        }
-      } else {
-        return {
-          "bg-primary": true
-        }
-      }
+      return post.type === POST_TYPE.PUBLIC ? { "bg-info": true } : { "bg-primary": true }
     },
     getRecipientName(post) {
       if (post.organizationId !== undefined) {
-        return this.organizationsById[post.organizationId].name
+        return this.organizations[post.organizationId].name
       } else if (post.personRecipient !== undefined) {
         return post.personRecipient.authSubject === this.oidcUser.sub ? "You" : post.personRecipient.name
       } else {
