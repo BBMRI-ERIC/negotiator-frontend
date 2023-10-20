@@ -58,7 +58,7 @@
         <div id="file-info">
           <div> {{ attachment.name }} </div>
           <div class="text-info">
-            {{ attachment.type + " " + attachment.size }}
+            {{ getFileTypeName(attachment.type) + " " + getHumanFileSize(attachment.size) }}
           </div>
         </div>
         <div
@@ -179,42 +179,58 @@ export default {
     ...mapActions([
       "retrievePostsByNegotiationId",
       "addMessageToNegotiation",
+      "addAttachmentToNegotiation",
       "markMessageAsRead",
     ]),
     resetForm() {
       this.message = ""
       this.recipientId = ""
+      this.resetAttachment()
+    },
+    resetAttachment() {
+      this.attachment = undefined
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
     },
     showAttachment(event) {
       const file = event.target.files[0]
-      console.log(file)
-      this.attachment = {
-        name: file.name,
-        size: this.getHumanFileSize(file.size),
-        type: this.getFileTypeName(file.type),
-      }
+      this.attachment = file
+    //   this.attachment = {
+    //     file: file,
+    //     name: file.name,
+    //     size: this.getHumanFileSize(file.size),
+    //     type: this.getFileTypeName(file.type),
+    //   }
     },
     async sendMessage() {
       if (!this.readyToSend) {
         return
       }
-    
+      if (this.attachment != undefined) {
+        await this.addAttachmentToNegotiation({
+          data: {
+            negotiationId: this.negotiation.id,
+            attachment: this.attachment
+          }
+        }).then((attachment) => {
+          console.log(`Successfully uploaded file: ${attachment}`)
+        })
+      } else {
       // send a message and add the newly created post
-      await this.addMessageToNegotiation({
-        data: {
-          organizationId: this.recipientId != "Everyone" ? this.recipientId : null,
-          text: this.message,
-          negotiationId: this.negotiation.id,
-          type: this.recipientId === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
-        },
-      }).then((post) => {
-        if (post) {
-          this.posts.push(post)
-        }
-      })
+        await this.addMessageToNegotiation({
+          data: {
+            organizationId: this.recipientId != "Everyone" ? this.recipientId : null,
+            text: this.message,
+            negotiationId: this.negotiation.id,
+            type: this.recipientId === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
+          },
+        }).then((post) => {
+          if (post) {
+            this.posts.push(post)
+          }
+        })
+      }
       this.resetForm()
     },
     transformId(id) {
@@ -256,10 +272,10 @@ export default {
       } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
       return bytes.toFixed(dp) + " " + units[u]
     },
-    getFileTypeIconClass(fileTypeName) {
-      if (fileTypeName === "PDF") {
+    getFileTypeIconClass(fileType) {
+      if (fileType === "application/pdf") {
         return { "bi-file-pdf": true }
-      } else if (["DOCX", "DOC"].includes(fileTypeName)) {
+      } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
         return { "bi-file-word": true }
       } else {
         return { "bi-file-earmark": true }
@@ -273,11 +289,8 @@ export default {
       } else if (fileType === "application/msword") {
         return "DOC"
       }
-    },
-    resetAttachment() {
-      this.attachment = undefined
     }
-  }
+  }   
 }
 </script>
 

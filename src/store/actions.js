@@ -153,6 +153,21 @@ export default {
         commit("setNotification", "Error sending message")
       })
   },
+  addAttachmentToNegotiation({ state, commit }, { data }) {
+    const formData = new FormData()
+    formData.append("file", data.attachment)
+    const uploadFileHeaders = { headers: getBearerHeaders(state.oidc.access_token) }
+    uploadFileHeaders["Content-type"] = "multipart/form-data"
+        
+    return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/attachments`, formData, uploadFileHeaders)
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "There was an error saving the attachment")
+        return null
+      })
+  },
   markMessageAsRead({ state }, { data }) {
     return axios.put(`${NEGOTIATION_PATH}/${data.negotiationId}/posts/${data.postId}`, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
