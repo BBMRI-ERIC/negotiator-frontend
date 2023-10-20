@@ -11,7 +11,7 @@
     <template #footer>
       <button
         type="button"
-        class="btn btn-info"
+        class="btn btn-dark"
         data-bs-dismiss="modal"
       >
         Cancel

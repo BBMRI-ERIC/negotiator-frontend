@@ -34,20 +34,64 @@
     >
     <h5>Send a message</h5>
     <form
-      class="mb-4"
+      class="border rounded mb-4 p-2"
       @submit.prevent="sendMessage"
     >
       <textarea
         v-model="message"
         class="form-control mb-3"
       />
-      <div class="d-flex flex-row-reverse">
+      
+      <div
+        v-if="attachment"
+        class="border rounded d-flex ms-auto p-2 w-50"
+      >
+        <div
+          id="file-type"
+          class="me-2"
+        >
+          <i
+            class="fs-2 bi"
+            :class="getFileTypeIconClass(attachment.type)"
+          />
+        </div>
+        <div id="file-info">
+          <div> {{ attachment.name }} </div>
+          <div class="text-info">
+            {{ attachment.type + " " + attachment.size }}
+          </div>
+        </div>
+        <div
+          id="file-reset"
+          class="ms-auto"
+        >
+          <button
+            type="button"
+            class="btn-close"
+            @click.prevent="resetAttachment()"
+          />
+        </div>
+      </div>
+      <div class="d-flex flex-row-reverse mt-3 mb-2">
         <button
           type="submit"
           :disabled="!readyToSend"
           class="btn btn-secondary ms-2"
         >
           Send message
+        </button>
+        <button
+          type="submit"
+          class="btn btn-attachment ms-2 border rounded"
+        >
+          <input
+            id="attachment"
+            class="form-control"
+            type="file"
+            accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            @change="showAttachment"
+          >
+          <i class="bi bi-paperclip" />
         </button>
         <select
           id="recipient"
@@ -113,12 +157,13 @@ export default {
       message: "",
       recipientId: "",
       messageStatus: MESSAGE_STATUS,
+      attachment: undefined
     }
   },
   computed: {
     ...mapGetters(["oidcUser"]),
     readyToSend() {
-      return this.message !== "" && this.recipientId !== ""
+      return (this.message !== "" || this.attachment != undefined) && this.recipientId !== ""
     },
     recipientsById() {
       return this.recipients.reduce(
@@ -142,6 +187,15 @@ export default {
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
+    },
+    showAttachment(event) {
+      const file = event.target.files[0]
+      console.log(file)
+      this.attachment = {
+        name: file.name,
+        size: this.getHumanFileSize(file.size),
+        type: this.getFileTypeName(file.type),
+      }
     },
     async sendMessage() {
       if (!this.readyToSend) {
@@ -174,7 +228,7 @@ export default {
       }
     },
     getRecipientPostColor(post) {
-      return post.type === POST_TYPE.PUBLIC ? { "bg-info": true } : { "bg-primary": true }
+      return post.type === POST_TYPE.PUBLIC ? { "bg-dark": true } : { "bg-primary": true }
     },
     getRecipientName(post) {
       if (post.organizationId !== undefined) {
@@ -184,7 +238,62 @@ export default {
       } else {
         return "Everyone"
       }
+    },
+    getHumanFileSize(bytes, dp=1) {
+      const thresh = 1024
+
+      if (Math.abs(bytes) < thresh) {
+        return bytes + " B"
+      }
+
+      const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"] 
+      let u = -1
+      const r = 10**dp
+
+      do {
+        bytes /= thresh
+        ++u
+      } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
+      return bytes.toFixed(dp) + " " + units[u]
+    },
+    getFileTypeIconClass(fileTypeName) {
+      if (fileTypeName === "PDF") {
+        return { "bi-file-pdf": true }
+      } else if (["DOCX", "DOC"].includes(fileTypeName)) {
+        return { "bi-file-word": true }
+      } else {
+        return { "bi-file-earmark": true }
+      }
+    },
+    getFileTypeName(fileType) {
+      if (fileType === "application/pdf") {
+        return "PDF"
+      } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+        return "DOCX"
+      } else if (fileType === "application/msword") {
+        return "DOC"
+      }
+    },
+    resetAttachment() {
+      this.attachment = undefined
     }
   }
 }
 </script>
+
+<style scoped>
+.btn-attachment input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;   
+    cursor: inherit;
+    display: block;
+}
+</style>
