@@ -98,6 +98,49 @@
                 Update selected
               </button>
             </p>
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-8"> 
+                  <p
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collectionsList"
+                    aria-expanded="false"
+                    aria-controls="collectionsList"
+                  >
+                    <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+                      <i class="bi bi-card-list" />
+                      COLLECTIONS ({{ numberOfCollections }})
+                    </span>
+                  </p>
+                </div>
+                <div class="col-sm-3">
+                  <select class="form-select">
+                    <option selected>
+                      New status...
+                    </option>
+                    <option value="1">
+                      One
+                    </option>
+                    <option value="2">
+                      Two
+                    </option>
+                    <option value="3">
+                      Three
+                    </option>
+                  </select>
+                </div>
+                <div class="col-sm-1">
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm me-md-2 float-end"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+            
             <div
               id="resourcesList"
               v-for="key in Object.keys(groupedResources)"
@@ -111,7 +154,7 @@
                     class="form-check-input"
                     type="checkbox"
                     value=""
-                    
+                    :disabled="isBiobankButtonDisabled(groupedResources[key])"
                     @change="changeSelection(key)"
                   >
                   <label
@@ -135,6 +178,8 @@
                     class="form-check-input"
                     type="checkbox"
                     value=""
+                    @change="setCurrentMultipleStatus(collection.id)"
+                    :disabled="isResourceButtonDisabled(collection.id)"
                   >
                   <label
                     class="form-check-label"
@@ -143,11 +188,11 @@
                     {{ collection.id }}
                   </label>
                   
-                  <span class="badge rounded-pill bg-primary">
+                  <span class="badge rounded-pill bg-primary ms-4">
                     {{ getStatusForCollection(collection.id) }}
                   </span>
                   
-                  <button
+                  <!--button
                     v-if="(userRole === availableRoles.REPRESENTATIVE
                       && isRepresentativeForResource(collection.id)) || loadPossibleEventsForSpecificResource(collection.id)"
                     class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
@@ -156,7 +201,7 @@
                     @click.stop="interactLifecycleModal(collection.id)"
                   >
                     <i class="bi-gear" />
-                  </button>
+                  </button-->
                 </div>
               </div>
             </div>
@@ -297,6 +342,7 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
+import { faTachographDigital } from "@fortawesome/free-solid-svg-icons"
 
 export default {
   name: "NegotiationPage",
@@ -322,7 +368,8 @@ export default {
       availableRoles: ROLES,
       currentResourceEvents: [],
       groupedResources: undefined,
-      selected: {}
+      selected: {},
+      currentMultipleResourceStatus: undefined
     }
   },  
   computed: {
@@ -485,8 +532,57 @@ export default {
         console.log(this.groupedResources[key][collection].id)
         this.selected[this.groupedResources[key][collection].id] = !this.selected[this.groupedResources[key][collection].id]
       }
+    },
+    isBiobankButtonDisabled(collections){
+      let current_status = this.getStatusForCollection(collections[0].id)
+      console.log(current_status)
+      for (let i=1; i<collections.length; i++){
+        console.log(this.getStatusForCollection(collections[i].id))
+        if (this.getStatusForCollection(collections[i].id) != current_status){
+          return true
+        }
+        return false
+      }     
+    },
+    isResourceButtonDisabled(resourceId){
+      console.log("STATUS BUTTON")
+      console.log(this.currentMultipleResourceStatus)
+      if (this.currentMultipleResourceStatus != undefined && this.getStatusForCollection(resourceId) != this.currentMultipleResourceStatus){
+        return true
+      }
+      return false
+    },
+    setCurrentMultipleStatus(resourceId){
+      console.log(this.selected)
+      for (let i in this.selected) {
+        console.log(i + "is " + this.selected[i])
+}
+
+      if (!Object.values(this.selected).includes(true)){
+       
+        console.log( Object.entries(this.selected))
+        console.log(Object.values(this.selected))
+        console.log("ALL BUTTONS UNCHECKED")
+        this.currentMultipleResourceStatus = undefined
+        return
+      }
+      console.log("????????????")
+      console.log(this.selected)
+      
+      console.log( Object.entries(this.selected))
+      console.log(Object.values(this.selected))
+      console.log("NOT ALL BUTTONS UNCHECKED")
+      this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
+    },
+    areAllUnchecked(){
+      console.log("All unchecked")
+      console.log(this.selected)
+      console.log(Object.values(this.selected))
+      console.log(Object.values(this.selected).includes(true))
+      return Object.values(this.selected).includes(true) ? false : true
     }
   },
+
 }
 </script>
 
