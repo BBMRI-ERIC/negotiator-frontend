@@ -115,11 +115,20 @@
                   </p>
                 </div>
                 <div class="col-sm-3">
-                  <select class="form-select">
-                    <option selected>
+                  <select 
+                    v-model="foo"
+                    class="form-select"
+                    :disabled="isStatusComboDisabled()"
+                  >
+                    <option
+                      selected
+                    >
                       New status...
                     </option>
-                    <option value="1">
+                    <option v-for="key in responseOptions" :key="key" :value="key">
+                      {{ key }}
+                    </option>
+                    <!--option value="1">
                       One
                     </option>
                     <option value="2">
@@ -127,7 +136,7 @@
                     </option>
                     <option value="3">
                       Three
-                    </option>
+                    </option-->
                   </select>
                 </div>
                 <div class="col-sm-1">
@@ -178,8 +187,8 @@
                     class="form-check-input"
                     type="checkbox"
                     value=""
-                    @change="setCurrentMultipleStatus(collection.id)"
                     :disabled="isResourceButtonDisabled(collection.id)"
+                    @change="setCurrentMultipleStatus(collection.id)"
                   >
                   <label
                     class="form-check-label"
@@ -369,7 +378,7 @@ export default {
       currentResourceEvents: [],
       groupedResources: undefined,
       selected: {},
-      currentMultipleResourceStatus: undefined
+      currentMultipleResourceStatus: undefined,
     }
   },  
   computed: {
@@ -423,35 +432,25 @@ export default {
     }
   },
   async beforeMount() {
-    console.log("Start before mount")
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
     this.attachments = await this.retrieveAttachmentsByNegotiationId({
       negotiationId: this.negotiation.id
     })
-    console.log("retieve events")
     this.responseOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
-    console.log("retieve roles")
     this.roles = await this.retrieveUserRoles()
     this.groupedResources = this.groupResourcesByOrganization(this.negotiation.allResources)
-    console.log(this.groupedResources)
     //initialize checkboxes selection 
     let keys = Object.keys(this.groupedResources)
-    console.log(keys)
     for (let i=0; i<keys.length; i++){
-      console.log("$$$$$")
-      console.log(keys[i])
       this.selected[keys[i]] = false
       for (const collection in this.groupedResources[keys[i]]){
-        console.log(this.groupedResources[keys[i]][collection].id)
         this.selected[this.groupedResources[keys[i]][collection].id] = false
       }
     }
-    console.log("#########")
-    console.log(this.selected)
   },
   methods: {
     ...mapActions([
@@ -523,21 +522,14 @@ export default {
       return groupedResources
     },
     changeSelection(key){
-      console.log("*****BeforeSelection*********")
-      console.log(this.selected)
       this.selected[key] = !this.selected[key]
-      console.log("*****AfterSelection*********")
-      console.log(this.selected)
       for (const collection in this.groupedResources[key]){
-        console.log(this.groupedResources[key][collection].id)
         this.selected[this.groupedResources[key][collection].id] = !this.selected[this.groupedResources[key][collection].id]
       }
     },
     isBiobankButtonDisabled(collections){
       let current_status = this.getStatusForCollection(collections[0].id)
-      console.log(current_status)
       for (let i=1; i<collections.length; i++){
-        console.log(this.getStatusForCollection(collections[i].id))
         if (this.getStatusForCollection(collections[i].id) != current_status){
           return true
         }
@@ -545,41 +537,32 @@ export default {
       }     
     },
     isResourceButtonDisabled(resourceId){
-      console.log("STATUS BUTTON")
-      console.log(this.currentMultipleResourceStatus)
       if (this.currentMultipleResourceStatus != undefined && this.getStatusForCollection(resourceId) != this.currentMultipleResourceStatus){
         return true
       }
       return false
     },
     setCurrentMultipleStatus(resourceId){
-      console.log(this.selected)
-      for (let i in this.selected) {
-        console.log(i + "is " + this.selected[i])
-}
-
       if (!Object.values(this.selected).includes(true)){
-       
-        console.log( Object.entries(this.selected))
-        console.log(Object.values(this.selected))
-        console.log("ALL BUTTONS UNCHECKED")
         this.currentMultipleResourceStatus = undefined
         return
       }
-      console.log("????????????")
-      console.log(this.selected)
-      
-      console.log( Object.entries(this.selected))
-      console.log(Object.values(this.selected))
-      console.log("NOT ALL BUTTONS UNCHECKED")
       this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
+      this.statusOptions = this.getAvailableComboOptions()
+      console.log(this.statusOptions)
     },
-    areAllUnchecked(){
-      console.log("All unchecked")
-      console.log(this.selected)
-      console.log(Object.values(this.selected))
-      console.log(Object.values(this.selected).includes(true))
-      return Object.values(this.selected).includes(true) ? false : true
+    isStatusComboDisabled(){
+      return this.currentMultipleResourceStatus == undefined ? true :false
+    },
+    getAvailableComboOptions(){
+      for (var resource in this.selected){
+        if (this.selected[resource] == true){
+          this.lifecycleResourceId = resource
+          this.loadPossibleEventsForResource()
+          return
+        } 
+      }
+
     }
   },
 
