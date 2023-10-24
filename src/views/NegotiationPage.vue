@@ -65,6 +65,21 @@
             </div>
           </li>
           <li class="list-group-item p-3">
+            <span class="fs-5 fw-bold text-secondary border-bottom mt-3 mb-3">
+              ATTACHMENTS
+            </span>
+            <NegotiationAttachment 
+              v-for="attachment in attachments"
+              :id="attachment.id"
+              :key="attachment.id"
+              class="mb-2" 
+              :name="attachment.name"
+              :size="attachment.size"
+              :content-type="attachment.contentType"
+              @download="downloadAttachment({id: attachment.id, name: attachment.name})"
+            />
+          </li>
+          <li class="list-group-item p-3">
             <p
               type="button"
               data-bs-toggle="collapse"
@@ -210,6 +225,7 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
+import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
@@ -217,7 +233,7 @@ import { mapActions, mapGetters } from "vuex"
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, UpdateStatusModal, NegotiationPosts,
+    ConfirmationModal, UpdateStatusModal, NegotiationPosts, NegotiationAttachment
   },
   props: {
     negotiationId: {
@@ -292,6 +308,9 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
+    this.attachments = await this.retrieveAttachmentsByNegotiationId({
+      negotiationId: this.negotiation.id
+    })
     this.responseOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
@@ -304,6 +323,7 @@ export default {
       "retrieveUserRoles",
       "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
+      "retrieveAttachmentsByNegotiationId",
       "updateNegotiationStatus",
       "updateResourceStatus",
       "downloadAttachment"
