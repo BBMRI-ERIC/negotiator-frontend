@@ -251,7 +251,8 @@ export default {
       roles: [],
       responseOptions: [],
       lifecycleResourceId: undefined,
-      availableRoles: ROLES
+      availableRoles: ROLES,
+      currentResourceEvents: []
     }
   },  
   computed: {
