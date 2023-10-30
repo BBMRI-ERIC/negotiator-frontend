@@ -116,8 +116,9 @@
                 </div>
                 <div class="col-sm-3">
                   <select 
+                    id="collectionsList"
                     v-model="selectedStatus"
-                    class="form-select"
+                    class="form-select collapse"
                     :disabled="isStatusComboDisabled()"
                   >
                     <option
@@ -145,7 +146,8 @@
                 </div>
                 <div class="col-sm-1">
                   <button
-                    class="btn btn-secondary btn-sm me-md-2 float-end" 
+                    id="collectionsList"
+                    class="btn btn-secondary btn-sm me-md-2 float-end collapse" 
                     type="submit" 
                     @click.prevent="updateCheckedResourcesStatus(selectedStatus)"
                   >
@@ -158,8 +160,9 @@
             <div
               id="resourcesList"
               v-for="(key, index) in Object.keys(groupedResources)"
+              id="collectionsList"
               :key="key"
-              class="card mb-2"
+              class="card mb-2 collapse"
             >
               <a
                 data-bs-toggle="collapse"
