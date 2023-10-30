@@ -125,7 +125,11 @@
                     >
                       New status...
                     </option>
-                    <option v-for="key in responseOptions" :key="key" :value="key">
+                    <option
+                      v-for="key in responseOptions"
+                      :key="key"
+                      :value="key"
+                    >
                       {{ key }}
                     </option>
                     <!--option value="1">
@@ -153,54 +157,68 @@
             
             <div
               id="resourcesList"
-              v-for="key in Object.keys(groupedResources)"
+              v-for="(key, index) in Object.keys(groupedResources)"
               :key="key"
               class="card mb-2"
             >
-              <div class="card-header">
-                <div class="form-check">
-                  <input
-                    id="flexCheckDefault"
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    :disabled="isBiobankButtonDisabled(groupedResources[key])"
-                    @change="changeSelection(key)"
-                  >
-                  <label
-                    class="form-check-label text-primary fw-bold ml-2"
-                    for="flexCheckDefault"
-                  >
-                    {{ groupedResources[key][0].organization.name }}
-                  </label>
-                </div>
-              </div>
-
-              <div
-                v-for="collection in groupedResources[key]"
-                :key="collection"
-                class="card-body"
+              <a
+                data-bs-toggle="collapse"
+                :href="'#card-body-block'+index"
+                aria-expanded="true"
+                :aria-controls="'card-body-block'+index"
               >
-                <div class="form-check">
-                  <input
-                    id="flexCheckDefault"
-                    v-model="selected[collection.id]"
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    :disabled="isResourceButtonDisabled(collection.id)"
-                    @change="setCurrentMultipleStatus(collection.id)"
-                  >
-                  <label
-                    class="form-check-label"
-                    for="flexCheckDefault"
-                  >
-                    {{ collection.id }}
-                  </label>
+                <div class="card-header">
+                  <div class="form-check">
+                    <input
+                      id="flexCheckDefault"
+                      class="form-check-input"
+                      type="checkbox"
+                      value=""
+                      :disabled="isBiobankButtonDisabled(groupedResources[key])"
+                      @change="changeSelection(key)"
+                    >
+                 
+                    <label
+                      class="form-check-label text-primary fw-bold ml-2"
+                      for="flexCheckDefault"
+                    >
+                      {{ groupedResources[key][0].organization.name }}
+                    </label>
+               
                   
-                  <span class="badge rounded-pill bg-primary ms-4">
-                    {{ getStatusForCollection(collection.id) }}
-                  </span>
+                  </div>
+                </div>
+              </a>
+              <div
+                :id="'card-body-block'+index"
+                class="collapse multi-collapse"
+              >
+                <div
+                
+                  v-for="collection in groupedResources[key]"
+                  :key="collection"
+                  class="card-body"
+                >
+                  <div class="form-check">
+                    <input
+                      id="flexCheckDefault"
+                      v-model="selected[collection.id]"
+                      class="form-check-input"
+                      type="checkbox"
+                      value=""
+                      :disabled="isResourceButtonDisabled(collection.id)"
+                      @change="setCurrentMultipleStatus(collection.id)"
+                    >
+                    <label
+                      class="form-check-label"
+                      for="flexCheckDefault"
+                    >
+                      {{ collection.id }}
+                    </label>
+                  
+                    <span class="badge rounded-pill bg-primary ms-4">
+                      {{ getStatusForCollection(collection.id) }}
+                    </span>
                   
                   <!--button
                     v-if="(userRole === availableRoles.REPRESENTATIVE
@@ -212,6 +230,7 @@
                   >
                     <i class="bi-gear" />
                   </button-->
+                  </div>
                 </div>
               </div>
             </div>
