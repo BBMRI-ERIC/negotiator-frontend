@@ -116,7 +116,7 @@
                 </div>
                 <div class="col-sm-3">
                   <select 
-                    v-model="foo"
+                    v-model="selectedStatus"
                     class="form-select"
                     :disabled="isStatusComboDisabled()"
                   >
@@ -141,8 +141,9 @@
                 </div>
                 <div class="col-sm-1">
                   <button
-                    type="button"
-                    class="btn btn-secondary btn-sm me-md-2 float-end"
+                    class="btn btn-secondary btn-sm me-md-2 float-end" 
+                    type="submit" 
+                    @click.prevent="updateCheckedResourcesStatus(selectedStatus)"
                   >
                     Save
                   </button>
@@ -379,6 +380,7 @@ export default {
       groupedResources: undefined,
       selected: {},
       currentMultipleResourceStatus: undefined,
+      selectedStatus: undefined
     }
   },  
   computed: {
@@ -563,7 +565,20 @@ export default {
         } 
       }
 
+    },
+    async updateCheckedResourcesStatus(event){
+      // For each of the settled resources, update the status to the one chosen in the combo 
+      for (var resource in this.selected){
+        if (this.selected[resource] == true){
+          await this.updateResourceStatus({
+            negotiationId: this.negotiation.id,
+            resourceId: resource,
+            event: event
+          })
+        } 
+      }
     }
+
   },
 
 }
