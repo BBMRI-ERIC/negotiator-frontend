@@ -23,19 +23,9 @@
     <update-status-modal
       id="updateStatusModal"
       :resource-id="lifecycleResourceId"
-      :options="responseOptions"
+      :options="currentResourceEvents"
       :visible="updateStatusVisible"
       @selected="updateResource"
-    />
-
-    <private-post-modal
-      v-for="collection in collections"
-      :id="`privatePostModal${getElementIdFromCollectionId(collection)}`"
-      :key="collection"
-      :resource-id="collection"
-      :negotiation="negotiation"
-      :user-role="userRole"
-      :visible="privatePostVisible"
     />
 
     <div class="row mt-4">
@@ -75,50 +65,54 @@
             </div>
           </li>
           <li class="list-group-item p-3">
+            <span class="fs-5 fw-bold text-secondary border-bottom mt-3 mb-3">
+              ATTACHMENTS
+            </span>
+            <NegotiationAttachment 
+              v-for="attachment in attachments"
+              :id="attachment.id"
+              :key="attachment.id"
+              class="mb-2" 
+              :name="attachment.name"
+              :size="attachment.size"
+              :content-type="attachment.contentType"
+              @download="downloadAttachment({id: attachment.id, name: attachment.name})"
+            />
+          </li>
+          <li class="list-group-item p-3">
             <p
               type="button"
               data-bs-toggle="collapse"
-              data-bs-target="#collectionsList"
+              data-bs-target="#resourcesList"
               aria-expanded="false"
-              aria-controls="collectionsList"
+              aria-controls="resourcesList"
             >
               <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
                 <i class="bi bi-card-list" />
-                COLLECTIONS ({{ numberOfCollections }})
+                COLLECTIONS ({{ numberOfResources }})
               </span>
             </p>
             <div
-              id="collectionsList"
+              id="resourcesList"
               class="collapse"
             >
               <ul>
                 <li
-                  v-for="collection in collections"
-                  :key="collection"
+                  v-for="resource in resources"
+                  :key="resource.id"
                 >
                   <div class="me-auto p-2">
-                    <label class="me-2 fw-bold small">{{ collection }}</label>
+                    <label class="me-2 fw-bold small">{{ resource.name }} ({{ resource.organization.name }}) </label>
                     <span>
-                      {{ getStatusForCollection(collection) }}
+                      {{ resource.status }}
                       <button
-                        v-if="(userRole === availableRoles.REPRESENTATIVE
-                          && isRepresentativeForResource(collection)) || loadPossibleEventsForSpecificResource(collection)"
+                        v-if="userRole === availableRoles.REPRESENTATIVE && isRepresentativeForResource(resource.id)"
                         class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
                         data-bs-toggle="modal"
                         data-bs-target="#updateStatusModal"
-                        @click.stop="interactLifecycleModal(collection)"
+                        @click.stop="interactLifecycleModal(resource.id)"
                       >
                         <i class="bi-gear" />
-                      </button>
-                      <button
-                        v-if="negotiation && negotiation.postsEnabled"
-                        type="button"
-                        class="btn btn-secondary btn-sm me-2 mb-1 float-end"
-                        :data-bs-target="`#privatePostModal${getElementIdFromCollectionId(collection)}`"
-                        data-bs-toggle="modal"
-                        @click.prevent="interactPrivatePostModal(collection)"
-                      >
-                        <i class="bi-chat-fill" />
                       </button>
                     </span>
                   </div>
@@ -131,7 +125,9 @@
           v-if="negotiation && negotiation.postsEnabled"
           :negotiation="negotiation"
           :user-role="userRole"
-          scope="public"
+          :resources="resources"
+          :organizations="organizationsById"
+          :recipients="postsRecipients"
         />
         <div v-else>
           <h5>
@@ -147,7 +143,7 @@
             <div class="fw-bold text-secondary">
               Author:
             </div>
-            <div>{{ authorName }}</div>
+            <div>{{ author.name }}</div>
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-secondary">
@@ -229,15 +225,15 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
-import PrivatePostModal from "@/components/modals/PrivatePostModal.vue"
-import { MESSAGE_STATUS, ROLES, dateFormat } from "@/config/consts"
+import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
+import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, UpdateStatusModal, PrivatePostModal, NegotiationPosts,
+    ConfirmationModal, UpdateStatusModal, NegotiationPosts, NegotiationAttachment
   },
   props: {
     negotiationId: {
@@ -252,39 +248,55 @@ export default {
   data() {
     return {
       negotiation: undefined,
-      posts: [],
-      message: {
-        text: "",
-        resourceId: undefined,
-      },
       roles: [],
       responseOptions: [],
-      selectedItem: "",
-      messageStatus: MESSAGE_STATUS,
-      showPrivatePostModal: false,
-      privatePostResourceId: undefined,
       lifecycleResourceId: undefined,
-      availableRoles: ROLES
+      availableRoles: ROLES,
+      currentResourceEvents: []
     }
   },  
   computed: {
-    collections() {
-      const collections = []
-
-      for (const request of this.negotiation.requests) {
-        for (const resource of request.resources) {
-          collections.push(resource.id)
+    ...mapGetters(["oidcUser"]),
+    resources() {
+      return this.negotiation.resources
+    },
+    organizations() {
+      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name }})
+    },
+    organizationsById() {
+      return this.resources.reduce((organizations, resource) => {
+        if (resource.organization.externalId in organizations) {
+          organizations[resource.organization.externalId].resources.push(
+            resource)
+        } else {
+          organizations[resource.organization.externalId] = {
+            name: resource.organization.name,
+            resources: [resource] 
+          }
         }
+        return organizations
+      }, {})
+    },
+    numberOfResources() {
+      return this.resources.length
+    },
+    representativeResources() {
+      return this.resources.filter(resource => this.isRepresentativeForResource(resource.id))
+    },
+    representativeOrganizations() {
+      return this.representativeResources.map(resource => resource.organization)
+    },
+    postsRecipients() {
+      if (this.userRole === ROLES.RESEARCHER) {
+        return this.organizations.map(org => { return { id: org.externalId, name: org.name } })
+      } else {
+        return this.representativeOrganizations.map(org => { return { id: org.externalId, name: org.name } })
       }
-      return collections
     },
-    numberOfCollections() {
-      return this.collections.length
-    },
-    authorName() {
+    author() {
       for (const person of this.negotiation.persons) {
         if (person.role === ROLES.RESEARCHER) {
-          return person.name
+          return person
         }
       }
       return ""
@@ -297,6 +309,9 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
+    this.attachments = await this.retrieveAttachmentsByNegotiationId({
+      negotiationId: this.negotiation.id
+    })
     this.responseOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
@@ -309,6 +324,7 @@ export default {
       "retrieveUserRoles",
       "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
+      "retrieveAttachmentsByNegotiationId",
       "updateNegotiationStatus",
       "updateResourceStatus",
       "downloadAttachment"
@@ -316,9 +332,9 @@ export default {
     async isRepresentativeForResource(resourceId) {
       return !!this.roles.includes(`${ROLES.REPRESENTATIVE}_${resourceId}`)
     },
-    getStatusForCollection(collectionId) {
+    getStatusForCollection(resourceId) {
       if (this.negotiation.resourceStatus && typeof this.negotiation.resourceStatus === "object") {
-        return this.negotiation.resourceStatus[collectionId] || ""
+        return this.negotiation.resourceStatus[resourceId] || ""
       } else {
         return ""
       }
@@ -342,36 +358,18 @@ export default {
         event: status,
       })
     },
-    loadPossibleEventsForResource() {
-      this.retrievePossibleEventsForResource({
-        negotiationId: this.negotiation.id,
-        resourceId: this.lifecycleResourceId
-      }).then((data) => {
-        this.responseOptions = data
-      })
-    },
-    async loadPossibleEventsForSpecificResource(resourceId) {
-      if (this.userRole !== ROLES.RESEARCHER){
-        return false
-      }
-      let response
-      this.retrievePossibleEventsForResource({
+    async loadPossibleEventsForResource(resourceId) {
+      this.currentResourceEvents = await this.retrievePossibleEventsForResource({
         negotiationId: this.negotiation.id,
         resourceId: resourceId
       }).then((data) => {
-        response = data
+        return data
       })
-      return response.length > 0
-    },
-    interactPrivatePostModal(resourceId) {
-      this.privatePostResourceId = resourceId
+      
     },
     interactLifecycleModal(resourceId) {
       this.lifecycleResourceId = resourceId
-      this.loadPossibleEventsForResource()
-    },
-    getElementIdFromCollectionId(collection) {
-      return collection.replaceAll(":", "_")
+      this.loadPossibleEventsForResource(resourceId)
     }
   },
 }

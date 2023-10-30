@@ -95,7 +95,7 @@ export default {
         return null
       })
   },
-  retrievePossibleEvents({ state, commit }, { negotiationId }) {
+  async retrievePossibleEvents({ state, commit }, { negotiationId }) {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
@@ -133,10 +133,20 @@ export default {
         commit("setNotification", "Error getting request data from server")
       })
   },
-  retrievePostsByNegotiationId({ state, commit }, { negotiationId, type, resourceId }) {
+  async retrievePostsByNegotiationId({ state, commit }, { negotiationId, resourceId }) {
     let url = `${NEGOTIATION_PATH}/${negotiationId}/posts`
-    let params = resourceId ? { type: type, resource: resourceId } : { type: type }
+    let params = resourceId ? { resource: resourceId } : { }
     return axios.get(url, { headers: getBearerHeaders(state.oidc.access_token), params: params })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+      })
+  },
+  async retrieveAttachmentsByNegotiationId({ state, commit }, { negotiationId }) {
+    let url = `${NEGOTIATION_PATH}/${negotiationId}/attachments`
+    return axios.get(url, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -151,6 +161,24 @@ export default {
       })
       .catch(() => {
         commit("setNotification", "Error sending message")
+      })
+  },
+  addAttachmentToNegotiation({ state, commit }, { data }) {
+    const formData = new FormData()
+    const uploadFileHeaders = { headers: getBearerHeaders(state.oidc.access_token) }
+    if (data.organizationId != null) {
+      formData.append("organizationId", data.organizationId)
+    }
+    formData.append("file", data.attachment)
+    uploadFileHeaders["Content-type"] = "multipart/form-data"
+        
+    return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/attachments`, formData, uploadFileHeaders)
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "There was an error saving the attachment")
+        return null
       })
   },
   markMessageAsRead({ state }, { data }) {

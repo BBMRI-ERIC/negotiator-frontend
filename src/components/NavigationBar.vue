@@ -86,7 +86,6 @@
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
 
-
 export default {
   name: "NavigationBar",
   data() {
