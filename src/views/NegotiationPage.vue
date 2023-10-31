@@ -205,7 +205,7 @@
                   <div class="form-check">
                     <input
                       id="flexCheckDefault"
-                      v-model="selected[collection.id]"
+                      v-model="selected[collection.id]['checked']"
                       class="form-check-input"
                       type="checkbox"
                       value=""
@@ -470,9 +470,14 @@ export default {
     //initialize checkboxes selection 
     let keys = Object.keys(this.groupedResources)
     for (let i=0; i<keys.length; i++){
-      this.selected[keys[i]] = false
+      //this.selected[keys[i]]["checked"]= false
+      //this.selected[keys[i]]["type"]= "ORGANIZATION"
+      this.selected[keys[i]] = { "checked": false, "type": "ORGANIZATION" }
       for (const collection in this.groupedResources[keys[i]]){
-        this.selected[this.groupedResources[keys[i]][collection].id] = false
+        //this.selected[this.groupedResources[keys[i]][collection].id]["checked"] = false
+        //this.selected[keys[i]]["type"]= "RESOURCE"
+        this.selected[this.groupedResources[keys[i]][collection].id] = { "checked": false, "type": "RESOURCE" }
+
       }
     }
   },
@@ -546,10 +551,22 @@ export default {
       return groupedResources
     },
     changeSelection(key){
-      this.selected[key] = !this.selected[key]
+      let checkedResource = undefined
+      this.selected[key]["checked"] = !this.selected[key]["checked"]
       for (const collection in this.groupedResources[key]){
-        this.selected[this.groupedResources[key][collection].id] = !this.selected[this.groupedResources[key][collection].id]
+        this.selected[this.groupedResources[key][collection].id]["checked"] = !this.selected[this.groupedResources[key][collection].id]["checked"]
+        if (this.selected[this.groupedResources[key][collection].id]["checked"] == true && this.selected[this.groupedResources[key][collection].id]["type"] == "RESOURCE"){
+          checkedResource = this.groupedResources[key][collection].id
+        }
       }
+      //if at least one resource has been checked, set the multiple status for the resource as it happens by clicking 
+      //a single resource instead of the overall organisation multiple selection
+      if (checkedResource != undefined){
+        this.setCurrentMultipleStatus(checkedResource)
+      }
+      else{
+        this.currentMultipleResourceStatus = undefined
+      }      
     },
     isBiobankButtonDisabled(collections){
       let current_status = this.getStatusForCollection(collections[0].id)
@@ -567,20 +584,28 @@ export default {
       return false
     },
     setCurrentMultipleStatus(resourceId){
-      if (!Object.values(this.selected).includes(true)){
-        this.currentMultipleResourceStatus = undefined
-        return
+      console.log("SET STATUS CALLED")
+      console.log(this.selected["checked"])
+      console.log(this.selected)
+      for(var resource in this.selected){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == "RESOURCE"){
+          this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
+          this.statusOptions = this.getAvailableComboOptions()
+          console.log(this.statusOptions)
+          return
+        }
       }
-      this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
-      this.statusOptions = this.getAvailableComboOptions()
-      console.log(this.statusOptions)
+      this.currentMultipleResourceStatus = undefined
     },
     isStatusComboDisabled(){
       return this.currentMultipleResourceStatus == undefined ? true :false
     },
     getAvailableComboOptions(){
+      console.log("Called Get Available Combo options")
+      console.log(this.selected)
       for (var resource in this.selected){
-        if (this.selected[resource] == true){
+        console.log(resource)
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == "RESOURCE"){
           this.lifecycleResourceId = resource
           this.loadPossibleEventsForResource()
           return
@@ -591,7 +616,7 @@ export default {
     async updateCheckedResourcesStatus(event){
       // For each of the settled resources, update the status to the one chosen in the combo 
       for (var resource in this.selected){
-        if (this.selected[resource] == true){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == "RESOURCE"){
           await this.updateResourceStatus({
             negotiationId: this.negotiation.id,
             resourceId: resource,
