@@ -422,8 +422,6 @@ export default {
       negotiationId: this.negotiation.id
     })
     this.roles = await this.retrieveUserRoles()
-    console.log("@#@#@#@#")
-    console.log(this.negotiation.allResources)
     this.groupedResources = this.groupResourcesByOrganization(this.negotiation.allResources)
     //initialize checkboxes selection 
     let keys = Object.keys(this.groupedResources)
@@ -496,7 +494,6 @@ export default {
       const groupedResources = {}
       resources.forEach(item => {
         const key = item.organization.externalId
-        console.log(key)
         if (!groupedResources[key]) {
           groupedResources[key] = []
         }
@@ -523,11 +520,8 @@ export default {
       }      
     },
     isBiobankButtonDisabled(collections){
-      console.log("Check Biobank button disabled")
       let current_status = this.getStatusForCollection(collections[0].id)
       //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
-      console.log(current_status)
-      console.log(this.currentMultipleResourceStatus)
       if(this.currentMultipleResourceStatus != undefined && current_status != this.currentMultipleResourceStatus){
         return true
       }
@@ -545,14 +539,10 @@ export default {
       return false
     },
     setCurrentMultipleStatus(resourceId){
-      console.log("SET STATUS CALLED")
-      console.log(this.selected["checked"])
-      console.log(this.selected)
       for(var resource in this.selected){
         if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
           this.statusOptions = this.getAvailableComboOptions()
-          console.log(this.statusOptions)
           return
         }
       }
@@ -562,10 +552,7 @@ export default {
       return this.currentMultipleResourceStatus == undefined ? true :false
     },
     getAvailableComboOptions(){
-      console.log("Called Get Available Combo options")
-      console.log(this.selected)
       for (var resource in this.selected){
-        console.log(resource)
         if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           this.lifecycleResourceId = resource
           this.loadPossibleEventsForResource()
