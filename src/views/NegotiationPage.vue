@@ -114,7 +114,10 @@
                     </span>
                   </p>
                 </div>
-                <div class="col-sm-3">
+                <div
+                  v-if="userRole === availableRoles.REPRESENTATIVE"
+                  class="col-sm-3"
+                >
                   <select 
                     id="collectionsList"
                     v-model="selectedStatus"
@@ -137,6 +140,7 @@
                 </div>
                 <div class="col-sm-1">
                   <button
+                    v-if="userRole === availableRoles.REPRESENTATIVE"
                     id="collectionsList"
                     class="btn btn-secondary btn-sm me-md-2 float-end collapse" 
                     type="submit" 
@@ -158,6 +162,7 @@
               <div class="card-header">
                 <div class="form-check">
                   <input
+                    v-if="userRole === availableRoles.REPRESENTATIVE"
                     id="flexCheckDefault"
                     class="form-check-input"
                     type="checkbox"
@@ -195,6 +200,7 @@
                 >
                   <div class="form-check">
                     <input
+                      v-if="userRole === availableRoles.REPRESENTATIVE"
                       id="flexCheckDefault"
                       v-model="selected[collection.id]['checked']"
                       class="form-check-input"
