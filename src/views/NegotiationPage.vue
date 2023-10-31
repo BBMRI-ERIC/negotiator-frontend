@@ -133,15 +133,6 @@
                     >
                       {{ key }}
                     </option>
-                    <!--option value="1">
-                      One
-                    </option>
-                    <option value="2">
-                      Two
-                    </option>
-                    <option value="3">
-                      Three
-                    </option-->
                   </select>
                 </div>
                 <div class="col-sm-1">
@@ -222,48 +213,10 @@
                     <span class="badge rounded-pill bg-primary ms-4">
                       {{ getStatusForCollection(collection.id) }}
                     </span>
-                  
-                  <!--button
-                    v-if="(userRole === availableRoles.REPRESENTATIVE
-                      && isRepresentativeForResource(collection.id)) || loadPossibleEventsForSpecificResource(collection.id)"
-                    class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
-                    data-bs-toggle="modal"
-                    data-bs-target="#updateStatusModal"
-                    @click.stop="interactLifecycleModal(collection.id)"
-                  >
-                    <i class="bi-gear" />
-                  </button-->
                   </div>
                 </div>
               </div>
             </div>
-            <!--div
-              id="collectionsList"
-              class="collapse"
-            >
-              <ul>
-                <li
-                  v-for="resource in resources"
-                  :key="resource.id"
-                >
-                  <div class="me-auto p-2">
-                    <label class="me-2 fw-bold small">{{ resource.name }} ({{ resource.organization.name }}) </label>
-                    <span>
-                      {{ resource.status }}
-                      <button
-                        v-if="userRole === availableRoles.REPRESENTATIVE && isRepresentativeForResource(resource.id)"
-                        class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
-                        data-bs-toggle="modal"
-                        data-bs-target="#updateStatusModal"
-                        @click.stop="interactLifecycleModal(resource.id)"
-                      >
-                        <i class="bi-gear" />
-                      </button>
-                    </span>
-                  </div>
-                </li>
-              </ul>
-            </div-->
           </li>
         </ul>
         <NegotiationPosts
@@ -374,7 +327,6 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
-import { faTachographDigital } from "@fortawesome/free-solid-svg-icons"
 
 export default {
   name: "NegotiationPage",
@@ -402,7 +354,11 @@ export default {
       groupedResources: undefined,
       selected: {},
       currentMultipleResourceStatus: undefined,
-      selectedStatus: undefined
+      selectedStatus: undefined,
+      RESOURCE_TYPE: "RESOURCE",
+      ORGANIZATION_TYPE: "ORGANIZATION"
+
+
     }
   },  
   computed: {
@@ -466,17 +422,15 @@ export default {
       negotiationId: this.negotiation.id
     })
     this.roles = await this.retrieveUserRoles()
+    console.log("@#@#@#@#")
+    console.log(this.negotiation.allResources)
     this.groupedResources = this.groupResourcesByOrganization(this.negotiation.allResources)
     //initialize checkboxes selection 
     let keys = Object.keys(this.groupedResources)
     for (let i=0; i<keys.length; i++){
-      //this.selected[keys[i]]["checked"]= false
-      //this.selected[keys[i]]["type"]= "ORGANIZATION"
-      this.selected[keys[i]] = { "checked": false, "type": "ORGANIZATION" }
+      this.selected[keys[i]] = { "checked": false, "type": this.ORGANIZATION_TYPE }
       for (const collection in this.groupedResources[keys[i]]){
-        //this.selected[this.groupedResources[keys[i]][collection].id]["checked"] = false
-        //this.selected[keys[i]]["type"]= "RESOURCE"
-        this.selected[this.groupedResources[keys[i]][collection].id] = { "checked": false, "type": "RESOURCE" }
+        this.selected[this.groupedResources[keys[i]][collection].id] = { "checked": false, "type": this.RESOURCE_TYPE }
 
       }
     }
@@ -555,7 +509,7 @@ export default {
       this.selected[key]["checked"] = !this.selected[key]["checked"]
       for (const collection in this.groupedResources[key]){
         this.selected[this.groupedResources[key][collection].id]["checked"] = !this.selected[this.groupedResources[key][collection].id]["checked"]
-        if (this.selected[this.groupedResources[key][collection].id]["checked"] == true && this.selected[this.groupedResources[key][collection].id]["type"] == "RESOURCE"){
+        if (this.selected[this.groupedResources[key][collection].id]["checked"] == true && this.selected[this.groupedResources[key][collection].id]["type"] == this.RESOURCE_TYPE){
           checkedResource = this.groupedResources[key][collection].id
         }
       }
@@ -569,13 +523,20 @@ export default {
       }      
     },
     isBiobankButtonDisabled(collections){
+      console.log("Check Biobank button disabled")
       let current_status = this.getStatusForCollection(collections[0].id)
+      //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
+      console.log(current_status)
+      console.log(this.currentMultipleResourceStatus)
+      if(this.currentMultipleResourceStatus != undefined && current_status != this.currentMultipleResourceStatus){
+        return true
+      }
       for (let i=1; i<collections.length; i++){
         if (this.getStatusForCollection(collections[i].id) != current_status){
           return true
         }
-        return false
-      }     
+      }  
+      return false   
     },
     isResourceButtonDisabled(resourceId){
       if (this.currentMultipleResourceStatus != undefined && this.getStatusForCollection(resourceId) != this.currentMultipleResourceStatus){
@@ -588,7 +549,7 @@ export default {
       console.log(this.selected["checked"])
       console.log(this.selected)
       for(var resource in this.selected){
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == "RESOURCE"){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
           this.statusOptions = this.getAvailableComboOptions()
           console.log(this.statusOptions)
@@ -605,7 +566,7 @@ export default {
       console.log(this.selected)
       for (var resource in this.selected){
         console.log(resource)
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == "RESOURCE"){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           this.lifecycleResourceId = resource
           this.loadPossibleEventsForResource()
           return
@@ -616,7 +577,7 @@ export default {
     async updateCheckedResourcesStatus(event){
       // For each of the settled resources, update the status to the one chosen in the combo 
       for (var resource in this.selected){
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == "RESOURCE"){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           await this.updateResourceStatus({
             negotiationId: this.negotiation.id,
             resourceId: resource,
