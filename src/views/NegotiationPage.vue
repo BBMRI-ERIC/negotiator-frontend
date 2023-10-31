@@ -164,34 +164,34 @@
               :key="key"
               class="card mb-2 collapse"
             >
-              <a
-                data-bs-toggle="collapse"
-                :href="'#card-body-block'+index"
-                aria-expanded="true"
-                :aria-controls="'card-body-block'+index"
-              >
-                <div class="card-header">
-                  <div class="form-check">
-                    <input
-                      id="flexCheckDefault"
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      :disabled="isBiobankButtonDisabled(groupedResources[key])"
-                      @change="changeSelection(key)"
-                    >
+              <div class="card-header">
+                <div class="form-check">
+                  <input
+                    id="flexCheckDefault"
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    :disabled="isBiobankButtonDisabled(groupedResources[key])"
+                    @change="changeSelection(key)"
+                  >
                  
-                    <label
+                  <label
+                    class="form-check-label text-primary fw-bold ml-2"
+                    for="flexCheckDefault"
+                  >
+                    <a
                       class="form-check-label text-primary fw-bold ml-2"
-                      for="flexCheckDefault"
+                      data-bs-toggle="collapse"
+                      :href="'#card-body-block'+index"
+                      aria-expanded="true"
+                      :aria-controls="'card-body-block'+index"
                     >
                       {{ groupedResources[key][0].organization.name }}
-                    </label>
-               
-                  
-                  </div>
+                    </a>
+                  </label>
                 </div>
-              </a>
+              </div>
+            
               <div
                 :id="'card-body-block'+index"
                 class="collapse multi-collapse"
