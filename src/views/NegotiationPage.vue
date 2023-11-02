@@ -135,70 +135,69 @@
             </div>
             
             <div
-              v-for="(key, index) in Object.keys(groupedResources)"
+              v-for="[orgId, org] in Object.entries(organizationsById)"
               id="collectionsList"
-              :key="key"
+              :key="orgId"
               class="card mb-2 collapse"
             >
               <div class="card-header">
                 <div class="form-check">
                   <input
-                    v-if="isRepresentativeForOrganization(key)"
-                    id="flexCheckDefault"
+                    v-if="isRepresentativeForOrganization(orgId)"
+                    :id="getElementIdFromCollectionId(orgId)"
+                    v-model="selected[orgId]['checked']"
                     class="form-check-input"
                     type="checkbox"
-                    value=""
-                    :disabled="isBiobankButtonDisabled(groupedResources[key])"
-                    @change="changeSelection(key)"
+                    :disabled="isBiobankButtonDisabled(org.resources)"
+                    @change="changeSelection(orgId)"
                   >
                  
                   <label
                     class="form-check-label text-primary fw-bold ml-2"
-                    for="flexCheckDefault"
+                    :for="getElementIdFromCollectionId(orgId)"
                   >
                     <a
                       class="form-check-label text-primary fw-bold ml-2"
                       data-bs-toggle="collapse"
-                      :href="'#card-body-block'+index"
+                      :href="`#card-body-block-${getElementIdFromCollectionId(orgId)}`"
                       aria-expanded="true"
-                      :aria-controls="'card-body-block'+index"
+                      :aria-controls="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
                     >
-                      {{ groupedResources[key][0].organization.name }}
+                      {{ org.name }}  
                     </a>
                   </label>
                 </div>
               </div>
             
               <div
-                :id="'card-body-block'+index"
+                :id="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
                 class="collapse multi-collapse"
               >
                 <div
                 
-                  v-for="collection in groupedResources[key]"
-                  :key="collection"
+                  v-for="resource in org.resources"
+                  :key="resource.id"
                   class="card-body"
                 >
                   <div class="form-check">
                     <input
-                      v-if="isRepresentativeForResource(collection.id)"
-                      id="flexCheckDefault"
-                      v-model="selected[collection.id]['checked']"
+                      v-if="isRepresentativeForResource(resource.id)"
+                      :id="getElementIdFromCollectionId(resource.id)"
+                      v-model="selected[resource.id]['checked']"
                       class="form-check-input"
                       type="checkbox"
-                      value=""
-                      :disabled="isResourceButtonDisabled(collection.id)"
-                      @change="setCurrentMultipleStatus(collection.id)"
+                      :disabled="isResourceButtonDisabled(resource.id)"
+                      @change="setCurrentMultipleStatus(resource.id)"
                     >
                     <label
                       class="form-check-label"
-                      for="flexCheckDefault"
+                      :for="getElementIdFromCollectionId(resource.id)"
                     >
-                      {{ collection.id }}
+                      {{ resource.id }}
                     </label>
                   
                     <span class="badge rounded-pill bg-primary ms-4">
-                      {{ getStatusForResource(collection.id) }}
+                      {{ getStatusForResource(resource.id) }}
                     </span>
                   </div>
                 </div>
@@ -338,7 +337,6 @@ export default {
       lifecycleResourceId: undefined,
       availableRoles: ROLES,
       currentResourceEvents: [],
-      groupedResources: undefined,
       selected: {},
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
@@ -419,16 +417,13 @@ export default {
       negotiationId: this.negotiation.id
     })
     this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-    this.groupedResources = this.groupResourcesByOrganization(this.negotiation.resources)
     //initialize checkboxes selection 
-    let keys = Object.keys(this.groupedResources)
-    for (let i=0; i<keys.length; i++){
-      this.selected[keys[i]] = { "checked": false, "type": this.ORGANIZATION_TYPE }
-      for (const collection in this.groupedResources[keys[i]]){
-        this.selected[this.groupedResources[keys[i]][collection].id] = { "checked": false, "type": this.RESOURCE_TYPE }
-
-      }
-    }
+    this.representedOrganizations.forEach(org => {
+      this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
+    })
+    this.representedResources.forEach(res => {
+      this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
+    })
   },
   methods: {
     ...mapActions([
@@ -487,26 +482,15 @@ export default {
     getElementIdFromCollectionId(collection) {
       return collection.replaceAll(":", "_")
     },
-    groupResourcesByOrganization(resources){
-      const groupedResources = {}
-      resources.forEach(item => {
-        const key = item.organization.externalId
-        if (!groupedResources[key]) {
-          groupedResources[key] = []
-        }
-        groupedResources[key].push(item)
-      })
-      return groupedResources
-    },
     changeSelection(key){
       let checkedResource = undefined
-      this.selected[key]["checked"] = !this.selected[key]["checked"]
-      for (const collection in this.groupedResources[key]){
-        this.selected[this.groupedResources[key][collection].id]["checked"] = !this.selected[this.groupedResources[key][collection].id]["checked"]
-        if (this.selected[this.groupedResources[key][collection].id]["checked"] == true && this.selected[this.groupedResources[key][collection].id]["type"] == this.RESOURCE_TYPE){
-          checkedResource = this.groupedResources[key][collection].id
+      // this.selected[key]["checked"] = !this.selected[key]["checked"]
+      this.organizationsById[key].resources.forEach(resource => {
+        this.selected[resource.id].checked = !this.selected[resource.id].checked
+        if (this.selected[resource.id].checked === true &&  this.selected[resource.id].type ===  this.RESOURCE_TYPE) {
+          checkedResource = resource.id
         }
-      }
+      })
       //if at least one resource has been checked, set the multiple status for the resource as it happens by clicking 
       //a single resource instead of the overall organisation multiple selection
       if (checkedResource != undefined){
@@ -517,13 +501,13 @@ export default {
       }      
     },
     isBiobankButtonDisabled(collections){
-      let current_status = this.getStatusForResource(collections[0].id)
+      let currentStatus = this.getStatusForResource(collections[0].id)
       //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
-      if(this.currentMultipleResourceStatus != undefined && current_status != this.currentMultipleResourceStatus){
+      if(this.currentMultipleResourceStatus != undefined && currentStatus != this.currentMultipleResourceStatus){
         return true
       }
       for (let i=1; i<collections.length; i++){
-        if (this.getStatusForResource(collections[i].id) != current_status){
+        if (this.getStatusForResource(collections[i].id) != currentStatus){
           return true
         }
       }  
