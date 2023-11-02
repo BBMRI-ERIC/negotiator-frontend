@@ -12,22 +12,12 @@
       <i class="bi-arrow-left" />
       Go back
     </button>
-
     <confirmation-modal
       id="abandonModal"
       title="Are you sure you want to abandon this Negotiation?"
       text="Confirming, you will not be able to access this negotiation again."
       @confirm="updateNegotiation('ABANDON')"
     />
-
-    <update-status-modal
-      id="updateStatusModal"
-      :resource-id="lifecycleResourceId"
-      :options="currentResourceEvents"
-      :visible="updateStatusVisible"
-      @selected="updateResource"
-    />
-
     <div class="row mt-4">
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
@@ -132,8 +122,7 @@
                   </button>
                 </div>
               </div>
-            </div>
-            
+            </div>  
             <div
               v-for="[orgId, org] in Object.entries(organizationsById)"
               id="collectionsList"
@@ -148,33 +137,25 @@
                     v-model="selected[orgId]['checked']"
                     class="form-check-input"
                     type="checkbox"
-                    :disabled="isBiobankButtonDisabled(org.resources)"
-                    @change="changeSelection(orgId)"
-                  >
-                 
+                    :disabled="isOrganizationButtonDisabled(org.resources)"
+                    @change="changeOrganizationSelection(orgId)"
+                  >           
                   <label
-                    class="form-check-label text-primary fw-bold ml-2"
-                    :for="getElementIdFromCollectionId(orgId)"
+                    class="text-primary fw-bold ml-2 cursor-pointer"
+                    data-bs-toggle="collapse"
+                    :data-bs-target="`#card-body-block-${getElementIdFromCollectionId(orgId)}`"
+                    aria-expanded="true"
+                    :aria-controls="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
                   >
-                    <a
-                      class="form-check-label text-primary fw-bold ml-2"
-                      data-bs-toggle="collapse"
-                      :href="`#card-body-block-${getElementIdFromCollectionId(orgId)}`"
-                      aria-expanded="true"
-                      :aria-controls="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
-                    >
-                      {{ org.name }}  
-                    </a>
+                    {{ org.name }}  
                   </label>
                 </div>
-              </div>
-            
+              </div>   
               <div
                 :id="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
                 class="collapse multi-collapse"
               >
-                <div
-                
+                <div    
                   v-for="resource in org.resources"
                   :key="resource.id"
                   class="card-body"
@@ -194,8 +175,7 @@
                       :for="getElementIdFromCollectionId(resource.id)"
                     >
                       {{ resource.id }}
-                    </label>
-                  
+                    </label>           
                     <span class="badge rounded-pill bg-primary ms-4">
                       {{ getStatusForResource(resource.id) }}
                     </span>
@@ -270,16 +250,16 @@
             aria-labelledby="dropdownMenuButton1"
           >
             <li
-              v-for="response in responseOptions"
-              :key="response"
-              :value="response"
+              v-for="status in negotiationStatusOptions"
+              :key="status"
+              :value="status"
             >
               <button
                 class="dropdown-item"
                 type="button"
-                @click="updateNegotiation(response)"
+                @click="updateNegotiation(status)"
               >
-                {{ response }}
+                {{ status }}
               </button>
             </li>
           </ul>
@@ -308,7 +288,6 @@
 <script>
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
-import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
@@ -317,7 +296,7 @@ import { mapActions, mapGetters } from "vuex"
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, UpdateStatusModal, NegotiationPosts, NegotiationAttachment
+    ConfirmationModal, NegotiationPosts, NegotiationAttachment
   },
   props: {
     negotiationId: {
@@ -333,7 +312,7 @@ export default {
     return {
       negotiation: undefined,
       representedResourcesIds: [],
-      responseOptions: [],
+      negotiationStatusOptions: [],
       lifecycleResourceId: undefined,
       availableRoles: ROLES,
       currentResourceEvents: [],
@@ -342,8 +321,6 @@ export default {
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
       ORGANIZATION_TYPE: "ORGANIZATION"
-
-
     }
   },  
   computed: {
@@ -413,7 +390,7 @@ export default {
     this.attachments = await this.retrieveAttachmentsByNegotiationId({
       negotiationId: this.negotiation.id
     })
-    this.responseOptions = await this.retrievePossibleEvents({
+    this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
     this.representedResourcesIds = await this.retrieveUserRepresentedResources()
@@ -472,17 +449,12 @@ export default {
         resourceId: resourceId
       }).then((data) => {
         return data
-      })
-      
-    },
-    interactLifecycleModal(resourceId) {
-      this.lifecycleResourceId = resourceId
-      this.loadPossibleEventsForResource(resourceId)
+      })     
     },
     getElementIdFromCollectionId(collection) {
       return collection.replaceAll(":", "_")
     },
-    changeSelection(key){
+    changeOrganizationSelection(key){
       let checkedResource = undefined
       // this.selected[key]["checked"] = !this.selected[key]["checked"]
       this.organizationsById[key].resources.forEach(resource => {
@@ -500,7 +472,7 @@ export default {
         this.currentMultipleResourceStatus = undefined
       }      
     },
-    isBiobankButtonDisabled(collections){
+    isOrganizationButtonDisabled(collections){
       let currentStatus = this.getStatusForResource(collections[0].id)
       //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
       if(this.currentMultipleResourceStatus != undefined && currentStatus != this.currentMultipleResourceStatus){
@@ -514,10 +486,7 @@ export default {
       return false   
     },
     isResourceButtonDisabled(resourceId){
-      if (this.currentMultipleResourceStatus != undefined && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus){
-        return true
-      }
-      return false
+      return this.currentMultipleResourceStatus != undefined && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus
     },
     setCurrentMultipleStatus(resourceId){
       for(var resource in this.selected){
@@ -530,17 +499,16 @@ export default {
       this.currentMultipleResourceStatus = undefined
     },
     isStatusComboDisabled(){
-      return this.currentMultipleResourceStatus == undefined ? true :false
+      return this.currentMultipleResourceStatus === undefined
     },
     getAvailableComboOptions(){
       for (var resource in this.selected){
         if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           this.lifecycleResourceId = resource
           this.loadPossibleEventsForResource(resource)
-          return
+          break
         } 
       }
-
     },
     async updateCheckedResourcesStatus(event){
       // For each of the settled resources, update the status to the one chosen in the combo 
@@ -554,9 +522,7 @@ export default {
         } 
       }
     }
-
   },
-
 }
 </script>
 
