@@ -80,24 +80,6 @@
             />
           </li>
           <li class="list-group-item p-3">
-            <p
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#resourcesList"
-              aria-expanded="false"
-              aria-controls="resourcesList"
-            >
-              <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
-                <i class="bi bi-card-list" />
-                COLLECTIONS ({{ numberOfResources }})
-              </span>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm me-md-2 float-end"
-              >
-                Update selected
-              </button>
-            </p>
             <div class="container">
               <div class="row">
                 <div class="col-sm-8"> 
@@ -110,7 +92,7 @@
                   >
                     <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
                       <i class="bi bi-card-list" />
-                      COLLECTIONS ({{ numberOfCollections }})
+                      COLLECTIONS ({{ numberOfResources }})
                     </span>
                   </p>
                 </div>
@@ -130,7 +112,7 @@
                       New status...
                     </option>
                     <option
-                      v-for="key in responseOptions"
+                      v-for="key in currentResourceEvents"
                       :key="key"
                       :value="key"
                     >
@@ -153,7 +135,6 @@
             </div>
             
             <div
-              id="resourcesList"
               v-for="(key, index) in Object.keys(groupedResources)"
               id="collectionsList"
               :key="key"
@@ -162,7 +143,7 @@
               <div class="card-header">
                 <div class="form-check">
                   <input
-                    v-if="userRole === availableRoles.REPRESENTATIVE"
+                    v-if="isRepresentativeForOrganization(key)"
                     id="flexCheckDefault"
                     class="form-check-input"
                     type="checkbox"
@@ -200,7 +181,7 @@
                 >
                   <div class="form-check">
                     <input
-                      v-if="userRole === availableRoles.REPRESENTATIVE"
+                      v-if="isRepresentativeForResource(collection.id)"
                       id="flexCheckDefault"
                       v-model="selected[collection.id]['checked']"
                       class="form-check-input"
@@ -217,7 +198,7 @@
                     </label>
                   
                     <span class="badge rounded-pill bg-primary ms-4">
-                      {{ getStatusForCollection(collection.id) }}
+                      {{ getStatusForResource(collection.id) }}
                     </span>
                   </div>
                 </div>
@@ -352,7 +333,7 @@ export default {
   data() {
     return {
       negotiation: undefined,
-      roles: [],
+      representedResourcesIds: [],
       responseOptions: [],
       lifecycleResourceId: undefined,
       availableRoles: ROLES,
@@ -389,20 +370,30 @@ export default {
         return organizations
       }, {})
     },
+    resourcesById() {
+      return this.resources.reduce((resourcesObjects, resource) => {
+        resourcesObjects[resource.id] = resource
+        return resourcesObjects
+      }, {})
+    },
     numberOfResources() {
       return this.resources.length
     },
-    representativeResources() {
+    representedResources() {
       return this.resources.filter(resource => this.isRepresentativeForResource(resource.id))
     },
-    representativeOrganizations() {
-      return this.representativeResources.map(resource => resource.organization)
+    representedOrganizations() {
+      return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t.externalId === value.externalId
+        ))
+      )
     },
     postsRecipients() {
       if (this.userRole === ROLES.RESEARCHER) {
         return this.organizations.map(org => { return { id: org.externalId, name: org.name } })
       } else {
-        return this.representativeOrganizations.map(org => { return { id: org.externalId, name: org.name } })
+        return this.representedOrganizations.map(org => { return { id: org.externalId, name: org.name } })
       }
     },
     author() {
@@ -427,8 +418,8 @@ export default {
     this.responseOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
-    this.roles = await this.retrieveUserRoles()
-    this.groupedResources = this.groupResourcesByOrganization(this.negotiation.allResources)
+    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
+    this.groupedResources = this.groupResourcesByOrganization(this.negotiation.resources)
     //initialize checkboxes selection 
     let keys = Object.keys(this.groupedResources)
     for (let i=0; i<keys.length; i++){
@@ -443,7 +434,7 @@ export default {
     ...mapActions([
       "retrieveNegotiationById",
       "retrievePostsByNegotiationId",
-      "retrieveUserRoles",
+      "retrieveUserRepresentedResources",
       "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
       "retrieveAttachmentsByNegotiationId",
@@ -451,15 +442,15 @@ export default {
       "updateResourceStatus",
       "downloadAttachment"
     ]),
-    async isRepresentativeForResource(resourceId) {
-      return !!this.roles.includes(`${ROLES.REPRESENTATIVE}_${resourceId}`)
+    isRepresentativeForResource(resourceId) {
+      return this.representedResourcesIds.includes(resourceId)
     },
-    getStatusForCollection(resourceId) {
-      if (this.negotiation.resourceStatus && typeof this.negotiation.resourceStatus === "object") {
-        return this.negotiation.resourceStatus[resourceId] || ""
-      } else {
-        return ""
-      }
+    isRepresentativeForOrganization(organizationId) {
+      return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
+    },
+
+    getStatusForResource(resourceId) {
+      return this.resourcesById[resourceId].status
     },
     isAttachment(value) {
       return value instanceof Object
@@ -526,20 +517,20 @@ export default {
       }      
     },
     isBiobankButtonDisabled(collections){
-      let current_status = this.getStatusForCollection(collections[0].id)
+      let current_status = this.getStatusForResource(collections[0].id)
       //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
       if(this.currentMultipleResourceStatus != undefined && current_status != this.currentMultipleResourceStatus){
         return true
       }
       for (let i=1; i<collections.length; i++){
-        if (this.getStatusForCollection(collections[i].id) != current_status){
+        if (this.getStatusForResource(collections[i].id) != current_status){
           return true
         }
       }  
       return false   
     },
     isResourceButtonDisabled(resourceId){
-      if (this.currentMultipleResourceStatus != undefined && this.getStatusForCollection(resourceId) != this.currentMultipleResourceStatus){
+      if (this.currentMultipleResourceStatus != undefined && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus){
         return true
       }
       return false
@@ -547,7 +538,7 @@ export default {
     setCurrentMultipleStatus(resourceId){
       for(var resource in this.selected){
         if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
-          this.currentMultipleResourceStatus = this.getStatusForCollection(resourceId)
+          this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
           this.statusOptions = this.getAvailableComboOptions()
           return
         }
@@ -561,7 +552,7 @@ export default {
       for (var resource in this.selected){
         if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
           this.lifecycleResourceId = resource
-          this.loadPossibleEventsForResource()
+          this.loadPossibleEventsForResource(resource)
           return
         } 
       }
