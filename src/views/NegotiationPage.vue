@@ -455,7 +455,6 @@ export default {
       return collection.replaceAll(":", "_")
     },
     changeOrganizationSelection(key, event) {
-      console.log(event.target.checked)
       let checkedResource = undefined
       // this.selected[key]["checked"] = !this.selected[key]["checked"]
       this.organizationsById[key].resources.forEach(resource => {
