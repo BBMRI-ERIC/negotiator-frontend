@@ -138,7 +138,7 @@
                     class="form-check-input"
                     type="checkbox"
                     :disabled="isOrganizationButtonDisabled(org.resources)"
-                    @change="changeOrganizationSelection(orgId)"
+                    @change="changeOrganizationSelection(orgId, $event)"
                   >           
                   <label
                     class="text-primary fw-bold ml-2 cursor-pointer"
@@ -454,11 +454,12 @@ export default {
     getElementIdFromCollectionId(collection) {
       return collection.replaceAll(":", "_")
     },
-    changeOrganizationSelection(key){
+    changeOrganizationSelection(key, event) {
+      console.log(event.target.checked)
       let checkedResource = undefined
       // this.selected[key]["checked"] = !this.selected[key]["checked"]
       this.organizationsById[key].resources.forEach(resource => {
-        this.selected[resource.id].checked = !this.selected[resource.id].checked
+        this.selected[resource.id].checked = event.target.checked
         if (this.selected[resource.id].checked === true &&  this.selected[resource.id].type ===  this.RESOURCE_TYPE) {
           checkedResource = resource.id
         }
