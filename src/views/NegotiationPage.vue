@@ -87,19 +87,18 @@
                   </p>
                 </div>
                 <div
-                  v-if="userRole === availableRoles.REPRESENTATIVE"
+                  v-if="(userRole === availableRoles.REPRESENTATIVE || userRole === availableRoles.RESEARCHER) "
                   class="col-sm-3"
                 >
                   <select 
+                    v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length >0"
                     id="collectionsList"
                     v-model="selectedStatus"
                     class="form-select collapse"
                     :disabled="isStatusComboDisabled()"
                   >
-                    <option
-                      selected
-                    >
-                      New status...
+                    <option selected>
+                      Select new state...
                     </option>
                     <option
                       v-for="key in currentResourceEvents"
@@ -112,7 +111,8 @@
                 </div>
                 <div class="col-sm-1">
                   <button
-                    v-if="userRole === availableRoles.REPRESENTATIVE"
+                    v-if="(userRole === availableRoles.REPRESENTATIVE || userRole === availableRoles.RESEARCHER)"
+                    v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length >0"
                     id="collectionsList"
                     class="btn btn-secondary btn-sm me-md-2 float-end collapse" 
                     type="submit" 
@@ -120,6 +120,14 @@
                   >
                     Save
                   </button>
+                </div>
+             
+                <div 
+                  v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length == 0"
+                  class="alert alert-danger"
+                  role="alert"
+                >
+                  No selectable status for this resource(s), wait for the other part to respond
                 </div>
               </div>
             </div>  
@@ -132,7 +140,7 @@
               <div class="card-header">
                 <div class="form-check">
                   <input
-                    v-if="isRepresentativeForOrganization(orgId)"
+                    v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
                     :id="getElementIdFromCollectionId(orgId)"
                     v-model="selected[orgId]['checked']"
                     class="form-check-input"
@@ -162,7 +170,7 @@
                 >
                   <div class="form-check">
                     <input
-                      v-if="isRepresentativeForResource(resource.id)"
+                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
                       :id="getElementIdFromCollectionId(resource.id)"
                       v-model="selected[resource.id]['checked']"
                       class="form-check-input"
@@ -395,12 +403,23 @@ export default {
     })
     this.representedResourcesIds = await this.retrieveUserRepresentedResources()
     //initialize checkboxes selection 
-    this.representedOrganizations.forEach(org => {
-      this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
-    })
-    this.representedResources.forEach(res => {
-      this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
-    })
+    if (this.userRole === ROLES.REPRESENTATIVE){
+      this.representedOrganizations.forEach(org => {
+        this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
+      })
+      this.representedResources.forEach(res => {
+        this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
+      })
+    }
+    else { //role is researcher 
+      this.organizations.forEach(org => {
+        this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
+      })
+      this.resources.forEach(res => {
+        this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
+      })
+
+    }
   },
   methods: {
     ...mapActions([
@@ -449,7 +468,7 @@ export default {
         resourceId: resourceId
       }).then((data) => {
         return data
-      })     
+      })   
     },
     getElementIdFromCollectionId(collection) {
       return collection.replaceAll(":", "_")
@@ -486,7 +505,7 @@ export default {
       return false   
     },
     isResourceButtonDisabled(resourceId){
-      return this.currentMultipleResourceStatus != undefined && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus
+      return this.currentMultipleResourceStatus != undefined  && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus
     },
     setCurrentMultipleStatus(resourceId){
       for(var resource in this.selected){
