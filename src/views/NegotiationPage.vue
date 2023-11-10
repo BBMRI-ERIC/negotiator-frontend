@@ -12,22 +12,12 @@
       <i class="bi-arrow-left" />
       Go back
     </button>
-
     <confirmation-modal
       id="abandonModal"
       title="Are you sure you want to abandon this Negotiation?"
       text="Confirming, you will not be able to access this negotiation again."
       @confirm="updateNegotiation('ABANDON')"
     />
-
-    <update-status-modal
-      id="updateStatusModal"
-      :resource-id="lifecycleResourceId"
-      :options="currentResourceEvents"
-      :visible="updateStatusVisible"
-      @selected="updateResource"
-    />
-
     <div class="row mt-4">
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
@@ -80,44 +70,126 @@
             />
           </li>
           <li class="list-group-item p-3">
-            <p
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#resourcesList"
-              aria-expanded="false"
-              aria-controls="resourcesList"
-            >
-              <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
-                <i class="bi bi-card-list" />
-                COLLECTIONS ({{ numberOfResources }})
-              </span>
-            </p>
-            <div
-              id="resourcesList"
-              class="collapse"
-            >
-              <ul>
-                <li
-                  v-for="resource in resources"
-                  :key="resource.id"
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-8"> 
+                  <p
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collectionsList"
+                    aria-expanded="false"
+                    aria-controls="collectionsList"
+                  >
+                    <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+                      <i class="bi bi-card-list" />
+                      COLLECTIONS ({{ numberOfResources }})
+                    </span>
+                  </p>
+                </div>
+                <div
+                  v-if="(userRole === availableRoles.REPRESENTATIVE || userRole === availableRoles.RESEARCHER) "
+                  class="col-sm-3"
                 >
-                  <div class="me-auto p-2">
-                    <label class="me-2 fw-bold small">{{ resource.name }} ({{ resource.organization.name }}) </label>
-                    <span>
-                      {{ resource.status }}
-                      <button
-                        v-if="userRole === availableRoles.REPRESENTATIVE && isRepresentativeForResource(resource.id)"
-                        class="btn btn-secondary btn-sm me-2 mb-1 float-end order-first"
-                        data-bs-toggle="modal"
-                        data-bs-target="#updateStatusModal"
-                        @click.stop="interactLifecycleModal(resource.id)"
-                      >
-                        <i class="bi-gear" />
-                      </button>
+                  <select 
+                    v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length >0"
+                    id="collectionsList"
+                    v-model="selectedStatus"
+                    class="form-select collapse"
+                    :disabled="isStatusComboDisabled()"
+                  >
+                    <option selected>
+                      Select new state...
+                    </option>
+                    <option
+                      v-for="key in currentResourceEvents"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ key }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-sm-1">
+                  <button
+                    v-if="(userRole === availableRoles.REPRESENTATIVE || userRole === availableRoles.RESEARCHER)"
+                    v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length >0"
+                    id="collectionsList"
+                    class="btn btn-secondary btn-sm me-md-2 float-end collapse" 
+                    type="submit" 
+                    @click.prevent="updateCheckedResourcesStatus(selectedStatus)"
+                  >
+                    Save
+                  </button>
+                </div>
+             
+                <div 
+                  v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length == 0"
+                  class="alert alert-danger"
+                  role="alert"
+                >
+                  No selectable status for this resource(s), wait for the other part to respond
+                </div>
+              </div>
+            </div>  
+            <div
+              v-for="[orgId, org] in Object.entries(organizationsById)"
+              id="collectionsList"
+              :key="orgId"
+              class="card mb-2 collapse"
+            >
+              <div class="card-header">
+                <div class="form-check">
+                  <input
+                    v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                    :id="getElementIdFromCollectionId(orgId)"
+                    v-model="selected[orgId]['checked']"
+                    class="form-check-input"
+                    type="checkbox"
+                    :disabled="isOrganizationButtonDisabled(org.resources)"
+                    @change="changeOrganizationSelection(orgId, $event)"
+                  >           
+                  <label
+                    class="text-primary fw-bold ml-2 cursor-pointer"
+                    data-bs-toggle="collapse"
+                    :data-bs-target="`#card-body-block-${getElementIdFromCollectionId(orgId)}`"
+                    aria-expanded="true"
+                    :aria-controls="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
+                  >
+                    {{ org.name }}  
+                  </label>
+                </div>
+              </div>   
+              <div
+                :id="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
+                class="collapse multi-collapse"
+              >
+                <div    
+                  v-for="resource in org.resources"
+                  :key="resource.id"
+                  class="card-body"
+                >
+                  <div class="form-check">
+                    <input
+                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                      :id="getElementIdFromCollectionId(resource.id)"
+                      v-model="selected[resource.id]['checked']"
+                      class="form-check-input"
+                      type="checkbox"
+                      :disabled="isResourceButtonDisabled(resource.id)"
+                      @change="setCurrentMultipleStatus(resource.id)"
+                    >
+                    <label
+                      class="form-check-label"
+                      :for="getElementIdFromCollectionId(resource.id)"
+                    >
+                      {{ resource.id }}
+                    </label>           
+                    <span class="badge rounded-pill bg-primary ms-4">
+                      {{ getStatusForResource(resource.id) }}
                     </span>
                   </div>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
           </li>
         </ul>
@@ -186,16 +258,16 @@
             aria-labelledby="dropdownMenuButton1"
           >
             <li
-              v-for="response in responseOptions"
-              :key="response"
-              :value="response"
+              v-for="status in negotiationStatusOptions"
+              :key="status"
+              :value="status"
             >
               <button
                 class="dropdown-item"
                 type="button"
-                @click="updateNegotiation(response)"
+                @click="updateNegotiation(status)"
               >
-                {{ response }}
+                {{ status }}
               </button>
             </li>
           </ul>
@@ -224,7 +296,6 @@
 <script>
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
-import UpdateStatusModal from "@/components/modals/UpdateStatusModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
@@ -233,7 +304,7 @@ import { mapActions, mapGetters } from "vuex"
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, UpdateStatusModal, NegotiationPosts, NegotiationAttachment
+    ConfirmationModal, NegotiationPosts, NegotiationAttachment
   },
   props: {
     negotiationId: {
@@ -248,11 +319,16 @@ export default {
   data() {
     return {
       negotiation: undefined,
-      roles: [],
-      responseOptions: [],
+      representedResourcesIds: [],
+      negotiationStatusOptions: [],
       lifecycleResourceId: undefined,
       availableRoles: ROLES,
-      currentResourceEvents: []
+      currentResourceEvents: [],
+      selected: {},
+      currentMultipleResourceStatus: undefined,
+      selectedStatus: undefined,
+      RESOURCE_TYPE: "RESOURCE",
+      ORGANIZATION_TYPE: "ORGANIZATION"
     }
   },  
   computed: {
@@ -277,20 +353,30 @@ export default {
         return organizations
       }, {})
     },
+    resourcesById() {
+      return this.resources.reduce((resourcesObjects, resource) => {
+        resourcesObjects[resource.id] = resource
+        return resourcesObjects
+      }, {})
+    },
     numberOfResources() {
       return this.resources.length
     },
-    representativeResources() {
+    representedResources() {
       return this.resources.filter(resource => this.isRepresentativeForResource(resource.id))
     },
-    representativeOrganizations() {
-      return this.representativeResources.map(resource => resource.organization)
+    representedOrganizations() {
+      return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t.externalId === value.externalId
+        ))
+      )
     },
     postsRecipients() {
       if (this.userRole === ROLES.RESEARCHER) {
         return this.organizations.map(org => { return { id: org.externalId, name: org.name } })
       } else {
-        return this.representativeOrganizations.map(org => { return { id: org.externalId, name: org.name } })
+        return this.representedOrganizations.map(org => { return { id: org.externalId, name: org.name } })
       }
     },
     author() {
@@ -312,16 +398,34 @@ export default {
     this.attachments = await this.retrieveAttachmentsByNegotiationId({
       negotiationId: this.negotiation.id
     })
-    this.responseOptions = await this.retrievePossibleEvents({
+    this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
-    this.roles = await this.retrieveUserRoles()
+    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
+    //initialize checkboxes selection 
+    if (this.userRole === ROLES.REPRESENTATIVE){
+      this.representedOrganizations.forEach(org => {
+        this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
+      })
+      this.representedResources.forEach(res => {
+        this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
+      })
+    }
+    else { //role is researcher 
+      this.organizations.forEach(org => {
+        this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
+      })
+      this.resources.forEach(res => {
+        this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
+      })
+
+    }
   },
   methods: {
     ...mapActions([
       "retrieveNegotiationById",
       "retrievePostsByNegotiationId",
-      "retrieveUserRoles",
+      "retrieveUserRepresentedResources",
       "retrievePossibleEvents",
       "retrievePossibleEventsForResource",
       "retrieveAttachmentsByNegotiationId",
@@ -329,15 +433,15 @@ export default {
       "updateResourceStatus",
       "downloadAttachment"
     ]),
-    async isRepresentativeForResource(resourceId) {
-      return !!this.roles.includes(`${ROLES.REPRESENTATIVE}_${resourceId}`)
+    isRepresentativeForResource(resourceId) {
+      return this.representedResourcesIds.includes(resourceId)
     },
-    getStatusForCollection(resourceId) {
-      if (this.negotiation.resourceStatus && typeof this.negotiation.resourceStatus === "object") {
-        return this.negotiation.resourceStatus[resourceId] || ""
-      } else {
-        return ""
-      }
+    isRepresentativeForOrganization(organizationId) {
+      return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
+    },
+
+    getStatusForResource(resourceId) {
+      return this.resourcesById[resourceId].status
     },
     isAttachment(value) {
       return value instanceof Object
@@ -364,12 +468,78 @@ export default {
         resourceId: resourceId
       }).then((data) => {
         return data
-      })
-      
+      })   
     },
-    interactLifecycleModal(resourceId) {
-      this.lifecycleResourceId = resourceId
-      this.loadPossibleEventsForResource(resourceId)
+    getElementIdFromCollectionId(collection) {
+      return collection.replaceAll(":", "_")
+    },
+    changeOrganizationSelection(key, event) {
+      let checkedResource = undefined
+      // this.selected[key]["checked"] = !this.selected[key]["checked"]
+      this.organizationsById[key].resources.forEach(resource => {
+        this.selected[resource.id].checked = event.target.checked
+        if (this.selected[resource.id].checked === true &&  this.selected[resource.id].type ===  this.RESOURCE_TYPE) {
+          checkedResource = resource.id
+        }
+      })
+      //if at least one resource has been checked, set the multiple status for the resource as it happens by clicking 
+      //a single resource instead of the overall organisation multiple selection
+      if (checkedResource != undefined){
+        this.setCurrentMultipleStatus(checkedResource)
+      }
+      else{
+        this.currentMultipleResourceStatus = undefined
+      }      
+    },
+    isOrganizationButtonDisabled(collections){
+      let currentStatus = this.getStatusForResource(collections[0].id)
+      //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
+      if(this.currentMultipleResourceStatus != undefined && currentStatus != this.currentMultipleResourceStatus){
+        return true
+      }
+      for (let i=1; i<collections.length; i++){
+        if (this.getStatusForResource(collections[i].id) != currentStatus){
+          return true
+        }
+      }  
+      return false   
+    },
+    isResourceButtonDisabled(resourceId){
+      return this.currentMultipleResourceStatus != undefined  && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus
+    },
+    setCurrentMultipleStatus(resourceId){
+      for(var resource in this.selected){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
+          this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
+          this.statusOptions = this.getAvailableComboOptions()
+          return
+        }
+      }
+      this.currentMultipleResourceStatus = undefined
+    },
+    isStatusComboDisabled(){
+      return this.currentMultipleResourceStatus === undefined
+    },
+    getAvailableComboOptions(){
+      for (var resource in this.selected){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
+          this.lifecycleResourceId = resource
+          this.loadPossibleEventsForResource(resource)
+          break
+        } 
+      }
+    },
+    async updateCheckedResourcesStatus(event){
+      // For each of the settled resources, update the status to the one chosen in the combo 
+      for (var resource in this.selected){
+        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
+          await this.updateResourceStatus({
+            negotiationId: this.negotiation.id,
+            resourceId: resource,
+            event: event
+          })
+        } 
+      }
     }
   },
 }
