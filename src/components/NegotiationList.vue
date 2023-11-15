@@ -17,7 +17,7 @@
           @click="
             $router.push({
               name: 'negotiation-page',
-              params: { negotiationId: fn.id, userRole: userRole },
+              params: { negotiationId: fn.id, userRole: userRole, filters: filters },
             })
           "
         />
@@ -227,6 +227,11 @@ export default {
       return filterConditions.length == 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
     }
   },
+  beforeMount(){
+    console.log("BEFORE")
+    this.loadActiveFiltersFromURL()
+
+  },
   methods: {
     sort(column){
       let sortedNegotiations = this.negotiations
@@ -258,8 +263,55 @@ export default {
       else {
         this.filters[filterName] = filterValue
       }
+      console.log("updating...")
+      console.log(this.activeFilters(this.filters))
+      // update the url according to fiter(s)
+      this.$router.push({ path: "/biobanker", query: this.activeFilters(this.filters) })
+
+      // Reload the page
+      // window.location.reload()
+    },
+    activeFilters(filters){
+      let activeFilters = {}
+      for (const key in filters){
+        // console.log(key)
+        if((key == "status" && filters[key] != []) || (key != "status" && filters[key] != "")){
+          activeFilters[key] = filters[key]
+        }
+      }
+      // console.log("******")
+      // console.log(activeFilters)
+      return activeFilters
+    },
+    loadActiveFiltersFromURL(){
+      console.log("LOADING.......")
+      console.log(this.$route.query)
+      for (const param in this.$route.query){
+        if (param == "status"){
+          for (const value in this.$route.query[param]){
+            console.log(this.$route.query[param][value])
+            this.filters["status"].push(this.$route.query[param][value])
+            if (this.$route.query[param][value] == "SUBMITTED"){
+              console.log("checking submitted")
+              this.submittedSelection = true
+            }
+            if (this.$route.query[param][value]  == "IN_PROGRESS"){
+              this.ongoingSelection = true
+            }
+            if(this.$route.query[param][value]  == "ABANDONED"){
+              console.log("checking abandoned")
+              this.abandonedSelection = true
+            }
+          }
+
+        }
+      } 
     }
+ 
+
   }
+
+
   
 }
 </script>
