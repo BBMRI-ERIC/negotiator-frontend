@@ -153,7 +153,7 @@
 
 <script>
 import NegotiationCard from "@/components/NegotiationCard.vue"
-import { ROLES } from "@/config/consts"
+import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
 import moment from "moment"
 
 
@@ -228,9 +228,7 @@ export default {
     }
   },
   beforeMount(){
-    console.log("BEFORE")
     this.loadActiveFiltersFromURL()
-
   },
   methods: {
     sort(column){
@@ -263,10 +261,9 @@ export default {
       else {
         this.filters[filterName] = filterValue
       }
-      console.log("updating...")
-      console.log(this.activeFilters(this.filters))
       // update the url according to fiter(s)
-      this.$router.push({ path: "/biobanker", query: this.activeFilters(this.filters) })
+      const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
+      this.$router.push({ path: "/"+ destinationPage, query: this.activeFilters(this.filters) })
 
       // Reload the page
       // window.location.reload()
@@ -274,41 +271,54 @@ export default {
     activeFilters(filters){
       let activeFilters = {}
       for (const key in filters){
-        // console.log(key)
         if((key == "status" && filters[key] != []) || (key != "status" && filters[key] != "")){
           activeFilters[key] = filters[key]
         }
       }
-      // console.log("******")
-      // console.log(activeFilters)
       return activeFilters
     },
     loadActiveFiltersFromURL(){
-      console.log("LOADING.......")
-      console.log(this.$route.query)
       for (const param in this.$route.query){
         if (param == "status"){
-          for (const value in this.$route.query[param]){
-            console.log(this.$route.query[param][value])
-            this.filters["status"].push(this.$route.query[param][value])
-            if (this.$route.query[param][value] == "SUBMITTED"){
-              console.log("checking submitted")
+          if (typeof(this.$route.query[param]) == "string"){
+            // single value for this parameter in the url
+            this.filters["status"].push(this.$route.query[param])
+            if (this.$route.query[param]== NEGOTIATION_STATUS.SUBMITTED){
               this.submittedSelection = true
             }
-            if (this.$route.query[param][value]  == "IN_PROGRESS"){
+            if (this.$route.query[param]  == NEGOTIATION_STATUS.IN_PROGRESS){
               this.ongoingSelection = true
             }
-            if(this.$route.query[param][value]  == "ABANDONED"){
-              console.log("checking abandoned")
+            if(this.$route.query[param]  == NEGOTIATION_STATUS.ABANDONED){
               this.abandonedSelection = true
             }
+            
           }
-
+          else{
+            //multiple values for this parameters in the URL 
+            for (const value in this.$route.query[param]){
+              this.filters["status"].push(this.$route.query[param][value])
+              if (this.$route.query[param][value] == NEGOTIATION_STATUS.SUBMITTED){
+                this.submittedSelection = true
+              }
+              if (this.$route.query[param][value]  == NEGOTIATION_STATUS.IN_PROGRESS){
+                this.ongoingSelection = true
+              }
+              if(this.$route.query[param][value]  == NEGOTIATION_STATUS.ABANDONED){
+                this.abandonedSelection = true
+              }          
+            }
+          }
         }
+        if(param == "dateStart"){
+          this.selectedStartDate = this.$route.query[param]
+        }
+        if(param == "dateEnd"){
+          this.selectedEndDate = this.$route.query[param]
+        }
+        
       } 
     }
- 
-
   }
 
 
