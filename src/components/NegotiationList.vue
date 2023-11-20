@@ -278,46 +278,37 @@ export default {
       return activeFilters
     },
     loadActiveFiltersFromURL(){
-      for (const param in this.$route.query){
-        if (param == "status"){
-          if (typeof(this.$route.query[param]) == "string"){
-            // single value for this parameter in the url
-            this.filters["status"].push(this.$route.query[param])
-            if (this.$route.query[param]== NEGOTIATION_STATUS.SUBMITTED){
-              this.submittedSelection = true
+      for (const [param, value] of Object.entries(this.$route.query)) {
+        if (param === "status") {
+          const statusArray = [
+            NEGOTIATION_STATUS.SUBMITTED,
+            NEGOTIATION_STATUS.IN_PROGRESS,
+            NEGOTIATION_STATUS.ABANDONED,
+          ]
+          if (typeof value === "string") {
+            this.filters["status"].push(value)
+            if (statusArray.includes(value)) {
+              this.submittedSelection = value === NEGOTIATION_STATUS.SUBMITTED
+              this.ongoingSelection = value === NEGOTIATION_STATUS.IN_PROGRESS
+              this.abandonedSelection = value === NEGOTIATION_STATUS.ABANDONED
             }
-            if (this.$route.query[param]  == NEGOTIATION_STATUS.IN_PROGRESS){
-              this.ongoingSelection = true
-            }
-            if(this.$route.query[param]  == NEGOTIATION_STATUS.ABANDONED){
-              this.abandonedSelection = true
-            }
-            
-          }
-          else{
-            //multiple values for this parameters in the URL 
-            for (const value in this.$route.query[param]){
-              this.filters["status"].push(this.$route.query[param][value])
-              if (this.$route.query[param][value] == NEGOTIATION_STATUS.SUBMITTED){
-                this.submittedSelection = true
+          } else {
+            for (const status of value) {
+              this.filters["status"].push(status)
+              if (statusArray.includes(status)) {
+                this.submittedSelection = status === NEGOTIATION_STATUS.SUBMITTED || this.submittedSelection
+                this.ongoingSelection = status === NEGOTIATION_STATUS.IN_PROGRESS || this.ongoingSelection
+                this.abandonedSelection = status === NEGOTIATION_STATUS.ABANDONED || this.abandonedSelection
               }
-              if (this.$route.query[param][value]  == NEGOTIATION_STATUS.IN_PROGRESS){
-                this.ongoingSelection = true
-              }
-              if(this.$route.query[param][value]  == NEGOTIATION_STATUS.ABANDONED){
-                this.abandonedSelection = true
-              }          
             }
           }
         }
-        if(param == "dateStart"){
-          this.selectedStartDate = this.$route.query[param]
+        if (param === "dateStart" || param === "dateEnd") {
+          this.filters[param] = value
+          this.selectedStartDate = param === "dateStart" ? value : this.selectedStartDate
+          this.selectedEndDate = param === "dateEnd" ? value : this.selectedEndDate
         }
-        if(param == "dateEnd"){
-          this.selectedEndDate = this.$route.query[param]
-        }
-        
-      } 
+      }
     }
   }
 
