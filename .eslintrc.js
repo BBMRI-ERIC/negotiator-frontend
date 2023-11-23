@@ -37,6 +37,10 @@ module.exports = {
     "object-curly-spacing": [
       "error",
       "always"
+    ],
+    "space-before-blocks": [
+      "error",
+      "always"
     ]
   }
 }
