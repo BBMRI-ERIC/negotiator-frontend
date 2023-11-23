@@ -27,9 +27,9 @@
           <li
             v-for="(element, key) in negotiation.payload"
             :key="element"
-            class="list-group-item border-bottom p-3"
+            class="list-group-item p-3"
           >
-            <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+            <span class="fs-5 fw-bold text-secondary mt-3">
               {{ key.toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -55,7 +55,7 @@
             </div>
           </li>
           <li class="list-group-item p-3">
-            <span class="fs-5 fw-bold text-secondary border-bottom mt-3 mb-3">
+            <span class="fs-5 fw-bold text-secondary mt-3 mb-3">
               ATTACHMENTS
             </span>
             <NegotiationAttachment 
@@ -80,7 +80,7 @@
                     aria-expanded="false"
                     aria-controls="collectionsList"
                   >
-                    <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+                    <span class="fs-5 fw-bold text-secondary mt-3">
                       <i class="bi bi-card-list" />
                       COLLECTIONS ({{ numberOfResources }})
                     </span>
@@ -121,7 +121,6 @@
                     Save
                   </button>
                 </div>
-             
                 <div 
                   v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length == 0"
                   class="alert alert-danger"
@@ -182,7 +181,7 @@
                       class="form-check-label"
                       :for="getElementIdFromCollectionId(resource.id)"
                     >
-                      {{ resource.id }}
+                      {{ resource.name }}
                     </label>           
                     <span class="badge rounded-pill bg-primary ms-4">
                       {{ getStatusForResource(resource.id) }}
@@ -439,7 +438,6 @@ export default {
     isRepresentativeForOrganization(organizationId) {
       return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
     },
-
     getStatusForResource(resourceId) {
       return this.resourcesById[resourceId].status
     },

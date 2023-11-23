@@ -32,6 +32,15 @@
       @on-complete="startNegotiation"
     >
       <tab-content
+        title="Request summary"
+        class="form-step border rounded-2 px-2 py-3 mb-2"
+      >
+        <resources-list
+          class="mx-3"
+          :resources="resources"
+        />
+      </tab-content>
+      <tab-content
         v-for="section in accessCriteria.sections"
         :key="section.name"
         :title="section.label"
@@ -118,6 +127,7 @@
 
 <script>
 import FeedbackModal from "@/components/modals/FeedbackModal.vue"
+import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
 import { mapActions } from "vuex"
@@ -127,7 +137,8 @@ export default {
   components: {
     FormWizard,
     TabContent,
-    FeedbackModal
+    FeedbackModal,
+    ResourcesList
   },
   props: {
     requestId: {
@@ -141,6 +152,7 @@ export default {
       notificationText: "",
       negotiationCriteria: {},
       accessCriteria: undefined,
+      resources: []
     }
   },
   computed: {
@@ -149,6 +161,32 @@ export default {
         this.initNegotiationCriteria()
       }
       return this.accessCriteria === undefined
+    },
+    organizations() {
+      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name }})
+    },
+    organizationsById() {        
+      return this.resources.reduce((organizations, resource) => {
+        if (resource.organization.externalId in organizations) {
+          organizations[resource.organization.externalId].resources.push(
+            resource)
+        } else {
+          organizations[resource.organization.externalId] = {
+            name: resource.organization.name,
+            resources: [resource] 
+          }
+        }
+        return organizations
+      }, {})
+    },
+    resourcesById() {
+      return this.resources.reduce((resourcesObjects, resource) => {
+        resourcesObjects[resource.id] = resource
+        return resourcesObjects
+      }, {})
+    },
+    numberOfResources() {
+      return this.resources.length
     },
   },
   async mounted() {
@@ -164,6 +202,7 @@ export default {
     } else if (result.negotiationId) {    
       this.showNotification("Error", "Request already submitted")
     } else {
+      this.resources = result.resources
       await this.retrieveAccessCriteriaByResourceId({
         resourceId: result.resources[0].id
       }).then((accessCriteria) => {
@@ -208,6 +247,9 @@ export default {
           this.negotiationCriteria[section.name][criteria.name] = null
         }
       }
+    },
+    getElementIdFromResourceId(collection) {
+      return collection.replaceAll(":", "_")
     },
   },
 }
