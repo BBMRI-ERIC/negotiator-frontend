@@ -89,7 +89,7 @@
               <div 
                 v-if="currentMultipleResourceStatus !== undefined && currentResourceEvents.length > 0"
                 id="statusChange"
-                class="ms-auto d-flex"
+                class="ms-auto d-flex w-50"
               >
                 <select 
                   v-model="selectedStatus"
@@ -137,7 +137,7 @@
                     <input
                       v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
                       :id="getElementIdFromResourceId(orgId)"
-                      v-model="selected[orgId]['checked']"
+                      v-model="selection[orgId]['checked']"
                       class="form-check-input"
                       type="checkbox"
                       :disabled="isOrganizationButtonDisabled(org.resources)"
@@ -168,7 +168,7 @@
                         v-if="userRole === availableRoles.RESEARCHER || 
                           (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
                         :id="getElementIdFromResourceId(resource.id)"
-                        v-model="selected[resource.id]['checked']"
+                        v-model="selection[resource.id]['checked']"
                         class="form-check-input"
                         type="checkbox"
                         :disabled="isResourceButtonDisabled(resource.id)"
@@ -320,7 +320,7 @@ export default {
       negotiationStatusOptions: [],
       availableRoles: ROLES,
       currentResourceEvents: [],
-      selected: {},
+      selection: {},
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
@@ -405,10 +405,10 @@ export default {
     }
 
     organizations.forEach(org => {
-      this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
+      this.selection[org.externalId] = { "checked": false, "type": this.ORGANIZATION_TYPE }
     })
     resources.forEach(res => {
-      this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
+      this.selection[res.id] = { "checked": false, "type": this.RESOURCE_TYPE }
     })
 
     this.attachments = await this.retrieveAttachmentsByNegotiationId({
@@ -455,22 +455,18 @@ export default {
     getElementIdFromResourceId(resourceId) {
       return resourceId.replaceAll(":", "_")
     },
-    changeOrganizationSelection(key, event) {
+    changeOrganizationSelection(org, event) {
       let checkedResource = undefined
-      this.organizationsById[key].resources.forEach(resource => {
-        this.selected[resource.id].checked = event.target.checked
-        if (this.selected[resource.id].checked === true && this.selected[resource.id].type === this.RESOURCE_TYPE) {
+      this.organizationsById[org].resources.forEach(resource => {
+        this.selection[resource.id].checked = event.target.checked
+        // checkedResource === undefined avoid overwriting the checkedResource each iteration
+        if (checkedResource === undefined && this.selection[resource.id].checked === true) {
           checkedResource = resource.id
         }
       })
       //if at least one resource has been checked, set the multiple status for the resource as it happens by clicking 
       //a single resource instead of the overall organisation multiple selection
-      if (checkedResource !== undefined) {
-        this.setCurrentMultipleStatus(checkedResource)
-      }
-      else {
-        this.currentMultipleResourceStatus = undefined
-      }      
+      this.setCurrentMultipleStatus(checkedResource)
     },
     isOrganizationButtonDisabled(resources) {
       let currentStatus = this.getStatusForResource(resources[0].id)
@@ -490,8 +486,8 @@ export default {
       return this.currentMultipleResourceStatus != undefined  && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus
     },
     async setCurrentMultipleStatus(resourceId) {
-      console.log(Object.values(this.selected).filter((res => res.type === this.RESOURCE_TYPE && res.checked === true)))
-      if (!Object.values(this.selected).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
+      // If no resource is selected, it reset events and status
+      if (resourceId === undefined || !Object.values(this.selection).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
         this.currentResourceEvents = []
         this.currentMultipleResourceStatus = undefined
       } else {
@@ -500,17 +496,20 @@ export default {
           resourceId: resourceId
         }).then((data) => {
           this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
+          const orgId = this.resourcesById[resourceId].organization.externalId
+          const allChecked = this.organizationsById[orgId].resources.every(res => res.id in this.selection && this.selection[res.id].checked === true)
+          this.selection[orgId].checked = allChecked
           return data
         })
-      }
+      }      
     },
     isStatusComboDisabled() {
       return this.currentMultipleResourceStatus === undefined
     },
     async updateCheckedResourcesStatus(event) {
       // For each of the settled resources, update the status to the one chosen in the combo 
-      for (var resource in this.selected) {
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE) {
+      for (var resource in this.selection) {
+        if (this.selection[resource]["checked"] == true && this.selection[resource]["type"] == this.RESOURCE_TYPE) {
           await this.updateResourceStatus({
             negotiationId: this.negotiation.id,
             resourceId: resource,
