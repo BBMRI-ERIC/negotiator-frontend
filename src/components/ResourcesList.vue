@@ -1,8 +1,22 @@
 <template>
-  <div
-    class="mx-3"
-  >
-    <span class="fs-5 fw-bold text-secondary ">
+  <div>
+    <p 
+      v-if="collapsible"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#resourcesList"
+      aria-expanded="false"
+      aria-controls="resourcesList"
+    >
+      <span class="fs-5 fw-bold text-secondary mt-3">
+        <i class="bi bi-card-list" />
+        RESOURCES ({{ numberOfResources }})
+      </span>
+    </p>
+    <span
+      v-else
+      class="fs-5 fw-bold text-secondary mt-3"
+    >
       <i class="bi bi-card-list" />
       RESOURCES ({{ numberOfResources }})
     </span>
@@ -12,20 +26,24 @@
       :key="orgId"
       class="card my-2"
     >
-      <div class="card-header">
-        <label
-          class="text-primary fw-bold ml-2 cursor-pointer"
-          data-bs-toggle="collapse"
-          :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
-          aria-expanded="true"
-          :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+      <div
+        class="card-header cursor-pointer"
+        data-bs-toggle="collapse"
+        :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
+        aria-expanded="true"
+        :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+      >
+        <button
+          class="btn btn-link text-primary fw-bold"
+          style="text-decoration: none;"
+          type="button"
         >
           {{ `${org.name} (${org.resources.length})` }}  
-        </label>
+        </button>
       </div>
       <div
         :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
-        class="collapse multi-collapse"
+        class="collapse show"
       >
         <div    
           v-for="resource in org.resources"
@@ -54,6 +72,14 @@ export default {
       type: Array[Object],
       default: []
     },
+    changeStatusAvailable: {
+      type: Boolean,
+      default: false
+    },
+    collapsible: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     organizations() {
