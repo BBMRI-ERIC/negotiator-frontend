@@ -457,6 +457,7 @@ export default {
     },
     changeOrganizationSelection(org, event) {
       let checkedResource = undefined
+      // sets the reso
       this.organizationsById[org].resources.forEach(resource => {
         this.selection[resource.id].checked = event.target.checked
         // checkedResource === undefined avoid overwriting the checkedResource each iteration
@@ -487,21 +488,29 @@ export default {
     },
     async setCurrentMultipleStatus(resourceId) {
       // If no resource is selected, it reset events and status
-      if (resourceId === undefined || !Object.values(this.selection).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
-        this.currentResourceEvents = []
+      if (resourceId === undefined || 
+          !Object.values(this.selection).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
         this.currentMultipleResourceStatus = undefined
+        this.currentResourceEvents = []
       } else {
-        this.currentResourceEvents = await this.retrievePossibleEventsForResource({
-          negotiationId: this.negotiation.id,
-          resourceId: resourceId
-        }).then((data) => {
-          this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
-          const orgId = this.resourcesById[resourceId].organization.externalId
-          const allChecked = this.organizationsById[orgId].resources.every(res => res.id in this.selection && this.selection[res.id].checked === true)
-          this.selection[orgId].checked = allChecked
-          return data
-        })
-      }      
+        if (this.currentMultipleResourceStatus === undefined) {
+          this.currentResourceEvents = await this.retrievePossibleEventsForResource({
+            negotiationId: this.negotiation.id,
+            resourceId: resourceId
+          }).then((data) => {
+            this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
+            // gets the orgId of the organization of the checked resource
+            return data
+          })
+        }
+      }  
+      if (resourceId !== undefined) {
+        const orgId = this.resourcesById[resourceId].organization.externalId
+        // checks if all its resources are checked
+        const allChecked = this.organizationsById[orgId].resources
+          .every(res => res.id in this.selection && this.selection[res.id].checked === true)    
+        this.selection[orgId].checked = allChecked
+      }
     },
     isStatusComboDisabled() {
       return this.currentMultipleResourceStatus === undefined
