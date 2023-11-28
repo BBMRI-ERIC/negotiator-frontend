@@ -298,7 +298,7 @@
           @click="
             $router.push({
               name: 'negotiation-page',
-              params: { negotiationId: fn.id, userRole: userRole, filters: filters },
+              params: { negotiationId: fn.id, userRole: userRole, filters: filters, sortBy: sortby },
             })
           "
         />
@@ -483,7 +483,7 @@ export default {
         "dateStart": "",
         "dateEnd": ""
       },
-      hasSortApplied: false
+      sortBy: { "sortColumn": undefined }
     }
   }, 
   computed: {
@@ -510,12 +510,19 @@ export default {
     }
   },
   beforeMount(){
-    this.loadActiveFiltersFromURL()
+    this.loadActiveFiltersandSortingFromURL()
+    
+  },
+  beforeUpdate(){
+    this.loadSortingFromURL()
   },
   methods: {
     sort(column){
-      this.hasSortApplied = true
+      this.sortBy.sortColumn = column
+      this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
+      
       let sortedNegotiations = this.negotiations
+      console.log(sortedNegotiations)
 
       return sortedNegotiations.sort((a, b) => {
         a = this.sortAttrs[column].sortTransformation(a)
@@ -545,9 +552,9 @@ export default {
         this.filters[filterName] = filterValue
       }
       // update the url according to fiter(s)
-      const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
-      this.$router.push({ path: "/"+ destinationPage, query: this.activeFilters(this.filters) })
-
+      //const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
+      //this.$router.push({ path: "/"+ destinationPage, query: this.activeFilters(this.filters) })
+      this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
       // Reload the page
       // window.location.reload()
     },
@@ -560,8 +567,16 @@ export default {
       }
       return activeFilters
     },
-    loadActiveFiltersFromURL(){
+    loadSortingFromURL(){
       for (const [param, value] of Object.entries(this.$route.query)) {
+        if (param == "sortColumn"){
+          this.sort(value)
+        }
+      }
+    },
+    loadActiveFiltersandSortingFromURL(){
+      for (const [param, value] of Object.entries(this.$route.query)) {
+
         if (param === "status") {
           const statusArray = [
             NEGOTIATION_STATUS.SUBMITTED,
@@ -594,10 +609,17 @@ export default {
       }
     }, 
     getSortClass(){
-      console.log("calling")
-      console.log(this.hasSortApplied)
-      return this.hasSortApplied ? "btn dropdown-toggle btn-secondary" : "btn dropdown-toggle btn-outline-secondary "
+      return this.sortBy.sortColumn != undefined ? "btn dropdown-toggle btn-secondary" : "btn dropdown-toggle btn-outline-secondary "
+    },
+    updateRoutingParams(filters, sortBy){
+      let query = {}
+      Object.assign(query, filters, sortBy)
+      const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
+      this.$router.push({ path: "/"+ destinationPage, query: query })
+
+
     }
+
   }
 
 
