@@ -1,4 +1,5 @@
 <template>
+  
   <div
     class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm"
     style="top: 50px"
@@ -90,7 +91,7 @@
             class="dropdown-menu"
             aria-labelledby="dropdownMenuButton1"
           >
-            <div class="mx-2 my-2">
+            <div class="mx-2 my-2 dropdown-contents">
               <div class="form-check">
                 <input
                   id="submitted"
@@ -218,7 +219,7 @@
             class="dropdown-menu"
             aria-labelledby="dropdownMenuButton1"
           >
-            <div class="mx-2 my-2">
+            <div class="mx-2 my-2 dropdown-contents">
               <div class="d-flex align-items-center mb-2">
                 <label
                   class="pe-2 w-25"
@@ -248,6 +249,11 @@
             </div>
           </ul>
         </div>
+        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
+
+<button type="button" class="btn mr-2 btn-outline-danger" @click="clearAllFilters()">Clear all filters</button>
+</div>
+
       <!--div class="card">
         <div class="card-header">
           Filter by date
@@ -628,6 +634,13 @@ export default {
         return 2
       }
       return 1
+    },
+    clearAllFilters(){
+      this.filters={
+        "status": [],
+        "dateStart": "",
+        "dateEnd": ""
+      }
     }
 
   }
