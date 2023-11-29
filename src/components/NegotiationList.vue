@@ -7,18 +7,20 @@
       <div class="col-12">
         <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
           <button
-            id="dropdownMenuButton1"
+            id="dropdownSortingButton"
             aria-haspopup="true"
             :class="getSortClass()"
             type="button"
             data-bs-toggle="dropdown"
+            data-bs-auto-close="true"
             aria-expanded="false"
           >
             Sort by 
           </button>
           <ul
             class="dropdown-menu"
-            aria-labelledby="dropdownMenuButton1"
+            aria-labelledby="dropdownSortingButton"
+            role="menu"
           >
             <div
               v-for="(value, name) in sortAttrs"
@@ -46,9 +48,10 @@
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            :class=" filters.status.length >0 ? 'btn dropdown-toggle btn-secondary' : 'btn dropdown-toggle btn-outline-secondary'"
+            :class=" filters.status.length >0 ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary show'"
             type="button"
             data-bs-toggle="dropdown"
+            data-bs-auto-close="true"
             aria-expanded="false"
           >
             Filter by status 
@@ -117,9 +120,10 @@
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            :class=" filters.dateStart != '' || filters.dateEnd != '' ? 'btn dropdown-toggle btn-secondary' : 'btn dropdown-toggle btn-outline-secondary'"
+            :class=" filters.dateStart != '' || filters.dateEnd != '' ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary show'"
             type="button"
             data-bs-toggle="dropdown"
+            data-bs-auto-close="outside"
             aria-expanded="false"
           >
             Filter by Date
@@ -378,7 +382,7 @@ export default {
       }
     }, 
     getSortClass(){
-      return this.sortBy.sortColumn != undefined ? "btn dropdown-toggle btn-secondary" : "btn dropdown-toggle btn-outline-secondary "
+      return this.sortBy.sortColumn != undefined ? "btn dropdown-toggle btn-secondary show" : "btn dropdown-toggle btn-outline-secondary"
     },
     updateRoutingParams(filters, sortBy){
       let query = {}
