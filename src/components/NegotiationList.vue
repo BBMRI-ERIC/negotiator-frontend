@@ -297,8 +297,6 @@ export default {
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
       
       let sortedNegotiations = this.negotiations
-      console.log(sortedNegotiations)
-
       return sortedNegotiations.sort((a, b) => {
         a = this.sortAttrs[column].sortTransformation(a)
         b = this.sortAttrs[column].sortTransformation(b)
