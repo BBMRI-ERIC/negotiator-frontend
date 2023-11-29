@@ -1,28 +1,14 @@
 <template>
-  <div>
-    <p 
-      v-if="collapsible"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#resourcesList"
-      aria-expanded="false"
-      aria-controls="resourcesList"
-    >
-      <span class="fs-5 fw-bold text-secondary mt-3">
-        <i class="bi bi-card-list" />
-        RESOURCES ({{ numberOfResources }})
-      </span>
-    </p>
-    <span
-      v-else
-      class="fs-5 fw-bold text-secondary mt-3"
-    >
-      <i class="bi bi-card-list" />
-      RESOURCES ({{ numberOfResources }})
-    </span>
+  <span class="fs-5 fw-bold text-secondary mt-3">
+    <i class="bi bi-card-list" />
+    RESOURCES ({{ numberOfResources }})
+  </span>
+  <div
+    id="resourcesList"
+    class="collapse show"
+  >
     <div
       v-for="[orgId, org] in Object.entries(organizationsById)"
-      id="resourcesList"
       :key="orgId"
       class="card my-2"
     >
@@ -71,14 +57,6 @@ export default {
     resources: {
       type: Array[Object],
       default: []
-    },
-    changeStatusAvailable: {
-      type: Boolean,
-      default: false
-    },
-    collapsible: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
@@ -110,8 +88,8 @@ export default {
     },
   },
   methods: {
-    getElementIdFromResourceId(collection) {
-      return collection.replaceAll(":", "_")
+    getElementIdFromResourceId(resourceId) {
+      return resourceId.replaceAll(":", "_")
     },
   },
 }
