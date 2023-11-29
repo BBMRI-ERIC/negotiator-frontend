@@ -48,7 +48,7 @@
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            :class=" filters.status.length >0 ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary show'"
+            :class=" filters.status.length >0 ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary'"
             type="button"
             data-bs-toggle="dropdown"
             data-bs-auto-close="true"
@@ -120,10 +120,10 @@
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            :class=" filters.dateStart != '' || filters.dateEnd != '' ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary show'"
+            :class=" filters.dateStart != '' || filters.dateEnd != '' ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary'"
             type="button"
             data-bs-toggle="dropdown"
-            data-bs-auto-close="outside"
+            data-bs-auto-close="true"
             aria-expanded="false"
           >
             Filter by Date
