@@ -1,5 +1,4 @@
 <template>
-  
   <div
     class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm"
     style="top: 50px"
@@ -43,35 +42,6 @@
             </div>
           </ul>
         </div>
-        <!--div class="card mb-2">
-        <div class="card-header">
-          Sort by
-        </div>
-        <div class="card-body">
-          <div
-            v-for="(value, name) in sortAttrs"
-            :key="name"
-            class="form-check"
-          >
-            <input
-              :id="name"
-              class="form-check-input"
-              type="radio"
-              name="sort"
-              :value="name"
-              @change="sort($event.target.value)"
-            >
-            <label
-              class="form-check-label"
-              :for="name"
-            >
-              {{ value.label }}
-            </label>
-          </div>
-        </div>
-      </div--> 
-    
-  
         <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
           <button
             id="dropdownMenuButton1"
@@ -143,63 +113,6 @@
             </div>
           </ul>
         </div>
-        <!--div class="card mb-2">
-        <div class="card-header">
-          Filter by status
-        </div>
-        <div class="card-body">
-          <div class="form-check">
-            <input
-              id="submitted"
-              v-model="submittedSelection"
-              class="form-check-input"
-              type="checkbox"
-              value="submitted"
-              @change="updateFilter('status', 'SUBMITTED', submittedSelection)"
-            >
-            <label
-              class="form-check-label"
-              for="submitted"
-            >
-              Submitted
-            </label>
-          </div>
-          <div class="form-check">
-            <input
-              id="ongoing"
-              v-model="ongoingSelection"
-              class="form-check-input"
-              type="checkbox"
-              value="ongoing"
-              @change="updateFilter('status', 'IN_PROGRESS', ongoingSelection)"
-            >
-            <label
-              class="form-check-label"
-              for="ongoing"
-            >
-              In progress
-            </label>
-          </div>
-          <div class="form-check">
-            <input
-              id="abandoned"
-              v-model="abandonedSelection"
-              class="form-check-input"
-              type="checkbox"
-              value="abandoned"
-              @change="updateFilter('status', 'ABANDONED', abandonedSelection)"
-            >
-            <label
-              class="form-check-label"
-              for="abandoned"
-            >
-              Abandoned
-            </label>
-          </div>
-        </div>
-      </div!--> 
-   
-    
         <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
           <button
             id="dropdownMenuButton1"
@@ -250,43 +163,14 @@
           </ul>
         </div>
         <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
-
-<button type="button" class="btn mr-2 btn-outline-danger" @click="clearAllFilters()">Clear all filters</button>
-</div>
-
-      <!--div class="card">
-        <div class="card-header">
-          Filter by date
+          <button
+            type="button"
+            class="btn mr-2 btn-outline-danger"
+            @click="clearAllFilters()"
+          >
+            Clear all filters
+          </button>
         </div>
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-2">
-            <label
-              class="pe-2 w-25"
-              for="startDate"
-            >Start:</label>
-            <input
-              id="startDate"
-              v-model="selectedStartDate"
-              class="form-control"
-              type="date"
-              @input="updateFilter('dateStart', selectedStartDate)"
-            >
-          </div>
-          <div class="d-flex align-items-center">
-            <label
-              for="endDate"
-              class="pe-2 w-25"
-            >End:</label>
-            <input
-              id="endDate"
-              v-model="selectedEndDate"
-              class="form-control"
-              type="date"
-              @input="updateFilter('dateEnd', selectedEndDate)"
-            >
-          </div>
-        </div>
-      </div-->
       </div>
     </div>
   </div>
@@ -319,125 +203,6 @@
           No Negotiations found
         </h2>
       </div>
-      <!--div
-        class="col-3"
-      >
-        <div class="card mb-2">
-          <div class="card-header">
-            Sort by
-          </div>
-          <div class="card-body">
-            <div
-              v-for="(value, name) in sortAttrs"
-              :key="name"
-              class="form-check"
-            >
-              <input
-                :id="name"
-                class="form-check-input"
-                type="radio"
-                name="sort"
-                :value="name"
-                @change="sort($event.target.value)"
-              >
-              <label
-                class="form-check-label"
-                :for="name"
-              >
-                {{ value.label }}
-              </label>
-            </div>
-          </div>
-        </div>  
-        <div class="card mb-2">
-          <div class="card-header">
-            Filter by status
-          </div>
-          <div class="card-body">
-            <div class="form-check">
-              <input
-                id="submitted"
-                v-model="submittedSelection"
-                class="form-check-input"
-                type="checkbox"
-                value="submitted"
-                @change="updateFilter('status', 'SUBMITTED', submittedSelection)"
-              >
-              <label
-                class="form-check-label"
-                for="submitted"
-              >
-                Submitted
-              </label>
-            </div>
-            <div class="form-check">
-              <input
-                id="ongoing"
-                v-model="ongoingSelection"
-                class="form-check-input"
-                type="checkbox"
-                value="ongoing"
-                @change="updateFilter('status', 'IN_PROGRESS', ongoingSelection)"
-              >
-              <label
-                class="form-check-label"
-                for="ongoing"
-              >
-                In progress
-              </label>
-            </div>
-            <div class="form-check">
-              <input
-                id="abandoned"
-                v-model="abandonedSelection"
-                class="form-check-input"
-                type="checkbox"
-                value="abandoned"
-                @change="updateFilter('status', 'ABANDONED', abandonedSelection)"
-              >
-              <label
-                class="form-check-label"
-                for="abandoned"
-              >
-                Abandoned
-              </label>
-            </div>
-          </div>
-        </div>  
-        <div class="card">
-          <div class="card-header">
-            Filter by date
-          </div>
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-2">
-              <label
-                class="pe-2 w-25"
-                for="startDate"
-              >Start:</label>
-              <input
-                id="startDate"
-                v-model="selectedStartDate"
-                class="form-control"
-                type="date"
-                @input="updateFilter('dateStart', selectedStartDate)"
-              >
-            </div>
-            <div class="d-flex align-items-center">
-              <label
-                for="endDate"
-                class="pe-2 w-25"
-              >End:</label>
-              <input
-                id="endDate"
-                v-model="selectedEndDate"
-                class="form-control"
-                type="date"
-                @input="updateFilter('dateEnd', selectedEndDate)"
-              >
-            </div>
-          </div>
-        </div>
-      </div-->
     </div>
   </div>
 </template>
@@ -562,11 +327,7 @@ export default {
         this.filters[filterName] = filterValue
       }
       // update the url according to fiter(s)
-      //const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
-      //this.$router.push({ path: "/"+ destinationPage, query: this.activeFilters(this.filters) })
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
-      // Reload the page
-      // window.location.reload()
     },
     activeFilters(filters){
       let activeFilters = {}
