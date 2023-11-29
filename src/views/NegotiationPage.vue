@@ -141,7 +141,7 @@
                       class="form-check-input"
                       type="checkbox"
                       :disabled="isOrganizationButtonDisabled(org.resources)"
-                      @change="changeOrganizationSelection(orgId, $event)"
+                      @change="selectAllOrganizationResource(orgId, $event)"
                     >           
                     <label
                       class="text-primary fw-bold ml-2 cursor-pointer"
@@ -455,9 +455,9 @@ export default {
     getElementIdFromResourceId(resourceId) {
       return resourceId.replaceAll(":", "_")
     },
-    changeOrganizationSelection(org, event) {
+    selectAllOrganizationResource(org, event) {
       let checkedResource = undefined
-      // sets the reso
+      // sets the resource
       this.organizationsById[org].resources.forEach(resource => {
         this.selection[resource.id].checked = event.target.checked
         // checkedResource === undefined avoid overwriting the checkedResource each iteration
@@ -465,6 +465,7 @@ export default {
           checkedResource = resource.id
         }
       })
+
       //if at least one resource has been checked, set the multiple status for the resource as it happens by clicking 
       //a single resource instead of the overall organisation multiple selection
       this.setCurrentMultipleStatus(checkedResource)
@@ -503,7 +504,7 @@ export default {
             return data
           })
         }
-      }  
+      }
       if (resourceId !== undefined) {
         const orgId = this.resourcesById[resourceId].organization.externalId
         // checks if all its resources are checked
