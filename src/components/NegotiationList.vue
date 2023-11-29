@@ -203,12 +203,16 @@
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            class="btn btn-outline-secondary dropdown-toggle"
+            :class=" filters.dateStart != '' || filters.dateEnd != '' ? 'btn dropdown-toggle btn-secondary' : 'btn dropdown-toggle btn-outline-secondary'"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
             Filter by Date
+            <span
+              v-if="filters.dateStart != '' || filters.dateEnd != ''"
+              class="badge bg-primary border ml-2"
+            > {{ computeDateFilterLength() }}</span>
           </button>
           <ul
             class="dropdown-menu"
@@ -618,6 +622,12 @@ export default {
       this.$router.push({ path: "/"+ destinationPage, query: query })
 
 
+    },
+    computeDateFilterLength(){
+      if(this.filters.dateStart != "" && this.filters.dateEnd != ""){
+        return 2
+      }
+      return 1
     }
 
   }
