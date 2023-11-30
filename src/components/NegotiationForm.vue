@@ -29,6 +29,7 @@
       v-if="accessCriteria"
       :start-index="0"
       color="var(--bs-secondary)"
+      step-size="md"
       @on-complete="startNegotiation"
     >
       <tab-content
@@ -36,7 +37,7 @@
         class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
       >
         <div class="mx-3">
-          <div class="fs-5 fw-bold text-secondary mt-3">
+          <div class="fs-5 fw-bold text-secondary">
             SEARCH PARAMETERS
           </div>
           <div
@@ -58,7 +59,28 @@
         :key="section.name"
         :title="section.label"
         class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
+        :before-change="isSectionValid(section)"
       >
+        <div
+          v-if="showStepFeedback"
+          class="row"
+        >
+          <div class="col-12">
+            <div
+              class="alert alert-warning alert-dismissible fade show"
+              role="alert"
+            >
+              Please fill all the required fields
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+                @click="resetNotification"
+              />
+            </div>
+          </div>
+        </div>
         <div
           v-for="criteria in section.accessCriteria"
           :key="criteria.name"
@@ -169,50 +191,23 @@ export default {
       negotiationCriteria: {},
       accessCriteria: undefined,
       resources: [],
-      humanReadableSearchParameters: []
+      humanReadableSearchParameters: [],
+      showStepFeedback: false
     }
   },
   computed: {
     loading() {
-      if (this.accessCriteria !== undefined) {
-        this.initNegotiationCriteria()
-      }
       return this.accessCriteria === undefined
-    },
-    organizations() {
-      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name }})
-    },
-    organizationsById() {        
-      return this.resources.reduce((organizations, resource) => {
-        if (resource.organization.externalId in organizations) {
-          organizations[resource.organization.externalId].resources.push(
-            resource)
-        } else {
-          organizations[resource.organization.externalId] = {
-            name: resource.organization.name,
-            resources: [resource] 
-          }
-        }
-        return organizations
-      }, {})
-    },
-    resourcesById() {
-      return this.resources.reduce((resourcesObjects, resource) => {
-        resourcesObjects[resource.id] = resource
-        return resourcesObjects
-      }, {})
-    },
-    numberOfResources() {
-      return this.resources.length
     },
     queryParameters() {
       return this.humanReadableSearchParameters.split("\r\n")
     }
   },
-  async mounted() {
+  async beforeMount() {
     const result = await this.retrieveRequestById({
       requestId: this.requestId,
     })
+
     if (result.code) {        
       if (result.code == 404) {
         this.showNotification("Error", "Request not found")
@@ -224,11 +219,12 @@ export default {
     } else {
       this.resources = result.resources
       this.humanReadableSearchParameters = result.humanReadable
-      await this.retrieveAccessCriteriaByResourceId({
+      this.accessCriteria = await this.retrieveAccessCriteriaByResourceId({
         resourceId: result.resources[0].id
-      }).then((accessCriteria) => {
-        this.accessCriteria = accessCriteria
       })
+      if (this.accessCriteria !== undefined) {
+        this.initNegotiationCriteria()
+      }
     }
   },
   methods: {
@@ -272,6 +268,13 @@ export default {
     getElementIdFromResourceId(collection) {
       return collection.replaceAll(":", "_")
     },
+    isSectionValid(section) {
+      return () => {
+        const valid = section.accessCriteria.every(ac => !ac.required || this.negotiationCriteria[section.name][ac.name])
+        this.showStepFeedback = !valid
+        return valid
+      }
+    }
   },
 }
 </script>
@@ -283,6 +286,6 @@ export default {
 }
 
 .form-step {
-  min-height: 30rem;
+  height: 32rem;
 }
 </style>
