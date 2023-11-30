@@ -33,6 +33,7 @@
                 type="radio"
                 name="sort"
                 :value="name"
+                :checked="isChecked(name)"
                 @change="triggerSort($event.target.value)"
               >
               <label
@@ -424,6 +425,9 @@ export default {
         "dateStart": "",
         "dateEnd": ""
       }
+    },
+    isChecked(value){
+      return this.sortBy.sortColumn == value ? true : false
     }
 
   }
