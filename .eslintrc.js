@@ -5,9 +5,10 @@ module.exports = {
   },
   "extends": [
     "eslint:recommended",
-    "@vue/standard",
-    "plugin:vue/vue3/essential",
-    "plugin:vue/vue3-recommended"
+    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-recommended",
+    "plugin:vue/vue3-strongly-recommended",
+    "@vue/standard"
   ],
   "parserOptions": {
     "ecmaVersion": 12,
