@@ -1,48 +1,39 @@
 <template>
-  <span class="fs-5 fw-bold text-secondary mt-3">
-    <i class="bi bi-card-list" />
-    RESOURCES ({{ numberOfResources }})
-  </span>
-  <div
-    id="resourcesList"
-    class="collapse show"
-  >
-    <div
-      v-for="[orgId, org] in Object.entries(organizationsById)"
-      :key="orgId"
-      class="card my-2"
-    >
+  <div>
+    <span class="fs-5 fw-bold text-secondary mt-3">
+      <i class="bi bi-card-list" />
+      RESOURCES ({{ numberOfResources }})
+    </span>
+    <div>
       <div
-        class="card-header cursor-pointer"
-        data-bs-toggle="collapse"
-        :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
-        aria-expanded="true"
-        :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+        v-for="[orgId, org] in Object.entries(organizationsById)"
+        :key="orgId"
+        class="card my-2"
       >
-        <button
-          class="btn btn-link text-primary fw-bold"
-          style="text-decoration: none;"
-          type="button"
+        <div
+          class="card-header cursor-pointer text-primary fw-bold"
+          data-bs-toggle="collapse"
+          :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
+          aria-expanded="true"
+          :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
         >
           {{ `${org.name} (${org.resources.length})` }}  
-        </button>
-      </div>
-      <div
-        :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
-        class="collapse show"
-      >
-        <div    
-          v-for="resource in org.resources"
-          :key="resource.id"
-          class="card-body"
+        </div>
+        <div
+          :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+          class="collapse show"
         >
-          <div class="form-check">
-            <label
-              class="form-check-label"
+          <div    
+            v-for="resource in org.resources"
+            :key="resource.id"
+            class="card-body"
+          >
+            <span
+              class="text-dark"
               :for="getElementIdFromResourceId(resource.id)"
             >
               {{ resource.name }}
-            </label>
+            </span>
           </div>
         </div>
       </div>
