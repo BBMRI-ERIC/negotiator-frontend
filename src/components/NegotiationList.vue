@@ -33,7 +33,7 @@
                 type="radio"
                 name="sort"
                 :value="name"
-                @change="sort($event.target.value)"
+                @change="triggerSort($event.target.value)"
               >
               <label
                 class="form-check-label"
@@ -262,11 +262,13 @@ export default {
         "dateStart": "",
         "dateEnd": ""
       },
-      sortBy: { "sortColumn": undefined }
+      sortBy: { "sortColumn": undefined },
+      isSortFromURL: true
     }
   }, 
   computed: {
     filteredNegotiations: function() {
+      console.log("computig filters")
       let filterConditions = []
       if (this.filters.status.length > 0) {
         filterConditions.push(item => this.filters["status"].includes(item.status))
@@ -285,22 +287,34 @@ export default {
           return eventDate <= endDate
         })     
       }
-      return filterConditions.length == 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
+
+      let filteredNegotiations = filterConditions.length == 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
+      return filteredNegotiations
+    },
+    sortedNegotiations: function() {
+      if (this.sortBy.sortColumn != undefined  && this.isSortFromURL){
+        console.log("sorting from URL......")
+        return this.sort(this.sortBy.sortColumn)
+      }
+      return this.filteredNegotiations
     }
   },
   beforeMount(){
     this.loadActiveFiltersandSortingFromURL()
+    this.loadSortingFromURL()
     
   },
-  beforeUpdate(){
-    this.loadSortingFromURL()
-  },
   methods: {
-    sort(column){
+    triggerSort(column){
       this.sortBy.sortColumn = column
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
-      
-      let sortedNegotiations = this.negotiations
+      this.isSortFromURL = false
+      return this.sort(column)
+    },
+    sort(column){
+      // this.sortBy.sortColumn = column
+      // this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
+      let sortedNegotiations = this.filteredNegotiations
       return sortedNegotiations.sort((a, b) => {
         a = this.sortAttrs[column].sortTransformation(a)
         b = this.sortAttrs[column].sortTransformation(b)
@@ -343,7 +357,7 @@ export default {
     loadSortingFromURL(){
       for (const [param, value] of Object.entries(this.$route.query)) {
         if (param == "sortColumn"){
-          this.sort(value)
+          this.sortBy.sortColumn = value
         }
       }
     },
