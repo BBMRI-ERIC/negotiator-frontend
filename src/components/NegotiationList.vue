@@ -44,11 +44,12 @@
             </div>
           </ul>
         </div>
-        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
+        <div class="dropdown mx-2 filter-dropdown position-static btn-group">
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            :class=" filters.status.length >0 ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary'"
+            class="btn dropdown-toggle"
+            :class="{ 'btn-secondary show': filters.status.length > 0, 'btn-outline-secondary' : filters.status.length === 0 && statusFilterFirstLoad,'btn-outline-secondary show': filters.status.length === 0 && !statusFilterFirstLoad }"
             type="button"
             data-bs-toggle="dropdown"
             data-bs-auto-close="true"
@@ -120,7 +121,8 @@
           <button
             id="dropdownMenuButton1"
             aria-haspopup="true"
-            :class=" filters.dateStart != '' || filters.dateEnd != '' ? 'btn dropdown-toggle btn-secondary show' : 'btn dropdown-toggle btn-outline-secondary'"
+            class="btn dropdown-toggle"
+            :class="{ 'btn-secondary show': filters.dateStart != '' || filters.dateEnd != '', 'btn-outline-secondary' : filters.dateStart == '' && filters.dateEnd == '' && dateFilterFirstLoad,'btn-outline-secondary show': filters.dateStart == '' && filters.dateEnd == '' && !dateFilterFirstLoad }"
             type="button"
             data-bs-toggle="dropdown"
             data-bs-auto-close="true"
@@ -185,7 +187,7 @@
         class="col-9"
       >
         <NegotiationCard
-          v-for="fn in filteredNegotiations"
+          v-for="fn in sortedNegotiations"
           :id="fn.id"
           :key="fn.id"
           :title="fn.payload.project.title"
@@ -263,12 +265,13 @@ export default {
         "dateEnd": ""
       },
       sortBy: { "sortColumn": undefined },
-      isSortFromURL: true
+      isSortFromURL: true, 
+      statusFilterFirstLoad: true,
+      dateFilterFirstLoad: true
     }
   }, 
   computed: {
     filteredNegotiations: function() {
-      console.log("computig filters")
       let filterConditions = []
       if (this.filters.status.length > 0) {
         filterConditions.push(item => this.filters["status"].includes(item.status))
@@ -293,7 +296,6 @@ export default {
     },
     sortedNegotiations: function() {
       if (this.sortBy.sortColumn != undefined  && this.isSortFromURL){
-        console.log("sorting from URL......")
         return this.sort(this.sortBy.sortColumn)
       }
       return this.filteredNegotiations
@@ -332,6 +334,7 @@ export default {
     }, 
     updateFilter(filterName, filterValue, selection){
       if(filterName == "status"){
+        this.statusFilterFirstLoad = false
         if(selection){
           this.filters[filterName].push(filterValue)
         }
@@ -340,6 +343,7 @@ export default {
         }
       }
       else {
+        this.dateFilterFirstLoad = false
         this.filters[filterName] = filterValue
       }
       // update the url according to fiter(s)
@@ -365,6 +369,7 @@ export default {
       for (const [param, value] of Object.entries(this.$route.query)) {
 
         if (param === "status") {
+          this.statusFilterFirstLoad = false
           const statusArray = [
             NEGOTIATION_STATUS.SUBMITTED,
             NEGOTIATION_STATUS.IN_PROGRESS,
@@ -389,6 +394,7 @@ export default {
           }
         }
         if (param === "dateStart" || param === "dateEnd") {
+          this.dateFilterFirstLoad = false
           this.filters[param] = value
           this.selectedStartDate = param === "dateStart" ? value : this.selectedStartDate
           this.selectedEndDate = param === "dateEnd" ? value : this.selectedEndDate
