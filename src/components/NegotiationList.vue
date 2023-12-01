@@ -187,7 +187,10 @@
     </div>
   </div>
   <hr class="my-4">
-  <div class="container">
+  <div
+    v-if="!loading"
+    class="container"
+  >
     <div class="row">
       <div
         class="col-2 align-self-center"
@@ -219,11 +222,27 @@
           "
         />
         <h2
-          v-if="negotiations.length == 0"
+          v-if="sortedNegotiations.length ===0"
           class="text-center"
         >
           No Negotiations found
         </h2>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div
+        class="spinner-border d-flex justify-content-center "
+        role="status"
+      />
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          Loading ...
+        </h4>
       </div>
     </div>
   </div>
@@ -242,9 +261,7 @@ export default {
   props: {
     negotiations: {
       type: Array,
-      default() {
-        return []
-      }
+      default: undefined
     },
     userRole: {
       type: String,
@@ -315,6 +332,10 @@ export default {
         return this.sort(this.sortBy.sortColumn)
       }
       return this.filteredNegotiations
+    },
+    loading() {
+      console.log(this.negotiations)
+      return this.negotiations === undefined
     }
   },
   beforeMount(){
