@@ -4,7 +4,7 @@
     style="top: 50px"
   >
     <div class="row mb-2">
-      <div class="col-12">
+      <div class="col-10">
         <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
           <button
             id="dropdownSortingButton"
@@ -169,10 +169,12 @@
             </div>
           </ul>
         </div>
-        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
+      </div>
+      <div class="col-2 align-self-end">
+        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group float-right">
           <button
             type="button"
-            class="btn mr-2 btn-outline-danger"
+            class="btn btn-outline-danger"
             @click="clearAllFilters()"
           >
             Clear all filters
@@ -185,8 +187,14 @@
   <div class="container">
     <div class="row">
       <div
-        class="col-9"
+        class="col-2 align-self-center"
+      />
+      <div
+        class="col-8 align-self-center"
       >
+        <div
+          class="col-2 align-self-center"
+        />
         <NegotiationCard
           v-for="fn in sortedNegotiations"
           :id="fn.id"
