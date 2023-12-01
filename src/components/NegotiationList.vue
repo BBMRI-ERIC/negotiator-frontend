@@ -198,6 +198,10 @@
         <div
           class="col-2 align-self-center"
         />
+        <p v-if="sortedNegotiations.length >0">
+          <strong>Search results : </strong><br>
+          {{ sortedNegotiations.length }} Negotiations found
+        </p>
         <NegotiationCard
           v-for="fn in sortedNegotiations"
           :id="fn.id"
