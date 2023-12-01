@@ -1,184 +1,187 @@
 <template>
   <div
-    class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm"
+    class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm container"
     style="top: 50px"
   >
     <div class="row mb-2">
-      <div class="col-10">
-        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
-          <button
-            id="dropdownSortingButton"
-            aria-haspopup="true"
-            :class="getSortClass()"
-            type="button"
-            data-bs-toggle="dropdown"
-            data-bs-auto-close="true"
-            aria-expanded="false"
-          >
-            Sort by 
-          </button>
-          <ul
-            class="dropdown-menu"
-            aria-labelledby="dropdownSortingButton"
-            role="menu"
-          >
-            <div
-              v-for="(value, name) in sortAttrs"
-              :key="name"
-              class="form-check mx-2 my-2"
+      <div
+        class="col-2"
+      />
+      <div class="col-8">
+        <div class="d-flex flex-row">
+          <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+            <button
+              id="dropdownSortingButton"
+              aria-haspopup="true"
+              :class="getSortClass()"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
             >
-              <input
-                :id="name"
-                class="form-check-input"
-                type="radio"
-                name="sort"
-                :value="name"
-                :checked="isChecked(name)"
-                @change="triggerSort($event.target.value)"
+              Sort by 
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="dropdownSortingButton"
+              role="menu"
+            >
+              <div
+                v-for="(value, name) in sortAttrs"
+                :key="name"
+                class="form-check mx-2 my-2"
               >
-              <label
-                class="form-check-label"
-                :for="name"
-              >
-                {{ value.label }}
-              </label>
-            </div>
-          </ul>
-        </div>
-        <div class="dropdown mx-2 filter-dropdown position-static btn-group">
-          <button
-            id="dropdownMenuButton1"
-            aria-haspopup="true"
-            class="btn dropdown-toggle"
-            :class="{ 'btn-secondary show': filters.status.length > 0, 'btn-outline-secondary' : filters.status.length === 0 && statusFilterFirstLoad,'btn-outline-secondary show': filters.status.length === 0 && !statusFilterFirstLoad }"
-            type="button"
-            data-bs-toggle="dropdown"
-            data-bs-auto-close="true"
-            aria-expanded="false"
-          >
-            Filter by status 
-            <span
-              v-if="filters.status.length > 0"
-              class="badge bg-primary border ml-2"
-            > {{ filters.status.length }}</span>
-          </button>
-          <ul
-            class="dropdown-menu"
-            aria-labelledby="dropdownMenuButton1"
-          >
-            <div class="mx-2 my-2 dropdown-contents">
-              <div class="form-check">
                 <input
-                  id="submitted"
-                  v-model="submittedSelection"
+                  :id="name"
                   class="form-check-input"
-                  type="checkbox"
-                  value="submitted"
-                  @change="updateFilter('status', 'SUBMITTED', submittedSelection)"
+                  type="radio"
+                  name="sort"
+                  :value="name"
+                  :checked="isChecked(name)"
+                  @change="triggerSort($event.target.value)"
                 >
                 <label
                   class="form-check-label"
-                  for="submitted"
+                  :for="name"
                 >
-                  Submitted
+                  {{ value.label }}
                 </label>
               </div>
-              <div class="form-check">
-                <input
-                  id="ongoing"
-                  v-model="ongoingSelection"
-                  class="form-check-input"
-                  type="checkbox"
-                  value="ongoing"
-                  @change="updateFilter('status', 'IN_PROGRESS', ongoingSelection)"
-                >
-                <label
-                  class="form-check-label"
-                  for="ongoing"
-                >
-                  In progress
-                </label>
+            </ul>
+          </div>
+          <div class="dropdown mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+            <button
+              id="dropdownMenuButton1"
+              aria-haspopup="true"
+              class="btn dropdown-toggle"
+              :class="{ 'btn-secondary show': filters.status.length > 0, 'btn-outline-secondary' : filters.status.length === 0 && statusFilterFirstLoad,'btn-outline-secondary show': filters.status.length === 0 && !statusFilterFirstLoad }"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
+            >
+              Filter by status 
+              <span
+                v-if="filters.status.length > 0"
+                class="badge bg-primary border ml-2"
+              > {{ filters.status.length }}</span>
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <div class="mx-2 my-2 dropdown-contents">
+                <div class="form-check">
+                  <input
+                    id="submitted"
+                    v-model="submittedSelection"
+                    class="form-check-input"
+                    type="checkbox"
+                    value="submitted"
+                    @change="updateFilter('status', 'SUBMITTED', submittedSelection)"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="submitted"
+                  >
+                    Submitted
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    id="ongoing"
+                    v-model="ongoingSelection"
+                    class="form-check-input"
+                    type="checkbox"
+                    value="ongoing"
+                    @change="updateFilter('status', 'IN_PROGRESS', ongoingSelection)"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="ongoing"
+                  >
+                    In progress
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    id="abandoned"
+                    v-model="abandonedSelection"
+                    class="form-check-input"
+                    type="checkbox"
+                    value="abandoned"
+                    @change="updateFilter('status', 'ABANDONED', abandonedSelection)"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="abandoned"
+                  >
+                    Abandoned
+                  </label>
+                </div>
               </div>
-              <div class="form-check">
-                <input
-                  id="abandoned"
-                  v-model="abandonedSelection"
-                  class="form-check-input"
-                  type="checkbox"
-                  value="abandoned"
-                  @change="updateFilter('status', 'ABANDONED', abandonedSelection)"
-                >
-                <label
-                  class="form-check-label"
-                  for="abandoned"
-                >
-                  Abandoned
-                </label>
+            </ul>
+          </div>
+          <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+            <button
+              id="dropdownMenuButton1"
+              aria-haspopup="true"
+              class="btn dropdown-toggle"
+              :class="{ 'btn-secondary show': filters.dateStart != '' || filters.dateEnd != '', 'btn-outline-secondary' : filters.dateStart == '' && filters.dateEnd == '' && dateFilterFirstLoad,'btn-outline-secondary show': filters.dateStart == '' && filters.dateEnd == '' && !dateFilterFirstLoad }"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
+            >
+              Filter by Date
+              <span
+                v-if="filters.dateStart != '' || filters.dateEnd != ''"
+                class="badge bg-primary border ml-2"
+              > {{ computeDateFilterLength() }}</span>
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <div class="mx-2 my-2 dropdown-contents">
+                <div class="d-flex align-items-center mb-2">
+                  <label
+                    class="pe-2 w-25"
+                    for="startDate"
+                  >Start:</label>
+                  <input
+                    id="startDate"
+                    v-model="selectedStartDate"
+                    class="form-control"
+                    type="date"
+                    @input="updateFilter('dateStart', selectedStartDate)"
+                  >
+                </div>
+                <div class="d-flex align-items-center">
+                  <label
+                    for="endDate"
+                    class="pe-2 w-25"
+                  >End:</label>
+                  <input
+                    id="endDate"
+                    v-model="selectedEndDate"
+                    class="form-control"
+                    type="date"
+                    @input="updateFilter('dateEnd', selectedEndDate)"
+                  >
+                </div>
               </div>
-            </div>
-          </ul>
-        </div>
-        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group">
-          <button
-            id="dropdownMenuButton1"
-            aria-haspopup="true"
-            class="btn dropdown-toggle"
-            :class="{ 'btn-secondary show': filters.dateStart != '' || filters.dateEnd != '', 'btn-outline-secondary' : filters.dateStart == '' && filters.dateEnd == '' && dateFilterFirstLoad,'btn-outline-secondary show': filters.dateStart == '' && filters.dateEnd == '' && !dateFilterFirstLoad }"
-            type="button"
-            data-bs-toggle="dropdown"
-            data-bs-auto-close="true"
-            aria-expanded="false"
-          >
-            Filter by Date
-            <span
-              v-if="filters.dateStart != '' || filters.dateEnd != ''"
-              class="badge bg-primary border ml-2"
-            > {{ computeDateFilterLength() }}</span>
-          </button>
-          <ul
-            class="dropdown-menu"
-            aria-labelledby="dropdownMenuButton1"
-          >
-            <div class="mx-2 my-2 dropdown-contents">
-              <div class="d-flex align-items-center mb-2">
-                <label
-                  class="pe-2 w-25"
-                  for="startDate"
-                >Start:</label>
-                <input
-                  id="startDate"
-                  v-model="selectedStartDate"
-                  class="form-control"
-                  type="date"
-                  @input="updateFilter('dateStart', selectedStartDate)"
-                >
-              </div>
-              <div class="d-flex align-items-center">
-                <label
-                  for="endDate"
-                  class="pe-2 w-25"
-                >End:</label>
-                <input
-                  id="endDate"
-                  v-model="selectedEndDate"
-                  class="form-control"
-                  type="date"
-                  @input="updateFilter('dateEnd', selectedEndDate)"
-                >
-              </div>
-            </div>
-          </ul>
-        </div>
-      </div>
-      <div class="col-2 align-self-end">
-        <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group float-right">
-          <button
-            type="button"
-            class="btn btn-outline-danger"
-            @click="clearAllFilters()"
-          >
-            Clear all filters
-          </button>
+            </ul>
+          </div> 
+          <div class="dropdown b-dropdown ms-auto filter-dropdown position-static btn-group d-flex justify-content-end">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              @click="clearAllFilters()"
+            >
+              Clear all filters
+            </button>
+          </div>
         </div>
       </div>
     </div>
