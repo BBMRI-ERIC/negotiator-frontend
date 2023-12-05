@@ -5,7 +5,10 @@ module.exports = {
   },
   "extends": [
     "eslint:recommended",
-    "plugin:vue/vue3-recommended"
+    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-recommended",
+    "plugin:vue/vue3-strongly-recommended",
+    "@vue/standard"
   ],
   "parserOptions": {
     "ecmaVersion": 12,
@@ -35,6 +38,10 @@ module.exports = {
       "error", { "beforeColon": false }
     ],
     "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "space-before-blocks": [
       "error",
       "always"
     ]

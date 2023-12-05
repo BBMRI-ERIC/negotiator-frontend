@@ -29,18 +29,62 @@
       v-if="accessCriteria"
       :start-index="0"
       color="var(--bs-secondary)"
+      step-size="md"
       @on-complete="startNegotiation"
     >
+      <tab-content
+        title="Request summary"
+        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
+      >
+        <div class="mx-3">
+          <div class="fs-5 fw-bold text-secondary">
+            SEARCH PARAMETERS
+          </div>
+          <div
+            v-for="(qp, index) in queryParameters"
+            :key="index" 
+            class="fs-6 text-dar"
+          >
+            {{ qp }}
+          </div>
+        </div>
+        <hr class="mx-3">
+        <resources-list
+          class="mx-3"
+          :resources="resources"
+        />
+      </tab-content>
       <tab-content
         v-for="section in accessCriteria.sections"
         :key="section.name"
         :title="section.label"
-        class="form-step border rounded-2 px-2 py-3 mb-2"
+        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
+        :before-change="isSectionValid(section)"
       >
+        <div
+          v-if="showStepFeedback"
+          class="row"
+        >
+          <div class="col-12">
+            <div
+              class="alert alert-warning alert-dismissible fade show"
+              role="alert"
+            >
+              Please fill all the required fields
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+                @click="resetNotification"
+              />
+            </div>
+          </div>
+        </div>
         <div
           v-for="criteria in section.accessCriteria"
           :key="criteria.name"
-          class="mb-4 ms-3 me-3"
+          class="mb-4 mx-3"
         >
           <label
             class="form-label"
@@ -70,7 +114,10 @@
           >
         </div>
       </tab-content>
-      <tab-content title="Overview">
+      <tab-content
+        title="Overview"
+        class="form-step overflow-auto"
+      >
         <div
           v-for="section in accessCriteria.sections"
           :key="section.name"
@@ -118,6 +165,7 @@
 
 <script>
 import FeedbackModal from "@/components/modals/FeedbackModal.vue"
+import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
 import { mapActions } from "vuex"
@@ -127,7 +175,8 @@ export default {
   components: {
     FormWizard,
     TabContent,
-    FeedbackModal
+    FeedbackModal,
+    ResourcesList
   },
   props: {
     requestId: {
@@ -141,20 +190,24 @@ export default {
       notificationText: "",
       negotiationCriteria: {},
       accessCriteria: undefined,
+      resources: [],
+      humanReadableSearchParameters: [],
+      showStepFeedback: false
     }
   },
   computed: {
     loading() {
-      if (this.accessCriteria !== undefined) {
-        this.initNegotiationCriteria()
-      }
       return this.accessCriteria === undefined
     },
+    queryParameters() {
+      return this.humanReadableSearchParameters.split("\r\n")
+    }
   },
-  async mounted() {
+  async beforeMount() {
     const result = await this.retrieveRequestById({
       requestId: this.requestId,
     })
+
     if (result.code) {        
       if (result.code == 404) {
         this.showNotification("Error", "Request not found")
@@ -164,11 +217,14 @@ export default {
     } else if (result.negotiationId) {    
       this.showNotification("Error", "Request already submitted")
     } else {
-      await this.retrieveAccessCriteriaByResourceId({
+      this.resources = result.resources
+      this.humanReadableSearchParameters = result.humanReadable
+      this.accessCriteria = await this.retrieveAccessCriteriaByResourceId({
         resourceId: result.resources[0].id
-      }).then((accessCriteria) => {
-        this.accessCriteria = accessCriteria
       })
+      if (this.accessCriteria !== undefined) {
+        this.initNegotiationCriteria()
+      }
     }
   },
   methods: {
@@ -209,6 +265,16 @@ export default {
         }
       }
     },
+    getElementIdFromResourceId(collection) {
+      return collection.replaceAll(":", "_")
+    },
+    isSectionValid(section) {
+      return () => {
+        const valid = section.accessCriteria.every(ac => !ac.required || this.negotiationCriteria[section.name][ac.name])
+        this.showStepFeedback = !valid
+        return valid
+      }
+    }
   },
 }
 </script>
@@ -220,7 +286,6 @@ export default {
 }
 
 .form-step {
-    height: 26rem;
-    overflow-y: auto;
+  height: 32rem;
 }
 </style>

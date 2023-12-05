@@ -27,9 +27,9 @@
           <li
             v-for="(element, key) in negotiation.payload"
             :key="element"
-            class="list-group-item border-bottom p-3"
+            class="list-group-item p-3"
           >
-            <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
+            <span class="fs-5 fw-bold text-secondary mt-3">
               {{ key.toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -55,7 +55,7 @@
             </div>
           </li>
           <li class="list-group-item p-3">
-            <span class="fs-5 fw-bold text-secondary border-bottom mt-3 mb-3">
+            <span class="fs-5 fw-bold text-secondary mt-3 mb-3">
               ATTACHMENTS
             </span>
             <NegotiationAttachment 
@@ -70,123 +70,120 @@
             />
           </li>
           <li class="list-group-item p-3">
-            <div class="container">
-              <div class="row">
-                <div class="col-sm-8"> 
-                  <p
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collectionsList"
-                    aria-expanded="false"
-                    aria-controls="collectionsList"
-                  >
-                    <span class="fs-5 fw-bold text-secondary border-bottom mt-3">
-                      <i class="bi bi-card-list" />
-                      COLLECTIONS ({{ numberOfResources }})
-                    </span>
-                  </p>
-                </div>
-                <div
-                  v-if="(userRole === availableRoles.REPRESENTATIVE || userRole === availableRoles.RESEARCHER) "
-                  class="col-sm-3"
-                >
-                  <select 
-                    v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length >0"
-                    id="collectionsList"
-                    v-model="selectedStatus"
-                    class="form-select collapse"
-                    :disabled="isStatusComboDisabled()"
-                  >
-                    <option selected>
-                      Select new state...
-                    </option>
-                    <option
-                      v-for="key in currentResourceEvents"
-                      :key="key"
-                      :value="key"
-                    >
-                      {{ key }}
-                    </option>
-                  </select>
-                </div>
-                <div class="col-sm-1">
-                  <button
-                    v-if="(userRole === availableRoles.REPRESENTATIVE || userRole === availableRoles.RESEARCHER)"
-                    v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length >0"
-                    id="collectionsList"
-                    class="btn btn-secondary btn-sm me-md-2 float-end collapse" 
-                    type="submit" 
-                    @click.prevent="updateCheckedResourcesStatus(selectedStatus)"
-                  >
-                    Save
-                  </button>
-                </div>
-             
-                <div 
-                  v-show="currentMultipleResourceStatus != undefined && currentResourceEvents.length == 0"
-                  class="alert alert-danger"
-                  role="alert"
-                >
-                  No selectable status for this resource(s), wait for the other part to respond
-                </div>
-              </div>
-            </div>  
-            <div
-              v-for="[orgId, org] in Object.entries(organizationsById)"
-              id="collectionsList"
-              :key="orgId"
-              class="card mb-2 collapse"
+            <div 
+              class="d-flex flex-row mb-3"
+              style="min-height: 38px;"
             >
-              <div class="card-header">
-                <div class="form-check">
-                  <input
-                    v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
-                    :id="getElementIdFromCollectionId(orgId)"
-                    v-model="selected[orgId]['checked']"
-                    class="form-check-input"
-                    type="checkbox"
-                    :disabled="isOrganizationButtonDisabled(org.resources)"
-                    @change="changeOrganizationSelection(orgId, $event)"
-                  >           
-                  <label
-                    class="text-primary fw-bold ml-2 cursor-pointer"
-                    data-bs-toggle="collapse"
-                    :data-bs-target="`#card-body-block-${getElementIdFromCollectionId(orgId)}`"
-                    aria-expanded="true"
-                    :aria-controls="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
-                  >
-                    {{ org.name }}  
-                  </label>
-                </div>
-              </div>   
               <div
-                :id="`card-body-block-${getElementIdFromCollectionId(orgId)}`"
-                class="collapse multi-collapse"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#resourcesList"
+                aria-expanded="false"
+                aria-controls="resourcesList"
               >
-                <div    
-                  v-for="resource in org.resources"
-                  :key="resource.id"
-                  class="card-body"
+                <span class="fs-5 fw-bold text-secondary mt-3">
+                  <i class="bi bi-card-list" />
+                  RESOURCES ({{ numberOfResources }})
+                </span>
+              </div>
+              <div 
+                v-if="currentMultipleResourceStatus !== undefined && currentResourceEvents.length > 0"
+                id="statusChange"
+                class="ms-auto d-flex w-50"
+              >
+                <select 
+                  v-model="selectedStatus"
+                  class="form-select me-2"
+                  :disabled="isStatusComboDisabled()"
                 >
+                  <option selected>
+                    Select new state...
+                  </option>
+                  <option
+                    v-for="key in currentResourceEvents"
+                    :key="key"
+                    :value="key"
+                  >
+                    {{ key }}
+                  </option>
+                </select>
+                <button
+                  class="btn btn-secondary me-md-2 float-end" 
+                  type="submit" 
+                  @click.prevent="updateCheckedResourcesStatus(selectedStatus)"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+            <div 
+              v-if="currentMultipleResourceStatus !== undefined && currentResourceEvents.length === 0"
+              class="alert alert-danger"
+              role="alert"
+            >
+              No selectable status for this resource(s), wait for the other part to respond
+            </div>
+            <div
+              id="resourcesList"
+              class="collapse"
+            >
+              <div
+                v-for="[orgId, org] in Object.entries(organizationsById)"
+                :key="orgId"
+                class="card mb-2"
+              >
+                <div class="card-header">
                   <div class="form-check">
                     <input
                       v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
-                      :id="getElementIdFromCollectionId(resource.id)"
-                      v-model="selected[resource.id]['checked']"
+                      :id="getElementIdFromResourceId(orgId)"
+                      v-model="selection[orgId]['checked']"
                       class="form-check-input"
                       type="checkbox"
-                      :disabled="isResourceButtonDisabled(resource.id)"
-                      @change="setCurrentMultipleStatus(resource.id)"
-                    >
+                      :disabled="isOrganizationButtonDisabled(org.resources)"
+                      @change="selectAllOrganizationResource(orgId, $event)"
+                    >           
                     <label
-                      class="form-check-label"
-                      :for="getElementIdFromCollectionId(resource.id)"
+                      class="text-primary fw-bold ml-2 cursor-pointer"
+                      data-bs-toggle="collapse"
+                      :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
+                      aria-expanded="true"
+                      :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
                     >
-                      {{ resource.id }}
-                    </label>           
-                    <span class="badge rounded-pill bg-primary ms-4">
-                      {{ getStatusForResource(resource.id) }}
-                    </span>
+                      {{ org.name }}  
+                    </label>
+                  </div>
+                </div>   
+                <div
+                  :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+                  class="collapse multi-collapse"
+                >
+                  <div    
+                    v-for="resource in org.resources"
+                    :key="resource.id"
+                    class="card-body"
+                  >
+                    <div class="form-check">
+                      <input
+                        v-if="userRole === availableRoles.RESEARCHER || 
+                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                        :id="getElementIdFromResourceId(resource.id)"
+                        v-model="selection[resource.id]['checked']"
+                        class="form-check-input"
+                        type="checkbox"
+                        :disabled="isResourceButtonDisabled(resource.id)"
+                        @change="setCurrentMultipleStatus(resource.id)"
+                      >
+                      <label
+                        class="form-check-label"
+                        :for="getElementIdFromResourceId(resource.id)"
+                      >
+                        {{ resource.name }}
+                      </label>           
+                      <span class="badge rounded-pill bg-primary ms-4">
+                        {{ getStatusForResource(resource.id) }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -321,10 +318,9 @@ export default {
       negotiation: undefined,
       representedResourcesIds: [],
       negotiationStatusOptions: [],
-      lifecycleResourceId: undefined,
       availableRoles: ROLES,
       currentResourceEvents: [],
-      selected: {},
+      selection: {},
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
@@ -395,31 +391,33 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId,
     }) 
+    
+    //initialize checkboxes selection 
+    var organizations, resources
+    if (this.userRole === ROLES.REPRESENTATIVE) {
+      this.representedResourcesIds = await this.retrieveUserRepresentedResources() 
+      organizations = this.representedOrganizations
+      resources = this.representedResources
+    }
+    else { //role is researcher 
+      organizations = this.organizations
+      resources = this.resources
+    }
+
+    organizations.forEach(org => {
+      this.selection[org.externalId] = { "checked": false, "type": this.ORGANIZATION_TYPE }
+    })
+    resources.forEach(res => {
+      this.selection[res.id] = { "checked": false, "type": this.RESOURCE_TYPE }
+    })
+
     this.attachments = await this.retrieveAttachmentsByNegotiationId({
       negotiationId: this.negotiation.id
     })
+    
     this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
-    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-    //initialize checkboxes selection 
-    if (this.userRole === ROLES.REPRESENTATIVE){
-      this.representedOrganizations.forEach(org => {
-        this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
-      })
-      this.representedResources.forEach(res => {
-        this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
-      })
-    }
-    else { //role is researcher 
-      this.organizations.forEach(org => {
-        this.selected[org.externalId] =  { "checked": false, "type": this.ORGANIZATION_TYPE }
-      })
-      this.resources.forEach(res => {
-        this.selected[res.id] =  { "checked": false, "type": this.RESOURCE_TYPE }
-      })
-
-    }
   },
   methods: {
     ...mapActions([
@@ -439,7 +437,6 @@ export default {
     isRepresentativeForOrganization(organizationId) {
       return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
     },
-
     getStatusForResource(resourceId) {
       return this.resourcesById[resourceId].status
     },
@@ -455,84 +452,74 @@ export default {
         event: action
       })
     },
-    async updateResource(status) {
-      await this.updateResourceStatus({
-        negotiationId: this.negotiation.id,
-        resourceId: this.lifecycleResourceId,
-        event: status,
-      })
+    getElementIdFromResourceId(resourceId) {
+      return resourceId.replaceAll(":", "_")
     },
-    async loadPossibleEventsForResource(resourceId) {
-      this.currentResourceEvents = await this.retrievePossibleEventsForResource({
-        negotiationId: this.negotiation.id,
-        resourceId: resourceId
-      }).then((data) => {
-        return data
-      })   
-    },
-    getElementIdFromCollectionId(collection) {
-      return collection.replaceAll(":", "_")
-    },
-    changeOrganizationSelection(key, event) {
+    selectAllOrganizationResource(org, event) {
       let checkedResource = undefined
-      // this.selected[key]["checked"] = !this.selected[key]["checked"]
-      this.organizationsById[key].resources.forEach(resource => {
-        this.selected[resource.id].checked = event.target.checked
-        if (this.selected[resource.id].checked === true &&  this.selected[resource.id].type ===  this.RESOURCE_TYPE) {
+      // sets the resource
+      this.organizationsById[org].resources.forEach(resource => {
+        this.selection[resource.id].checked = event.target.checked
+        // checkedResource === undefined avoid overwriting the checkedResource each iteration
+        if (checkedResource === undefined && this.selection[resource.id].checked === true) {
           checkedResource = resource.id
         }
       })
+
       //if at least one resource has been checked, set the multiple status for the resource as it happens by clicking 
       //a single resource instead of the overall organisation multiple selection
-      if (checkedResource != undefined){
-        this.setCurrentMultipleStatus(checkedResource)
-      }
-      else{
-        this.currentMultipleResourceStatus = undefined
-      }      
+      this.setCurrentMultipleStatus(checkedResource)
     },
-    isOrganizationButtonDisabled(collections){
-      let currentStatus = this.getStatusForResource(collections[0].id)
-      //if this status is different from the current set multiple status (maybe coming from a collection of another organization, then disable the button)
-      if(this.currentMultipleResourceStatus != undefined && currentStatus != this.currentMultipleResourceStatus){
+    isOrganizationButtonDisabled(resources) {
+      let currentStatus = this.getStatusForResource(resources[0].id)
+      // if this status is different from the current set multiple status (maybe coming from a 
+      // resource of another organization, then disable the button)
+      if(this.currentMultipleResourceStatus != undefined && currentStatus != this.currentMultipleResourceStatus) {
         return true
       }
-      for (let i=1; i<collections.length; i++){
-        if (this.getStatusForResource(collections[i].id) != currentStatus){
+      for (let i = 1; i < resources.length; i++) {
+        if (this.getStatusForResource(resources[i].id) != currentStatus) {
           return true
         }
       }  
       return false   
     },
-    isResourceButtonDisabled(resourceId){
+    isResourceButtonDisabled(resourceId) {
       return this.currentMultipleResourceStatus != undefined  && this.getStatusForResource(resourceId) != this.currentMultipleResourceStatus
     },
-    setCurrentMultipleStatus(resourceId){
-      for(var resource in this.selected){
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
-          this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
-          this.statusOptions = this.getAvailableComboOptions()
-          return
+    async setCurrentMultipleStatus(resourceId) {
+      // If no resource is selected, it reset events and status
+      if (resourceId === undefined || 
+          !Object.values(this.selection).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
+        this.currentMultipleResourceStatus = undefined
+        this.currentResourceEvents = []
+      } else {
+        if (this.currentMultipleResourceStatus === undefined) {
+          this.currentResourceEvents = await this.retrievePossibleEventsForResource({
+            negotiationId: this.negotiation.id,
+            resourceId: resourceId
+          }).then((data) => {
+            this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
+            // gets the orgId of the organization of the checked resource
+            return data
+          })
         }
       }
-      this.currentMultipleResourceStatus = undefined
-    },
-    isStatusComboDisabled(){
-      return this.currentMultipleResourceStatus === undefined
-    },
-    getAvailableComboOptions(){
-      for (var resource in this.selected){
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
-          this.lifecycleResourceId = resource
-          this.loadPossibleEventsForResource(resource)
-          break
-        } 
+      if (resourceId !== undefined) {
+        const orgId = this.resourcesById[resourceId].organization.externalId
+        // checks if all its resources are checked
+        const allChecked = this.organizationsById[orgId].resources
+          .every(res => res.id in this.selection && this.selection[res.id].checked === true)    
+        this.selection[orgId].checked = allChecked
       }
     },
-    async updateCheckedResourcesStatus(event){
+    isStatusComboDisabled() {
+      return this.currentMultipleResourceStatus === undefined
+    },
+    async updateCheckedResourcesStatus(event) {
       // For each of the settled resources, update the status to the one chosen in the combo 
-      for (var resource in this.selected){
-        if (this.selected[resource]["checked"] == true && this.selected[resource]["type"] == this.RESOURCE_TYPE){
+      for (var resource in this.selection) {
+        if (this.selection[resource]["checked"] ==  true && this.selection[resource]["type"] == this.RESOURCE_TYPE) {
           await this.updateResourceStatus({
             negotiationId: this.negotiation.id,
             resourceId: resource,
