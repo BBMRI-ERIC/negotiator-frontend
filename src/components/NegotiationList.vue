@@ -413,24 +413,22 @@ export default {
       this.sortBy.sortColumn = this.$route.query.sortColumn
     },
     loadActiveFiltersFromURL() {
-      for (const [param, value] of Object.entries(this.$route.query)) {
-
-        if (param === "status") {
+        if (this.$route.query.status) {
           this.statusFilterFirstLoad = false
           const statusArray = [
             NEGOTIATION_STATUS.SUBMITTED,
             NEGOTIATION_STATUS.IN_PROGRESS,
             NEGOTIATION_STATUS.ABANDONED,
           ]
-          if (typeof value === "string") {
-            this.filters["status"].push(value)
-            if (statusArray.includes(value)) {
+          if (typeof this.$route.query.status === "string") {
+            this.filters["status"].push(this.$route.query.status)
+            if (statusArray.includes(this.$route.query.status)) {
               this.submittedSelection = value === NEGOTIATION_STATUS.SUBMITTED
               this.ongoingSelection = value === NEGOTIATION_STATUS.IN_PROGRESS
               this.abandonedSelection = value === NEGOTIATION_STATUS.ABANDONED
             }
           } else {
-            for (const status of value) {
+            for (const status of this.$route.query.status) {
               this.filters["status"].push(status)
               if (statusArray.includes(status)) {
                 this.submittedSelection = status === NEGOTIATION_STATUS.SUBMITTED || this.submittedSelection
@@ -440,13 +438,15 @@ export default {
             }
           }
         }
-        if (param === "dateStart" || param === "dateEnd") {
+        if (this.$route.query.dateStart || this.$route.query.dateEnd) {
           this.dateFilterFirstLoad = false
-          this.filters[param] = value
-          this.selectedStartDate = param === "dateStart" ? value : this.selectedStartDate
-          this.selectedEndDate = param === "dateEnd" ? value : this.selectedEndDate
-        }
-      }
+          if(this.$route.query.dateStart) {
+            this.filters.dateStart = this.selectedStartDate = this.$route.query.dateStart 
+          }
+          if(this.$route.query.dateEnd) {
+            this.filters.dateEnd = this.selectedEndDate = this.$route.query.dateEnd 
+          }
+        }      
     },
     updateRoutingParams(filters, sortBy){
       let query = {}
@@ -461,6 +461,8 @@ export default {
       }
       this.selectedStartDate = ""
       this.selectedEndDate = ""
+      let query = {}
+      this.$router.replace({ query })
     },
     isChecked(value){
       return this.sortBy.sortColumn === value ? true : false
