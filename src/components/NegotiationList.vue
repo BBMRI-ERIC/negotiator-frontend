@@ -13,7 +13,12 @@
             <button
               id="dropdownSortingButton"
               aria-haspopup="true"
-              :class="getSortClass()"
+              class="btn dropdown-toggle"
+              :class="{ 
+                'btn-secondary': sortBy.sortColumn != undefined, 
+                'btn-outline-secondary' : sortBy.sortColumn == undefined, 
+                'show': sortBy.sortColumn != undefined
+              }"
               type="button"
               data-bs-toggle="dropdown"
               data-bs-auto-close="true"
@@ -145,7 +150,7 @@
               <span
                 v-if="filters.dateStart != '' || filters.dateEnd != ''"
                 class="badge bg-primary border ml-2"
-              > {{ computeDateFilterLength() }}</span>
+              > {{ dateFilterLength }}</span>
             </button>
             <ul
               class="dropdown-menu"
@@ -331,8 +336,7 @@ export default {
           return eventDate <= endDate
         })     
       }
-
-      let filteredNegotiations = filterConditions.length == 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
+      let filteredNegotiations = filterConditions.length === 0 ? this.negotiations : this.negotiations.filter(item => filterConditions.every(f => f(item)))
       return filteredNegotiations
     },
     sortedNegotiations: function() {
@@ -342,41 +346,45 @@ export default {
       return this.filteredNegotiations
     },
     loading() {
-      console.log(this.negotiations)
       return this.negotiations === undefined
-    }
+    },
+    dateFilterLength() {
+      if(this.filters.dateStart != "" && this.filters.dateEnd != ""){
+        return 2
+      }
+      return 1
+    },
   },
-  beforeMount(){
-    this.loadActiveFiltersandSortingFromURL()
+  beforeMount() {
+    this.loadActiveFiltersFromURL()
     this.loadSortingFromURL()
-    
   },
   methods: {
-    triggerSort(column){
+    triggerSort(column) {
       this.sortBy.sortColumn = column
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
       this.isSortFromURL = false
       return this.sort(column)
     },
-    sort(column){
+    sort(column) {
       let sortedNegotiations = this.filteredNegotiations
       return sortedNegotiations.sort((a, b) => {
         a = this.sortAttrs[column].sortTransformation(a)
         b = this.sortAttrs[column].sortTransformation(b)
         if (a < b) {
-          return this.sortAttrs[column].sortOrder == "desc" ? 1 : -1
+          return this.sortAttrs[column].sortOrder === "desc" ? 1 : -1
         }
         if (a > b) {
-          return this.sortAttrs[column].sortOrder == "desc" ? -1 : 1 
+          return this.sortAttrs[column].sortOrder === "desc" ? -1 : 1 
         }
         return 0
       })
     },
-    formatDate(date){
+    formatDate(date) {
       return moment(date).format("YYYY/MM/DD HH:mm")
     }, 
-    updateFilter(filterName, filterValue, selection){
-      if(filterName == "status"){
+    updateFilter(filterName, filterValue, selection) {
+      if(filterName === "status"){
         this.statusFilterFirstLoad = false
         if(selection){
           this.filters[filterName].push(filterValue)
@@ -392,23 +400,19 @@ export default {
       // update the url according to fiter(s)
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
     },
-    activeFilters(filters){
+    activeFilters(filters) {
       let activeFilters = {}
       for (const key in filters){
-        if((key == "status" && filters[key] != []) || (key != "status" && filters[key] != "")){
+        if((key === "status" && filters[key] != []) || (key !== "status" && filters[key] !== "")){
           activeFilters[key] = filters[key]
         }
       }
       return activeFilters
     },
-    loadSortingFromURL(){
-      for (const [param, value] of Object.entries(this.$route.query)) {
-        if (param == "sortColumn"){
-          this.sortBy.sortColumn = value
-        }
-      }
+    loadSortingFromURL() {
+      this.sortBy.sortColumn = this.$route.query.sortColumn
     },
-    loadActiveFiltersandSortingFromURL(){
+    loadActiveFiltersFromURL() {
       for (const [param, value] of Object.entries(this.$route.query)) {
 
         if (param === "status") {
@@ -443,35 +447,22 @@ export default {
           this.selectedEndDate = param === "dateEnd" ? value : this.selectedEndDate
         }
       }
-    }, 
-    getSortClass(){
-      return this.sortBy.sortColumn != undefined ? "btn dropdown-toggle btn-secondary show" : "btn dropdown-toggle btn-outline-secondary"
     },
     updateRoutingParams(filters, sortBy){
       let query = {}
       Object.assign(query, filters, sortBy)
-      const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
-      this.$router.push({ path: "/"+ destinationPage, query: query })
-    },
-    computeDateFilterLength(){
-      if(this.filters.dateStart != "" && this.filters.dateEnd != ""){
-        return 2
-      }
-      return 1
+      this.$router.replace({ query })
     },
     clearAllFilters(){
-      this.filters={
-        "status": [],
-        "dateStart": "",
-        "dateEnd": ""
+      this.filters = {
+        status: [],
+        dateStart: "",
+        dateEnd: ""
       }
     },
     isChecked(value){
-      return this.sortBy.sortColumn == value ? true : false
+      return this.sortBy.sortColumn === value ? true : false
     }
-  }
-
-
-  
+  }  
 }
 </script>
