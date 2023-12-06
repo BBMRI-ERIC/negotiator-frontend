@@ -459,6 +459,8 @@ export default {
         dateStart: "",
         dateEnd: ""
       }
+      this.selectedStartDate = ""
+      this.selectedEndDate = ""
     },
     isChecked(value){
       return this.sortBy.sortColumn === value ? true : false
