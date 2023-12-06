@@ -289,28 +289,28 @@ export default {
     return {
       availableRoles: ROLES,
       sortAttrs: {
-        "title": {
+        title: {
           label: "Title",
           sortTransformation: (value) => value.payload.project.title,
           sortOrder: "asc"
         },
-        "status": {
+        status: {
           label: "Status",
           sortTransformation: (value) => value.status,
           sortOrder: "asc"
         },
-        "creationDate": {
+        creationDate: {
           label: "Date of creation",
           sortTransformation: (value) => new Date(value.creationDate),
           sortOrder: "desc"
         } 
       },      
       filters: {
-        "status": [],
-        "dateStart": "",
-        "dateEnd": ""
+        status: [],
+        dateStart: "",
+        dateEnd: ""
       },
-      sortBy: { "sortColumn": undefined },
+      sortBy: { sortColumn: undefined },
       isSortFromURL: true, 
       statusFilterFirstLoad: true,
       dateFilterFirstLoad: true
