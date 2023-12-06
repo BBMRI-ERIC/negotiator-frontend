@@ -54,7 +54,11 @@
               id="dropdownMenuButton1"
               aria-haspopup="true"
               class="btn dropdown-toggle"
-              :class="{ 'btn-secondary show': filters.status.length > 0, 'btn-outline-secondary' : filters.status.length === 0 && statusFilterFirstLoad,'btn-outline-secondary show': filters.status.length === 0 && !statusFilterFirstLoad }"
+              :class="{ 
+                'btn-secondary': filters.status.length > 0, 
+                'btn-outline-secondary' : filters.status.length === 0,
+                'show': filters.status.length > 0 || !statusFilterFirstLoad
+              }"
               type="button"
               data-bs-toggle="dropdown"
               data-bs-auto-close="true"
@@ -63,7 +67,7 @@
               Filter by status 
               <span
                 v-if="filters.status.length > 0"
-                class="badge bg-primary border ml-2"
+                class="badge bg-primary border ms-2"
               > {{ filters.status.length }}</span>
             </button>
             <ul
@@ -127,7 +131,11 @@
               id="dropdownMenuButton1"
               aria-haspopup="true"
               class="btn dropdown-toggle"
-              :class="{ 'btn-secondary show': filters.dateStart != '' || filters.dateEnd != '', 'btn-outline-secondary' : filters.dateStart == '' && filters.dateEnd == '' && dateFilterFirstLoad,'btn-outline-secondary show': filters.dateStart == '' && filters.dateEnd == '' && !dateFilterFirstLoad }"
+              :class="{ 
+                'btn-secondary': filters.dateStart !== '' || filters.dateEnd !== '', 
+                'btn-outline-secondary' : filters.dateStart === '' && filters.dateEnd === '',
+                'show': filters.dateStart !== '' || filters.dateEnd !== '' || !dateFilterFirstLoad 
+              }"
               type="button"
               data-bs-toggle="dropdown"
               data-bs-auto-close="true"
@@ -351,8 +359,6 @@ export default {
       return this.sort(column)
     },
     sort(column){
-      // this.sortBy.sortColumn = column
-      // this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
       let sortedNegotiations = this.filteredNegotiations
       return sortedNegotiations.sort((a, b) => {
         a = this.sortAttrs[column].sortTransformation(a)
@@ -446,8 +452,6 @@ export default {
       Object.assign(query, filters, sortBy)
       const destinationPage = this.userRole == ROLES.REPRESENTATIVE ? "biobanker" : "researcher" 
       this.$router.push({ path: "/"+ destinationPage, query: query })
-
-
     },
     computeDateFilterLength(){
       if(this.filters.dateStart != "" && this.filters.dateEnd != ""){
@@ -465,7 +469,6 @@ export default {
     isChecked(value){
       return this.sortBy.sortColumn == value ? true : false
     }
-
   }
 
 
