@@ -1,7 +1,7 @@
 <template>
   <div
     class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm container"
-    style="top: 50px"
+    style="top: 65px"
   >
     <div class="row mb-2">
       <div

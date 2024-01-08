@@ -3,7 +3,7 @@
   <header>
     <navigation-bar />
   </header>
-  <div class="container min-vh-100 d-flex flex-column pt-4">
+  <div class="mt-5 container min-vh-100 d-flex flex-column pt-4 ">
     <div
       v-if="notification !== undefined"
       class="row"
