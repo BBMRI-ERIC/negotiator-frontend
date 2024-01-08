@@ -1,7 +1,7 @@
 <template>
   <nav
     v-if="oidcIsAuthenticated"
-    class="navbar navbar-expand-lg navbar-light bg-light"
+    class="navbar fixed-top navbar-expand-lg navbar-light bg-light"
   >
     <div class="container-fluid">
       <img
