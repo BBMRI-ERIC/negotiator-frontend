@@ -82,11 +82,6 @@ export default {
 </script>
 <style scoped>
 h1 {
-  font-family: Calibri, Arial, sans-serif;
   font-size: 3.5rem;
-}
-
-h2 {
-  font-family: Calibri, Arial, sans-serif;
 }
 </style>
