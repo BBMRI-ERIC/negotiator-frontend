@@ -14,6 +14,10 @@ $default-text-color: white;
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
+body {
+    font-family: Calibri, Arial, sans-serif;
+}
+  
 .btn-primary {
     color: white;
 }
