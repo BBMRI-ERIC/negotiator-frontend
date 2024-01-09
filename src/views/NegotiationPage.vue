@@ -531,9 +531,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-h1 {
-  font-family: Calibri, Arial, sans-serif;
-}
-</style>
