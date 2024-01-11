@@ -30,7 +30,7 @@ services:
         - Name: some-app-scope-1
         - Name: some-app-scope-2
       API_RESOURCES_INLINE: |
-        - Name: negotiator-api
+        - Name: https://negotiator.bbmri-eric.eu
           Scopes:
             - some-app-scope-1
             - some-app-scope-2

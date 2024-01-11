@@ -5,6 +5,7 @@ const devSettings = {
   redirectUri: "http://localhost:8080/logged-in",
   postLogoutRedirectUri: "http://localhost:8080",
   responseType: "code",
+  resource: "https://negotiator.bbmri-eric.eu",
   scope: "openid profile email permissions some-app-scope-1",
   automaticSilentRenew: true
 }
