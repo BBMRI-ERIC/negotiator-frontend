@@ -26,6 +26,16 @@ services:
         {
           "AutomaticRedirectAfterSignOut": true
         }
+      API_SCOPES_INLINE: |
+        - Name: some-app-scope-1
+        - Name: some-app-scope-2
+      API_RESOURCES_INLINE: |
+        - Name: negotiator-api
+          Scopes:
+            - some-app-scope-1
+            - some-app-scope-2
+          ApiSecrets:
+            - negotiator-secret
       IDENTITY_RESOURCES_PATH: /config/identity-resources.json
       USERS_CONFIGURATION_INLINE: |
         [
