@@ -9,6 +9,7 @@ do
   sed -i 's|CLIENT_ID_PLACEHOLDER|'${CLIENT_ID}'|g' $file
   sed -i 's|REDIRECT_URI_PLACEHOLDER|'${REDIRECT_URI}'|g' $file
   sed -i 's|LOGOUT_URI_PLACEHOLDER|'${LOGOUT_URI}'|g' $file
+  sed -i 's|RESOURCES_PLACEHOLDER|'${API_RESOURCES}'|g' $file
 
 done
 

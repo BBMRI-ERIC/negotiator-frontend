@@ -5,7 +5,8 @@ const devSettings = {
   redirectUri: "http://localhost:8080/logged-in",
   postLogoutRedirectUri: "http://localhost:8080",
   responseType: "code",
-  scope: "openid profile email permissions",
+  resource: "https://negotiator.bbmri-eric.eu",
+  scope: "openid profile email permissions some-app-scope-1",
   automaticSilentRenew: true
 }
 
@@ -14,6 +15,7 @@ const prodSettings = {
   clientId: "CLIENT_ID_PLACEHOLDER",
   redirectUri: "REDIRECT_URI_PLACEHOLDER",
   postLogoutRedirectUri: "LOGOUT_URI_PLACEHOLDER",
+  resource: "RESOURCES_PLACEHOLDER",
   responseType: "code",
   scope: "openid profile email offline_access eduperson_entitlement",
   automaticSilentRenew: true
