@@ -81,16 +81,31 @@
             </div>
           </div>
         </div>
+        <div v-if="section.description" class="mb-4 d-flex justify-content-end">
+          <div class="dropdown mx-2">
+            <i data-bs-toggle="dropdown"
+            aria-expanded="false" class="bi bi-info-circle"/>
+            <div class="dropdown-menu p-3 text-body-secondary">
+              <p> {{section.description}} </p>
+            </div>
+          </div>
+        </div>
         <div
           v-for="criteria in section.accessCriteria"
           :key="criteria.name"
           class="mb-4 mx-3"
         >
-          <label
-            class="form-label"
-            :class="{ required: criteria.required }"
-          >{{ criteria.label }}
-          </label>
+          <label class="form-label" :class="{ required: criteria.required }"> 
+            {{ criteria.label }}
+          </label> 
+
+          <span v-if="criteria.description" class="dropdown mx-2">
+              <i data-bs-toggle="dropdown" aria-expanded="false" class="bi bi-info-circle" />
+              <div class="dropdown-menu p-3 text-body-secondary">
+                <p> {{criteria.description}} </p>
+              </div>
+           </span>
+
           <textarea
             v-if="criteria.type === 'textarea'"
             v-model="negotiationCriteria[section.name][criteria.name]"
@@ -287,5 +302,9 @@ export default {
 
 .form-step {
   height: 32rem;
+}
+
+.bi:hover {
+  color: #7c7c7c;
 }
 </style>
