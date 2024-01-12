@@ -146,6 +146,12 @@
         </div>
       </tab-content>
       <template #footer="props">
+        <div v-if="props.isLastStep" class="form-check mb-3 d-flex justify-content-end">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+          <label class="form-check-label ps-2" for="flexCheckDefault">
+             <p class="m-0">Start Test Negotiation</p> 
+          </label>
+        </div>
         <div class="wizard-footer-left">
           <button
             v-if="props.activeTabIndex > 0"
@@ -295,10 +301,6 @@ export default {
 .required:after {
   content: "  *\00a0";
   color: red;
-}
-
-.form-step {
-  height: 32rem;
 }
 
 .bi:hover {
