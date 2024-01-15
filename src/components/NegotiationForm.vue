@@ -81,15 +81,11 @@
             </div>
           </div>
         </div>
-        <div v-if="section.description" class="mb-4 d-flex justify-content-end">
-          <div class="dropdown mx-2">
-            <i data-bs-toggle="dropdown"
-            aria-expanded="false" class="bi bi-info-circle"/>
-            <div class="dropdown-menu p-3 text-body-secondary">
-              <p> {{section.description}} </p>
-            </div>
-          </div>
+  
+        <div v-if="section.description" class="mx-3 d-flex justify-content-end">
+          <i  class="py-1 bi bi-info-circle" data-bs-toggle="tooltip" :data-bs-title="section.description"></i>
         </div>
+        
         <div
           v-for="criteria in section.accessCriteria"
           :key="criteria.name"
@@ -99,12 +95,7 @@
             {{ criteria.label }}
           </label> 
 
-          <span v-if="criteria.description" class="dropdown mx-2">
-              <i data-bs-toggle="dropdown" aria-expanded="false" class="bi bi-info-circle" />
-              <div class="dropdown-menu p-3 text-body-secondary">
-                <p> {{criteria.description}} </p>
-              </div>
-           </span>
+          <i v-if="criteria.description" class="mx-2 py-1 bi bi-info-circle" data-bs-toggle="tooltip" :data-bs-title="criteria.description"></i>
 
           <textarea
             v-if="criteria.type === 'textarea'"
@@ -185,6 +176,7 @@
 </template>
 
 <script>
+import { Tooltip } from 'bootstrap'
 import FeedbackModal from "@/components/modals/FeedbackModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
@@ -254,6 +246,11 @@ export default {
         this.initNegotiationCriteria()
       }
     }
+  },
+  mounted () {
+    new Tooltip(document.body, {
+      selector: "[data-bs-toggle='tooltip']",
+    })
   },
   methods: {
     ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
