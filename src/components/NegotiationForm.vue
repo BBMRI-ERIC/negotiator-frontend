@@ -263,7 +263,7 @@ export default {
       }).then((negotiationId) => {
         if (negotiationId) {
           this.showNotification(
-            "Negotiation Created Correctly", 
+            "Request submitted correctly", 
             "You can follow the status of this negotiation in your researcher page")
         } 
       })
