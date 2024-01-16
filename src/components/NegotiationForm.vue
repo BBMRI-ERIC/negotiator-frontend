@@ -146,6 +146,12 @@
         </div>
       </tab-content>
       <template #footer="props">
+        <div v-if="props.isLastStep && isAdmin" class="form-check mb-3 d-flex justify-content-end">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+          <label class="form-check-label ps-2" for="flexCheckDefault">
+             <p class="m-0">Mark as test request</p> 
+          </label>
+        </div>
         <div class="wizard-footer-left">
           <button
             v-if="props.activeTabIndex > 0"
@@ -176,6 +182,7 @@ import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
 import { mapActions } from "vuex"
+import { ROLES } from "@/config/consts"
 
 export default {
   name: "NegotiationForm",
@@ -199,10 +206,14 @@ export default {
       accessCriteria: undefined,
       resources: [],
       humanReadableSearchParameters: [],
-      showStepFeedback: false
+      showStepFeedback: false,
+      roles: []
     }
   },
   computed: {
+    isAdmin() {
+      return this.roles.includes(ROLES.ADMINISTRATOR)
+    },
     loading() {
       return this.accessCriteria === undefined
     },
@@ -214,6 +225,8 @@ export default {
     const result = await this.retrieveRequestById({
       requestId: this.requestId,
     })
+
+    this.roles = await this.retrieveUserRoles()
 
     if (result.code) {        
       if (result.code == 404) {
@@ -240,7 +253,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(["retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
+    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
     async startNegotiation() {
       await this.createNegotiation({
         data: {
@@ -250,7 +263,7 @@ export default {
       }).then((negotiationId) => {
         if (negotiationId) {
           this.showNotification(
-            "Negotiation Created Correctly", 
+            "Request submitted correctly", 
             "You can follow the status of this negotiation in your researcher page")
         } 
       })
@@ -295,10 +308,6 @@ export default {
 .required:after {
   content: "  *\00a0";
   color: red;
-}
-
-.form-step {
-  height: 32rem;
 }
 
 .bi:hover {
