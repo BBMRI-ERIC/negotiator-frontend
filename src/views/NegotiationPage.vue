@@ -104,7 +104,7 @@
                     :key="key"
                     :value="key"
                   >
-                    {{ key }}
+                    {{ transformString(key)  }}
                   </option>
                 </select>
                 <button
@@ -224,7 +224,7 @@
             <div class="fw-bold text-secondary">
               Status:
             </div>
-            <span> {{ negotiation ? tranformString(negotiation.status) : "" }}
+            <span> {{ negotiation ? transformString(negotiation.status) : "" }}
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -516,9 +516,6 @@ export default {
     isStatusComboDisabled() {
       return this.currentMultipleResourceStatus === undefined
     },
-    tranformString(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase().split('_').join(' ');
-    },
     async updateCheckedResourcesStatus(event) {
       // For each of the settled resources, update the status to the one chosen in the combo 
       for (var resource in this.selection) {
@@ -530,7 +527,10 @@ export default {
           })
         } 
       }
-    }
+    },
+    transformString(string) {
+      return string ? string.toUpperCase().split('_').join(' ') : "";
+    },
   },
 }
 </script>

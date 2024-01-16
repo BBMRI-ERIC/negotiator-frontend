@@ -3,7 +3,7 @@
     <h5 class="card-header">
       {{ title }}
       <span class="badge rounded-pill bg-primary float-end">
-        {{ status }}
+        {{ transformString(status) }}
       </span>
     </h5>
     <div class="card-body">
@@ -45,6 +45,11 @@ export default {
       type: Date,
       default: undefined
     }
+  },
+  methods: {
+    transformString(string) {
+      return string ? string.toUpperCase().split('_').join(' ') : "";
+    },
   }
 }
 </script>
