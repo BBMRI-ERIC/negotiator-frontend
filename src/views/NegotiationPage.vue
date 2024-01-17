@@ -132,27 +132,34 @@
                 :key="orgId"
                 class="card mb-2"
               >
-                <div class="card-header">
-                  <div class="form-check">
+                <div class="card-header cursor-pointer"
+                  data-bs-toggle="collapse"
+                  :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
+                  :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+                >
+                  <div class="form-check d-flex justify-content-between cursor-pointer">
+                    <div>
                     <input
                       v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
                       :id="getElementIdFromResourceId(orgId)"
                       v-model="selection[orgId]['checked']"
-                      class="form-check-input"
+                      class="form-check-input justify-content-start"
                       type="checkbox"
                       :disabled="isOrganizationButtonDisabled(org.resources)"
                       @change="selectAllOrganizationResource(orgId, $event)"
-                    >           
+                    >   
                     <label
                       class="text-primary fw-bold ml-2 cursor-pointer"
-                      data-bs-toggle="collapse"
-                      :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
-                      aria-expanded="true"
-                      :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
+                      
                     >
                       {{ org.name }}  
-                    </label>
-                  </div>
+                    </label>   
+                    </div>                    
+                      <div class="justify-content-end pt-1">
+                        <i class="bi bi-chevron-down"></i>
+                        <i class="bi bi-chevron-up"></i>
+                      </div>
+                    </div>
                 </div>   
                 <div
                   :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
@@ -264,7 +271,7 @@
                 type="button"
                 @click="updateNegotiation(status)"
               >
-                {{ status }}
+                {{ transformString(status) }}
               </button>
             </li>
           </ul>
@@ -438,7 +445,8 @@ export default {
       return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
     },
     getStatusForResource(resourceId) {
-      return this.resourcesById[resourceId].status
+      let resource = this.resourcesById[resourceId].status
+      return this.transformString(resource)
     },
     isAttachment(value) {
       return value instanceof Object
@@ -534,3 +542,15 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.card-header[aria-expanded=true] .bi-chevron-down {
+  display: none;
+}
+.card-header:not([aria-expanded]) .bi-chevron-up {
+  display: none;
+}
+.card-header[aria-expanded=false] .bi-chevron-up {
+  display: none;
+}
+</style>
