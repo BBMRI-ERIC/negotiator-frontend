@@ -3,7 +3,8 @@
   <header>
     <navigation-bar />
   </header>
-  <div class="mt-5 container min-vh-100 d-flex flex-column pt-4 ">
+  <div v-if="$route.path !== '/'" class="mt-5 pt-4">&nbsp;</div>
+  <div class="container body d-flex flex-column">
     <div
       v-if="notification !== undefined"
       class="row"
@@ -30,7 +31,7 @@
       </div>
     </div>
   </div>
-  <div class="container">
+  <div v-if="$route.path !== '/'" class="container">
     <div class="col-12">
       <footer
         class="bottom-0 p-0 w-100"
@@ -86,11 +87,19 @@ header {
   max-height: 100vh;
 }
 
+.body {
+  min-height: calc(100vh - 149px);
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
+  }
+  
+  .body {
+    min-height: calc(100vh - 169px);
   }
 
   header .wrapper {

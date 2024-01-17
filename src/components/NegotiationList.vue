@@ -4,12 +4,8 @@
     style="top: 65px"
   >
     <div class="row mb-2">
-      <div
-        class="col-2"
-      />
-      <div class="col-8">
-        <div class="d-flex flex-row">
-          <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+        <div class="d-flex flex-row flex-wrap">
+          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
             <button
               id="dropdownSortingButton"
               aria-haspopup="true"
@@ -54,7 +50,7 @@
               </div>
             </ul>
           </div>
-          <div class="dropdown mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+          <div class="dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
             <button
               id="dropdownMenuButton1"
               aria-haspopup="true"
@@ -131,7 +127,7 @@
               </div>
             </ul>
           </div>
-          <div class="dropdown b-dropdown mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
             <button
               id="dropdownMenuButton1"
               aria-haspopup="true"
@@ -186,7 +182,7 @@
               </div>
             </ul>
           </div> 
-          <div class="dropdown b-dropdown ms-auto filter-dropdown position-static btn-group d-flex justify-content-end">
+          <div class="dropdown mb-2  b-dropdown ms-auto filter-dropdown position-static btn-group d-flex justify-content-end">
             <button
               type="button"
               class="btn btn-outline-danger"
@@ -196,7 +192,6 @@
             </button>
           </div>
         </div>
-      </div>
     </div>
   </div>
   <hr class="my-4">
