@@ -1,5 +1,6 @@
 import { createApp } from "vue"
 import App from "./App.vue"
+import Vue3Tour from 'vue3-tour'
 import router from "./router"
 import store from "./store"
 import { sync } from "vuex-router-sync"
@@ -10,17 +11,19 @@ import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css"
 import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
+import 'vue3-tour/dist/vue3-tour.css'
 
 library.add(faSpinner)
 library.add(faPencil)
 library.add(faTrash)
 library.add(faDownload)
 
+
 const app = createApp(App)
 
 app.use(router)
 app.use(store)
-
+app.use(Vue3Tour)
 
 app.component("FontAwesomeIcon", FontAwesomeIcon)
 

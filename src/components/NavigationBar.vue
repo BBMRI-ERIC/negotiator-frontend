@@ -3,7 +3,7 @@
     v-if="oidcIsAuthenticated"
     class="navbar fixed-top navbar-expand-lg navbar-light bg-light"
   >
-    <div class="container-fluid">
+    <div class="container-fluid" data-v-step="2">
       <img
         src="../assets/images/logo.svg"
         width="125"

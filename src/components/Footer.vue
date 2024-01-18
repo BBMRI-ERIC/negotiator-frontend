@@ -4,7 +4,7 @@
     >
         <hr class="mt-10 mb-10">
         <div class="row d-flex flex-column flex-md-row">
-            <div class="col text-center mb-4 mb-md-0">
+            <div class="col text-center mb-4 mb-md-0 v-step-1">
                 <a href="https://bbmri-eric.eu" >
                     <img 
                         width="150"
