@@ -33,23 +33,7 @@
   </div>
   <div v-if="$route.path !== '/'" class="container">
     <div class="col-12">
-      <footer
-        class="bottom-0 p-0 w-100"
-      >
-        <hr class="mt-10 mb-10">
-        <div class="row">
-          <div class="col text-center">
-            <p>&copy; 2023 BBMRI-ERIC</p>
-          </div>
-          <div class="col text-center">
-            <img src="../src/assets/images/logo.svg">
-          </div>
-          <div class="col text-center">
-            <i class="bi bi-github" />
-            <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   </div>
 </template>
@@ -59,11 +43,14 @@ import { RouterView } from "vue-router"
 import { mapGetters, mapMutations } from "vuex"
 
 import NavigationBar from "./components/NavigationBar.vue"
+import Footer from "./components/Footer.vue"
+
 
 export default {
   components: {
     RouterView,
-    NavigationBar
+    NavigationBar,
+    Footer
   },
   computed: {
     ...mapGetters({ notification: "getNotification" })
@@ -88,7 +75,7 @@ header {
 }
 
 .body {
-  min-height: calc(100vh - 149px);
+  min-height: calc(100vh - 391px);
 }
 
 @media (min-width: 1024px) {
@@ -99,7 +86,7 @@ header {
   }
   
   .body {
-    min-height: calc(100vh - 169px);
+    min-height: calc(100vh - 263px);
   }
 
   header .wrapper {
