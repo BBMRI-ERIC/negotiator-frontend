@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="row">
-      <div id="v-step-0" class="col-12">
+      <div class="col-12">
         <router-view :key="$route.path" />
       </div>
     </div>
@@ -87,10 +87,11 @@ export default {
     },
   mounted: function () {
     // TODO: Hide me after the first visit so returning users don't get annoyed!
-    if(!localStorage.getItem('show_vue_tour')){
-      localStorage.setItem('show_vue_tour', true)
-      this.$tours['myTour'].start()
-    }
+
+    // if(localStorage.getItem('show_vue_tour') ){
+    //   localStorage.setItem('show_vue_tour', true)
+    //   this.$tours['myTour'].start()
+    // }
   },
   computed: {
     ...mapGetters({ notification: "getNotification" })

@@ -3,7 +3,7 @@
     class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm container"
     style="top: 65px"
   >
-    <div class="row mb-2">
+    <div id="v-step-0" class="row mb-2">
         <div class="d-flex flex-row flex-wrap">
           <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
             <button
@@ -353,6 +353,10 @@ export default {
   beforeMount() {
     this.loadActiveFiltersFromURL()
     this.loadSortingFromURL()
+  },
+  mounted() {
+    if(this.$route.path === '/researcher')
+    this.$tours['myTour'].start()
   },
   methods: {
     triggerSort(column) {
