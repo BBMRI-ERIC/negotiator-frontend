@@ -1,5 +1,5 @@
 <template>
-  <div class="card mb-2">
+  <div class="card mb-2 px-0">
     <h5 class="card-header">
       {{ title }}
       <span class="badge rounded-pill bg-primary float-end">

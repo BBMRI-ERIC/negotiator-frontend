@@ -1,7 +1,10 @@
 <template>
   <NegotiationList 
-    :negotiations="negotiations" 
+    :negotiations="negotiations"
+    :pagination="pagination"
     :user-role="userRole"
+    @currentPageNumber="retrieveNegotiationsByPage"
+    @filterStatus="retrieveNegotiationsByFilterStatus"
   />
 </template>
 <script>
@@ -27,14 +30,30 @@ export default {
   data() {
     return {
       negotiations: undefined,
+      pagination: undefined,
+      user: undefined,
+      userId: undefined,
       roles: []
     }
   },
   async mounted() {
-    this.negotiations = await this.retrieveNegotiationsByRole({ userRole: this.userRole })
+    this.user = await await this.retrieveUser()
+    this.userId = this.user._embedded.userResponseModelList[0].id;
+    this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: 0 })
+    this.pagination = this.negotiations.page
+
+    this.negotiations = this.negotiations._embedded.negotiationDTOList
   },
   methods: {
-    ...mapActions(["retrieveNegotiationsByRole", "retrieveUserRoles"])
+    ...mapActions(["retrieveNegotiationsByRole","retrieveUser", "retrieveUserRoles"]),
+    async retrieveNegotiationsByPage(currentPageNumber) {
+      this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: currentPageNumber })
+      this.negotiations = this.negotiations._embedded.negotiationDTOList
+    },
+    async retrieveNegotiationsByFilterStatus(filterStatus) {
+      this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: 0, statusFilter: filterStatus})
+      this.negotiations = this.negotiations._embedded.negotiationDTOList
+    },
   }
 }
 </script>
