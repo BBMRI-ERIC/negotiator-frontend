@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!loading"
+    v-if="!loading && negotiations.length > 0"
     class="container"
   >
       <div
@@ -61,7 +61,7 @@
 
   </div>
   <div
-    v-else
+    v-else-if="loading"
     class="d-flex justify-content-center flex-row"
   >
     <div class="d-flex justify-content-center">
@@ -72,6 +72,18 @@
       <div class="d-flex justify-content-center">
         <h4 class="mb-3 ms-3">
           Loading ...
+        </h4>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          No Negotiations found
         </h4>
       </div>
     </div>

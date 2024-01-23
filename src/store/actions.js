@@ -206,7 +206,7 @@ export default {
   retrieveUser({ state, commit }) {
     return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data
+        return response.data._embedded
       })
       .catch(() => {
         commit("setNotification", "Error sending message")      

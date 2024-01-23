@@ -383,12 +383,7 @@ export default {
       }
     },
     author() {
-      for (const person of this.negotiation.persons) {
-        if (person.role === ROLES.RESEARCHER) {
-          return person
-        }
-      }
-      return ""
+          return this.negotiation.author
     },
     loading() {
       return this.negotiation === undefined

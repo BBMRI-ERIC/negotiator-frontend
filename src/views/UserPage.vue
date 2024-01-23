@@ -38,21 +38,26 @@ export default {
   },
   async mounted() {
     this.user = await await this.retrieveUser()
-    this.userId = this.user._embedded.userResponseModelList[0].id;
+    this.userId = this.user.users[0].id;
     this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: 0 })
     this.pagination = this.negotiations.page
-
-    this.negotiations = this.negotiations._embedded.negotiationDTOList
+    if(this.negotiations.page.totalElements === 0){
+      this.negotiations = {}
+    } else {
+      this.negotiations = this.negotiations._embedded.negotiations
+    }
   },
   methods: {
     ...mapActions(["retrieveNegotiationsByRole","retrieveUser", "retrieveUserRoles"]),
     async retrieveNegotiationsByPage(currentPageNumber) {
       this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: currentPageNumber })
-      this.negotiations = this.negotiations._embedded.negotiationDTOList
+      if(this.negotiations._embedded)
+      this.negotiations = this.negotiations._embedded.negotiations
     },
     async retrieveNegotiationsByFilterStatus(filterStatus) {
       this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: 0, statusFilter: filterStatus})
-      this.negotiations = this.negotiations._embedded.negotiationDTOList
+      if(this.negotiations._embedded)
+      this.negotiations = this.negotiations._embedded.negotiations
     },
   }
 }
