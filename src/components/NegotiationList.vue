@@ -5,7 +5,7 @@
   >
     <div id="v-step-0" class="row mb-2">
         <div class="d-flex flex-row flex-wrap">
-          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start v-step-1">
             <button
               id="dropdownSortingButton"
               aria-haspopup="true"

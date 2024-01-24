@@ -63,11 +63,11 @@ export default {
             header: {
               title: 'Get Started',
             },
-            content: `Discover <strong>Vue Tour</strong>!`
+            content: `Discover the new <strong>Negotiator</strong>!`
           },
           {
             target: '.v-step-1',
-            content: 'An awesome plugin made with Vue.js!',
+            content: 'Sort your negotiations by clicking on the Sort by button and selecting the desired option.',
             before: type => new Promise((resolve, reject) => {
               this.$router.push("/biobanker")
 
@@ -76,11 +76,11 @@ export default {
             })
           },
           {
-            target: '[data-v-step="2"]',
-            content: 'Try it, you\'ll love it!<br>You can put HTML in the steps and completely customize the DOM to suit your needs.',
-            params: {
-              placement: 'top' // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
-            }
+            target: '#v-step-end',  // We're using document.querySelector() under the hood
+            header: {
+              title: 'Logout',
+            },
+            content: `Logout of the Negotiator when done.`
           }
         ]
       }

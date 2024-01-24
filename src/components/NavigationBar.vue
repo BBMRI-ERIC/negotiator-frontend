@@ -3,7 +3,7 @@
     v-if="oidcIsAuthenticated"
     class="navbar fixed-top navbar-expand-lg navbar-light bg-light"
   >
-    <div class="container-fluid" data-v-step="2">
+    <div class="container-fluid">
       <img
         src="../assets/images/logo.svg"
         width="125"
@@ -65,7 +65,7 @@
         </ul>
         <span
           v-if="oidcIsAuthenticated"
-          class="navbar-text me-2 "
+          class="navbar-text me-2 v-step-end"
         >
           Welcome back {{ oidcUser.name }}
         </span>
