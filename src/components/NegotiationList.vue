@@ -3,23 +3,222 @@
     v-if="!loading && negotiations.length > 0"
     class="container"
   >
+  <div
+    class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm container"
+    style="top: 65px"
+  >
+    <div class="row mb-2">
+        <div class="d-flex flex-row flex-wrap">
+          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+            <button
+              id="dropdownSortingButton"
+              aria-haspopup="true"
+              class="btn dropdown-toggle"
+              :class="{ 
+                'btn-secondary': sortBy.sortColumn != undefined, 
+                'btn-outline-secondary' : sortBy.sortColumn == undefined, 
+                'show': sortBy.sortColumn != undefined
+              }"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
+            >
+              Sort by 
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="dropdownSortingButton"
+              role="menu"
+            >
+              <div
+                v-for="(value, name) in sortAttrs"
+                :key="name"
+                class="form-check mx-2 my-2"
+              >
+                <input
+                  :id="name"
+                  class="form-check-input"
+                  type="radio"
+                  name="sort"
+                  :value="name"
+                  :checked="isChecked(name)"
+                  @change="triggerSort($event.target.value)"
+                >
+                <label
+                  class="form-check-label"
+                  :for="name"
+                >
+                  {{ value.label }}
+                </label>
+              </div>
+            </ul>
+          </div>
+          <div class="dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+            <button
+              id="dropdownMenuButton1"
+              aria-haspopup="true"
+              class="btn dropdown-toggle"
+              :class="{ 
+                'btn-secondary': filters.status.length > 0, 
+                'btn-outline-secondary' : filters.status.length === 0,
+                'show': filters.status.length > 0 || !statusFilterFirstLoad
+              }"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
+            >
+              Filter by status 
+              <span
+                v-if="filters.status.length > 0"
+                class="badge bg-primary border ms-2"
+              > {{ filters.status.length }}</span>
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <div class="mx-2 my-2 dropdown-contents">
+                <div class="form-check">
+                  <input
+                    id="submitted"
+                    v-model="submittedSelection"
+                    class="form-check-input"
+                    type="checkbox"
+                    value="submitted"
+                    @change="updateFilter('status', 'SUBMITTED', submittedSelection)"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="submitted"
+                  >
+                    Submitted
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    id="ongoing"
+                    v-model="ongoingSelection"
+                    class="form-check-input"
+                    type="checkbox"
+                    value="ongoing"
+                    @change="updateFilter('status', 'IN_PROGRESS', ongoingSelection)"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="ongoing"
+                  >
+                    In progress
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    id="abandoned"
+                    v-model="abandonedSelection"
+                    class="form-check-input"
+                    type="checkbox"
+                    value="abandoned"
+                    @change="updateFilter('status', 'ABANDONED', abandonedSelection)"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="abandoned"
+                  >
+                    Abandoned
+                  </label>
+                </div>
+              </div>
+            </ul>
+          </div>
+          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+            <button
+              id="dropdownMenuButton1"
+              aria-haspopup="true"
+              class="btn dropdown-toggle"
+              :class="{ 
+                'btn-secondary': filters.dateStart !== '' || filters.dateEnd !== '', 
+                'btn-outline-secondary' : filters.dateStart === '' && filters.dateEnd === '',
+                'show': filters.dateStart !== '' || filters.dateEnd !== '' || !dateFilterFirstLoad 
+              }"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
+            >
+              Filter by Date
+              <span
+                v-if="filters.dateStart != '' || filters.dateEnd != ''"
+                class="badge bg-primary border ml-2"
+              > {{ dateFilterLength }}</span>
+            </button>
+            <ul
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <div class="mx-2 my-2 dropdown-contents">
+                <div class="d-flex align-items-center mb-2">
+                  <label
+                    class="pe-2 w-25"
+                    for="startDate"
+                  >Start:</label>
+                  <input
+                    id="startDate"
+                    v-model="selectedStartDate"
+                    class="form-control"
+                    type="date"
+                    @input="updateFilter('dateStart', selectedStartDate)"
+                  >
+                </div>
+                <div class="d-flex align-items-center">
+                  <label
+                    for="endDate"
+                    class="pe-2 w-25"
+                  >End:</label>
+                  <input
+                    id="endDate"
+                    v-model="selectedEndDate"
+                    class="form-control"
+                    type="date"
+                    @input="updateFilter('dateEnd', selectedEndDate)"
+                  >
+                </div>
+              </div>
+            </ul>
+          </div> 
+          <div class="dropdown mb-2  b-dropdown ms-auto filter-dropdown position-static btn-group d-flex justify-content-end">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              @click="clearAllFilters()"
+            >
+              Clear all filters
+            </button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <hr class="my-4">
+  
       <div
-      class="row row-cols-1 row-cols-md-2 d-grid-row"
+      class="row row-cols-1 d-grid-row"
+      :class="sortedNegotiations.length === 1 ? 'row-cols-md-1' : 'row-cols-md-2'"
       >
         <p class="ps-0" v-if="sortedNegotiations.length > 0">
           <strong>Search results : </strong><br>
           {{ sortedNegotiations.length }} Negotiations found
         </p>
-        <div class="dropdown mb-2 mb-md-0 ps-0 d-md-flex justify-content-end align-items-center">
+        <div></div>
+        <!-- <div class="dropdown mb-2 pe-1 mb-md-3 ps-0 d-md-flex justify-content-end align-items-center">
           <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            Sort by:
+            Filter status:
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             <li v-for="(status, index) in filtersStatus" :key="index">
               <a class="dropdown-item" href="#" @click="filterStatus(status.value)">{{status.label}}</a>
             </li>
           </ul>
-        </div>
+        </div> -->
         <NegotiationCard
           v-for="fn in sortedNegotiations"
           :id="fn.id"

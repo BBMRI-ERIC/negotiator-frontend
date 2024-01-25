@@ -41,7 +41,7 @@ export default {
     this.userId = this.user.users[0].id;
 
     if(this.userRole === 'ROLE_ADMIN')
-    this.negotiations = await this.retrieveNegotiations({ userId: this.userId, statusFilter: 'SUBMITTED', pageNumber: 0 })
+    this.negotiations = await this.retrieveNegotiations({ statusFilter: 'SUBMITTED', pageNumber: 0 })
 
     if(this.userRole === 'ROLE_RESEARCHER')
     this.negotiations = await this.retrieveNegotiationsByRole({ role: 'author', userId: this.userId, pageNumber: 0 })
@@ -59,7 +59,16 @@ export default {
   methods: {
     ...mapActions(["retrieveNegotiationsByRole","retrieveNegotiations","retrieveUser", "retrieveUserRoles"]),
     async retrieveNegotiationsByPage(currentPageNumber) {
-      this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: currentPageNumber })
+    if(this.userRole === 'ROLE_ADMIN')
+    this.negotiations = await this.retrieveNegotiations({ statusFilter: 'SUBMITTED', pageNumber: currentPageNumber })
+
+    if(this.userRole === 'ROLE_RESEARCHER')
+    this.negotiations = await this.retrieveNegotiationsByRole({ role: 'author', userId: this.userId, pageNumber: currentPageNumber })
+
+    if(this.userRole === 'ROLE_REPRESENTATIVE')
+    this.negotiations = await this.retrieveNegotiationsByRole({ role: 'representative', userId: this.userId, pageNumber: currentPageNumber })
+
+      // this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: currentPageNumber })
       if(this.negotiations._embedded)
       this.negotiations = this.negotiations._embedded.negotiations
     },

@@ -76,7 +76,7 @@ export default {
       })
 
   },
-  retrieveNegotiations({ state, commit }, { userId, statusFilter, pageNumber  }) {
+  retrieveNegotiations({ state, commit }, { statusFilter, pageNumber  }) {
     return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
       .then((response) => {
         return response.data
