@@ -60,13 +60,13 @@ export default {
     ...mapActions(["retrieveNegotiationsByRole","retrieveNegotiations","retrieveUser", "retrieveUserRoles"]),
     async retrieveNegotiationsByPage(currentPageNumber) {
     if(this.userRole === 'ROLE_ADMIN')
-    this.negotiations = await this.retrieveNegotiations({ statusFilter: 'SUBMITTED', pageNumber: currentPageNumber })
+    this.negotiations = await this.retrieveNegotiations({ statusFilter: 'SUBMITTED', pageNumber: currentPageNumber - 1 })
 
     if(this.userRole === 'ROLE_RESEARCHER')
-    this.negotiations = await this.retrieveNegotiationsByRole({ role: 'author', userId: this.userId, pageNumber: currentPageNumber })
+    this.negotiations = await this.retrieveNegotiationsByRole({ role: 'author', userId: this.userId, pageNumber: currentPageNumber - 1 })
 
     if(this.userRole === 'ROLE_REPRESENTATIVE')
-    this.negotiations = await this.retrieveNegotiationsByRole({ role: 'representative', userId: this.userId, pageNumber: currentPageNumber })
+    this.negotiations = await this.retrieveNegotiationsByRole({ role: 'representative', userId: this.userId, pageNumber: currentPageNumber - 1 })
 
       // this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: currentPageNumber })
       if(this.negotiations._embedded)
