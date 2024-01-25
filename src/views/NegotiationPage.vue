@@ -69,7 +69,7 @@
               @download="downloadAttachment({id: attachment.id, name: attachment.name})"
             />
           </li>
-          <li class="list-group-item p-3">
+          <!-- <li class="list-group-item p-3">
             <div 
               class="d-flex flex-row mb-3"
               style="min-height: 38px;"
@@ -195,7 +195,7 @@
                 </div>
               </div>
             </div>
-          </li>
+          </li> -->
         </ul>
         <NegotiationPosts
           v-if="negotiation && negotiation.postsEnabled"
