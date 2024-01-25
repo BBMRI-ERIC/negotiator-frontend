@@ -4,13 +4,13 @@
     class="container"
   >
       <div
-      class="row d-grid-row gap-2"
+      class="row row-cols-1 row-cols-md-2 d-grid-row"
       >
         <p class="ps-0" v-if="sortedNegotiations.length > 0">
           <strong>Search results : </strong><br>
           {{ sortedNegotiations.length }} Negotiations found
         </p>
-        <div class="dropdown ps-0">
+        <div class="dropdown mb-2 mb-md-0 ps-0 d-md-flex justify-content-end align-items-center">
           <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
             Sort by:
           </button>
@@ -26,8 +26,9 @@
           :key="fn.id"
           :title="fn.payload.project.title"
           :status="fn.status"
+          :submitter="fn.author.name"
           :creation-date="formatDate(fn.creationDate)"
-          class="cursor-pointer col-sm"
+          class="cursor-pointer"
           @click="
             $router.push({
               name: 'negotiation-page',
@@ -35,8 +36,40 @@
             })
           "
         />
+
+        <!-- <table class="table">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Negotiation ID</th>
+              <th scope="col">Created on</th>
+              <th scope="col">Created by</th>
+              <th scope="col">Status</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(fn,index) in sortedNegotiations" :key="index">
+              <th scope="row">
+                {{fn.payload.project.title}}
+              </th>
+              <td>{{fn.id}}</td>
+              <td>{{formatDate(fn.creationDate)}}</td>
+              <td>{{fn.author.name}}</td>
+              <td>
+                <span class="badge bg-primary-light ">
+                  {{ fn.status }}
+                </span>
+              </td>
+              <td>
+                <i class="bi bi-chevron-right float-end"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table> -->
+
         <h2
-          v-if="sortedNegotiations.length ===0"
+          v-if="sortedNegotiations.length === 0"
           class="text-center"
         >
           No Negotiations found
@@ -44,7 +77,7 @@
       </div>
 
     <nav v-if="sortedNegotiations.length > 0 && pagination.totalPages > 1" aria-label="Page navigation example">
-      <ul class="pagination justify-content-center mt-5">
+      <ul class="pagination justify-content-center mt-2">
         <li class="page-item" :class="currentPageNumber === 1 ? 'disabled' : ''">
           <a class="page-link" href="#" tabindex="-1" aria-disabled="true" @click="changeCurrentPage(currentPageNumber - 1)">Previous</a>
         </li>
