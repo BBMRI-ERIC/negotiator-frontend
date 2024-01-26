@@ -69,7 +69,7 @@
               @download="downloadAttachment({id: attachment.id, name: attachment.name})"
             />
           </li>
-          <!-- <li class="list-group-item p-3">
+          <li class="list-group-item p-3">
             <div 
               class="d-flex flex-row mb-3"
               style="min-height: 38px;"
@@ -140,7 +140,7 @@
                   <div class="form-check d-flex justify-content-between cursor-pointer">
                     <div>
                     <input
-                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId) && selection[orgId])"
                       :id="getElementIdFromResourceId(orgId)"
                       v-model="selection[orgId]['checked']"
                       class="form-check-input justify-content-start"
@@ -195,7 +195,7 @@
                 </div>
               </div>
             </div>
-          </li> -->
+          </li>
         </ul>
         <NegotiationPosts
           v-if="negotiation && negotiation.postsEnabled"
@@ -461,7 +461,7 @@ export default {
     selectAllOrganizationResource(org, event) {
       let checkedResource = undefined
       // sets the resource
-      this.organizationsById[org].resources.forEach(resource => {
+      this.organizationsById[org]?.resources?.forEach(resource => {
         this.selection[resource.id].checked = event.target.checked
         // checkedResource === undefined avoid overwriting the checkedResource each iteration
         if (checkedResource === undefined && this.selection[resource.id].checked === true) {
