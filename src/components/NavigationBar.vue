@@ -65,7 +65,7 @@
         </ul>
         <span
           v-if="oidcIsAuthenticated"
-          class="navbar-text me-2 v-step-end"
+          class="navbar-text me-2"
         >
           Welcome back {{ oidcUser.name }}
         </span>
@@ -74,6 +74,7 @@
           class="btn btn-outline-secondary me-2"
           aria-current="page"
           @click.stop.prevent="signOutOidc"
+          id="v-step-end"
         >
           Logout
         </button>
