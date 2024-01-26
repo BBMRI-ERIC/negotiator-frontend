@@ -172,7 +172,7 @@
                     <div class="form-check">
                       <input
                         v-if="userRole === availableRoles.RESEARCHER || 
-                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId)) && selection[resource.id]"
                         :id="getElementIdFromResourceId(resource.id)"
                         v-model="selection[resource.id]['checked']"
                         class="form-check-input"
