@@ -150,7 +150,6 @@
                     >   
                     <label
                       class="text-primary fw-bold ml-2 cursor-pointer"
-                      
                     >
                       {{ org.name }}  
                     </label>   
@@ -462,6 +461,7 @@ export default {
       let checkedResource = undefined
       // sets the resource
       this.organizationsById[org]?.resources?.forEach(resource => {
+        if(this.selection[resource.id])
         this.selection[resource.id].checked = event.target.checked
         // checkedResource === undefined avoid overwriting the checkedResource each iteration
         if (checkedResource === undefined && this.selection[resource.id].checked === true) {
