@@ -209,6 +209,8 @@
           {{ sortedNegotiations.length }} Negotiations found
         </p>
         <div></div>
+
+<!-- // To do swich logic form front-end sorting and filtering to ban-end -->
         <!-- <div class="dropdown mb-2 pe-1 mb-md-3 ps-0 d-md-flex justify-content-end align-items-center">
           <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
             Filter status:
@@ -236,6 +238,7 @@
           "
         />
 
+<!-- // To do add table for different view -->
         <!-- <table class="table">
           <thead>
             <tr>
