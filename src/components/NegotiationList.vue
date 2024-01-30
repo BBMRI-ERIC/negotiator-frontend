@@ -237,39 +237,6 @@
             })
           "
         />
-
-<!-- // To do add table for different view -->
-        <!-- <table class="table">
-          <thead>
-            <tr>
-              <th scope="col"></th>
-              <th scope="col">Negotiation ID</th>
-              <th scope="col">Created on</th>
-              <th scope="col">Created by</th>
-              <th scope="col">Status</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(fn,index) in sortedNegotiations" :key="index">
-              <th scope="row">
-                {{fn.payload.project.title}}
-              </th>
-              <td>{{fn.id}}</td>
-              <td>{{formatDate(fn.creationDate)}}</td>
-              <td>{{fn.author.name}}</td>
-              <td>
-                <span class="badge bg-primary-light ">
-                  {{ fn.status }}
-                </span>
-              </td>
-              <td>
-                <i class="bi bi-chevron-right float-end"></i>
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
-
         <h2
           v-if="sortedNegotiations.length === 0"
           class="text-center"
