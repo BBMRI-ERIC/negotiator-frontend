@@ -198,9 +198,33 @@
         </div>
     </div>
   </div>
+
   <hr class="my-4">
   
+  <div class="float-end my-2">
+
+<button
+  type="button"
+  class="btn me-2"
+  :class="activeView === 'Card' ? 'btn-primary-light':'btn-light'"
+  @click="activeView = 'Card'"
+>
+<i class="bi bi-card-heading"></i>
+</button>
+
+<button
+  type="button"
+  class="btn"
+  :class="activeView === 'Card' ? 'btn-light':'btn-primary-light'"
+  @click="activeView = 'Table'"
+>
+<i class="bi bi-table"></i>
+</button>
+
+</div>
+
       <div
+      v-if="activeView === 'Card'"
       class="row row-cols-1 d-grid-row"
       :class="sortedNegotiations.length === 1 ? 'row-cols-md-1' : 'row-cols-md-2'"
       >
@@ -210,17 +234,6 @@
         </p>
         <div></div>
 
-<!-- // To do swich logic form front-end sorting and filtering to ban-end -->
-        <!-- <div class="dropdown mb-2 pe-1 mb-md-3 ps-0 d-md-flex justify-content-end align-items-center">
-          <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter status:
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li v-for="(status, index) in filtersStatus" :key="index">
-              <a class="dropdown-item" href="#" @click="filterStatus(status.value)">{{status.label}}</a>
-            </li>
-          </ul>
-        </div> -->
         <NegotiationCard
           v-for="fn in sortedNegotiations"
           :id="fn.id"
@@ -237,13 +250,59 @@
             })
           "
         />
+        </div>
+
+        <div v-if="activeView === 'Table'">
+          <p class="ps-0" v-if="sortedNegotiations.length > 0">
+            <strong>Search results : </strong><br>
+            {{ sortedNegotiations.length }} Negotiations found
+          </p>
+        <!-- // To do add table for different view -->
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Negotiation ID</th>
+                <th scope="col">Created on</th>
+                <th scope="col">Created by</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(fn,index) in sortedNegotiations" :key="index"
+                @click="$router.push({
+                  name: 'negotiation-page',
+                  params: { negotiationId: fn.id, userRole: userRole, filters: filters, sortBy: sortby }
+                })"
+              >
+                <th scope="row">
+                  {{fn.payload.project.title}}
+                </th>
+                <td>{{fn.id}}</td>
+                <td>{{formatDate(fn.creationDate)}}</td>
+                <td>{{fn.author.name}}</td>
+                <td>
+                  <span class="badge bg-primary-light ">
+                    {{ fn.status }}
+                  </span>
+                  </td>
+                  <td>
+                    <i class="bi bi-chevron-right float-end"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+      </div>
+      
         <h2
           v-if="sortedNegotiations.length === 0"
           class="text-center"
         >
           No Negotiations found
         </h2>
-      </div>
 
     <nav v-if="sortedNegotiations.length > 0 && pagination.totalPages > 1" aria-label="Page navigation example">
       <ul class="pagination justify-content-center mt-2">
@@ -360,7 +419,8 @@ export default {
       isSortFromURL: true, 
       statusFilterFirstLoad: true,
       dateFilterFirstLoad: true,
-      currentPageNumber: 1
+      currentPageNumber: 1,
+      activeView: 'Card'
     }
   }, 
   computed: {
