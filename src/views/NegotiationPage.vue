@@ -140,7 +140,7 @@
                   <div class="form-check d-flex justify-content-between cursor-pointer">
                     <div>
                     <input
-                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId) && selection[orgId])"
                       :id="getElementIdFromResourceId(orgId)"
                       v-model="selection[orgId]['checked']"
                       class="form-check-input justify-content-start"
@@ -150,7 +150,6 @@
                     >   
                     <label
                       class="text-primary fw-bold ml-2 cursor-pointer"
-                      
                     >
                       {{ org.name }}  
                     </label>   
@@ -173,7 +172,7 @@
                     <div class="form-check">
                       <input
                         v-if="userRole === availableRoles.RESEARCHER || 
-                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId)) && selection[resource.id]"
                         :id="getElementIdFromResourceId(resource.id)"
                         v-model="selection[resource.id]['checked']"
                         class="form-check-input"
@@ -383,12 +382,7 @@ export default {
       }
     },
     author() {
-      for (const person of this.negotiation.persons) {
-        if (person.role === ROLES.RESEARCHER) {
-          return person
-        }
-      }
-      return ""
+          return this.negotiation.author
     },
     loading() {
       return this.negotiation === undefined
@@ -466,7 +460,8 @@ export default {
     selectAllOrganizationResource(org, event) {
       let checkedResource = undefined
       // sets the resource
-      this.organizationsById[org].resources.forEach(resource => {
+      this.organizationsById[org]?.resources?.forEach(resource => {
+        if(this.selection[resource.id])
         this.selection[resource.id].checked = event.target.checked
         // checkedResource === undefined avoid overwriting the checkedResource each iteration
         if (checkedResource === undefined && this.selection[resource.id].checked === true) {

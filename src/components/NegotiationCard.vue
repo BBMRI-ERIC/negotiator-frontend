@@ -1,8 +1,10 @@
 <template>
-  <div class="card mb-2">
-    <h5 class="card-header">
+  <div class="px-0 px-md-1">
+  <div class="card mb-2 px-0">
+    <h5 class="card-header bg-body">
       {{ title }}
-      <span class="badge rounded-pill bg-primary float-end">
+
+      <span class="badge bg-primary-light float-end">
         {{ transformString(status) }}
       </span>
     </h5>
@@ -18,6 +20,7 @@
       </h6>
     </div>
   </div>
+</div>
 </template>
 
 <script>

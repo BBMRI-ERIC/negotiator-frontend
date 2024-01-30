@@ -1,5 +1,9 @@
 <template>
   <div
+    v-if="!loading && negotiations.length > 0"
+    class="container"
+  >
+  <div
     class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm container"
     style="top: 65px"
   >
@@ -195,31 +199,35 @@
     </div>
   </div>
   <hr class="my-4">
-  <div
-    v-if="!loading"
-    class="container"
-  >
-    <div class="row">
+  
       <div
-        class="col-2 align-self-center"
-      />
-      <div
-        class="col-8 align-self-center"
+      class="row row-cols-1 d-grid-row"
+      :class="sortedNegotiations.length === 1 ? 'row-cols-md-1' : 'row-cols-md-2'"
       >
-        <div
-          class="col-2 align-self-center"
-        />
-        <p v-if="sortedNegotiations.length >0">
+        <p class="ps-0" v-if="sortedNegotiations.length > 0">
           <strong>Search results : </strong><br>
           {{ sortedNegotiations.length }} Negotiations found
         </p>
+        <div></div>
+
+<!-- // To do swich logic form front-end sorting and filtering to ban-end -->
+        <!-- <div class="dropdown mb-2 pe-1 mb-md-3 ps-0 d-md-flex justify-content-end align-items-center">
+          <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter status:
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li v-for="(status, index) in filtersStatus" :key="index">
+              <a class="dropdown-item" href="#" @click="filterStatus(status.value)">{{status.label}}</a>
+            </li>
+          </ul>
+        </div> -->
         <NegotiationCard
           v-for="fn in sortedNegotiations"
           :id="fn.id"
           :key="fn.id"
           :title="fn.payload.project.title"
           :status="fn.status"
-          :submitter="fn.persons.filter(p => p.role === availableRoles.RESEARCHER)[0].name"
+          :submitter="fn.author.name"
           :creation-date="formatDate(fn.creationDate)"
           class="cursor-pointer"
           @click="
@@ -230,16 +238,32 @@
           "
         />
         <h2
-          v-if="sortedNegotiations.length ===0"
+          v-if="sortedNegotiations.length === 0"
           class="text-center"
         >
           No Negotiations found
         </h2>
       </div>
-    </div>
+
+    <nav v-if="sortedNegotiations.length > 0 && pagination.totalPages > 1" aria-label="Page navigation example">
+      <ul class="pagination justify-content-center mt-2">
+        <li class="page-item" :class="currentPageNumber === 1 ? 'disabled' : ''">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true" @click="changeCurrentPage(currentPageNumber - 1)">Previous</a>
+        </li>
+        <li v-for="page in pagination.totalPages" class="page-item">
+          <a class="page-link" href="#" @click="changeCurrentPage(page)"> 
+            {{ page }}
+          </a>
+        </li>
+        <li class="page-item" :class="currentPageNumber < pagination.totalPages ? '' : 'disabled'">
+          <a class="page-link " href="#" @click="changeCurrentPage(currentPageNumber + 1)">Next</a>
+        </li>
+      </ul>
+</nav>
+
   </div>
   <div
-    v-else
+    v-else-if="loading"
     class="d-flex justify-content-center flex-row"
   >
     <div class="d-flex justify-content-center">
@@ -250,6 +274,18 @@
       <div class="d-flex justify-content-center">
         <h4 class="mb-3 ms-3">
           Loading ...
+        </h4>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          No Negotiations found
         </h4>
       </div>
     </div>
@@ -271,6 +307,10 @@ export default {
       type: Array,
       default: undefined
     },
+    pagination: {
+      type: Object,
+      default: undefined
+    },
     userRole: {
       type: String,
       required: true,
@@ -280,6 +320,8 @@ export default {
 
     }
   },
+  emits: ["currentPageNumber", "filterStatus"],
+
   data() {
     return {
       availableRoles: ROLES,
@@ -305,10 +347,20 @@ export default {
         dateStart: "",
         dateEnd: ""
       },
+      filtersStatus: [
+        {value: 'SUBMITTED', label: "Submitted"},
+        {value: 'APPROVED', label: "Approved"},
+        {value: 'DECLINED', label: "Declined"},
+        {value: 'IN_PROGRESS', label: "In progress"},
+        {value: 'PAUSED', label: "Paused"},
+        {value: 'CONCLUDED', label: "Concluded"},
+        {value: 'ABANDONED', label: "Abandoned"},
+      ],
       sortBy: { sortColumn: undefined },
       isSortFromURL: true, 
       statusFilterFirstLoad: true,
-      dateFilterFirstLoad: true
+      dateFilterFirstLoad: true,
+      currentPageNumber: 1
     }
   }, 
   computed: {
@@ -461,6 +513,13 @@ export default {
     },
     isChecked(value){
       return this.sortBy.sortColumn === value ? true : false
+    },
+    changeCurrentPage(pageNumber) {
+      this.$emit("currentPageNumber", pageNumber);
+      this.currentPageNumber = pageNumber;
+    },
+    filterStatus(status) {
+      this.$emit("filterStatus", status);
     }
   }  
 }
