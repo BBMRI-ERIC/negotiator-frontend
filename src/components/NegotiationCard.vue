@@ -1,6 +1,6 @@
 <template>
-  <div class="px-0 px-md-1">
-  <div class="card mb-2 px-0">
+  <div>
+  <div class="card mb-2">
     <h5 class="card-header bg-body">
       {{ title }}
 
