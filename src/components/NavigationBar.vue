@@ -6,7 +6,7 @@
     <div class="container-fluid">
       <img
         src="../assets/images/logo.svg"
-        width="125"
+        height="34"
         class="me-2"
       >
       <button
