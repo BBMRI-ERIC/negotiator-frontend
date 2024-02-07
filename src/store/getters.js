@@ -1,3 +1,4 @@
 export default {
-  getNotification: state => state.notification
+  getNotification: state => state.notification,
+  getSavedNegotiationsView: state => state.savedNegotiationsView
 }

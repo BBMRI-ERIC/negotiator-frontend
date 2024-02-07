@@ -16,7 +16,7 @@
         Created on: {{ creationDate }}
       </h6>
       <h6 class="card-subtitle mb-2 text-muted">
-        Created by: {{ submitter }}
+        Author: {{ submitter }}
       </h6>
     </div>
   </div>

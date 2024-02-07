@@ -255,5 +255,8 @@ export default {
         document.body.removeChild(anchorElement)
         window.URL.revokeObjectURL(href)
       })
-  }
+  },
+  setSavedNegotiationsView({ state, commit }, { negotiationsView }) {
+      commit("setSavedNegotiationsView", negotiationsView)
+  },
 }

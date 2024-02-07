@@ -210,27 +210,28 @@
         <button
           type="button"
           class="btn btn-sm me-2"
-          :class="activeView === 'Card-one-column' ? 'btn-primary-light' : activeView === 'Card-two-column' ? 'btn-primary-light' : 'bg-body'"
-          @click="activeView = 'Card-one-column'"
+          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-primary-light' : savedNegotiationsView === 'Card-two-column' ? 'btn-primary-light' : 'bg-body'"
+          @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
         >
         <i class="bi bi-card-heading"></i>
         </button>
 
         <button
+          v-if="sortedNegotiations.length > 1"
           type="button"
           class="btn btn-sm me-2"
-          :class="activeView === 'Card-one-column' ? 'btn-light':'bg-body'"
-          @click="activeView = 'Card-one-column'"
+          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
+          @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
         >
-        <i class="bi-three-dots-vertical"></i>
+        <i class="bi bi-list"></i>
         </button>
 
         <button
         v-if="sortedNegotiations.length > 1"
           type="button"
           class="btn btn-sm me-2"
-          :class="activeView === 'Card-two-column' ? 'btn-light':'bg-body'"
-          @click="activeView = 'Card-two-column'"
+          :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
+          @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView({negotiationsView:'Card-two-column'})"
         >
         <i class="bi bi-grid"></i>
         </button>
@@ -238,17 +239,17 @@
         <button
           type="button"
           class="btn btn-sm"
-          :class="activeView === 'Table' ? 'btn-primary-light' : 'bg-body'"
-          @click="activeView = 'Table'"
+          :class="savedNegotiationsView === 'Table' ? 'btn-primary-light' : 'bg-body'"
+          @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
         >
         <i class="bi bi-table"></i>
         </button>
       </div>
     </div>
       <div
-      v-if="activeView === 'Card-one-column' || activeView === 'Card-two-column'"
+      v-if="savedNegotiationsView === 'Card-one-column' || savedNegotiationsView === 'Card-two-column'"
       class="row row-cols-1 d-grid-row"
-      :class="activeView === 'Card-one-column' ? 'row-cols-md-1' : 'row-cols-md-2'"
+      :class="savedNegotiationsView === 'Card-one-column' ? 'row-cols-md-1' : 'row-cols-md-2'"
       >
         <NegotiationCard
           v-for="fn in sortedNegotiations"
@@ -268,15 +269,15 @@
         />
         </div>
 
-        <div v-if="activeView === 'Table'">
+        <div v-if="savedNegotiationsView === 'Table'">
         <div class="table-responsive">
           <table class="table table-hover">
             <thead>
               <tr>
-                <th scope="col"></th>
+                <th scope="col">Title</th>
                 <th scope="col">Negotiation ID</th>
                 <th scope="col">Created on</th>
-                <th scope="col">Created by</th>
+                <th scope="col">Author</th>
                 <th scope="col">Status</th>
                 <th scope="col"></th>
               </tr>
@@ -366,6 +367,7 @@
 <script>
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
+import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
 
 
@@ -431,9 +433,8 @@ export default {
       isSortFromURL: true, 
       statusFilterFirstLoad: true,
       dateFilterFirstLoad: true,
-      currentPageNumber: 1,
-      activeView: 'Card-one-column'
-    }
+      currentPageNumber: 1
+      }
   }, 
   computed: {
     filteredNegotiations: function() {
@@ -473,12 +474,19 @@ export default {
       }
       return 1
     },
+    ...mapGetters({ savedNegotiationsView: "getSavedNegotiationsView" })
   },
   beforeMount() {
     this.loadActiveFiltersFromURL()
     this.loadSortingFromURL()
+    if(this.savedNegotiationsView === '') {
+      this.setSavedNegotiationsView({negotiationsView:'Card-one-column'})
+    }
   },
   methods: {
+    ...mapActions([
+      "setSavedNegotiationsView"
+    ]),
     triggerSort(column) {
       this.sortBy.sortColumn = column
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
