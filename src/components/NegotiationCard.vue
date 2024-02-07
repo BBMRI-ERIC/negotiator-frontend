@@ -1,6 +1,6 @@
 <template>
-  <div class="px-0 px-md-1">
-  <div class="card mb-2 px-0">
+  <div>
+  <div class="card mb-2">
     <h5 class="card-header bg-body">
       {{ title }}
 
@@ -16,7 +16,7 @@
         Created on: {{ creationDate }}
       </h6>
       <h6 class="card-subtitle mb-2 text-muted">
-        Created by: {{ submitter }}
+        Author: {{ submitter }}
       </h6>
     </div>
   </div>
