@@ -1,5 +1,6 @@
 import { createApp } from "vue"
 import App from "./App.vue"
+import VueMatomo from 'vue-matomo'
 import router from "./router"
 import store from "./store"
 import { sync } from "vuex-router-sync"
@@ -16,7 +17,23 @@ library.add(faPencil)
 library.add(faTrash)
 library.add(faDownload)
 
-const app = createApp(App)
+let matomoHost = ''
+let matomoSiteId = 0
+if(window.location.origin === 'http://localhost:8080') {
+    matomoHost = 'https://matomo.bbmri-eric.eu/'
+    matomoSiteId = 1
+}else if(window.location.origin === 'https://negotiator.acc.bbmri-eric.eu') {
+    matomoHost = 'https://negotiator.acc.bbmri-eric.eu'
+    matomoSiteId = 2
+}else if(window.location.origin === 'https://negotiator.bbmri-eric.eu') {
+    matomoHost = 'https://negotiator.bbmri-eric.eu'
+    matomoSiteId = 3
+}
+
+const app = createApp(App).use(VueMatomo, {
+    host: matomoHost,
+    siteId: matomoSiteId,
+  })
 
 app.use(router)
 app.use(store)
@@ -27,5 +44,7 @@ app.component("FontAwesomeIcon", FontAwesomeIcon)
 sync(store, router)
 
 app.mount("#app")
+
+window._paq.push(['trackPageView']); // To track a page view
 
 import "./assets/scss/bbmri.scss"
