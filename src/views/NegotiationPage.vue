@@ -455,6 +455,8 @@ export default {
       await this.updateNegotiationStatus({
         negotiationId: this.negotiation.id,
         event: action
+      }).then(() => {
+        this.$router.replace({ params: {userRole:"ROLE_RESEARCHER"} })
       })
     },
     getElementIdFromResourceId(resourceId) {
