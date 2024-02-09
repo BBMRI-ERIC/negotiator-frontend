@@ -11,28 +11,16 @@ import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css"
 import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
+import matomo from "./config/matomo.js" 
 
 library.add(faSpinner)
 library.add(faPencil)
 library.add(faTrash)
 library.add(faDownload)
 
-let matomoHost = ''
-let matomoSiteId = 0
-if(window.location.origin === 'http://localhost:8080') {
-    matomoHost = 'https://matomo.bbmri-eric.eu/'
-    matomoSiteId = 1
-}else if(window.location.origin === 'https://negotiator.acc.bbmri-eric.eu') {
-    matomoHost = 'https://negotiator.acc.bbmri-eric.eu'
-    matomoSiteId = 2
-}else if(window.location.origin === 'https://negotiator.bbmri-eric.eu') {
-    matomoHost = 'https://negotiator.bbmri-eric.eu'
-    matomoSiteId = 3
-}
-
 const app = createApp(App).use(VueMatomo, {
-    host: matomoHost,
-    siteId: matomoSiteId,
+    host: matomo.matomoHost,
+    siteId: matomo.matomoId,
   })
 
 app.use(router)
