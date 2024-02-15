@@ -75,7 +75,7 @@
               style="min-height: 38px;"
                 data-bs-toggle="collapse"
                 data-bs-target="#resourcesList"
-                aria-expanded="false"
+                aria-expanded="true"
                 aria-controls="resourcesList"
                 type="button"
               >
@@ -128,7 +128,7 @@
             </div>
             <div
               id="resourcesList"
-              class="collapse"
+              class="collapse show"
             >
               <div
                 v-for="[orgId, org] in Object.entries(organizationsById)"
