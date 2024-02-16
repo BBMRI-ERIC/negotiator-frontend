@@ -71,21 +71,28 @@
           </li>
           <li class="list-group-item p-3">
             <div 
-              class="collections-header d-flex flex-row mb-3 justify-content-between"
+              class="d-flex flex-row mb-3 justify-content-between"
               style="min-height: 38px;"
+            >
+              <div 
                 data-bs-toggle="collapse"
                 data-bs-target="#resourcesList"
-                aria-expanded="true"
                 aria-controls="resourcesList"
+                aria-expanded="true"
                 type="button"
               >
-              <div>
                 <span class="fs-5 fw-bold text-secondary mt-3">
                   <i class="bi bi-card-list" />
                   COLLECTIONS ({{ numberOfResources }})
                 </span>
               </div>
-              <div class="justify-content-end pt-1">
+              <div 
+              data-bs-toggle="collapse"
+              data-bs-target="#resourcesList"
+              aria-controls="resourcesList"
+              aria-expanded="true"
+              type="button"
+              class="collections-header justify-content-end pt-1">
                 <i class="bi bi-chevron-down"></i>
                 <i class="bi bi-chevron-up"></i>
               </div>
