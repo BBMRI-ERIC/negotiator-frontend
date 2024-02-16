@@ -533,11 +533,8 @@ export default {
             event: event
           })
         } 
-        // update currentResourceEvents
-        this.currentResourceEvents = await this.retrievePossibleEventsForResource({
-            negotiationId: this.negotiation.id,
-            resourceId: this.savedResourceId
-        })
+        // update status and status select
+        this.$router.go(0)
       }
     },
     transformString(string) {
