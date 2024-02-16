@@ -32,7 +32,6 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/admin' ? 'text-primary' : ''"
               to="/admin"
             >
               <i class="bi bi-house-gear" />
@@ -45,7 +44,6 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/researcher' ? 'text-primary-light' : ''"
               to="/researcher"
             >
               <i class="bi bi-folder2" />
@@ -58,7 +56,6 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/biobanker' ? 'text-primary-light' : ''"
               to="/biobanker"
             >
               <i class="bi bi-hospital" />

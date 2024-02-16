@@ -31,7 +31,6 @@
       color="var(--bs-secondary)"
       step-size="md"
       @on-complete="startNegotiation"
-      @on-change="restartStepFeedback"
     >
       <tab-content
         title="Request summary"
@@ -300,9 +299,6 @@ export default {
         this.showStepFeedback = !valid
         return valid
       }
-    },    
-    restartStepFeedback() {
-      this.showStepFeedback = false
     }
   },
 }
