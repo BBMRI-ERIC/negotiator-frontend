@@ -329,6 +329,7 @@ export default {
       negotiationStatusOptions: [],
       availableRoles: ROLES,
       currentResourceEvents: [],
+      savedResourceId: undefined,
       selection: {},
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
@@ -508,6 +509,7 @@ export default {
             resourceId: resourceId
           }).then((data) => {
             this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
+            this.savedResourceId = resourceId
             // gets the orgId of the organization of the checked resource
             return data
           })
@@ -534,6 +536,11 @@ export default {
             event: event
           })
         } 
+        // update currentResourceEvents
+        this.currentResourceEvents = await this.retrievePossibleEventsForResource({
+            negotiationId: this.negotiation.id,
+            resourceId: this.savedResourceId
+        })
       }
     },
     transformString(string) {
