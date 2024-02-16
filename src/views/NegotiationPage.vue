@@ -541,10 +541,11 @@ export default {
             negotiationId: this.negotiation.id,
             resourceId: resource,
             event: event
+          }).then(() => {
+            // update status and status select
+            this.$router.go(0)
           })
         } 
-        // update status and status select
-        this.$router.go(0)
       }
     },
     transformString(string) {
