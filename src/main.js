@@ -35,4 +35,4 @@ app.mount("#app")
 
 window._paq.push(['trackPageView']); // To track a page view
 
-import "./assets/scss/bbmri.scss"
+import "./assets/scss/theme.scss"

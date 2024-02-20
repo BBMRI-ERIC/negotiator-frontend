@@ -17,7 +17,7 @@
             >
           </div>
           <h1
-            class="text-center card-title text-logo-grey fw-bold mb-5"
+            class="text-center card-title text-login-tittle-text fw-bold mb-5"
           >
             <b>NEGOTIATOR</b>
           </h1>
@@ -39,28 +39,28 @@
                   src="../assets/images/ls-aai-logo.png"
                   alt="icon"
                 >
-                <span class="align-self-center fw-boldtext-logo-grey pe-4">
+                <span class="align-self-center  text-primary pe-4">
                   Life Science Login</span>
               </button>
             </div>
           </div>
         </div>
         <div
-          class="text-center mt-2 mb-2"
+          class="text-center text-primary-text mt-2 mb-2"
         >
           Not familiar with LS Login? Visit their <a
             target="_blank"
             href="https://lifescience-ri.eu/ls-login.html"
           >website</a>.
         </div>
-        <div class="text-center mb-2">
+        <div class="text-center text-primary-text mb-2">
           Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
         </div>
-        <div class="text-center col mb-2">
+        <div class="text-center text-primary-text col mb-2">
             <i class="bi bi-github" />
             <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
         </div>
-        <div class="text-center mb-5">
+        <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="negotiation && negotiation.postsEnabled">
-    <h5>Comments</h5>
+    <h5 class="text-primary">Comments</h5>
     <div
       v-for="post in posts"
       :key="post.id"
@@ -32,14 +32,14 @@
       v-if="posts.length === 0"
       class="my-3"
     >
-    <h5>Send a message</h5>
+    <h5 class="text-primary">Send a message</h5>
     <form
       class="border rounded mb-4 p-2"
       @submit.prevent="sendMessage"
     >
       <textarea
         v-model="message"
-        class="form-control mb-3"
+        class="form-control mb-3 text-primary"
       />
       <NegotiationAttachment
         v-if="attachment"
@@ -73,7 +73,7 @@
         <select
           id="recipient"
           v-model="recipientId"
-          class="form-select w-25"
+          class="form-select w-25 text-primary"
         >
           <option
             disabled

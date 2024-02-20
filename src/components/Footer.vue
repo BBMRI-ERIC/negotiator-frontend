@@ -1,6 +1,6 @@
 <template>
     <footer
-        class="bottom-0 p-0 w-100"
+        class="bottom-0 p-0 w-100 text-primary-text"
     >
         <hr class="mt-10 mb-10">
         <div class="row d-flex flex-column flex-md-row">
@@ -28,14 +28,14 @@
                     <i class="bi bi-mic-fill"></i>
                 </a>
                 <div class="mt-2 mb-2 mb-md-0">
-                    <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend" class="link-dark">  <i class="bi bi-github" />
+                    <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend" class="text-primary-text">  <i class="bi bi-github" />
                         GitHub
                     </a>
                 </div>
             </div>
           
             <div class="col text-center">
-                <a class="link-dark" href="https://www.bbmri-eric.eu/wp-content/uploads/BBMRI-ERIC_work-program_2022-2024_DIGITAL.pdf" >
+                <a class="link-dark text-primary-text" href="https://www.bbmri-eric.eu/wp-content/uploads/BBMRI-ERIC_work-program_2022-2024_DIGITAL.pdf" >
                     <img                
                         width="22"
                         height="22"
@@ -46,7 +46,7 @@
                     Work Programme    
                 </a>
                 <div class="ms-md-3 mt-2"> 
-                    <button type="button" class="btn btn-light ms-md-5" href="https://www.bbmri-eric.eu/news-event/"> Subscribe To Our Newsletter</button>
+                    <button type="button" class="btn btn-light ms-md-5 text-primary-text" href="https://www.bbmri-eric.eu/news-event/"> Subscribe To Our Newsletter</button>
                 </div>
             </div>
             <div>
