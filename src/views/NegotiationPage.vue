@@ -232,6 +232,12 @@
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-secondary">
+              Email:
+            </div>
+            <div>{{ author.email }}</div>
+          </li>
+          <li class="list-group-item p-2">
+            <div class="fw-bold text-secondary">
               Negotiation ID:
             </div>
             <span> {{ negotiation ? negotiation.id : "" }}</span>
