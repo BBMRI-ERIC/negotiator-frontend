@@ -202,9 +202,9 @@
   <div>
     <div class="row row-cols-2 d-grid-row mt-3">
       <p v-if="sortedNegotiations.length > 0">
-            <strong>Search results : </strong><br>
-            {{ sortedNegotiations.length }} Negotiations found
-          </p>
+        <strong>Search results : </strong><br>
+        <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
+      </p>
 
       <div class="text-end my-2">
         <button
