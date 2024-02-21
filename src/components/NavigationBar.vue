@@ -1,7 +1,7 @@
 <template>
   <nav
     v-if="oidcIsAuthenticated"
-    class="navbar fixed-top navbar-expand-lg navbar-light bg-light"
+    class="navbar fixed-top navbar-expand-lg navbar-light bg-navbar-background"
   >
     <div class="container-fluid">
       <img
@@ -32,10 +32,10 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/admin' ? 'text-primary' : ''"
+              :class="$route.path ===  '/admin' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/admin"
             >
-              <i class="bi bi-house-gear" />
+              <i class="bi bi-clipboard-check" />
               Review requests
             </router-link>
           </li>
@@ -45,10 +45,10 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/researcher' ? 'text-primary-light' : ''"
+              :class="$route.path ===  '/researcher' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/researcher"
             >
-              <i class="bi bi-folder2" />
+              <i class="bi bi-chat-left-dots" />
               Your negotiations
             </router-link>
           </li>
@@ -58,23 +58,23 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/biobanker' ? 'text-primary-light' : ''"
+              :class="$route.path ===  '/biobanker' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/biobanker"
             >
-              <i class="bi bi-hospital" />
+              <i class="bi bi-bank" />
               Your biobank
             </router-link>
           </li>
         </ul>
         <span
           v-if="oidcIsAuthenticated"
-          class="navbar-text me-2 "
+          class="navbar-text me-2 text-navbar-welcome-text"
         >
           Welcome back {{ oidcUser.name }}
         </span>
         <button
           v-if="oidcIsAuthenticated"
-          class="btn btn-outline-secondary me-2"
+          class="btn btn-outline-navbar-button-outline me-2"
           aria-current="page"
           @click.stop.prevent="signOutOidc"
         >

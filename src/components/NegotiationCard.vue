@@ -1,10 +1,10 @@
 <template>
   <div>
   <div class="card mb-2">
-    <h5 class="card-header bg-body">
+    <h5 class="card-header bg-body text-card-title-text">
       {{ title }}
 
-      <span class="badge bg-primary-light float-end">
+      <span class="badge bg-status-badge float-end">
         {{ transformString(status) }}
       </span>
     </h5>

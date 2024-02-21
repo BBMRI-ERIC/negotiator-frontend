@@ -4,7 +4,7 @@
   >
     <button
       type="button"
-      class="btn btn-secondary"
+      class="btn btn-primary"
       @click="
         $router.go(-1)
       "
@@ -29,7 +29,7 @@
             :key="element"
             class="list-group-item p-3"
           >
-            <span class="fs-5 fw-bold text-secondary mt-3">
+            <span class="fs-5 fw-bold text-primary mt-3">
               {{ key.toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -37,9 +37,9 @@
               class="mt-3"
             >
               <label
-                class="me-2 fw-bold"
+                class="me-2 fw-bold text-secondary-text"
               >{{ subelementkey.toUpperCase() }}:</label>
-              <span v-if="isAttachment(subelement)">
+              <span v-if="isAttachment(subelement)" class="text-secondary-text">
                 {{ subelement.name }}
                 <font-awesome-icon
                   v-if="isAttachment(subelement)"
@@ -49,13 +49,13 @@
                   @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
                 />
               </span>
-              <span v-else>
+              <span v-else class="text-secondary-text">
                 {{ subelement }}
               </span>
             </div>
           </li>
           <li class="list-group-item p-3">
-            <span class="fs-5 fw-bold text-secondary mt-3 mb-3">
+            <span class="fs-5 fw-bold text-primary-text mt-3 mb-3">
               ATTACHMENTS
             </span>
             <NegotiationAttachment 
@@ -81,7 +81,7 @@
                 aria-expanded="true"
                 type="button"
               >
-                <span class="fs-5 fw-bold text-secondary mt-3">
+                <span class="fs-5 fw-bold text-primary-text mt-3">
                   <i class="bi bi-card-list" />
                   COLLECTIONS ({{ numberOfResources }})
                 </span>
@@ -161,7 +161,7 @@
                     <label
                       class="text-primary fw-bold ml-2 cursor-pointer"
                     >
-                      {{ org.name }}  
+                      {{ org.name }}
                     </label>   
                     </div>                    
                       <div class="justify-content-end pt-1">
@@ -191,12 +191,12 @@
                         @change="setCurrentMultipleStatus(resource.id)"
                       >
                       <label
-                        class="form-check-label"
+                        class="form-check-label text-primary-text"
                         :for="getElementIdFromResourceId(resource.id)"
                       >
                         {{ resource.name }}
                       </label>           
-                      <span class="badge rounded-pill bg-primary ms-4">
+                      <span class="badge rounded-pill bg-status-badge ms-4">
                         {{ getStatusForResource(resource.id) }}
                       </span>
                     </div>
@@ -225,28 +225,28 @@
       >
         <ul class="list-group list-group-flush my-3">
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
               Author:
             </div>
-            <div>{{ author.name }}</div>
+            <div class="text-secondary-text">{{ author.name }}</div>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
               Email:
             </div>
-            <div>{{ author.email }}</div>
+            <span class="text-secondary-text">{{ author.email }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
               Negotiation ID:
             </div>
-            <span> {{ negotiation ? negotiation.id : "" }}</span>
+            <span class="text-secondary-text"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
               Status:
             </div>
-            <span> {{ negotiation ? transformString(negotiation.status) : "" }}
+            <span class="text-secondary-text"> {{ negotiation ? transformString(negotiation.status) : "" }}
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"

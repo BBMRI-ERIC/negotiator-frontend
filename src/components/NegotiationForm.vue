@@ -37,13 +37,13 @@
         class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
       >
         <div class="mx-3">
-          <div class="fs-5 fw-bold text-secondary">
+          <div class="fs-5 fw-bold text-primary-text">
             SEARCH PARAMETERS
           </div>
           <div
             v-for="(qp, index) in queryParameters"
             :key="index" 
-            class="fs-6 text-dar"
+            class="fs-6 text-dar text-secondary-text"
           >
             {{ qp }}
           </div>
@@ -58,7 +58,7 @@
         v-for="section in accessCriteria.sections"
         :key="section.name"
         :title="section.label"
-        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
+        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto text-primary-text"
         :before-change="isSectionValid(section)"
       >
         <div
@@ -91,7 +91,7 @@
           :key="criteria.name"
           class="mb-4 mx-3"
         >
-          <label class="form-label" :class="{ required: criteria.required }"> 
+          <label class="form-label text-primary-text" :class="{ required: criteria.required }"> 
             {{ criteria.label }}
           </label> 
 
@@ -100,13 +100,13 @@
           <textarea
             v-if="criteria.type === 'textarea'"
             v-model="negotiationCriteria[section.name][criteria.name]"
-            class="form-control"
+            class="form-control text-secondary-text"
             :required="criteria.required"
           />
           <input
             v-else-if="criteria.type === 'file'"
             accept=".pdf"
-            class="form-control"
+            class="form-control text-secondary-text"
             :required="criteria.required"
             :type="criteria.type"
             @change="handleFileUpload($event, section.name, criteria.name)"
@@ -115,7 +115,7 @@
             v-else
             v-model="negotiationCriteria[section.name][criteria.name]"
             :type="criteria.type"
-            class="form-control"
+            class="form-control text-secondary-text"
             :required="criteria.required"
           >
         </div>
@@ -127,7 +127,7 @@
         <div
           v-for="section in accessCriteria.sections"
           :key="section.name"
-          class="border rounded-2 input-group p-3 mb-2 mb-3"
+          class="border rounded-2 input-group p-3 mb-2 mb-3 text-secondary-text"
         >
           <span class="mb-3 fs-4 fw-bold text-secondary">{{ section.label.toUpperCase() }}</span>
           <div
@@ -149,7 +149,7 @@
         <div v-if="props.isLastStep && isAdmin" class="form-check mb-3 d-flex justify-content-end">
           <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
           <label class="form-check-label ps-2" for="flexCheckDefault">
-             <p class="m-0">Mark as test request</p> 
+             <p class="m-0 text-secondary-text">Mark as test request</p> 
           </label>
         </div>
         <div class="wizard-footer-left">
