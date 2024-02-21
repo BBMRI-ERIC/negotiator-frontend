@@ -12,7 +12,7 @@ do
   sed -i 's|RESOURCES_PLACEHOLDER|'${API_RESOURCES}'|g' $file
   sed -i 's|MATOMO_HOST_PLACEHOLDER|'${MATOMO_HOST}'|g' $file
   sed -i 's|MATOMO_SITE_ID_PLACEHOLDER|'${MATOMO_SITE_ID}'|g' $file
-  sed -i 's|ACTIVE_THEME_EUCAIM_PLACEHOLDER|'${ACTIVE_THEME_EUCAIM}'|g' $file
+  sed -i 's|THEME_PATH_PLACEHOLDER|'${THEME_PATH:-./assets/scss/theme-bbmri.scss}'|g' $file
 
 done
 
