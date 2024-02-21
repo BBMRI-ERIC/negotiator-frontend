@@ -12,6 +12,8 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css"
 import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import matomo from "./config/matomo.js" 
+import activeTheme from "./config/theme.js" 
+
 
 library.add(faSpinner)
 library.add(faPencil)
@@ -35,4 +37,4 @@ app.mount("#app")
 
 window._paq.push(['trackPageView']); // To track a page view
 
-import "./assets/scss/theme.scss"
+import (`${activeTheme.activeThemeFile}`)

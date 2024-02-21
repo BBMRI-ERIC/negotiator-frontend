@@ -9,7 +9,7 @@
                     <img 
                         width="150"
                         height="40"
-                        src="../assets/images/logo-negotiator.svg"
+                        src="../assets/images/footer-logo-bbmri.svg"
                         alt="logo negotiator"
                     >
                 </a>

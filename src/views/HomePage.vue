@@ -10,10 +10,10 @@
         <div class="card py-5 p-3">
           <div class="col-10 col-md-4 align-self-center">
             <img
-              src="../assets/images/bbmri-logo.png"
+              :src="`${logoSrc}`"
               class="img-fluid mt-4 mb-2"
               style="min-width: 50px;"
-              alt="bbmri-logo"
+              alt="home-page-logo"
             >
           </div>
           <h1
@@ -70,9 +70,15 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import activeTheme from "../config/theme.js" 
 
 export default {
   name: "HomePage",
+  data() {
+    return {
+      logoSrc: activeTheme.homePageLogoFile,
+    }
+  },
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
   },

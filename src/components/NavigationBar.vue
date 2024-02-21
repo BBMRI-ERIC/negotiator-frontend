@@ -5,9 +5,10 @@
   >
     <div class="container-fluid">
       <img
-        src="../assets/images/logo.svg"
+        :src="`${logoSrc}`"
         height="34"
         class="me-2"
+        alt="nav-bar-logo"
       >
       <button
         class="navbar-toggler"
@@ -88,12 +89,14 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
+import activeTheme from "../config/theme.js" 
 
 export default {
   name: "NavigationBar",
   data() {
     return {
-      roles: []
+      roles: [],
+      logoSrc: activeTheme.navBarLogoFile,
     }
   },
   computed: {
