@@ -167,7 +167,7 @@
             class="btn btn-secondary"
             @click="props.nextTab()"
           >
-            {{ props.isLastStep ? "Start Negotiation" : "Next" }}
+            {{ props.isLastStep ? "Submit request" : "Next" }}
           </button>
         </div>
       </template>
