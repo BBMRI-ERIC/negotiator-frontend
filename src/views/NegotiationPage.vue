@@ -29,7 +29,7 @@
             :key="element"
             class="list-group-item p-3"
           >
-            <span class="fs-5 fw-bold text-primary mt-3">
+            <span class="fs-5 fw-bold text-primary-text mt-3">
               {{ key.toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
