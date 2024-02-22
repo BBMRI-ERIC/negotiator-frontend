@@ -5,7 +5,7 @@
   >
     <div class="container-fluid">
       <img
-        :src="`${logoSrc}`"
+        :src="logoSrc"
         height="34"
         class="me-2"
         alt="nav-bar-logo"
@@ -90,13 +90,15 @@
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
 import activeTheme from "../config/theme.js" 
+import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
+import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
 
 export default {
   name: "NavigationBar",
   data() {
     return {
       roles: [],
-      logoSrc: activeTheme.navBarLogoFile,
+      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
     }
   },
   computed: {

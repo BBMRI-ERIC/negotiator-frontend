@@ -37,4 +37,4 @@ app.mount("#app")
 
 window._paq.push(['trackPageView']); // To track a page view
 
-import (`${activeTheme.activeThemeFile}`)
+import (`./assets/scss/theme-${activeTheme.activeThemeFile}.scss`)

@@ -9,7 +9,7 @@
                     <img 
                         width="150"
                         height="40"
-                        src="../assets/images/footer-logo-bbmri.svg"
+                        :src="logoSrc"
                         alt="logo negotiator"
                     >
                 </a>
@@ -18,13 +18,13 @@
                 <span>
                     Follow Us:
                 </span>
-                <a href="https://www.linkedin.com/company/bbmri-eric" class="link-dark ms-2">
+                <a v-if="isFooterFollowUsVisible" href="https://www.linkedin.com/company/bbmri-eric" class="link-dark ms-2">
                     <i class="bi bi-linkedin mr-3" />
                 </a>
-                <a href="https://twitter.com/BBMRIERIC" class="link-dark ms-2">
+                <a v-if="isFooterFollowUsVisible" href="https://twitter.com/BBMRIERIC" class="link-dark ms-2">
                     <i class="bi bi-twitter-x" />
                 </a>
-                <a href="https://www.bbmri-eric.eu/bbmri-eric/bbmri-eric-podcast/" class="link-dark ms-2">
+                <a v-if="isFooterFollowUsVisible" href="https://www.bbmri-eric.eu/bbmri-eric/bbmri-eric-podcast/" class="link-dark ms-2">
                     <i class="bi bi-mic-fill"></i>
                 </a>
                 <div class="mt-2 mb-2 mb-md-0">
@@ -45,7 +45,7 @@
                     >
                     Work Programme    
                 </a>
-                <div class="ms-md-3 mt-2"> 
+                <div v-if="isFooterFollowUsVisible" class="ms-md-3 mt-2"> 
                     <button type="button" class="btn btn-light ms-md-5 text-primary-text" href="https://www.bbmri-eric.eu/news-event/"> Subscribe To Our Newsletter</button>
                 </div>
             </div>
@@ -64,6 +64,22 @@
         </div>
     </footer>
 </template>
+
+<script>
+import activeTheme from "../config/theme.js" 
+import bbmriLogo from '../assets/images/footer-bbmri.svg'
+import eucaimLogo from '../assets/images/footer-eucaim.png'
+
+export default {
+  name: "FooterPage",
+  data() {
+    return {
+      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
+      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
+    }
+  }
+}
+</script>
 
 <style scoped>
 a {

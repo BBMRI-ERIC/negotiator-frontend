@@ -10,7 +10,7 @@
         <div class="card py-5 p-3">
           <div class="col-10 col-md-4 align-self-center">
             <img
-              :src="`${logoSrc}`"
+              :src="logoSrc"
               class="img-fluid mt-4 mb-2"
               style="min-width: 50px;"
               alt="home-page-logo"
@@ -71,12 +71,14 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import activeTheme from "../config/theme.js" 
+import bbmriLogo from '../assets/images/home-bbmri.png'
+import eucaimLogo from '../assets/images/home-eucaim.png'
 
 export default {
   name: "HomePage",
   data() {
     return {
-      logoSrc: activeTheme.homePageLogoFile,
+      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
     }
   },
   computed: {
