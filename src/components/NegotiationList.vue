@@ -297,7 +297,7 @@
                 <td>{{fn.author.name}}</td>
                 <td>
                   <span class="badge bg-primary-light ">
-                    {{ fn.status }}
+                    {{ transformString(fn.status) }}
                   </span>
                   </td>
                   <td>
@@ -369,7 +369,7 @@ import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
 import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
-
+import { transformStatus } from "../utils/statusTransform.js"
 
 export default {
   name: "NegotiationsList",
@@ -600,7 +600,10 @@ export default {
     },
     filterStatus(status) {
       this.$emit("filterStatus", status);
-    }
+    },
+    transformString(string) {
+      return transformStatus(string)
+    },
   }  
 }
 </script>
