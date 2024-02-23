@@ -1,5 +1,9 @@
 <template>
   <div
+    v-if="!loading && negotiations.length > 0"
+    class="container"
+  >
+  <div
     class="px-3 pt-1 header-bar card sticky-top border-0 shadow-sm container"
     style="top: 65px"
   >
@@ -11,8 +15,8 @@
               aria-haspopup="true"
               class="btn dropdown-toggle"
               :class="{ 
-                'btn-secondary': sortBy.sortColumn != undefined, 
-                'btn-outline-secondary' : sortBy.sortColumn == undefined, 
+                'btn-sort-filter-button-outline': sortBy.sortColumn != undefined, 
+                'btn-outline-sort-filter-button-outline' : sortBy.sortColumn == undefined, 
                 'show': sortBy.sortColumn != undefined
               }"
               type="button"
@@ -30,7 +34,7 @@
               <div
                 v-for="(value, name) in sortAttrs"
                 :key="name"
-                class="form-check mx-2 my-2"
+                class="form-check mx-2 my-2 text-sort-filter-dropdown-text"
               >
                 <input
                   :id="name"
@@ -56,8 +60,8 @@
               aria-haspopup="true"
               class="btn dropdown-toggle"
               :class="{ 
-                'btn-secondary': filters.status.length > 0, 
-                'btn-outline-secondary' : filters.status.length === 0,
+                'btn-sort-filter-button-outline': filters.status.length > 0, 
+                'btn-outline-sort-filter-button-outline' : filters.status.length === 0,
                 'show': filters.status.length > 0 || !statusFilterFirstLoad
               }"
               type="button"
@@ -72,7 +76,7 @@
               > {{ filters.status.length }}</span>
             </button>
             <ul
-              class="dropdown-menu"
+              class="dropdown-menu text-sort-filter-dropdown-text"
               aria-labelledby="dropdownMenuButton1"
             >
               <div class="mx-2 my-2 dropdown-contents">
@@ -133,8 +137,8 @@
               aria-haspopup="true"
               class="btn dropdown-toggle"
               :class="{ 
-                'btn-secondary': filters.dateStart !== '' || filters.dateEnd !== '', 
-                'btn-outline-secondary' : filters.dateStart === '' && filters.dateEnd === '',
+                'btn-sort-filter-button-outline': filters.dateStart !== '' || filters.dateEnd !== '', 
+                'btn-outline-sort-filter-button-outline' : filters.dateStart === '' && filters.dateEnd === '',
                 'show': filters.dateStart !== '' || filters.dateEnd !== '' || !dateFilterFirstLoad 
               }"
               type="button"
@@ -152,7 +156,7 @@
               class="dropdown-menu"
               aria-labelledby="dropdownMenuButton1"
             >
-              <div class="mx-2 my-2 dropdown-contents">
+              <div class="mx-2 my-2 dropdown-contents text-sort-filter-dropdown-text">
                 <div class="d-flex align-items-center mb-2">
                   <label
                     class="pe-2 w-25"
@@ -161,7 +165,7 @@
                   <input
                     id="startDate"
                     v-model="selectedStartDate"
-                    class="form-control"
+                    class="form-control text-sort-filter-dropdown-text"
                     type="date"
                     @input="updateFilter('dateStart', selectedStartDate)"
                   >
@@ -174,7 +178,7 @@
                   <input
                     id="endDate"
                     v-model="selectedEndDate"
-                    class="form-control"
+                    class="form-control text-sort-filter-dropdown-text"
                     type="date"
                     @input="updateFilter('dateEnd', selectedEndDate)"
                   >
@@ -185,7 +189,7 @@
           <div class="dropdown mb-2  b-dropdown ms-auto filter-dropdown position-static btn-group d-flex justify-content-end">
             <button
               type="button"
-              class="btn btn-outline-danger"
+              class="btn btn-outline-sort-filter-clear-button-outline"
               @click="clearAllFilters()"
             >
               Clear all filters
@@ -194,32 +198,66 @@
         </div>
     </div>
   </div>
-  <hr class="my-4">
-  <div
-    v-if="!loading"
-    class="container"
-  >
-    <div class="row">
+
+  <div>
+    <div class="row row-cols-2 d-grid-row mt-3 ">
+      <p v-if="pagination.totalElements > 0">
+        <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
+        <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
+      </p>
+
+      <div class="text-end my-2">
+        <button
+          type="button"
+          class="btn btn-sm me-2"
+          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
+          @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+        >
+        <i class="bi bi-card-heading"></i>
+        </button>
+
+        <button
+          v-if="sortedNegotiations.length > 1"
+          type="button"
+          class="btn btn-sm me-2"
+          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
+          @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+        >
+        <i class="bi bi-list"></i>
+        </button>
+
+        <button
+        v-if="sortedNegotiations.length > 1"
+          type="button"
+          class="btn btn-sm me-2"
+          :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
+          @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView({negotiationsView:'Card-two-column'})"
+        >
+        <i class="bi bi-grid"></i>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm"
+          :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
+          @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
+        >
+        <i class="bi bi-table"></i>
+        </button>
+      </div>
+    </div>
       <div
-        class="col-2 align-self-center"
-      />
-      <div
-        class="col-8 align-self-center"
+      v-if="savedNegotiationsView === 'Card-one-column' || savedNegotiationsView === 'Card-two-column'"
+      class="row row-cols-1 d-grid-row"
+      :class="savedNegotiationsView === 'Card-one-column' ? 'row-cols-md-1' : 'row-cols-md-2'"
       >
-        <div
-          class="col-2 align-self-center"
-        />
-        <p v-if="sortedNegotiations.length >0">
-          <strong>Search results : </strong><br>
-          {{ sortedNegotiations.length }} Negotiations found
-        </p>
         <NegotiationCard
           v-for="fn in sortedNegotiations"
           :id="fn.id"
           :key="fn.id"
           :title="fn.payload.project.title"
           :status="fn.status"
-          :submitter="fn.persons.filter(p => p.role === availableRoles.RESEARCHER)[0].name"
+          :submitter="fn.author.name"
           :creation-date="formatDate(fn.creationDate)"
           class="cursor-pointer"
           @click="
@@ -229,17 +267,76 @@
             })
           "
         />
+        </div>
+
+        <div v-if="savedNegotiationsView === 'Table'">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr class="text-table-header-text">
+                <th scope="col">Title</th>
+                <th scope="col">Negotiation ID</th>
+                <th scope="col">Created on</th>
+                <th scope="col">Author</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(fn,index) in sortedNegotiations" :key="index"
+                @click="$router.push({
+                  name: 'negotiation-page',
+                  params: { negotiationId: fn.id, userRole: userRole, filters: filters, sortBy: sortby }
+                })"
+              >
+                <th scope="row" class="text-table-title-text">
+                  {{fn.payload.project.title}}
+                </th>
+                <td class="text-muted">{{fn.id}}</td>
+                <td class="text-muted">{{formatDate(fn.creationDate)}}</td>
+                <td class="text-muted">{{fn.author.name}}</td>
+                <td>
+                  <span class="badge" :class="getBadgeColor(fn.status)" style="width: 120px;">
+                    <i :class="getBadgeIcon(fn.status)" class="px-1" />
+                    {{ transformStatus(fn.status) }}
+                  </span>
+                  </td>
+                  <td>
+                    <i class="bi bi-chevron-right float-end"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+      </div>
+      
         <h2
-          v-if="sortedNegotiations.length ===0"
+          v-if="sortedNegotiations.length === 0"
           class="text-center"
         >
           No Negotiations found
         </h2>
       </div>
-    </div>
+
+    <nav v-if="sortedNegotiations.length > 0 && pagination.totalPages > 1" aria-label="Page navigation example">
+      <ul class="pagination justify-content-center mt-2">
+        <li class="page-item" :class="currentPageNumber === 1 ? 'disabled' : ''">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true" @click="changeCurrentPage(currentPageNumber - 1)">Previous</a>
+        </li>
+        <li v-for="page in pagination.totalPages" class="page-item">
+          <a class="page-link" href="#" @click="changeCurrentPage(page)"> 
+            {{ page }}
+          </a>
+        </li>
+        <li class="page-item" :class="currentPageNumber < pagination.totalPages ? '' : 'disabled'">
+          <a class="page-link " href="#" @click="changeCurrentPage(currentPageNumber + 1)">Next</a>
+        </li>
+      </ul>
+  </nav>
+
   </div>
   <div
-    v-else
+    v-else-if="loading"
     class="d-flex justify-content-center flex-row"
   >
     <div class="d-flex justify-content-center">
@@ -254,13 +351,26 @@
       </div>
     </div>
   </div>
+  <div
+    v-else
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          No Negotiations found
+        </h4>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
+import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
-
+import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
 export default {
   name: "NegotiationsList",
@@ -269,6 +379,10 @@ export default {
   props: {
     negotiations: {
       type: Array,
+      default: undefined
+    },
+    pagination: {
+      type: Object,
       default: undefined
     },
     userRole: {
@@ -280,6 +394,8 @@ export default {
 
     }
   },
+  emits: ["currentPageNumber", "filterStatus"],
+
   data() {
     return {
       availableRoles: ROLES,
@@ -305,11 +421,21 @@ export default {
         dateStart: "",
         dateEnd: ""
       },
+      filtersStatus: [
+        {value: 'SUBMITTED', label: "Submitted"},
+        {value: 'APPROVED', label: "Approved"},
+        {value: 'DECLINED', label: "Declined"},
+        {value: 'IN_PROGRESS', label: "In progress"},
+        {value: 'PAUSED', label: "Paused"},
+        {value: 'CONCLUDED', label: "Concluded"},
+        {value: 'ABANDONED', label: "Abandoned"},
+      ],
       sortBy: { sortColumn: undefined },
       isSortFromURL: true, 
       statusFilterFirstLoad: true,
-      dateFilterFirstLoad: true
-    }
+      dateFilterFirstLoad: true,
+      currentPageNumber: 1
+      }
   }, 
   computed: {
     filteredNegotiations: function() {
@@ -349,16 +475,23 @@ export default {
       }
       return 1
     },
+    ...mapGetters({ savedNegotiationsView: "getSavedNegotiationsView" })
   },
   beforeMount() {
     this.loadActiveFiltersFromURL()
     this.loadSortingFromURL()
+    if(this.savedNegotiationsView === '') {
+      this.setSavedNegotiationsView({negotiationsView:'Card-one-column'})
+    }
   },
   mounted() {
     if(this.$route.path === '/researcher')
     this.$tours['myTour'].start()
   },
   methods: {
+    ...mapActions([
+      "setSavedNegotiationsView"
+    ]),
     triggerSort(column) {
       this.sortBy.sortColumn = column
       this.updateRoutingParams(this.activeFilters(this.filters), this.sortBy)
@@ -465,6 +598,22 @@ export default {
     },
     isChecked(value){
       return this.sortBy.sortColumn === value ? true : false
+    },
+    changeCurrentPage(pageNumber) {
+      this.$emit("currentPageNumber", pageNumber);
+      this.currentPageNumber = pageNumber;
+    },
+    filterStatus(status) {
+      this.$emit("filterStatus", status);
+    },
+    transformStatus(string) {
+      return transformStatus(string)
+    },
+    getBadgeColor(badgeText) {
+      return getBadgeColor(badgeText)
+    },
+    getBadgeIcon(badgeText) {
+      return getBadgeIcon(badgeText)
     }
   }  
 }

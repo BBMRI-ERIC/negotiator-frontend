@@ -5,6 +5,7 @@ let BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
+const USER_PATH = `${BASE_API_PATH}/users`
 const USER_ROLES_PATH = `${BASE_API_PATH}/users/roles`
 const USER_RESOURCES_PATH = `${BASE_API_PATH}/users/resources`
 const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
@@ -75,8 +76,18 @@ export default {
       })
 
   },
-  retrieveNegotiationsByRole({ state, commit }, { userRole }) {
-    return axios.get(`${NEGOTIATION_PATH}`, { headers: getBearerHeaders(state.oidc.access_token), params: { userRole: userRole } })
+  retrieveNegotiations({ state, commit }, { statusFilter, pageNumber  }) {
+    return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+        return []
+      })
+  },
+  retrieveNegotiationsByRole({ state, commit }, { role, userId, statusFilter, pageNumber  }) {
+    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { role: role, status: statusFilter, page: pageNumber } })
       .then((response) => {
         return response.data
       })
@@ -202,6 +213,15 @@ export default {
         return "Failed"
       })
   },
+  retrieveUser({ state, commit }) {
+    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded
+      })
+      .catch(() => {
+        commit("setNotification", "Error sending message")      
+      })
+  },
   retrieveUserRoles({ state, commit }) {
     return axios.get(USER_ROLES_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
@@ -235,5 +255,8 @@ export default {
         document.body.removeChild(anchorElement)
         window.URL.revokeObjectURL(href)
       })
-  }
+  },
+  setSavedNegotiationsView({ state, commit }, { negotiationsView }) {
+      commit("setSavedNegotiationsView", negotiationsView)
+  },
 }

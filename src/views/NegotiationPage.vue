@@ -4,7 +4,7 @@
   >
     <button
       type="button"
-      class="btn btn-secondary"
+      class="btn btn-primary"
       @click="
         $router.go(-1)
       "
@@ -19,9 +19,13 @@
       @confirm="updateNegotiation('ABANDON')"
     />
     <div class="row mt-4">
+      <div class="row-col-2">
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       </h1>
+      <span :class="getBadgeColor(negotiation.status)" class="badge py-2 rounded-pill"><i :class="getBadgeIcon(negotiation.status)" class="px-1" /> {{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
+      <hr>
+    </div>
       <div class="col-8">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li
@@ -29,7 +33,7 @@
             :key="element"
             class="list-group-item p-3"
           >
-            <span class="fs-5 fw-bold text-secondary mt-3">
+            <span class="fs-5 fw-bold text-primary-text mt-3">
               {{ key.toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -37,9 +41,9 @@
               class="mt-3"
             >
               <label
-                class="me-2 fw-bold"
+                class="me-2 fw-bold text-secondary-text"
               >{{ subelementkey.toUpperCase() }}:</label>
-              <span v-if="isAttachment(subelement)">
+              <span v-if="isAttachment(subelement)" class="text-secondary-text">
                 {{ subelement.name }}
                 <font-awesome-icon
                   v-if="isAttachment(subelement)"
@@ -49,13 +53,13 @@
                   @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
                 />
               </span>
-              <span v-else>
+              <span v-else class="text-secondary-text">
                 {{ subelement }}
               </span>
             </div>
           </li>
           <li class="list-group-item p-3">
-            <span class="fs-5 fw-bold text-secondary mt-3 mb-3">
+            <span class="fs-5 fw-bold text-primary-text mt-3 mb-3">
               ATTACHMENTS
             </span>
             <NegotiationAttachment 
@@ -71,20 +75,30 @@
           </li>
           <li class="list-group-item p-3">
             <div 
-              class="d-flex flex-row mb-3"
+              class="d-flex flex-row mb-3 justify-content-between"
               style="min-height: 38px;"
             >
-              <div
-                type="button"
+              <div 
                 data-bs-toggle="collapse"
                 data-bs-target="#resourcesList"
-                aria-expanded="false"
                 aria-controls="resourcesList"
+                aria-expanded="true"
+                type="button"
               >
-                <span class="fs-5 fw-bold text-secondary mt-3">
+                <span class="fs-5 fw-bold text-primary-text mt-3">
                   <i class="bi bi-card-list" />
-                  RESOURCES ({{ numberOfResources }})
+                  COLLECTIONS ({{ numberOfResources }})
                 </span>
+              </div>
+              <div 
+              data-bs-toggle="collapse"
+              data-bs-target="#resourcesList"
+              aria-controls="resourcesList"
+              aria-expanded="true"
+              type="button"
+              class="collections-header justify-content-end pt-1">
+                <i class="bi bi-chevron-down"></i>
+                <i class="bi bi-chevron-up"></i>
               </div>
               <div 
                 v-if="currentMultipleResourceStatus !== undefined && currentResourceEvents.length > 0"
@@ -104,7 +118,7 @@
                     :key="key"
                     :value="key"
                   >
-                    {{ transformString(key)  }}
+                    {{ transformStatus(key)  }}
                   </option>
                 </select>
                 <button
@@ -125,7 +139,7 @@
             </div>
             <div
               id="resourcesList"
-              class="collapse"
+              class="collapse show"
             >
               <div
                 v-for="[orgId, org] in Object.entries(organizationsById)"
@@ -140,7 +154,7 @@
                   <div class="form-check d-flex justify-content-between cursor-pointer">
                     <div>
                     <input
-                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                      v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId) && selection[orgId])"
                       :id="getElementIdFromResourceId(orgId)"
                       v-model="selection[orgId]['checked']"
                       class="form-check-input justify-content-start"
@@ -150,9 +164,8 @@
                     >   
                     <label
                       class="text-primary fw-bold ml-2 cursor-pointer"
-                      
                     >
-                      {{ org.name }}  
+                      {{ org.name }}
                     </label>   
                     </div>                    
                       <div class="justify-content-end pt-1">
@@ -173,7 +186,7 @@
                     <div class="form-check">
                       <input
                         v-if="userRole === availableRoles.RESEARCHER || 
-                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId))"
+                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId)) && selection[resource.id]"
                         :id="getElementIdFromResourceId(resource.id)"
                         v-model="selection[resource.id]['checked']"
                         class="form-check-input"
@@ -182,12 +195,12 @@
                         @change="setCurrentMultipleStatus(resource.id)"
                       >
                       <label
-                        class="form-check-label"
+                        class="form-check-label text-primary-text"
                         :for="getElementIdFromResourceId(resource.id)"
                       >
                         {{ resource.name }}
                       </label>           
-                      <span class="badge rounded-pill bg-primary ms-4">
+                      <span class="badge rounded-pill bg-status-badge ms-4">
                         {{ getStatusForResource(resource.id) }}
                       </span>
                     </div>
@@ -205,33 +218,35 @@
           :organizations="organizationsById"
           :recipients="postsRecipients"
         />
-        <div v-else>
-          <h5>
-            Your request is waiting for approval by our team. You will be notified of any changes via email.
-          </h5>
-        </div>
       </div>
       <div
         class="col-4"
       >
         <ul class="list-group list-group-flush my-3">
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
               Author:
             </div>
-            <div>{{ author.name }}</div>
+            <div class="text-secondary-text">{{ author.name }}</div>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
+              Email:
+            </div>
+            <span class="text-secondary-text">{{ author.email }}</span>
+          </li>
+          <li class="list-group-item p-2">
+            <div class="fw-bold text-primary-text">
               Negotiation ID:
             </div>
-            <span> {{ negotiation ? negotiation.id : "" }}</span>
+            <span class="text-secondary-text"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-secondary">
+            <div class="fw-bold text-primary-text">
               Status:
             </div>
-            <span> {{ negotiation ? transformString(negotiation.status) : "" }}
+            <span> 
+              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -271,7 +286,7 @@
                 type="button"
                 @click="updateNegotiation(status)"
               >
-                {{ transformString(status) }}
+                {{ transformStatus(status) }}
               </button>
             </li>
           </ul>
@@ -304,6 +319,7 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
+import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
 export default {
   name: "NegotiationPage",
@@ -327,6 +343,7 @@ export default {
       negotiationStatusOptions: [],
       availableRoles: ROLES,
       currentResourceEvents: [],
+      savedResourceId: undefined,
       selection: {},
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
@@ -383,12 +400,7 @@ export default {
       }
     },
     author() {
-      for (const person of this.negotiation.persons) {
-        if (person.role === ROLES.RESEARCHER) {
-          return person
-        }
-      }
-      return ""
+          return this.negotiation.author
     },
     loading() {
       return this.negotiation === undefined
@@ -446,7 +458,7 @@ export default {
     },
     getStatusForResource(resourceId) {
       let resource = this.resourcesById[resourceId].status
-      return this.transformString(resource)
+      return this.transformStatus(resource)
     },
     isAttachment(value) {
       return value instanceof Object
@@ -458,6 +470,8 @@ export default {
       await this.updateNegotiationStatus({
         negotiationId: this.negotiation.id,
         event: action
+      }).then(() => {
+        this.$router.replace({ params: {userRole:"ROLE_RESEARCHER"} })
       })
     },
     getElementIdFromResourceId(resourceId) {
@@ -466,7 +480,8 @@ export default {
     selectAllOrganizationResource(org, event) {
       let checkedResource = undefined
       // sets the resource
-      this.organizationsById[org].resources.forEach(resource => {
+      this.organizationsById[org]?.resources?.forEach(resource => {
+        if(this.selection[resource.id])
         this.selection[resource.id].checked = event.target.checked
         // checkedResource === undefined avoid overwriting the checkedResource each iteration
         if (checkedResource === undefined && this.selection[resource.id].checked === true) {
@@ -508,6 +523,7 @@ export default {
             resourceId: resourceId
           }).then((data) => {
             this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
+            this.savedResourceId = resourceId
             // gets the orgId of the organization of the checked resource
             return data
           })
@@ -532,12 +548,21 @@ export default {
             negotiationId: this.negotiation.id,
             resourceId: resource,
             event: event
+          }).then(() => {
+            // update status and status select
+            this.$router.go(0)
           })
         } 
       }
     },
-    transformString(string) {
-      return string ? string.toUpperCase().split('_').join(' ') : "";
+    transformStatus(badgeText) {
+      return transformStatus(badgeText)
+    },
+    getBadgeColor(badgeText) {
+      return getBadgeColor(badgeText)
+    },
+    getBadgeIcon(badgeText) {
+      return getBadgeIcon(badgeText)
     },
   },
 }
@@ -551,6 +576,16 @@ export default {
   display: none;
 }
 .card-header[aria-expanded=false] .bi-chevron-up {
+  display: none;
+}
+
+.collections-header[aria-expanded=true] .bi-chevron-down {
+  display: none;
+}
+.collections-header:not([aria-expanded]) .bi-chevron-up {
+  display: none;
+}
+.collections-header[aria-expanded=false] .bi-chevron-up {
   display: none;
 }
 </style>

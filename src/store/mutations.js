@@ -4,5 +4,8 @@ export default {
   },
   setNegotiations(state, negotiations) {
     state.negotiations = negotiations
+  },
+  setSavedNegotiationsView(state, negotiationsView) {
+    state.savedNegotiationsView = negotiationsView
   }
 }

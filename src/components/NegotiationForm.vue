@@ -5,12 +5,13 @@
     data-bs-toggle="modal"
     data-bs-target="#feedbackModal"
   />
-  <feedback-modal
+  <confirmation-modal
     id="feedbackModal"
     :title="notificationTitle"
     :text="notificationText"
     dismiss-button-text="Back to HomePage"
     @dismiss="backToHomePage"
+    @confirm="startNegotiation"
   />
   <div
     v-if="loading"
@@ -25,25 +26,26 @@
     />
   </div>
   <div v-else>
+    <div class="fs-3 mb-4 fw-bold text-secondary text-center"> Access Form Submission</div>
     <form-wizard
       v-if="accessCriteria"
       :start-index="0"
       color="var(--bs-secondary)"
       step-size="md"
-      @on-complete="startNegotiation"
+      @on-complete="startModal"
     >
       <tab-content
         title="Request summary"
         class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
       >
         <div class="mx-3">
-          <div class="fs-5 fw-bold text-secondary">
+          <div class="fs-5 fw-bold text-primary-text">
             SEARCH PARAMETERS
           </div>
           <div
             v-for="(qp, index) in queryParameters"
             :key="index" 
-            class="fs-6 text-dar"
+            class="fs-6 text-dar text-secondary-text"
           >
             {{ qp }}
           </div>
@@ -58,7 +60,7 @@
         v-for="section in accessCriteria.sections"
         :key="section.name"
         :title="section.label"
-        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
+        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto text-primary-text"
         :before-change="isSectionValid(section)"
       >
         <div
@@ -91,7 +93,7 @@
           :key="criteria.name"
           class="mb-4 mx-3"
         >
-          <label class="form-label" :class="{ required: criteria.required }"> 
+          <label class="form-label text-primary-text" :class="{ required: criteria.required }"> 
             {{ criteria.label }}
           </label> 
 
@@ -100,13 +102,13 @@
           <textarea
             v-if="criteria.type === 'textarea'"
             v-model="negotiationCriteria[section.name][criteria.name]"
-            class="form-control"
+            class="form-control text-secondary-text"
             :required="criteria.required"
           />
           <input
             v-else-if="criteria.type === 'file'"
             accept=".pdf"
-            class="form-control"
+            class="form-control text-secondary-text"
             :required="criteria.required"
             :type="criteria.type"
             @change="handleFileUpload($event, section.name, criteria.name)"
@@ -115,7 +117,7 @@
             v-else
             v-model="negotiationCriteria[section.name][criteria.name]"
             :type="criteria.type"
-            class="form-control"
+            class="form-control text-secondary-text"
             :required="criteria.required"
           >
         </div>
@@ -124,10 +126,16 @@
         title="Overview"
         class="form-step overflow-auto"
       >
+      <div
+          class="border rounded-2 input-group p-3 mb-2 mb-3"
+        >
+        <span class="mb-3 fs-4 fw-bold text-secondary">Overview*</span>
+       <span class="text-primary">Upon confirmation, your request will undergo content review. Our reviewers may contact you via email for further details. Upon approval, the respective biobanks you wish to contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to proceed.</span>
+        </div>
         <div
           v-for="section in accessCriteria.sections"
           :key="section.name"
-          class="border rounded-2 input-group p-3 mb-2 mb-3"
+          class="border rounded-2 input-group p-3 mb-2 mb-3 text-secondary-text"
         >
           <span class="mb-3 fs-4 fw-bold text-secondary">{{ section.label.toUpperCase() }}</span>
           <div
@@ -146,12 +154,6 @@
         </div>
       </tab-content>
       <template #footer="props">
-        <div v-if="props.isLastStep && isAdmin" class="form-check mb-3 d-flex justify-content-end">
-          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-          <label class="form-check-label ps-2" for="flexCheckDefault">
-             <p class="m-0">Mark as test request</p> 
-          </label>
-        </div>
         <div class="wizard-footer-left">
           <button
             v-if="props.activeTabIndex > 0"
@@ -167,7 +169,7 @@
             class="btn btn-secondary"
             @click="props.nextTab()"
           >
-            {{ props.isLastStep ? "Start Negotiation" : "Next" }}
+            {{ props.isLastStep ? "Submit request" : "Next" }}
           </button>
         </div>
       </template>
@@ -177,7 +179,7 @@
 
 <script>
 import { Tooltip } from 'bootstrap'
-import FeedbackModal from "@/components/modals/FeedbackModal.vue"
+import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
@@ -189,7 +191,7 @@ export default {
   components: {
     FormWizard,
     TabContent,
-    FeedbackModal,
+    ConfirmationModal,
     ResourcesList
   },
   props: {
@@ -254,6 +256,9 @@ export default {
   },
   methods: {
     ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
+    backToNegotiation(id) {
+      this.$router.push("/negotiations/"+ id + "/ROLE_RESEARCHER")
+    },
     async startNegotiation() {
       await this.createNegotiation({
         data: {
@@ -261,12 +266,15 @@ export default {
           payload: this.negotiationCriteria,
         }
       }).then((negotiationId) => {
-        if (negotiationId) {
-          this.showNotification(
-            "Request submitted correctly", 
-            "You can follow the status of this negotiation in your researcher page")
-        } 
+        if(negotiationId){
+          this.backToNegotiation(negotiationId)
+        }
       })
+    },
+    async startModal() {
+          this.showNotification(
+            "Confirm submission",
+            "You will be redirected to the negotiation page where you can monitor the status. Click 'Confirm' to proceed.")
     },
     isAttachment(value) {
       return value instanceof File || value instanceof Object
@@ -278,9 +286,6 @@ export default {
       this.$refs.openModal.click()
       this.notificationTitle = header
       this.notificationText = body
-    },
-    backToHomePage() {
-      this.$router.push("/")
     },
     initNegotiationCriteria() {
       for (var section of this.accessCriteria.sections) {
