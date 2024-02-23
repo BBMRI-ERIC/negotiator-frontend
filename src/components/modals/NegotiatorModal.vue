@@ -9,7 +9,7 @@
   >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-center">
-        <h4 class="modal-header">
+        <h4 class="modal-header justify-content-center">
           {{ title }}
         </h4>
         <div class="modal-body">

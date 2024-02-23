@@ -33,7 +33,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/admin' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path ===  '/admin'  || $route.params.userRole  === 'ROLE_ADMIN' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/admin"
             >
               <i class="bi bi-clipboard-check" />
@@ -46,7 +46,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/researcher' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path ===  '/researcher' || $route.params.userRole  === 'ROLE_RESEARCHER' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/researcher"
             >
               <i class="bi bi-chat-left-dots" />
@@ -59,7 +59,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/biobanker' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path ===  '/biobanker' || $route.params.userRole  === 'ROLE_REPRESENTATIVE' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/biobanker"
             >
               <i class="bi bi-bank" />

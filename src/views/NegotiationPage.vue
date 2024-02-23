@@ -19,9 +19,13 @@
       @confirm="updateNegotiation('ABANDON')"
     />
     <div class="row mt-4">
+      <div class="row-col-2">
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       </h1>
+      <span :class="getBadgeColor(negotiation.status)" class="badge py-2 rounded-pill"><i :class="getBadgeIcon(negotiation.status)" class="px-1" /> {{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
+      <hr>
+    </div>
       <div class="col-8">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li
@@ -114,7 +118,7 @@
                     :key="key"
                     :value="key"
                   >
-                    {{ transformString(key)  }}
+                    {{ transformStatus(key)  }}
                   </option>
                 </select>
                 <button
@@ -214,11 +218,6 @@
           :organizations="organizationsById"
           :recipients="postsRecipients"
         />
-        <div v-else>
-          <h5>
-            Your request is waiting for approval by our team. You will be notified of any changes via email.
-          </h5>
-        </div>
       </div>
       <div
         class="col-4"
@@ -246,7 +245,8 @@
             <div class="fw-bold text-primary-text">
               Status:
             </div>
-            <span class="text-secondary-text"> {{ negotiation ? transformString(negotiation.status) : "" }}
+            <span> 
+              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -286,7 +286,7 @@
                 type="button"
                 @click="updateNegotiation(status)"
               >
-                {{ transformString(status) }}
+                {{ transformStatus(status) }}
               </button>
             </li>
           </ul>
@@ -319,6 +319,7 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
+import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
 export default {
   name: "NegotiationPage",
@@ -457,7 +458,7 @@ export default {
     },
     getStatusForResource(resourceId) {
       let resource = this.resourcesById[resourceId].status
-      return this.transformString(resource)
+      return this.transformStatus(resource)
     },
     isAttachment(value) {
       return value instanceof Object
@@ -554,8 +555,14 @@ export default {
         } 
       }
     },
-    transformString(string) {
-      return string ? string.toUpperCase().split('_').join(' ') : "";
+    transformStatus(badgeText) {
+      return transformStatus(badgeText)
+    },
+    getBadgeColor(badgeText) {
+      return getBadgeColor(badgeText)
+    },
+    getBadgeIcon(badgeText) {
+      return getBadgeIcon(badgeText)
     },
   },
 }
