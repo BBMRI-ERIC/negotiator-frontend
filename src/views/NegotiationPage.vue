@@ -23,7 +23,7 @@
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       </h1>
-      <span :class="getBadgeColor(negotiation.status)" class="badge py-2 rounded-pill"><i :class="getBadgeIcon(negotiation.status)" class="px-1" /> {{ negotiation ? transformString(negotiation.status) : "" }}</span>
+      <span :class="getBadgeColor(negotiation.status)" class="badge py-2 rounded-pill"><i :class="getBadgeIcon(negotiation.status)" class="px-1" /> {{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
       <hr>
     </div>
       <div class="col-8">
@@ -118,7 +118,7 @@
                     :key="key"
                     :value="key"
                   >
-                    {{ transformString(key)  }}
+                    {{ transformStatus(key)  }}
                   </option>
                 </select>
                 <button
@@ -246,7 +246,7 @@
               Status:
             </div>
             <span> 
-              <span>{{ negotiation ? transformString(negotiation.status) : "" }}</span>
+              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -286,7 +286,7 @@
                 type="button"
                 @click="updateNegotiation(status)"
               >
-                {{ transformString(status) }}
+                {{ transformStatus(status) }}
               </button>
             </li>
           </ul>
@@ -458,7 +458,7 @@ export default {
     },
     getStatusForResource(resourceId) {
       let resource = this.resourcesById[resourceId].status
-      return this.transformString(resource)
+      return this.transformStatus(resource)
     },
     isAttachment(value) {
       return value instanceof Object
@@ -555,7 +555,7 @@ export default {
         } 
       }
     },
-    transformString(badgeText) {
+    transformStatus(badgeText) {
       return transformStatus(badgeText)
     },
     getBadgeColor(badgeText) {

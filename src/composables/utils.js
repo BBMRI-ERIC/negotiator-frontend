@@ -8,7 +8,7 @@ export function transformStatus(status) {
 
 export function getBadgeColor(status) {
     if(status === 'SUBMITTED'){
-        return 'bg-warning'
+        return 'bg-status-badge'
     } else {
         return 'bg-success'
     }

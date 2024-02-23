@@ -2,11 +2,14 @@
   <div>
   <div class="card mb-2">
     <h5 class="card-header bg-body text-card-title-text">
-      {{ title }}
+    {{ title }}
 
-      <span class="badge bg-status-badge float-end">
-        {{ transformString(status) }}
-      </span>
+      <h6 class="float-end" >
+        <span :class="getBadgeColor(status)" class="badge" style="width: 110px;" >
+          <i :class="getBadgeIcon(status)" />
+          {{ transformStatus(status) }}
+        </span>
+      </h6>
     </h5>
     <div class="card-body">
       <h6 class="card-subtitle mb-2 text-muted">
@@ -24,7 +27,7 @@
 </template>
 
 <script>
-import { transformStatus } from "../composables/utils.js"
+import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
 export default {
   name: "NegotiationCard",
@@ -51,8 +54,14 @@ export default {
     }
   },
   methods: {
-    transformString(string) {
+    transformStatus(string) {
       return transformStatus(string)
+    },
+    getBadgeColor(badgeText) {
+      return getBadgeColor(badgeText)
+    },
+    getBadgeIcon(badgeText) {
+      return getBadgeIcon(badgeText)
     },
   }
 }
