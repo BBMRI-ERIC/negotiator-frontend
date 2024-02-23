@@ -358,7 +358,7 @@
     <div class="d-flex justify-content-center">
       <div class="d-flex justify-content-center">
         <h4 class="mb-3 ms-3">
-          No Negotiations found
+          No Negotiations found :(
         </h4>
       </div>
     </div>
