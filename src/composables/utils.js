@@ -9,7 +9,9 @@ export function transformStatus(status) {
 export function getBadgeColor(status) {
     if(status === 'SUBMITTED'){
         return 'bg-status-badge'
-    } else {
+    } else if(status === 'DECLINED' || status === 'ABANDONED'){
+        return 'bg-danger'
+    } else{
         return 'bg-success'
     }
 }
@@ -17,7 +19,7 @@ export function getBadgeColor(status) {
 export function getBadgeIcon(status) {
     if(status === 'SUBMITTED'){
         return 'bi-search'
-    } else if(status === 'ABANDONED'){
+    } else if(status === 'DECLINED' || status === 'ABANDONED'){
         return 'bi-x-circle'
     } else {
         return 'bi bi-circle'
