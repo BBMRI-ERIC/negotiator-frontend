@@ -369,7 +369,7 @@ import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
 import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
-import { transformStatus } from "../utils/statusTransform.js"
+import { transformStatus } from "../composables/utils.js"
 
 export default {
   name: "NegotiationsList",

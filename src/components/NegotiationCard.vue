@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { transformStatus } from "../utils/statusTransform.js"
+import { transformStatus } from "../composables/utils.js"
 
 export default {
   name: "NegotiationCard",

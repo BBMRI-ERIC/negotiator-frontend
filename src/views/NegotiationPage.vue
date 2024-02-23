@@ -23,7 +23,7 @@
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       </h1>
-      <span class="badge py-2 rounded-pill bg-primary"><i class="bi bi-search" /> {{ negotiation ? transformString(negotiation.status) : "" }}</span>
+      <span :class="getBadgeColor(negotiation.status)" class="badge py-2 rounded-pill"><i :class="getBadgeIcon(negotiation.status)" class="px-1" /> {{ negotiation ? transformString(negotiation.status) : "" }}</span>
       <hr>
     </div>
       <div class="col-8">
@@ -319,7 +319,7 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
-import { transformStatus } from "../utils/statusTransform.js"
+import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
 export default {
   name: "NegotiationPage",
@@ -555,9 +555,15 @@ export default {
         } 
       }
     },
-    transformString(string) {
-      return transformStatus(string)
-    }
+    transformString(badgeText) {
+      return transformStatus(badgeText)
+    },
+    getBadgeColor(badgeText) {
+      return getBadgeColor(badgeText)
+    },
+    getBadgeIcon(badgeText) {
+      return getBadgeIcon(badgeText)
+    },
   },
 }
 </script>
