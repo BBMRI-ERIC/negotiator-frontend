@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { transformStatus } from "../utils/statusTransform.js"
 
 export default {
   name: "NegotiationCard",
@@ -51,7 +52,7 @@ export default {
   },
   methods: {
     transformString(string) {
-      return string ? string.toUpperCase().split('_').join(' ') : "";
+      return transformStatus(string)
     },
   }
 }

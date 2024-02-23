@@ -19,9 +19,13 @@
       @confirm="updateNegotiation('ABANDON')"
     />
     <div class="row mt-4">
+      <div class="row-col-2">
       <h1 class="text-primary fw-bold">
         {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
       </h1>
+      <span class="badge py-2 rounded-pill bg-primary"><i class="bi bi-search" /> {{ negotiation ? transformString(negotiation.status) : "" }}</span>
+      <hr>
+    </div>
       <div class="col-8">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li
@@ -214,11 +218,6 @@
           :organizations="organizationsById"
           :recipients="postsRecipients"
         />
-        <div v-else>
-          <h5>
-            Your request is waiting for approval by our team. You will be notified of any changes via email.
-          </h5>
-        </div>
       </div>
       <div
         class="col-4"
@@ -246,7 +245,8 @@
             <div class="fw-bold text-primary-text">
               Status:
             </div>
-            <span class="text-secondary-text"> {{ negotiation ? transformString(negotiation.status) : "" }}
+            <span> 
+              <span>{{ negotiation ? transformString(negotiation.status) : "" }}</span>
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -319,6 +319,7 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
+import { transformStatus } from "../utils/statusTransform.js"
 
 export default {
   name: "NegotiationPage",
@@ -555,8 +556,8 @@ export default {
       }
     },
     transformString(string) {
-      return string ? string.toUpperCase().split('_').join(' ') : "";
-    },
+      return transformStatus(string)
+    }
   },
 }
 </script>
