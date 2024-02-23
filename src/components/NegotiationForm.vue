@@ -274,7 +274,7 @@ export default {
     async startModal() {
           this.showNotification(
             "Please confirm submission",
-            "You will be redirected to theYour request is waiting for approval b negotiation page where you can monitor the status.")
+            "You will be redirected to the negotiation page where you can monitor the status. Please click 'Confirm' to proceed.")
     },
     isAttachment(value) {
       return value instanceof File || value instanceof Object
