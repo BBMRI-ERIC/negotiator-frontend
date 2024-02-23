@@ -5,7 +5,7 @@
     {{ title }}
 
       <h6 class="float-end" >
-        <span :class="getBadgeColor(status)" class="badge" style="width: 117px;">
+        <span :class="getBadgeColor(status)" class="badge" style="width: 125px;" >
           <i :class="getBadgeIcon(status)" class="px-1"/>
           {{ transformStatus(status) }}
         </span>
