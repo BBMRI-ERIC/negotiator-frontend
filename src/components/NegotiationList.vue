@@ -296,8 +296,9 @@
                 <td class="text-muted">{{formatDate(fn.creationDate)}}</td>
                 <td class="text-muted">{{fn.author.name}}</td>
                 <td>
-                  <span class="badge bg-status-badge">
-                    {{ transformString(fn.status) }}
+                  <span class="badge" :class="getBadgeColor(fn.status)" style="width: 120px;">
+                    <i :class="getBadgeIcon(fn.status)" class="px-1" />
+                    {{ transformStatus(fn.status) }}
                   </span>
                   </td>
                   <td>
@@ -369,7 +370,7 @@ import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
 import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
-
+import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
 export default {
   name: "NegotiationsList",
@@ -601,9 +602,15 @@ export default {
     filterStatus(status) {
       this.$emit("filterStatus", status);
     },
-    transformString(string) {
-      return string ? string.toUpperCase().split('_').join(' ') : "";
+    transformStatus(string) {
+      return transformStatus(string)
     },
+    getBadgeColor(badgeText) {
+      return getBadgeColor(badgeText)
+    },
+    getBadgeIcon(badgeText) {
+      return getBadgeIcon(badgeText)
+    }
   }  
 }
 </script>
