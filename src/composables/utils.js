@@ -17,8 +17,10 @@ export function getBadgeColor(status) {
 export function getBadgeIcon(status) {
     if(status === 'SUBMITTED'){
         return 'bi-search'
+    } else if(status === 'ABANDONED'){
+        return 'bi-x-circle'
     } else {
-        return 'bi bi-chat-left-dots'
+        return 'bi bi-circle'
     }
 }
 

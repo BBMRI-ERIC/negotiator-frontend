@@ -296,8 +296,8 @@
                 <td class="text-muted">{{formatDate(fn.creationDate)}}</td>
                 <td class="text-muted">{{fn.author.name}}</td>
                 <td>
-                  <span class="badge col-12" :class="getBadgeColor(fn.status)" >
-                    <i :class="getBadgeIcon(fn.status)" />
+                  <span class="badge" :class="getBadgeColor(fn.status)" style="width: 120px;">
+                    <i :class="getBadgeIcon(fn.status)" class="px-1" />
                     {{ transformStatus(fn.status) }}
                   </span>
                   </td>
