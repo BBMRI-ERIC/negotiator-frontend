@@ -1,13 +1,14 @@
 <template>
   <nav
     v-if="oidcIsAuthenticated"
-    class="navbar fixed-top navbar-expand-lg navbar-light bg-light"
+    class="navbar fixed-top navbar-expand-lg navbar-light bg-navbar-background"
   >
     <div class="container-fluid">
       <img
-        src="../assets/images/logo.svg"
+        :src="logoSrc"
         height="34"
         class="me-2"
+        alt="nav-bar-logo"
       >
       <button
         class="navbar-toggler"
@@ -32,10 +33,10 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/admin' ? 'text-primary' : ''"
+              :class="$route.path ===  '/admin' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/admin"
             >
-              <i class="bi bi-house-gear" />
+              <i class="bi bi-clipboard-check" />
               Review requests
             </router-link>
           </li>
@@ -45,10 +46,10 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/researcher' ? 'text-primary-light' : ''"
+              :class="$route.path ===  '/researcher' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/researcher"
             >
-              <i class="bi bi-folder2" />
+              <i class="bi bi-chat-left-dots" />
               Your negotiations
             </router-link>
           </li>
@@ -58,23 +59,23 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/biobanker' ? 'text-primary-light' : ''"
+              :class="$route.path ===  '/biobanker' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/biobanker"
             >
-              <i class="bi bi-hospital" />
+              <i class="bi bi-bank" />
               Your biobank
             </router-link>
           </li>
         </ul>
         <span
           v-if="oidcIsAuthenticated"
-          class="navbar-text me-2 "
+          class="navbar-text me-2 text-navbar-welcome-text"
         >
           Welcome back {{ oidcUser.name }}
         </span>
         <button
           v-if="oidcIsAuthenticated"
-          class="btn btn-outline-secondary me-2"
+          class="btn btn-outline-navbar-button-outline me-2"
           aria-current="page"
           @click.stop.prevent="signOutOidc"
         >
@@ -88,12 +89,16 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
+import activeTheme from "../config/theme.js" 
+import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
+import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
 
 export default {
   name: "NavigationBar",
   data() {
     return {
-      roles: []
+      roles: [],
+      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
     }
   },
   computed: {

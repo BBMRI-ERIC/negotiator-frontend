@@ -15,8 +15,8 @@
               aria-haspopup="true"
               class="btn dropdown-toggle"
               :class="{ 
-                'btn-secondary': sortBy.sortColumn != undefined, 
-                'btn-outline-secondary' : sortBy.sortColumn == undefined, 
+                'btn-sort-filter-button-outline': sortBy.sortColumn != undefined, 
+                'btn-outline-sort-filter-button-outline' : sortBy.sortColumn == undefined, 
                 'show': sortBy.sortColumn != undefined
               }"
               type="button"
@@ -34,7 +34,7 @@
               <div
                 v-for="(value, name) in sortAttrs"
                 :key="name"
-                class="form-check mx-2 my-2"
+                class="form-check mx-2 my-2 text-sort-filter-dropdown-text"
               >
                 <input
                   :id="name"
@@ -60,8 +60,8 @@
               aria-haspopup="true"
               class="btn dropdown-toggle"
               :class="{ 
-                'btn-secondary': filters.status.length > 0, 
-                'btn-outline-secondary' : filters.status.length === 0,
+                'btn-sort-filter-button-outline': filters.status.length > 0, 
+                'btn-outline-sort-filter-button-outline' : filters.status.length === 0,
                 'show': filters.status.length > 0 || !statusFilterFirstLoad
               }"
               type="button"
@@ -76,7 +76,7 @@
               > {{ filters.status.length }}</span>
             </button>
             <ul
-              class="dropdown-menu"
+              class="dropdown-menu text-sort-filter-dropdown-text"
               aria-labelledby="dropdownMenuButton1"
             >
               <div class="mx-2 my-2 dropdown-contents">
@@ -137,8 +137,8 @@
               aria-haspopup="true"
               class="btn dropdown-toggle"
               :class="{ 
-                'btn-secondary': filters.dateStart !== '' || filters.dateEnd !== '', 
-                'btn-outline-secondary' : filters.dateStart === '' && filters.dateEnd === '',
+                'btn-sort-filter-button-outline': filters.dateStart !== '' || filters.dateEnd !== '', 
+                'btn-outline-sort-filter-button-outline' : filters.dateStart === '' && filters.dateEnd === '',
                 'show': filters.dateStart !== '' || filters.dateEnd !== '' || !dateFilterFirstLoad 
               }"
               type="button"
@@ -156,7 +156,7 @@
               class="dropdown-menu"
               aria-labelledby="dropdownMenuButton1"
             >
-              <div class="mx-2 my-2 dropdown-contents">
+              <div class="mx-2 my-2 dropdown-contents text-sort-filter-dropdown-text">
                 <div class="d-flex align-items-center mb-2">
                   <label
                     class="pe-2 w-25"
@@ -165,7 +165,7 @@
                   <input
                     id="startDate"
                     v-model="selectedStartDate"
-                    class="form-control"
+                    class="form-control text-sort-filter-dropdown-text"
                     type="date"
                     @input="updateFilter('dateStart', selectedStartDate)"
                   >
@@ -178,7 +178,7 @@
                   <input
                     id="endDate"
                     v-model="selectedEndDate"
-                    class="form-control"
+                    class="form-control text-sort-filter-dropdown-text"
                     type="date"
                     @input="updateFilter('dateEnd', selectedEndDate)"
                   >
@@ -189,7 +189,7 @@
           <div class="dropdown mb-2  b-dropdown ms-auto filter-dropdown position-static btn-group d-flex justify-content-end">
             <button
               type="button"
-              class="btn btn-outline-danger"
+              class="btn btn-outline-sort-filter-clear-button-outline"
               @click="clearAllFilters()"
             >
               Clear all filters
@@ -200,9 +200,9 @@
   </div>
 
   <div>
-    <div class="row row-cols-2 d-grid-row mt-3">
-      <p v-if="sortedNegotiations.length > 0">
-        <strong>Search results : </strong><br>
+    <div class="row row-cols-2 d-grid-row mt-3 ">
+      <p v-if="pagination.totalElements > 0">
+        <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
         <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
       </p>
 
@@ -210,7 +210,7 @@
         <button
           type="button"
           class="btn btn-sm me-2"
-          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-primary-light' : savedNegotiationsView === 'Card-two-column' ? 'btn-primary-light' : 'bg-body'"
+          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
           @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
         >
         <i class="bi bi-card-heading"></i>
@@ -239,7 +239,7 @@
         <button
           type="button"
           class="btn btn-sm"
-          :class="savedNegotiationsView === 'Table' ? 'btn-primary-light' : 'bg-body'"
+          :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
           @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
         >
         <i class="bi bi-table"></i>
@@ -273,7 +273,7 @@
         <div class="table-responsive">
           <table class="table table-hover">
             <thead>
-              <tr>
+              <tr class="text-table-header-text">
                 <th scope="col">Title</th>
                 <th scope="col">Negotiation ID</th>
                 <th scope="col">Created on</th>
@@ -289,15 +289,15 @@
                   params: { negotiationId: fn.id, userRole: userRole, filters: filters, sortBy: sortby }
                 })"
               >
-                <th scope="row">
+                <th scope="row" class="text-table-title-text">
                   {{fn.payload.project.title}}
                 </th>
-                <td>{{fn.id}}</td>
-                <td>{{formatDate(fn.creationDate)}}</td>
-                <td>{{fn.author.name}}</td>
+                <td class="text-muted">{{fn.id}}</td>
+                <td class="text-muted">{{formatDate(fn.creationDate)}}</td>
+                <td class="text-muted">{{fn.author.name}}</td>
                 <td>
-                  <span class="badge bg-primary-light ">
-                    {{ fn.status }}
+                  <span class="badge bg-status-badge">
+                    {{ transformString(fn.status) }}
                   </span>
                   </td>
                   <td>
@@ -600,7 +600,10 @@ export default {
     },
     filterStatus(status) {
       this.$emit("filterStatus", status);
-    }
+    },
+    transformString(string) {
+      return string ? string.toUpperCase().split('_').join(' ') : "";
+    },
   }  
 }
 </script>

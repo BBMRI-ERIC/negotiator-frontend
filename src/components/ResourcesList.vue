@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="fs-5 fw-bold text-secondary mt-3">
+    <span class="fs-5 fw-bold text-primary-text mt-3">
       <i class="bi bi-card-list" />
       RESOURCES ({{ numberOfResources }})
     </span>
@@ -29,7 +29,7 @@
             class="card-body"
           >
             <span
-              class="text-dark"
+              class="text-secondary-text"
               :for="getElementIdFromResourceId(resource.id)"
             >
               {{ resource.name }}

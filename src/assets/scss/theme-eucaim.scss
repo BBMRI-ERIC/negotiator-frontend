@@ -1,0 +1,61 @@
+$theme-colors: (
+    "primary": #26336B,
+    "secondary": #416097,
+
+    "primary-text": #26336B,
+    "secondary-text": #416097,
+    "login-tittle-text": #26336B,
+
+    "navbar-background": #416097,
+    "navbar-text": #e7e7e7,
+    "navbar-active-text": #81CDEE,
+    "navbar-welcome-text": #e7e7e7,
+    "navbar-button-outline": #e7e7e7,
+
+    "sort-filter-button-outline": #26336B,
+    "sort-filter-dropdown-text": #26336B,
+    "sort-filter-clear-button-outline": #dc3545,
+
+    "search-results-text": #26336B,
+    "display-view-button-color": #F18918,
+
+    "card-title-text": #26336B,
+    "table-header-text": #26336B,
+    "table-title-text": #416097,
+
+    "status-badge": #F18918,
+
+    "danger": #dc3545,
+    "warning": #e95713,
+    "info": #7c7c7c,
+    "light": #e7e7e7,
+    "dark": #3c3c3d,
+
+    // EUCAIM Color palette
+    "example-1": #81CDEE,
+    "example-2": #416097,
+    "example-3": #F18918,
+    "example-4": #26336B,
+);
+
+$body-color: #3c3c3d;
+
+$default-text-color: white;
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
+body {
+    font-family: Calibri, Arial, sans-serif;
+}
+  
+.btn-primary {
+    color: white;
+}
+
+.btn-outline-light {
+    color: $dark;
+}
+
+.cursor-pointer {
+   cursor: pointer; 
+}

@@ -1,6 +1,6 @@
 <template>
     <footer
-        class="bottom-0 p-0 w-100"
+        class="bottom-0 p-0 w-100 text-primary-text"
     >
         <hr class="mt-10 mb-10">
         <div class="row d-flex flex-column flex-md-row">
@@ -9,7 +9,7 @@
                     <img 
                         width="150"
                         height="40"
-                        src="../assets/images/logo-negotiator.svg"
+                        :src="logoSrc"
                         alt="logo negotiator"
                     >
                 </a>
@@ -18,24 +18,24 @@
                 <span>
                     Follow Us:
                 </span>
-                <a href="https://www.linkedin.com/company/bbmri-eric" class="link-dark ms-2">
+                <a v-if="isFooterFollowUsVisible" href="https://www.linkedin.com/company/bbmri-eric" class="link-dark ms-2">
                     <i class="bi bi-linkedin mr-3" />
                 </a>
-                <a href="https://twitter.com/BBMRIERIC" class="link-dark ms-2">
+                <a v-if="isFooterFollowUsVisible" href="https://twitter.com/BBMRIERIC" class="link-dark ms-2">
                     <i class="bi bi-twitter-x" />
                 </a>
-                <a href="https://www.bbmri-eric.eu/bbmri-eric/bbmri-eric-podcast/" class="link-dark ms-2">
+                <a v-if="isFooterFollowUsVisible" href="https://www.bbmri-eric.eu/bbmri-eric/bbmri-eric-podcast/" class="link-dark ms-2">
                     <i class="bi bi-mic-fill"></i>
                 </a>
                 <div class="mt-2 mb-2 mb-md-0">
-                    <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend" class="link-dark">  <i class="bi bi-github" />
+                    <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend" class="text-primary-text">  <i class="bi bi-github" />
                         GitHub
                     </a>
                 </div>
             </div>
           
             <div class="col text-center">
-                <a class="link-dark" href="https://www.bbmri-eric.eu/wp-content/uploads/BBMRI-ERIC_work-program_2022-2024_DIGITAL.pdf" >
+                <a class="link-dark text-primary-text" href="https://www.bbmri-eric.eu/wp-content/uploads/BBMRI-ERIC_work-program_2022-2024_DIGITAL.pdf" >
                     <img                
                         width="22"
                         height="22"
@@ -45,8 +45,8 @@
                     >
                     Work Programme    
                 </a>
-                <div class="ms-md-3 mt-2"> 
-                    <button type="button" class="btn btn-light ms-md-5" href="https://www.bbmri-eric.eu/news-event/"> Subscribe To Our Newsletter</button>
+                <div v-if="isFooterFollowUsVisible" class="ms-md-3 mt-2"> 
+                    <button type="button" class="btn btn-light ms-md-5 text-primary-text" href="https://www.bbmri-eric.eu/news-event/"> Subscribe To Our Newsletter</button>
                 </div>
             </div>
             <div>
@@ -64,6 +64,22 @@
         </div>
     </footer>
 </template>
+
+<script>
+import activeTheme from "../config/theme.js" 
+import bbmriLogo from '../assets/images/footer-bbmri.svg'
+import eucaimLogo from '../assets/images/footer-eucaim.png'
+
+export default {
+  name: "FooterPage",
+  data() {
+    return {
+      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
+      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
+    }
+  }
+}
+</script>
 
 <style scoped>
 a {
