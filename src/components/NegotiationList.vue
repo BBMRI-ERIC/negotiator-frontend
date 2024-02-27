@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!loading && negotiations.length > 0"
+    v-if="!loading"
     class="container"
   >
   <div
@@ -201,7 +201,7 @@
 
   <div>
     <div class="row row-cols-2 d-grid-row mt-3 ">
-      <p v-if="pagination.totalElements > 0">
+      <p>
         <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
         <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
       </p>
@@ -334,6 +334,19 @@
       </ul>
   </nav>
 
+  <div v-if="pagination.totalElements === 0" class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center">
+        <h3 class="text-center mt-3">
+          <i style = "color: #7c7c7c;" class="bi bi-circle"></i>
+    
+        <h4 class="mb-3 ms-3 mt-3">
+          
+          There aren’t any negotiations.
+        </h4>
+      </h3>
+      </div>
+    </div>
+
   </div>
   <div
     v-else-if="loading"
@@ -358,7 +371,7 @@
     <div class="d-flex justify-content-center">
       <div class="d-flex justify-content-center">
         <h4 class="mb-3 ms-3">
-          No Negotiations found
+          No Negotiations found :(
         </h4>
       </div>
     </div>
@@ -481,7 +494,7 @@ export default {
     this.loadActiveFiltersFromURL()
     this.loadSortingFromURL()
     if(this.savedNegotiationsView === '') {
-      this.setSavedNegotiationsView({negotiationsView:'Card-one-column'})
+      this.setSavedNegotiationsView({negotiationsView:'Table'})
     }
   },
   methods: {

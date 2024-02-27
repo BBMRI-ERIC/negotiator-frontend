@@ -1,5 +1,5 @@
 <template>
-  <div v-if="negotiation && negotiation.postsEnabled">
+  <div v-if="negotiation">
     <h5 class="text-primary">Comments</h5>
     <div
       v-for="post in posts"
@@ -50,6 +50,9 @@
         @removed="resetAttachment"
       />
       <div class="d-flex flex-row-reverse mt-3 mb-2">
+        <span      
+          data-bs-toggle="tooltip"
+          :data-bs-title="negotiation.postsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' ">
         <button
           type="submit"
           :disabled="!readyToSend"
@@ -57,6 +60,7 @@
         >
           Send message
         </button>
+      </span>
         <button
           type="submit"
           class="btn btn-attachment ms-2 border rounded"
@@ -99,6 +103,7 @@
 </template>
 
 <script>
+import { Tooltip } from 'bootstrap'
 import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS, POST_TYPE } from "@/config/consts"
 import moment from "moment"
@@ -139,10 +144,15 @@ export default {
       attachment: undefined
     }
   },
+  mounted () {
+    new Tooltip(document.body, {
+      selector: "[data-bs-toggle='tooltip']",
+    })
+  },
   computed: {
     ...mapGetters(["oidcUser"]),
     readyToSend() {
-      return (this.message !== "" || this.attachment != undefined) && this.recipientId !== ""
+      return (this.message !== "" || this.attachment != undefined) && this.recipientId !== "" && this.negotiation.postsEnabled
     },
     recipientsById() {
       return this.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})

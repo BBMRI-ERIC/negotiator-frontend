@@ -211,7 +211,7 @@
           </li>
         </ul>
         <NegotiationPosts
-          v-if="negotiation && negotiation.postsEnabled"
+          v-if="negotiation"
           :negotiation="negotiation"
           :user-role="userRole"
           :resources="resources"
