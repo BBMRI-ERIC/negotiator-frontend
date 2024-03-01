@@ -24,7 +24,7 @@ const router = createRouter({
   }, {
     path: "/requests/:requestId",
     name: "request",
-    component: NegotiationCreatePage,
+    component: NegotiationCreatePage
   }, {
     path: "/researcher",
     name: "researcher",

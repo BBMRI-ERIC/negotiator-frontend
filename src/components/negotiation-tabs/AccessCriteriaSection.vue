@@ -33,10 +33,10 @@ export default {
   props: {
     accessCriteria: {
       type: Array,
-      default() {
+      default () {
         return []
       }
-    },
-  },
+    }
+  }
 }
 </script>
