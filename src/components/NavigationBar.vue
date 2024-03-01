@@ -71,7 +71,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/FAQ'"
+              :class="$route.path ===  '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/FAQ"
             >
               <i class="bi bi-question-square" />
