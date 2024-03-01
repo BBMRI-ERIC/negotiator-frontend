@@ -5,7 +5,7 @@
         <div class="card">
   <h5 class="card-header">Contact</h5>
   <div class="card-body">
-    <h5 class="card-title">Contact negotiation support by email</h5>
+    <h5 class="card-title">Contact negotiation support by email.</h5>
     <div class="mt-4">
     <a href="mailto:negotiator@helpdesk.bbmri-eric.eu" class="link-underline link-underline-opacity-0"><i class="bi bi-envelope-at"></i> Email</a>
 </div>
@@ -96,8 +96,10 @@
   <h5 class="card-header">Learn about negotiatior</h5>
   <div class="card-body">
     <h5 class="card-title">Learn more about the Negotiator and its use to communicate with BioBanks to obtain information on the availability of relevant samples/data.</h5>
+    <div class="mt-4">
     <a href="https://www.bbmri-eric.eu/services/sample-negotiator/" > <i class="bi bi-box-arrow-up-right"></i> Go to learn page</a>
-  </div>
+</div>
+</div>
 </div>
     </div>
 
@@ -105,9 +107,11 @@
         <div class="card">
   <h5 class="card-header">Federated Platform</h5>
   <div class="card-body">
-    <h5 class="card-title">Information about the Federated Platform and its advanced services such as the federated search or data analysis platform..</h5>
+    <h5 class="card-title">Information about the Federated Platform and its advanced services such as the federated search or data analysis platform.</h5>
+    <div class="mt-4"></div>
     <a href="https://www.bbmri-eric.eu/federated-platform/"> <i class="bi bi-box-arrow-up-right"></i> Go to Federated Platform page</a>
-  </div>
+</div>
+
 </div>
     </div>
 
@@ -117,8 +121,10 @@
   <h5 class="card-header">BBMRI-ERIC Sample and Data portal</h5>
   <div class="card-body">
     <h5 class="card-title">Information about the BBMRI-ERIC access pipeline helping expedite access to samples and data.</h5>
+    <div class="mt-4"></div>
     <a href="https://www.bbmri-eric.eu/bbmri-sample-and-data-portal/"><i class="bi bi-box-arrow-up-right"></i> Go to BBMRI-ERIC Sample and Data portal page</a>
   </div>
+
 </div>
     </div>
 </div>
