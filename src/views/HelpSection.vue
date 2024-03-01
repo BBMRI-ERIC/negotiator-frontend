@@ -17,7 +17,7 @@
         <div class="card">
   <h5 class="card-header">Feedback</h5>
   <div class="card-body">
-    <h5 class="card-title">We value your feedback to improve our serve.</h5>
+    <h5 class="card-title">We value your feedback to improve our services.</h5>
     <div class="mt-4">
     <a href="https://forms.office.com/e/Z3EvCnp6cw"><i class="bi bi-box-arrow-up-right"></i>
  Feedback form</a>
