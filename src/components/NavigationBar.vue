@@ -66,6 +66,18 @@
               Your biobank
             </router-link>
           </li>
+          <li
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active nav-option"
+              :class="$route.path ===  '/FAQ'"
+              to="/FAQ"
+            >
+              <i class="bi bi-question-square" />
+              FAQ
+            </router-link>
+          </li>
         </ul>
         <span
           v-if="oidcIsAuthenticated"

@@ -3,6 +3,7 @@ import OidcCallback from "@/components/OidcCallback.vue"
 import HomePage from "../views/HomePage.vue"
 import NegotiationCreatePage from "../views/NegotiationCreatePage.vue"
 import NegotiationPage from "../views/NegotiationPage.vue"
+import HelpSection from "../views/HelpSection.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
@@ -42,7 +43,14 @@ const router = createRouter({
     component: UserPage,
     props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false }
-  }, {
+  },
+   {
+    path: "/FAQ",
+    name: "FAQ",
+    component: HelpSection,
+    meta: { isPublic: false }
+  },
+   {
     path: "/negotiations/:negotiationId/:userRole",
     name: "negotiation-page",
     component: NegotiationPage,
