@@ -16,15 +16,15 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
+      "@": fileURLToPath(new URL("./src", import.meta.url))
+    }
   },
   server: {
     port: 8080,
     proxy: {
       "^/api": {
         target: PROXY_TARGET,
-        changeOrigin: true,
+        changeOrigin: true
       }
     }
   }

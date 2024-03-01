@@ -4,7 +4,7 @@
     :title="`Resource: ${resourceId}`"
   >
     <template #body>
-      <NegotiationPosts 
+      <NegotiationPosts
         :negotiation="negotiation"
         :user-role="userRole"
         scope="private"

@@ -50,7 +50,7 @@ export default {
   },
   emits: ["confirm"],
   methods: {
-    emitConfirm() {
+    emitConfirm () {
       this.$emit("confirm")
     }
   }

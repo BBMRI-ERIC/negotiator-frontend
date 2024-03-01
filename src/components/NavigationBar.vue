@@ -24,29 +24,29 @@
         id="menu-navbar"
         class="collapse navbar-collapse"
       >
-        <ul 
-          class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"  
+        <ul
+          class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
         >
-          <li 
+          <li
             v-if="isAdmin"
             class="nav-item"
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/admin'  || $route.params.userRole  === 'ROLE_ADMIN' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path === '/admin' || $route.params.userRole === 'ROLE_ADMIN' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/admin"
             >
               <i class="bi bi-clipboard-check" />
               Review requests
             </router-link>
           </li>
-          <li 
+          <li
             v-if="isResearcher"
             class="nav-item"
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/researcher' || $route.params.userRole  === 'ROLE_RESEARCHER' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path === '/researcher' || $route.params.userRole === 'ROLE_RESEARCHER' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/researcher"
             >
               <i class="bi bi-chat-left-dots" />
@@ -59,7 +59,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/biobanker' || $route.params.userRole  === 'ROLE_REPRESENTATIVE' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path === '/biobanker' || $route.params.userRole === 'ROLE_REPRESENTATIVE' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/biobanker"
             >
               <i class="bi bi-bank" />
@@ -89,27 +89,27 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
-import activeTheme from "../config/theme.js" 
-import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
-import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
+import activeTheme from "../config/theme.js"
+import bbmriLogo from "../assets/images/nav-bar-bbmri.svg"
+import eucaimLogo from "../assets/images/nav-bar-eucaim.png"
 
 export default {
   name: "NavigationBar",
-  data() {
+  data () {
     return {
       roles: [],
-      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
+      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo
     }
   },
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
-    isAdmin() {
+    isAdmin () {
       return this.roles.includes(ROLES.ADMINISTRATOR)
     },
-    isResearcher() {
+    isResearcher () {
       return this.roles.includes(ROLES.RESEARCHER)
     },
-    isRepresentative() {
+    isRepresentative () {
       return this.roles.includes(ROLES.REPRESENTATIVE)
     }
   },
@@ -138,4 +138,3 @@ nav {
     color: var(--bs-primary) ;
 }
 </style>
-
