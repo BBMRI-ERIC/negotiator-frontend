@@ -103,7 +103,7 @@
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
 import activeTheme from "../config/theme.js" 
-import  allFeatureFlags  from "@/config/featureFlags.js"
+import allFeatureFlags  from "@/config/featureFlags.js"
 import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
 import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
 
