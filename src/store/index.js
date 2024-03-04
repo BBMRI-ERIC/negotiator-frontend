@@ -13,8 +13,8 @@ export default new Vuex.Store({
     oidc: vuexOidcCreateStoreModule(
       oidcSettings,
       // Optional OIDC store settings
-      { removeUserWhenTokensExpire: false },
-    ),
+      { removeUserWhenTokensExpire: false }
+    )
   },
   state,
   mutations,

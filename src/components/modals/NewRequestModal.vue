@@ -2,7 +2,7 @@
   <NegotiatorModal
     :id="id"
     :title="title"
-    :fade="fade"
+    :is-modal-small="isModalSmall"
   >
     <template #body>
       <p>
@@ -12,20 +12,18 @@
     <template #footer>
       <button
         type="button"
-        class="btn btn-secondary"
+        class="btn btn-secondary px-4"
         data-bs-dismiss="modal"
-        @click="emitDismiss"
+        @click="emitConfirm"
       >
-        {{ dismissButtonText }}
+        OK
       </button>
     </template>
   </NegotiatorModal>
 </template>
-<script>
-import NegotiatorModal from "./NegotiatorModal.vue"
 
+<script>
 export default {
-  components: { NegotiatorModal },
   props: {
     id: {
       type: String,
@@ -39,20 +37,23 @@ export default {
       type: String,
       required: true
     },
-    fade: {
+    isModalSmall: {
       type: Boolean,
+      required: false,
       default: false
     },
-    dismissButtonText: {
-      type: String,
-      default: "OK"
+    isXButtondisplayed: {
+      type: Boolean,
+      required: true,
+      default: true
     }
   },
-  emits: ["dismiss"],
+  emits: ["confirm"],
   methods: {
-    emitDismiss () {
-      this.$emit("dismiss")
+    emitConfirm () {
+      this.$emit("confirm")
     }
   }
+
 }
 </script>

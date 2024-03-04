@@ -26,7 +26,9 @@
     />
   </div>
   <div v-else>
-    <div class="fs-3 mb-4 fw-bold text-secondary text-center"> Access Form Submission</div>
+    <div class="fs-3 mb-4 fw-bold text-secondary text-center">
+      Access Form Submission
+    </div>
     <form-wizard
       v-if="accessCriteria"
       :start-index="0"
@@ -44,7 +46,7 @@
           </div>
           <div
             v-for="(qp, index) in queryParameters"
-            :key="index" 
+            :key="index"
             class="fs-6 text-dar text-secondary-text"
           >
             {{ qp }}
@@ -83,21 +85,36 @@
             </div>
           </div>
         </div>
-  
-        <div v-if="section.description" class="mx-3 d-flex justify-content-end">
-          <i  class="py-1 bi bi-info-circle" data-bs-toggle="tooltip" :data-bs-title="section.description"></i>
+
+        <div
+          v-if="section.description"
+          class="mx-3 d-flex justify-content-end"
+        >
+          <i
+            class="py-1 bi bi-info-circle"
+            data-bs-toggle="tooltip"
+            :data-bs-title="section.description"
+          />
         </div>
-        
+
         <div
           v-for="criteria in section.accessCriteria"
           :key="criteria.name"
           class="mb-4 mx-3"
         >
-          <label class="form-label text-primary-text" :class="{ required: criteria.required }"> 
+          <label
+            class="form-label text-primary-text"
+            :class="{ required: criteria.required }"
+          >
             {{ criteria.label }}
-          </label> 
+          </label>
 
-          <i v-if="criteria.description" class="mx-2 py-1 bi bi-info-circle" data-bs-toggle="tooltip" :data-bs-title="criteria.description"></i>
+          <i
+            v-if="criteria.description"
+            class="mx-2 py-1 bi bi-info-circle"
+            data-bs-toggle="tooltip"
+            :data-bs-title="criteria.description"
+          />
 
           <textarea
             v-if="criteria.type === 'textarea'"
@@ -126,11 +143,11 @@
         title="Overview"
         class="form-step overflow-auto"
       >
-      <div
+        <div
           class="border rounded-2 input-group p-3 mb-2 mb-3"
         >
-        <span class="mb-3 fs-4 fw-bold text-secondary">Overview*</span>
-       <span class="text-primary">Upon confirmation, your request will undergo content review. Our reviewers may contact you via email for further details. Upon approval, the respective biobanks you wish to contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to proceed.</span>
+          <span class="mb-3 fs-4 fw-bold text-secondary">Overview*</span>
+          <span class="text-primary">Upon confirmation, your request will undergo content review. Our reviewers may contact you via email for further details. Upon approval, the respective biobanks you wish to contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to proceed.</span>
         </div>
         <div
           v-for="section in accessCriteria.sections"
@@ -178,7 +195,7 @@
 </template>
 
 <script>
-import { Tooltip } from 'bootstrap'
+import { Tooltip } from "bootstrap"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
@@ -198,9 +215,9 @@ export default {
     requestId: {
       type: String,
       default: undefined
-    },
+    }
   },
-  data() {
+  data () {
     return {
       notificationTitle: "",
       notificationText: "",
@@ -213,36 +230,36 @@ export default {
     }
   },
   computed: {
-    isAdmin() {
+    isAdmin () {
       return this.roles.includes(ROLES.ADMINISTRATOR)
     },
-    loading() {
+    loading () {
       return this.accessCriteria === undefined
     },
-    queryParameters() {
+    queryParameters () {
       return this.humanReadableSearchParameters.split("\r\n")
     }
   },
-  async beforeMount() {
+  async beforeMount () {
     const result = await this.retrieveRequestById({
-      requestId: this.requestId,
+      requestId: this.requestId
     })
 
     this.roles = await this.retrieveUserRoles()
 
-    if (result.code) {        
-      if (result.code == 404) {
+    if (result.code) {
+      if (result.code === 404) {
         this.showNotification("Error", "Request not found")
       } else {
         this.showNotification("Error", "Cannot contact the server to get request information")
       }
-    } else if (result.negotiationId) {    
+    } else if (result.negotiationId) {
       this.showNotification("Error", "Request already submitted")
     } else {
       this.resources = result.resources
       this.humanReadableSearchParameters = result.humanReadable
-      this.accessCriteria = await this.retrieveCombinedAccessForm({
-       requestId: this.requestId
+      this.accessCriteria = await this.retrieveAccessCriteriaByResourceId({
+        resourceId: result.resources[0].id
       })
       if (this.accessCriteria !== undefined) {
         this.initNegotiationCriteria()
@@ -251,61 +268,61 @@ export default {
   },
   mounted () {
     new Tooltip(document.body, {
-      selector: "[data-bs-toggle='tooltip']",
+      selector: "[data-bs-toggle='tooltip']"
     })
   },
   methods: {
-    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation", "retrieveCombinedAccessForm"]),
-    backToNegotiation(id) {
-      this.$router.push("/negotiations/"+ id + "/ROLE_RESEARCHER")
+    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
+    backToNegotiation (id) {
+      this.$router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
     },
-    async startNegotiation() {
+    async startNegotiation () {
       await this.createNegotiation({
         data: {
           requests: [this.requestId],
-          payload: this.negotiationCriteria,
+          payload: this.negotiationCriteria
         }
       }).then((negotiationId) => {
-        if(negotiationId){
+        if (negotiationId) {
           this.backToNegotiation(negotiationId)
         }
       })
     },
-    async startModal() {
-          this.showNotification(
-            "Confirm submission",
-            "You will be redirected to the negotiation page where you can monitor the status. Click 'Confirm' to proceed.")
+    async startModal () {
+      this.showNotification(
+        "Confirm submission",
+        "You will be redirected to the negotiation page where you can monitor the status. Click 'Confirm' to proceed.")
     },
-    isAttachment(value) {
+    isAttachment (value) {
       return value instanceof File || value instanceof Object
     },
-    handleFileUpload(event, section, criteria) {
+    handleFileUpload (event, section, criteria) {
       this.negotiationCriteria[section][criteria] = event.target.files[0]
     },
-    showNotification(header, body) {
+    showNotification (header, body) {
       this.$refs.openModal.click()
       this.notificationTitle = header
       this.notificationText = body
     },
-    initNegotiationCriteria() {
-      for (var section of this.accessCriteria.sections) {
+    initNegotiationCriteria () {
+      for (const section of this.accessCriteria.sections) {
         this.negotiationCriteria[section.name] = {}
-        for (var criteria of section.accessCriteria) {
+        for (const criteria of section.accessCriteria) {
           this.negotiationCriteria[section.name][criteria.name] = null
         }
       }
     },
-    getElementIdFromResourceId(collection) {
+    getElementIdFromResourceId (collection) {
       return collection.replaceAll(":", "_")
     },
-    isSectionValid(section) {
+    isSectionValid (section) {
       return () => {
         const valid = section.accessCriteria.every(ac => !ac.required || this.negotiationCriteria[section.name][ac.name])
         this.showStepFeedback = !valid
         return valid
       }
     }
-  },
+  }
 }
 </script>
 
