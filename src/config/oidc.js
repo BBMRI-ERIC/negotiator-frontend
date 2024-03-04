@@ -25,8 +25,7 @@ let oidcSettings
 
 if (import.meta.env.DEV) {
   oidcSettings = devSettings
-}
-else {
+} else {
   oidcSettings = prodSettings
 }
 

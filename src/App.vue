@@ -1,9 +1,13 @@
-
 <template>
   <header>
     <navigation-bar />
   </header>
-  <div v-if="$route.path !== '/'" class="mt-5 pt-4">&nbsp;</div>
+  <div
+    v-if="$route.path !== '/'"
+    class="mt-5 pt-4"
+  >
+&nbsp;
+  </div>
   <div class="container body d-flex flex-column">
     <div
       v-if="notification !== undefined"
@@ -31,7 +35,10 @@
       </div>
     </div>
   </div>
-  <div v-if="$route.path !== '/'" class="container">
+  <div
+    v-if="$route.path !== '/'"
+    class="container"
+  >
     <div class="col-12">
       <Footer />
     </div>
@@ -44,7 +51,6 @@ import { mapGetters, mapMutations } from "vuex"
 
 import NavigationBar from "./components/NavigationBar.vue"
 import Footer from "./components/Footer.vue"
-
 
 export default {
   components: {
@@ -60,7 +66,7 @@ export default {
     resetNotification () {
       this.setNotification(undefined)
     }
-  }  
+  }
 }
 </script>
 
@@ -84,7 +90,7 @@ header {
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
   }
-  
+
   .body {
     min-height: calc(100vh - 263px);
   }
