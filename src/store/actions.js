@@ -43,6 +43,17 @@ export default {
       })
 
   },
+  retrieveCombinedAccessForm({ state, commit }, { requestId }) {
+    return axios.get(`${BASE_API_PATH}/requests/${requestId}/access-form`, { headers: getBearerHeaders(state.oidc.access_token)})
+        .then((response) => {
+          return response.data
+        })
+        .catch(() => {
+          commit("setNotification", "Error getting request data from server")
+          return null
+        })
+
+  },
   async createNegotiation({ state, commit }, { data }) {
     data.attachments = []
     for (const [sectionName, criteriaList] of Object.entries(data.payload)) {

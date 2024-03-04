@@ -241,8 +241,8 @@ export default {
     } else {
       this.resources = result.resources
       this.humanReadableSearchParameters = result.humanReadable
-      this.accessCriteria = await this.retrieveAccessCriteriaByResourceId({
-        resourceId: result.resources[0].id
+      this.accessCriteria = await this.retrieveCombinedAccessForm({
+       requestId: this.requestId
       })
       if (this.accessCriteria !== undefined) {
         this.initNegotiationCriteria()
@@ -255,7 +255,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
+    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation", "retrieveCombinedAccessForm"]),
     backToNegotiation(id) {
       this.$router.push("/negotiations/"+ id + "/ROLE_RESEARCHER")
     },
