@@ -199,8 +199,10 @@
     </div>
   </div>
 
+  <NewRequestButton />
+
   <div>
-    <div class="row row-cols-2 d-grid-row mt-3 ">
+    <div class="row row-cols-2 d-grid-row mt-5 ">
       <p>
         <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
         <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
@@ -384,11 +386,11 @@ import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
 import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import NewRequestButton from "../components/NewRequestButton.vue"
 
 export default {
   name: "NegotiationsList",
-  components: { NegotiationCard, 
-  },
+  components: { NegotiationCard, NewRequestButton },
   props: {
     negotiations: {
       type: Array,

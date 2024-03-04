@@ -66,6 +66,19 @@
               Your biobank
             </router-link>
           </li>
+          <li
+            v-if="featureFlagsFAQ"
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active nav-option"
+              :class="$route.path ===  '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              to="/FAQ"
+            >
+              <i class="bi bi-question-square" />
+              FAQ
+            </router-link>
+          </li>
         </ul>
         <span
           v-if="oidcIsAuthenticated"
@@ -90,6 +103,7 @@
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
 import activeTheme from "../config/theme.js" 
+import  allFeatureFlags  from "@/config/featureFlags.js"
 import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
 import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
 
@@ -99,6 +113,7 @@ export default {
     return {
       roles: [],
       logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
+      featureFlagsFAQ: allFeatureFlags.faqPage,
     }
   },
   computed: {

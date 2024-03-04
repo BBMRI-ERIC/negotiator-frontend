@@ -7,15 +7,17 @@
     :aria-labelledby="`${id}Label`"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" :class="isModalSmall === true ? 'modal-sm' : ''">
       <div class="modal-content text-center">
-        <h4 class="modal-header justify-content-center">
-          {{ title }}
-        </h4>
+          <div class="modal-header justify-content-center">
+          <h4 class="modal-title ">{{ title }}</h4>
+          <button v-if="isXButtondisplayed" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
         <div class="modal-body">
           <slot name="body" />
         </div>
-        <div class="modal-footer justify-content-center bg-light">
+        <div class="modal-footer justify-content-center">
           <slot name="footer" />
         </div>
       </div>
@@ -41,6 +43,16 @@ export default {
     fade: {
       type: Boolean,
       required: false,
+      default: true
+    },
+    isModalSmall: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    isXButtondisplayed: {
+      type: Boolean,
+      required: true,
       default: true
     }
   }

@@ -243,10 +243,20 @@
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-primary-text">
+              Submitted at:
+            </div>
+            <span class="text-secondary-text"> {{ negotiation ? printDate(negotiation.creationDate) : "" }}</span>
+          </li>
+          <li class="list-group-item p-2 d-flex justify-content-between">
+            <div>
+              <div class="fw-bold text-primary-text">
               Status:
             </div>
-            <span> 
-              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
+            <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
+
+            </div>
+         
+            <div> 
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -255,13 +265,20 @@
                 data-bs-toggle="modal"
                 data-bs-target="#abandonModal"
               >
-                <i class="bi bi-trash" />
-                Abandon
-              </strong>
+             
+              <span
+                class="text-primary-text"
+              >
+              <i class="bi bi-trash text-warning"/>
+              <span class="abandon-text">Abandon</span>
             </span>
+              
+              </strong>
+            </div>
           </li>
-        </ul>
-        <div class="dropdown mt-3 mb-3">
+
+          <li class="list-group-item p-2">
+            <div class="dropdown mt-3 mb-3">
           <button
             v-if="userRole === availableRoles.ADMINISTRATOR"
             id="dropdownMenuButton1"
@@ -291,6 +308,14 @@
             </li>
           </ul>
         </div>
+          </li>
+
+          <li class="list-group-item p-2 btn-sm">
+            <PDFButton class="mt-2" :negotiationPdfData="negotiation"/>
+          </li>
+        </ul>
+
+        
       </div>
     </div>
   </div>  
@@ -316,6 +341,7 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
+import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
@@ -324,7 +350,7 @@ import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/uti
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, NegotiationPosts, NegotiationAttachment
+    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton
   },
   props: {
     negotiationId: {
@@ -587,5 +613,9 @@ export default {
 }
 .collections-header[aria-expanded=false] .bi-chevron-up {
   display: none;
+}
+
+.abandon-text:hover {
+  color: #dc3545;
 }
 </style>
