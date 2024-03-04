@@ -44,13 +44,13 @@ const router = createRouter({
     props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false }
   },
-   {
+  {
     path: "/FAQ",
     name: "FAQ",
     component: FaqPage,
     meta: { isPublic: true }
   },
-   {
+  {
     path: "/negotiations/:negotiationId/:userRole",
     name: "negotiation-page",
     component: NegotiationPage,

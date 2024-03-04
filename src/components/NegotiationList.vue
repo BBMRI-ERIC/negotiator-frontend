@@ -196,57 +196,56 @@
             </button>
           </div>
         </div>
+      </div>
     </div>
-  </div>
 
-  <NewRequestButton />
+    <NewRequestButton />
 
-  <div>
-    <div class="row row-cols-2 d-grid-row mt-5 ">
-      <p>
-        <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
-        <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
-      </p>
+    <div>
+      <div class="row row-cols-2 d-grid-row mt-5 ">
+        <p>
+          <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
+          <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
+        </p>
 
-      <div class="text-end my-2">
-        <button
-          type="button"
-          class="btn btn-sm me-2"
-          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
-          @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
-        >
-        <i class="bi bi-card-heading"></i>
-        </button>
+        <div class="text-end my-2">
+          <button
+            type="button"
+            class="btn btn-sm me-2"
+            :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
+            @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+          >
+            <i class="bi bi-card-heading" />
+          </button>
 
-        <button
-          v-if="sortedNegotiations.length > 1"
-          type="button"
-          class="btn btn-sm me-2"
-          :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
-          @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
-        >
-        <i class="bi bi-list"></i>
-        </button>
+          <button
+            v-if="sortedNegotiations.length > 1"
+            type="button"
+            class="btn btn-sm me-2"
+            :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
+            @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+          >
+            <i class="bi bi-list" />
+          </button>
 
-        <button
-        v-if="sortedNegotiations.length > 1"
-          type="button"
-          class="btn btn-sm me-2"
-          :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
-          @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView({negotiationsView:'Card-two-column'})"
-        >
-        <i class="bi bi-grid"></i>
-        </button>
+          <button
+            v-if="sortedNegotiations.length > 1"
+            type="button"
+            class="btn btn-sm me-2"
+            :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
+            @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView({negotiationsView:'Card-two-column'})"
+          >
+            <i class="bi bi-grid" />
+          </button>
 
-        <button
-          type="button"
-          class="btn btn-sm"
-          :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
-          @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
-        >
-        <i class="bi bi-table"></i>
-        </button>
-   
+          <button
+            type="button"
+            class="btn btn-sm"
+            :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
+            @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
+          >
+            <i class="bi bi-table" />
+          </button>
         </div>
       </div>
       <div

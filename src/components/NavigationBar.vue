@@ -72,7 +72,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path ===  '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path === '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/FAQ"
             >
               <i class="bi bi-question-square" />
@@ -102,18 +102,18 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
-import activeTheme from "../config/theme.js" 
-import allFeatureFlags  from "@/config/featureFlags.js"
-import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
-import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
+import activeTheme from "../config/theme.js"
+import allFeatureFlags from "@/config/featureFlags.js"
+import bbmriLogo from "../assets/images/nav-bar-bbmri.svg"
+import eucaimLogo from "../assets/images/nav-bar-eucaim.png"
 
 export default {
   name: "NavigationBar",
   data () {
     return {
       roles: [],
-      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
-      featureFlagsFAQ: allFeatureFlags.faqPage,
+      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
+      featureFlagsFAQ: allFeatureFlags.faqPage
     }
   },
   computed: {

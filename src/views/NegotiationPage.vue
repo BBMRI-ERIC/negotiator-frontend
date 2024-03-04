@@ -266,13 +266,12 @@
           <li class="list-group-item p-2 d-flex justify-content-between">
             <div>
               <div class="fw-bold text-primary-text">
-              Status:
+                Status:
+              </div>
+              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
             </div>
-            <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
 
-            </div>
-         
-            <div> 
+            <div>
               <strong
                 v-if="negotiation.status !== 'ABANDONED'"
                 class="float-end"
@@ -281,57 +280,58 @@
                 data-bs-toggle="modal"
                 data-bs-target="#abandonModal"
               >
-             
-              <span
-                class="text-primary-text"
-              >
-              <i class="bi bi-trash text-warning"/>
-              <span class="abandon-text">Abandon</span>
-            </span>
-              
+
+                <span
+                  class="text-primary-text"
+                >
+                  <i class="bi bi-trash text-warning" />
+                  <span class="abandon-text">Abandon</span>
+                </span>
+
               </strong>
             </div>
           </li>
 
           <li class="list-group-item p-2">
             <div class="dropdown mt-3 mb-3">
-          <button
-            v-if="userRole === availableRoles.ADMINISTRATOR"
-            id="dropdownMenuButton1"
-            class="btn btn-secondary dropdown-toggle me-3"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Select an Action
-          </button>
-          <ul
-            class="dropdown-menu"
-            aria-labelledby="dropdownMenuButton1"
-          >
-            <li
-              v-for="status in negotiationStatusOptions"
-              :key="status"
-              :value="status"
-            >
               <button
-                class="dropdown-item"
+                v-if="userRole === availableRoles.ADMINISTRATOR"
+                id="dropdownMenuButton1"
+                class="btn btn-secondary dropdown-toggle me-3"
                 type="button"
-                @click="updateNegotiation(status)"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-                {{ transformStatus(status) }}
+                Select an Action
               </button>
-            </li>
-          </ul>
-        </div>
+              <ul
+                class="dropdown-menu"
+                aria-labelledby="dropdownMenuButton1"
+              >
+                <li
+                  v-for="status in negotiationStatusOptions"
+                  :key="status"
+                  :value="status"
+                >
+                  <button
+                    class="dropdown-item"
+                    type="button"
+                    @click="updateNegotiation(status)"
+                  >
+                    {{ transformStatus(status) }}
+                  </button>
+                </li>
+              </ul>
+            </div>
           </li>
 
           <li class="list-group-item p-2 btn-sm">
-            <PDFButton class="mt-2" :negotiationPdfData="negotiation"/>
+            <PDFButton
+              class="mt-2"
+              :negotiation-pdf-data="negotiation"
+            />
           </li>
         </ul>
-
-        
       </div>
     </div>
   </div>
