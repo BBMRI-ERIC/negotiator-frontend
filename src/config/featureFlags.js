@@ -1,19 +1,17 @@
-const devSettings = { 
-    faqPage: false,
+const devSettings = {
+  faqPage: false
 }
 
 const prodSettings = {
-    faqPage: false,
+  faqPage: false
 }
 
 let allFeatureFlags
 
 if (import.meta.env.DEV) {
-    allFeatureFlags = devSettings
+  allFeatureFlags = devSettings
+} else {
+  allFeatureFlags = prodSettings
 }
-else {
-    allFeatureFlags = prodSettings
-}
-
 
 export default allFeatureFlags

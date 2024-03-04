@@ -1,8 +1,8 @@
 <template>
-    <NegotiatorModal
+  <NegotiatorModal
     :id="id"
     :title="title"
-    :isModalSmall="isModalSmall"
+    :is-modal-small="isModalSmall"
   >
     <template #body>
       <p>
@@ -20,41 +20,40 @@
       </button>
     </template>
   </NegotiatorModal>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      id: {
-        type: String,
-        required: true
-      },
-      title: {
-        type: String,
-        required: true
-      },
-      text: {
-        type: String,
-        required: true
-      },
-        isModalSmall: {
-        type: Boolean,
-        required: false,
-        default: false
-        },
-        isXButtondisplayed: {
-        type: Boolean,
-        required: true,
-        default: true
-        }
-    },
-    emits: ["confirm"],
-    methods: {
-        emitConfirm() {
-        this.$emit("confirm")
-        }
-    }
+</template>
 
+<script>
+export default {
+  props: {
+    id: {
+      type: String,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    text: {
+      type: String,
+      required: true
+    },
+    isModalSmall: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    isXButtondisplayed: {
+      type: Boolean,
+      required: true,
+      default: true
+    }
+  },
+  emits: ["confirm"],
+  methods: {
+    emitConfirm () {
+      this.$emit("confirm")
+    }
   }
-  </script>
-  
+
+}
+</script>

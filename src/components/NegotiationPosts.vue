@@ -1,6 +1,8 @@
 <template>
   <div v-if="negotiation">
-    <h5 class="text-primary">Comments</h5>
+    <h5 class="text-primary">
+      Comments
+    </h5>
     <div
       v-for="post in posts"
       :key="post.id"
@@ -32,7 +34,9 @@
       v-if="posts.length === 0"
       class="my-3"
     >
-    <h5 class="text-primary">Send a message</h5>
+    <h5 class="text-primary">
+      Send a message
+    </h5>
     <form
       class="border rounded mb-4 p-2"
       @submit.prevent="sendMessage"
@@ -43,24 +47,25 @@
       />
       <NegotiationAttachment
         v-if="attachment"
-        class="ms-auto " 
+        class="ms-auto "
         :name="attachment.name"
         :content-type="attachment.type"
         :size="attachment.size"
         @removed="resetAttachment"
       />
       <div class="d-flex flex-row-reverse mt-3 mb-2">
-        <span      
+        <span
           data-bs-toggle="tooltip"
-          :data-bs-title="negotiation.postsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' ">
-        <button
-          type="submit"
-          :disabled="!readyToSend"
-          class="btn btn-secondary ms-2"
+          :data-bs-title="negotiation.postsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
         >
-          Send message
-        </button>
-      </span>
+          <button
+            type="submit"
+            :disabled="!readyToSend"
+            class="btn btn-secondary ms-2"
+          >
+            Send message
+          </button>
+        </span>
         <button
           type="submit"
           class="btn btn-attachment ms-2 border rounded"
@@ -89,7 +94,7 @@
           <option value="Everyone">
             Everyone
           </option>
-          <option 
+          <option
             v-for="recipient in recipients"
             :key="recipient.id"
             :value="recipient.id"
@@ -103,7 +108,7 @@
 </template>
 
 <script>
-import { Tooltip } from 'bootstrap'
+import { Tooltip } from "bootstrap"
 import { mapActions, mapGetters } from "vuex"
 import { dateFormat, MESSAGE_STATUS, POST_TYPE } from "@/config/consts"
 import moment from "moment"
@@ -115,27 +120,27 @@ export default {
   props: {
     negotiation: {
       type: Object,
-      default: undefined,
+      default: undefined
     },
     userRole: {
       type: String,
-      default: undefined,
+      default: undefined
     },
     // Array of possible recipients for messages.
     recipients: {
       type: Array,
-      default(rawProps) { // eslint-disable-line no-unused-vars
+      default (rawProps) { // eslint-disable-line no-unused-vars
         return []
       }
     },
     organizations: {
       type: Object,
-      default(rawProps) { // eslint-disable-line no-unused-vars
+      default (rawProps) { // eslint-disable-line no-unused-vars
         return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       posts: [],
       message: "",
@@ -144,21 +149,21 @@ export default {
       attachment: undefined
     }
   },
-  mounted () {
-    new Tooltip(document.body, {
-      selector: "[data-bs-toggle='tooltip']",
-    })
-  },
   computed: {
     ...mapGetters(["oidcUser"]),
-    readyToSend() {
-      return (this.message !== "" || this.attachment != undefined) && this.recipientId !== "" && this.negotiation.postsEnabled
+    readyToSend () {
+      return (this.message !== "" || this.attachment !== undefined) && this.recipientId !== "" && this.negotiation.postsEnabled
     },
-    recipientsById() {
+    recipientsById () {
       return this.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
     }
   },
-  async beforeMount() {
+  mounted () {
+    new Tooltip(document.body, {
+      selector: "[data-bs-toggle='tooltip']"
+    })
+  },
+  async beforeMount () {
     this.posts = await this.retrievePostsByNegotiationId({
       negotiationId: this.negotiation.id
     })
@@ -168,47 +173,46 @@ export default {
       "retrievePostsByNegotiationId",
       "addMessageToNegotiation",
       "addAttachmentToNegotiation",
-      "markMessageAsRead",
+      "markMessageAsRead"
     ]),
-    resetForm() {
+    resetForm () {
       this.message = ""
       this.recipientId = ""
       this.resetAttachment()
     },
-    resetAttachment() {
+    resetAttachment () {
       this.attachment = undefined
     },
     printDate: function (date) {
       return moment(date).format(dateFormat)
     },
-    showAttachment(event) {
+    showAttachment (event) {
       const file = event.target.files[0]
       this.attachment = file
     },
-    async sendMessage() {
+    async sendMessage () {
       if (!this.readyToSend) {
         return
       }
-      if (this.attachment != undefined) {
+      if (this.attachment !== undefined) {
         await this.addAttachmentToNegotiation({
           data: {
-            organizationId: this.recipientId != "Everyone" ? this.recipientId : null,
+            organizationId: this.recipientId !== "Everyone" ? this.recipientId : null,
             negotiationId: this.negotiation.id,
             attachment: this.attachment
           }
         }).then((attachment) => {
           console.log(`Successfully uploaded file: ${attachment.name}`)
         })
-      }
-      else {
+      } else {
         // send a message and add the newly created post
         await this.addMessageToNegotiation({
           data: {
-            organizationId: this.recipientId != "Everyone" ? this.recipientId : null,
+            organizationId: this.recipientId !== "Everyone" ? this.recipientId : null,
             text: this.message,
             negotiationId: this.negotiation.id,
             type: this.recipientId === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
-          },
+          }
         }).then((post) => {
           if (post) {
             this.posts.push(post)
@@ -217,32 +221,29 @@ export default {
       }
       this.resetForm()
     },
-    transformId(id) {
+    transformId (id) {
       return id.replaceAll(":", "_")
     },
-    getAuthorName(post) {
+    getAuthorName (post) {
       if (post.createdBy.authSubject === this.oidcUser.sub) {
         return "You"
-      }
-      else {
+      } else {
         return `${post.createdBy.name}`
       }
     },
-    getRecipientPostColor(post) {
+    getRecipientPostColor (post) {
       return post.type === POST_TYPE.PUBLIC ? { "bg-dark": true } : { "bg-primary": true }
     },
-    getRecipientName(post) {
+    getRecipientName (post) {
       if (post.organizationId !== undefined) {
         return this.organizations[post.organizationId].name
-      }
-      else if (post.personRecipient !== undefined) {
+      } else if (post.personRecipient !== undefined) {
         return post.personRecipient.authSubject === this.oidcUser.sub ? "You" : post.personRecipient.name
-      }
-      else {
+      } else {
         return "Everyone"
       }
     },
-    getHumanFileSize(bytes, dp = 1) {
+    getHumanFileSize (bytes, dp = 1) {
       const thresh = 1024
       if (Math.abs(bytes) < thresh) {
         return bytes + " B"
@@ -256,25 +257,21 @@ export default {
       } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
       return bytes.toFixed(dp) + " " + units[u]
     },
-    getFileTypeIconClass(fileType) {
+    getFileTypeIconClass (fileType) {
       if (fileType === "application/pdf") {
         return { "bi-file-pdf": true }
-      }
-      else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
+      } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
         return { "bi-file-word": true }
-      }
-      else {
+      } else {
         return { "bi-file-earmark": true }
       }
     },
-    getFileTypeName(fileType) {
+    getFileTypeName (fileType) {
       if (fileType === "application/pdf") {
         return "PDF"
-      }
-      else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
         return "DOCX"
-      }
-      else if (fileType === "application/msword") {
+      } else if (fileType === "application/msword") {
         return "DOC"
       }
     }
@@ -294,7 +291,7 @@ export default {
     text-align: right;
     filter: alpha(opacity=0);
     opacity: 0;
-    outline: none;   
+    outline: none;
     cursor: inherit;
     display: block;
 }

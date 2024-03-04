@@ -24,7 +24,7 @@ const router = createRouter({
   }, {
     path: "/requests/:requestId",
     name: "request",
-    component: NegotiationCreatePage,
+    component: NegotiationCreatePage
   }, {
     path: "/researcher",
     name: "researcher",
@@ -44,13 +44,13 @@ const router = createRouter({
     props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false }
   },
-   {
+  {
     path: "/FAQ",
     name: "FAQ",
     component: FaqPage,
     meta: { isPublic: true }
   },
-   {
+  {
     path: "/negotiations/:negotiationId/:userRole",
     name: "negotiation-page",
     component: NegotiationPage,
