@@ -1,13 +1,9 @@
 <template>
   <div>
-    <button
-      type="button"
-      class="btn btn-primary"
+    <a
+      class="pdf-text cursor-pointer"
       @click="createPDF"
-    >
-      <i class="bi-filetype-pdf" />
-      <span class="text-">Download PDF</span>
-    </button>
+    ><i class="bi bi-filetype-pdf" /> Download PDF</a>
   </div>
 </template>
 
@@ -16,6 +12,8 @@ import jsPDF from "jspdf"
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/home-bbmri.png"
 import eucaimLogo from "../assets/images/home-eucaim.png"
+import moment from "moment"
+import { dateFormat } from "@/config/consts"
 
 export default {
   props: {
@@ -34,31 +32,92 @@ export default {
       const pdfName = "negotiation"
       const doc = new jsPDF()
 
-      doc.addImage(this.logoSrc, "JPEG", 15, 5, 50, 13)
+      const negotiationUser = {
+        Author: this.negotiationPdfData.author.name,
+        Email: this.negotiationPdfData.author.email,
+        "Negotiation ID": this.negotiationPdfData.id,
+        "Submitted at": this.negotiationPdfData.creationDate,
+        Status: this.negotiationPdfData.status,
+        "Report generated at": moment().format(dateFormat)
+      }
+
+      doc.addImage(this.logoSrc, "JPEG", 15, 7, 50, 13)
 
       doc.setFont("calibri", "bold")
-      doc.text("Request sumary", 105, 20, null, null, "center")
+      doc.text("REQUEST SUMMARY", 105, 20, null, null, "center")
 
-      doc.setFont("calibri", "normal")
+      doc.setFont("calibri", "bold")
+      doc.setFontSize(14)
 
-      doc.text("Author: " + this.negotiationPdfData.author.name, 15, 30)
-      doc.text("Email: " + this.negotiationPdfData.author.email, 15, 35)
-      doc.text("Negotiation ID: " + this.negotiationPdfData.id, 15, 40)
-      doc.text("Status: " + this.negotiationPdfData.status, 15, 45)
+      // Iterate through highlighted information and add to PDF
+      let yPos = 30
+      for (const [key, value] of Object.entries(negotiationUser)) {
+        doc.setFont("calibri", "bold")
+        doc.text(`${key}:`, 15, yPos)
+        const nekiBroj = 22 + (key.length * 2)
+        doc.setFont("calibri", "normal")
+        doc.text(`${value}`, nekiBroj, yPos)
 
-      let paddingInLoop = 75
+        yPos += 10
+      }
+
+      doc.line(0, yPos, 220, yPos)
+
+      let paddingInLoop = 100 // Initial padding
+
       for (const key in this.negotiationPdfData.payload) {
-        doc.text(key + ": ", 15, paddingInLoop)
-        paddingInLoop += 5
+        doc.setFont("calibri", "bold")
+
+        doc.text(key.toUpperCase(), 15, paddingInLoop)
+        paddingInLoop += 10
+
+        doc.setFont("calibri", "normal")
+
         for (const value in this.negotiationPdfData.payload[key]) {
           if (this.negotiationPdfData.payload[key][value]) {
-            doc.text(value + ":" + this.negotiationPdfData.payload[key][value], 15, paddingInLoop)
+            // Split text to fit within specified width
+            const lines = doc.splitTextToSize(value + ": " + this.negotiationPdfData.payload[key][value], 180)
+
+            // Add each line to the PDF
+            for (let i = 0; i < lines.length; i++) {
+              doc.text(lines[i], 15, paddingInLoop)
+              paddingInLoop += 5
+            }
           }
-          paddingInLoop += 5
         }
+        paddingInLoop += 10
       }
+
+      // Set font style for dynamic text
+      // doc.setFont("helvetica", "normal");
+      // doc.setFontSize(12);
+
+      //   let paddingInLoop = 75
+      //   for (const key in this.negotiationPdfData.payload) {
+      //     doc.text(key + ": ", 15, paddingInLoop)
+      //     paddingInLoop += 5
+      //     for (const value in this.negotiationPdfData.payload[key]) {
+      //       if (this.negotiationPdfData.payload[key][value]) {
+      //         doc.text(value + ":" + this.negotiationPdfData.payload[key][value], 15, paddingInLoop)
+      //       }
+      //       paddingInLoop += 5
+      //     }
+      //   }
       doc.save(pdfName + ".pdf")
     }
   }
 }
 </script>
+
+<style scoped>
+a {
+    text-decoration: none;
+}
+.pdf-text {
+  color: #3c3c3d;
+}
+
+.pdf-text:hover {
+  color: #e95713;
+}
+</style>
