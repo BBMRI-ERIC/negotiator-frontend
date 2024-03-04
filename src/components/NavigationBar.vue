@@ -67,6 +67,7 @@
             </router-link>
           </li>
           <li
+            v-if="featureFlagsFAQ"
             class="nav-item"
           >
             <router-link
@@ -102,6 +103,7 @@
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
 import activeTheme from "../config/theme.js" 
+import  allFeatureFlags  from "@/config/featureFlags.js"
 import bbmriLogo from '../assets/images/nav-bar-bbmri.svg'
 import eucaimLogo from '../assets/images/nav-bar-eucaim.png'
 
@@ -111,6 +113,7 @@ export default {
     return {
       roles: [],
       logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
+      featureFlagsFAQ: allFeatureFlags.faqPage,
     }
   },
   computed: {

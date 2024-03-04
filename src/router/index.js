@@ -3,7 +3,7 @@ import OidcCallback from "@/components/OidcCallback.vue"
 import HomePage from "../views/HomePage.vue"
 import NegotiationCreatePage from "../views/NegotiationCreatePage.vue"
 import NegotiationPage from "../views/NegotiationPage.vue"
-import HelpSection from "../views/HelpSection.vue"
+import FaqPage from "../views/FaqPage.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
@@ -47,7 +47,7 @@ const router = createRouter({
    {
     path: "/FAQ",
     name: "FAQ",
-    component: HelpSection,
+    component: FaqPage,
     meta: { isPublic: true }
   },
    {

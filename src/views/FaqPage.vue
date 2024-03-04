@@ -1,7 +1,7 @@
 <template>
     <h1 class="text-center mb-5">Support</h1>
     <div class="row row-cols-1 row-cols-md-2 d-grid-row">
-    <div class="mb-2">
+    <div class="mb-4">
         <div class="card">
   <h5 class="card-header">Contact</h5>
   <div class="card-body">
@@ -13,7 +13,7 @@
 </div>
     </div>
    
-    <div class="mb-2">
+    <div class="mb-4">
         <div class="card">
   <h5 class="card-header">Feedback</h5>
   <div class="card-body">
@@ -30,7 +30,7 @@
 
 </div>
 
-<div class="mb-2">
+<div class="mb-4">
         <div class="card">
   <h5 class="card-header">FAQ</h5>
   <div class="card-body">
@@ -91,7 +91,7 @@
     <h1 class="text-center mt-3 mb-5">Learn</h1>
    
 <div class="row row-cols-1 row-cols-md-2 d-grid-row">
-    <div class="mb-2">
+    <div class="mb-4">
         <div class="card">
   <h5 class="card-header">Learn about negotiatior</h5>
   <div class="card-body">
@@ -103,12 +103,12 @@
 </div>
     </div>
 
-    <div class="mb-2">
+    <div class="mb-4">
         <div class="card">
   <h5 class="card-header">Federated Platform</h5>
   <div class="card-body">
     <h5 class="card-title">Information about the Federated Platform and its advanced services such as the federated search or data analysis platform.</h5>
-    <div class="mt-4"></div>
+    <div class="mt-5"></div>
     <a href="https://www.bbmri-eric.eu/federated-platform/"> <i class="bi bi-box-arrow-up-right"></i> Go to Federated Platform page</a>
 </div>
 
@@ -116,7 +116,7 @@
     </div>
 
 
-    <div class="mb-2">
+    <div class="mb-4">
         <div class="card">
   <h5 class="card-header">BBMRI-ERIC Sample and Data portal</h5>
   <div class="card-body">
