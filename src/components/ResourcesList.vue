@@ -17,13 +17,13 @@
           aria-expanded="true"
           :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
         >
-          {{ `${org.name} (${org.resources.length})` }}  
+          {{ `${org.name} (${org.resources.length})` }}
         </div>
         <div
           :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
           class="collapse show"
         >
-          <div    
+          <div
             v-for="resource in org.resources"
             :key="resource.id"
             class="card-body"
@@ -51,10 +51,10 @@ export default {
     }
   },
   computed: {
-    organizations() {
-      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name }})
+    organizations () {
+      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name } })
     },
-    organizationsById() {        
+    organizationsById () {
       return this.resources.reduce((organizations, resource) => {
         if (resource.organization.externalId in organizations) {
           organizations[resource.organization.externalId].resources.push(
@@ -62,26 +62,26 @@ export default {
         } else {
           organizations[resource.organization.externalId] = {
             name: resource.organization.name,
-            resources: [resource] 
+            resources: [resource]
           }
         }
         return organizations
       }, {})
     },
-    resourcesById() {
+    resourcesById () {
       return this.resources.reduce((resourcesObjects, resource) => {
         resourcesObjects[resource.id] = resource
         return resourcesObjects
       }, {})
     },
-    numberOfResources() {
+    numberOfResources () {
       return this.resources.length
-    },
+    }
   },
   methods: {
-    getElementIdFromResourceId(resourceId) {
+    getElementIdFromResourceId (resourceId) {
       return resourceId.replaceAll(":", "_")
-    },
-  },
+    }
+  }
 }
 </script>
