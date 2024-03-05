@@ -87,22 +87,6 @@ export default {
         }
         paddingInLoop += 10
       }
-
-      // Set font style for dynamic text
-      // doc.setFont("helvetica", "normal");
-      // doc.setFontSize(12);
-
-      //   let paddingInLoop = 75
-      //   for (const key in this.negotiationPdfData.payload) {
-      //     doc.text(key + ": ", 15, paddingInLoop)
-      //     paddingInLoop += 5
-      //     for (const value in this.negotiationPdfData.payload[key]) {
-      //       if (this.negotiationPdfData.payload[key][value]) {
-      //         doc.text(value + ":" + this.negotiationPdfData.payload[key][value], 15, paddingInLoop)
-      //       }
-      //       paddingInLoop += 5
-      //     }
-      //   }
       doc.save(pdfName + ".pdf")
     }
   }
