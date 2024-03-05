@@ -1,6 +1,6 @@
 <template>
   <div
-    v-for="criteria in accessCriteria"
+    v-for="criteria in elements"
     :key="criteria.name"
     class="mb-4 ms-3 me-3"
   >
@@ -21,6 +21,7 @@
     <input
       v-else
       :type="criteria.type"
+      :placeholder="criteria.description"
       class="form-control"
       :required="criteria.required"
     >
@@ -31,7 +32,7 @@
 export default {
   name: "AccessCriteriaSection",
   props: {
-    accessCriteria: {
+    elements: {
       type: Array,
       default () {
         return []
