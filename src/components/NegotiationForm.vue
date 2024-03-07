@@ -240,7 +240,7 @@ export default {
       this.resources = result.resources
       this.humanReadableSearchParameters = result.humanReadable
       this.accessCriteria = await this.retrieveAccessCriteriaByResourceId({
-        resourceId: result.resources[0].id
+        resourceId: result.resources[0].externalId
       })
       if (this.accessCriteria !== undefined) {
         this.initNegotiationCriteria()
