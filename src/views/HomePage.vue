@@ -57,8 +57,8 @@
           Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
         </div>
         <div class="text-center text-primary-text col mb-2">
-            <i class="bi bi-github" />
-            <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
+          <i class="bi bi-github" />
+          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
         </div>
         <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>
@@ -70,21 +70,21 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import activeTheme from "../config/theme.js" 
-import bbmriLogo from '../assets/images/home-bbmri.png'
-import eucaimLogo from '../assets/images/home-eucaim.png'
+import activeTheme from "../config/theme.js"
+import bbmriLogo from "../assets/images/home-bbmri.png"
+import eucaimLogo from "../assets/images/home-eucaim.png"
 
 export default {
   name: "HomePage",
-  data() {
+  data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === 'bbmri' ? bbmriLogo : eucaimLogo,
+      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo
     }
   },
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
   },
-  beforeMount() {
+  beforeMount () {
     if (this.oidcIsAuthenticated) {
       this.$router.push("/researcher")
     }
@@ -92,7 +92,7 @@ export default {
   methods: {
     ...mapActions([
       "authenticateOidc"
-    ])    
+    ])
   }
 }
 </script>

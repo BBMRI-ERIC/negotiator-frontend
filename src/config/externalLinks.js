@@ -1,18 +1,17 @@
-const devSettings = { 
-    directory: "https://directory.bbmri-eric.eu",
+const devSettings = {
+  directory: "https://directory.bbmri-eric.eu"
 }
 
 const prodSettings = {
-    directory: "https://directory.bbmri-eric.eu",
+  directory: "https://directory.bbmri-eric.eu"
 }
 
 let allExternalLinks
 
 if (import.meta.env.DEV) {
-    allExternalLinks = devSettings
-}
-else {
-    allExternalLinks = prodSettings
+  allExternalLinks = devSettings
+} else {
+  allExternalLinks = prodSettings
 }
 
 export default allExternalLinks

@@ -1,24 +1,24 @@
 module.exports = {
-  "env": {
-    "browser": true,
-    "es2021": true
+  env: {
+    browser: true,
+    es2021: true
   },
-  "extends": [
+  extends: [
     "eslint:recommended",
     "plugin:vue/vue3-essential",
     "plugin:vue/vue3-recommended",
     "plugin:vue/vue3-strongly-recommended",
-    "@vue/standard"
+    "@vue/eslint-config-standard"
   ],
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module"
+  parserOptions: {
+    ecmaVersion: 12,
+    sourceType: "module"
   },
-  "plugins": [
+  plugins: [
     "vue"
   ],
-  "rules": {
-    "indent": [
+  rules: {
+    indent: [
       "error",
       2
     ],
@@ -26,16 +26,16 @@ module.exports = {
       "error",
       "unix"
     ],
-    "quotes": [
+    quotes: [
       "error",
       "double"
     ],
-    "semi": [
+    semi: [
       "error",
       "never"
     ],
     "key-spacing": [
-      "error", { "beforeColon": false }
+      "error", { beforeColon: false }
     ],
     "object-curly-spacing": [
       "error",

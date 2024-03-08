@@ -10,7 +10,7 @@ import NegotiationForm from "@/components/NegotiationForm.vue"
 export default {
   name: "HomePage",
   components: {
-    NegotiationForm,
+    NegotiationForm
   }
 }
 </script>
