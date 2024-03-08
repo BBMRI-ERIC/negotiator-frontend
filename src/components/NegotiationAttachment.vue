@@ -33,7 +33,7 @@
       class="ms-auto align-self-center pe-2 cursor-pointer"
     >
       <i
-        class="bi bi-download" 
+        class="bi bi-download"
         @click="$emit('download')"
       />
     </div>
@@ -64,21 +64,21 @@ export default {
   },
   emits: ["removed", "download"],
   computed: {
-    downloadable() {
-      return this.id != undefined
+    downloadable () {
+      return this.id !== undefined
     }
   },
   methods: {
-    getHumanFileSize(bytes, dp=1) {
+    getHumanFileSize (bytes, dp = 1) {
       const thresh = 1024
 
       if (Math.abs(bytes) < thresh) {
         return bytes + " B"
       }
 
-      const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"] 
+      const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
       let u = -1
-      const r = 10**dp
+      const r = 10 ** dp
 
       do {
         bytes /= thresh
@@ -86,7 +86,7 @@ export default {
       } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
       return bytes.toFixed(dp) + " " + units[u]
     },
-    getFileTypeIconClass(fileType) {
+    getFileTypeIconClass (fileType) {
       if (fileType === "application/pdf") {
         return { "bi-file-pdf": true }
       } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
@@ -95,7 +95,7 @@ export default {
         return { "bi-file-earmark": true }
       }
     },
-    getFileTypeName(fileType) {
+    getFileTypeName (fileType) {
       if (fileType === "application/pdf") {
         return "PDF"
       } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
@@ -104,7 +104,7 @@ export default {
         return "DOC"
       }
     },
-    emitRemoved() {
+    emitRemoved () {
       this.$emit("removed")
     }
   }

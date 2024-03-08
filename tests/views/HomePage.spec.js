@@ -7,7 +7,7 @@ describe("HomePage", () => {
   let store
   let auth
 
-  beforeEach (() => {
+  beforeEach(() => {
     store = createStore()
     auth = {
       isUserLoggedIn: vi.fn()

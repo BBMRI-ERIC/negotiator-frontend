@@ -1,4 +1,4 @@
-<template> 
+<template>
   <NegotiatorModal
     :id="id"
     :title="title"
@@ -50,7 +50,7 @@ export default {
   },
   emits: ["dismiss"],
   methods: {
-    emitDismiss() {
+    emitDismiss () {
       this.$emit("dismiss")
     }
   }

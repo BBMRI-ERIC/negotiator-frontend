@@ -8,17 +8,48 @@ You can spin up a preconfigured instance with the following command.
 cd oidc_mock && docker-compose up -d
 ```
 Then to run the application with correct settings run:
-```
-vite dev
+
+## Recommended package manager is Yarn
+
+# Because of some Legacy package (or the packages that has not updated for a few years) that specify a peer dependency which is in conflict with a package you want to install
+
+## Project Setup
+
+```sh
+# yarn
+yarn install
+
+# npm
+npm install
 ```
 
-## Production build
-```
-vite build
+### Compile and Hot-Reload for Development
+
+```sh
+# yarn
+yarn dev
+
+# npm
+npm run dev
 ```
 
-### Lints and fixes files
+### Compile and Minify for Production
+
+```sh
+# yarn
+yarn build
+
+# npm
+npm run build
 ```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+# yarn
+yarn lint
+
+# npm
 npm run lint
 ```
 

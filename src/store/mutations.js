@@ -1,11 +1,11 @@
 export default {
-  setNotification(state, notificationMessage) {
+  setNotification (state, notificationMessage) {
     state.notification = notificationMessage
   },
-  setNegotiations(state, negotiations) {
+  setNegotiations (state, negotiations) {
     state.negotiations = negotiations
   },
-  setSavedNegotiationsView(state, negotiationsView) {
+  setSavedNegotiationsView (state, negotiationsView) {
     state.savedNegotiationsView = negotiationsView
   }
 }
