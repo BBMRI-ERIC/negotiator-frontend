@@ -270,32 +270,14 @@
               </div>
               <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
             </div>
-
-            <div>
-              <strong
-                v-if="negotiation.status !== 'ABANDONED'"
-                class="float-end"
-                type="button"
-                role="button"
-                data-bs-toggle="modal"
-                data-bs-target="#abandonModal"
-              >
-
-                <span
-                  class="text-primary-text"
-                >
-                  <i class="bi bi-trash text-warning" />
-                  <span class="abandon-text">Abandon</span>
-                </span>
-
-              </strong>
-            </div>
           </li>
 
-          <li class="list-group-item p-2">
+          <li
+            v-if="userRole === availableRoles.ADMINISTRATOR"
+            class="list-group-item p-2"
+          >
             <div class="dropdown mt-3 mb-3">
               <button
-                v-if="userRole === availableRoles.ADMINISTRATOR"
                 id="dropdownMenuButton1"
                 class="btn btn-secondary dropdown-toggle me-3"
                 type="button"
@@ -325,11 +307,27 @@
             </div>
           </li>
 
-          <li class="list-group-item p-2 btn-sm">
+          <li class="list-group-item p-2 btn-sm border-bottom-0">
             <PDFButton
               class="mt-2"
               :negotiation-pdf-data="negotiation"
             />
+          </li>
+          <li class="list-group-item p-2 border-bottom-0">
+            <div class="pt-2 abandon-text">
+              <div
+                v-if="negotiation.status !== 'ABANDONED'"
+                type="button"
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#abandonModal"
+              >
+                <span>
+                  <i class="bi bi-trash pe-1" />
+                  <span>Abandon</span>
+                </span>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -627,6 +625,9 @@ export default {
 }
 .collections-header[aria-expanded=false] .bi-chevron-up {
   display: none;
+}
+.abandon-text {
+  color: #3c3c3d;
 }
 .abandon-text:hover {
   color: #dc3545;
