@@ -10,8 +10,9 @@
 <script>
 import jsPDF from "jspdf"
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/home-bbmri.png"
-import eucaimLogo from "../assets/images/home-eucaim.png"
+import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
+import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
+import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import moment from "moment"
 import { dateFormat } from "@/config/consts"
 
@@ -24,7 +25,7 @@ export default {
   },
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo)
     }
   },
   methods: {
