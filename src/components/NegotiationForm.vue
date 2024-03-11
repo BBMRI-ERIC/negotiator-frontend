@@ -30,7 +30,7 @@
       Access Form Submission
     </div>
     <form-wizard
-      v-if="accessCriteria"
+      v-if="accessForm"
       :start-index="0"
       color="var(--bs-secondary)"
       step-size="md"
@@ -59,7 +59,7 @@
         />
       </tab-content>
       <tab-content
-        v-for="section in accessCriteria.sections"
+        v-for="section in accessForm.sections"
         :key="section.name"
         :title="section.label"
         class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto text-primary-text"
@@ -98,7 +98,7 @@
         </div>
 
         <div
-          v-for="criteria in section.accessCriteria"
+          v-for="criteria in section.elements"
           :key="criteria.name"
           class="mb-4 mx-3"
         >
@@ -109,16 +109,10 @@
             {{ criteria.label }}
           </label>
 
-          <i
-            v-if="criteria.description"
-            class="mx-2 py-1 bi bi-info-circle"
-            data-bs-toggle="tooltip"
-            :data-bs-title="criteria.description"
-          />
-
           <textarea
             v-if="criteria.type === 'textarea'"
             v-model="negotiationCriteria[section.name][criteria.name]"
+            :placeholder="criteria.description"
             class="form-control text-secondary-text"
             :required="criteria.required"
           />
@@ -127,6 +121,7 @@
             accept=".pdf"
             class="form-control text-secondary-text"
             :required="criteria.required"
+            :placeholder="criteria.description"
             :type="criteria.type"
             @change="handleFileUpload($event, section.name, criteria.name)"
           >
@@ -134,6 +129,7 @@
             v-else
             v-model="negotiationCriteria[section.name][criteria.name]"
             :type="criteria.type"
+            :placeholder="criteria.description"
             class="form-control text-secondary-text"
             :required="criteria.required"
           >
@@ -150,22 +146,22 @@
           <span class="text-primary">Upon confirmation, your request will undergo content review. Our reviewers may contact you via email for further details. Upon approval, the respective biobanks you wish to contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to proceed.</span>
         </div>
         <div
-          v-for="section in accessCriteria.sections"
+          v-for="section in accessForm.sections"
           :key="section.name"
           class="border rounded-2 input-group p-3 mb-2 mb-3 text-secondary-text"
         >
           <span class="mb-3 fs-4 fw-bold text-secondary">{{ section.label.toUpperCase() }}</span>
           <div
-            v-for="criteria in section.accessCriteria"
-            :key="criteria.name"
+            v-for="accessFormElement in section.elements"
+            :key="accessFormElement.name"
             class="input-group mb-2"
           >
-            <label class="me-2 fw-bold">{{ criteria.label }}:</label>
-            <span v-if="isAttachment(negotiationCriteria[section.name][criteria.name])">
-              {{ negotiationCriteria[section.name][criteria.name].name }}
+            <label class="me-2 fw-bold">{{ accessFormElement.label }}:</label>
+            <span v-if="isAttachment(negotiationCriteria[section.name][accessFormElement.name])">
+              {{ negotiationCriteria[section.name][accessFormElement.name].name }}
             </span>
             <span v-else>
-              {{ negotiationCriteria[section.name][criteria.name] }}
+              {{ negotiationCriteria[section.name][accessFormElement.name] }}
             </span>
           </div>
         </div>
@@ -222,7 +218,7 @@ export default {
       notificationTitle: "",
       notificationText: "",
       negotiationCriteria: {},
-      accessCriteria: undefined,
+      accessForm: undefined,
       resources: [],
       humanReadableSearchParameters: [],
       showStepFeedback: false,
@@ -234,7 +230,7 @@ export default {
       return this.roles.includes(ROLES.ADMINISTRATOR)
     },
     loading () {
-      return this.accessCriteria === undefined
+      return this.accessForm === undefined
     },
     queryParameters () {
       return this.humanReadableSearchParameters.split("\r\n")
@@ -258,10 +254,10 @@ export default {
     } else {
       this.resources = result.resources
       this.humanReadableSearchParameters = result.humanReadable
-      this.accessCriteria = await this.retrieveAccessCriteriaByResourceId({
-        resourceId: result.resources[0].id
+      this.accessForm = await this.retrieveCombinedAccessForm({
+        requestId: this.requestId
       })
-      if (this.accessCriteria !== undefined) {
+      if (this.accessForm !== undefined) {
         this.initNegotiationCriteria()
       }
     }
@@ -272,7 +268,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation"]),
+    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation", "retrieveCombinedAccessForm"]),
     backToNegotiation (id) {
       this.$router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
     },
@@ -305,9 +301,9 @@ export default {
       this.notificationText = body
     },
     initNegotiationCriteria () {
-      for (const section of this.accessCriteria.sections) {
+      for (const section of this.accessForm.sections) {
         this.negotiationCriteria[section.name] = {}
-        for (const criteria of section.accessCriteria) {
+        for (const criteria of section.elements) {
           this.negotiationCriteria[section.name][criteria.name] = null
         }
       }
@@ -317,7 +313,7 @@ export default {
     },
     isSectionValid (section) {
       return () => {
-        const valid = section.accessCriteria.every(ac => !ac.required || this.negotiationCriteria[section.name][ac.name])
+        const valid = section.elements.every(ac => !ac.required || this.negotiationCriteria[section.name][ac.name])
         this.showStepFeedback = !valid
         return valid
       }
