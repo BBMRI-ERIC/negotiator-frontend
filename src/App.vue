@@ -1,6 +1,6 @@
 <template>
   <v-tour
-    v-show="$route.path !== '/'"
+    v-show="$route.path !== '/' && vueTourFeatureFlag"
     name="myTour"
     :steps="steps"
   />
@@ -57,6 +57,7 @@
 <script>
 import { RouterView } from "vue-router"
 import { mapGetters, mapMutations } from "vuex"
+import allFeatureFlags from "@/config/featureFlags.js"
 
 import NavigationBar from "./components/NavigationBar.vue"
 import Footer from "./components/Footer.vue"
@@ -69,6 +70,7 @@ export default {
   },
   data () {
     return {
+      vueTourFeatureFlag: allFeatureFlags.vueTour,
       steps: [
         {
           target: "#v-step-0", // We're using document.querySelector() under the hood
