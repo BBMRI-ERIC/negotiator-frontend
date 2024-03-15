@@ -8,6 +8,7 @@
         <a href="https://bbmri-eric.eu">
           <img
             width="150"
+            height="40"
             :src="logoSrc"
             alt="logo negotiator"
           >
@@ -80,9 +81,11 @@
           <div class="col  text-center">
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
-          <div class="col d-none d-lg-block" />
+          <div class="col text-center ">
+            UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
+          </div>
           <div class="col text-center ms-5">
-            Need help? <a class="text-primary" href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+            Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
           </div>
         </div>
       </div>
@@ -92,17 +95,28 @@
 
 <script>
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/bbmri/footer-bbmri.svg"
-import eucaimLogo from "../assets/images/eucaim/footer-eucaim.png"
-import canservLogo from "../assets/images/canserv/footer-canserv.png"
+import bbmriLogo from "../assets/images/footer-bbmri.svg"
+import eucaimLogo from "../assets/images/footer-eucaim.png"
+import { mapActions } from "vuex"
+const viteGitTag = import.meta.env.VITE_GIT_TAG
 
 export default {
   name: "FooterPage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo),
-      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
+      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
+      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
+      gitTag: viteGitTag,
+      backendVersion: ""
     }
+  },
+  async beforeMount () {
+    this.backendVersion = await this.retrieveBackendVersion()
+  },
+  methods: {
+    ...mapActions([
+      "retrieveBackendVersion"
+    ])
   }
 }
 </script>
