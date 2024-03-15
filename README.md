@@ -55,3 +55,106 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+# FOR DEVELOPERS - config files
+
+## Setting Theme of project
+
+Location of theme config file:
+src/
+└── config/
+    └── theme.js
+
+### There are 3 variable
+
+### 1. activeThemeFile - define the active theme scss file
+
+default 
+```sh 
+activeThemeFile: "bbmri"
+```
+Location of theme scss files:
+src/
+└── assets/
+    └── scss/
+        ├── theme-bbmri.js
+        ├── theme-eucaim.js
+        └── theme-canServ.js
+
+You can change the values of the color variables as you see fit
+
+### 2. activeLogosFiles - define the active logos files
+
+default 
+```sh
+activeLogosFiles: "bbmri"
+```
+Location of logos files:
+src/
+└── assets/
+    └── images/
+            ├── bbmri/
+            │   ├── footer-bbmri.svg
+            │   ├── home-bbmri.png
+            │   └── nav-bar-bbmri.svg
+            ├── canserv/
+            │   ├── footer-canserv.png
+            │   ├── home-canserv.png
+            │   └── nav-bar-canserv.png
+            └── eucaim/
+                ├── footer-eucaim.png
+                ├── home-eucaim.png
+                └── nav-bar-eucaim.png
+
+If you want to change the image, you can replace the existing one with a new one, but with the same name, file type and size
+
+### 3. isFooterFollowUsVisible - define if item in footer are visible (Follow Us, Subscribe To Our Newsletter...)
+default
+```sh
+activeLogosFiles: "true"
+```
+## Config for matomo analytics
+
+Location of matomo config file:
+src/
+└── config/
+    └── matomo.js
+
+### There are 2 variable
+
+```sh
+  matomoHost: "MATOMO_HOST_PLACEHOLDER",
+  matomoId: "MATOMO_SITE_ID_PLACEHOLDER"
+```
+See [Configuration Reference](https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-tracking-code-on-websites-that-use-vue-js/).
+
+
+## Config for Feature Flags
+
+Location of featureFlags config file:
+src/
+└── config/
+    └── featureFlags.js
+
+You can adjust the visibility of features, components or code that is ready for testing but not intended for realese is hidden behind feature flags.
+
+## Config for external links
+
+Location of external links config file:
+src/
+└── config/
+    └── externalLinks.js
+
+You can set which URLs external links lead to
+
+## Config for vuex-oidc
+
+Location of matomo config file:
+src/
+└── config/
+    └── oidc.js
+
+### About 
+Library to provide OpenID Connect (OIDC) and OAuth2 protocol support for client-side, browser-based JavaScript client applications. Also included is support for user session and access token management.
+
+See [Configuration Reference](https://github.com/perarnborg/vuex-oidc/wiki).
