@@ -21,7 +21,7 @@
     <div class="row mt-4">
       <div class="row-col-2">
         <h1 class="text-primary fw-bold">
-          {{ negotiation ? negotiation.payload.project.title.toUpperCase() : "" }}
+          {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
         </h1>
         <span
           :class="getBadgeColor(negotiation.status)"
@@ -76,6 +76,7 @@
             </span>
             <NegotiationAttachment
               v-for="attachment in attachments"
+              v-if="dataReady"
               :id="attachment.id"
               :key="attachment.id"
               class="mb-2"
@@ -469,12 +470,17 @@ export default {
       this.selection[res.id] = { checked: false, type: this.RESOURCE_TYPE }
     })
 
-    this.attachments = await this.retrieveAttachmentsByNegotiationId({
-      negotiationId: this.negotiation.id
-    })
-
     this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
+    })
+  },
+  async created () {
+    this.dataReady = false
+    await this.retrieveAttachmentsByNegotiationId({
+      negotiationId: this.negotiationId
+    }).then((response) => {
+      this.attachments = response
+      this.dataReady = true
     })
   },
   methods: {
