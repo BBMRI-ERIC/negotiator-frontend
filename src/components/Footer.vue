@@ -81,7 +81,9 @@
           <div class="col  text-center">
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
-          <div class="col d-none d-lg-block" />
+          <div class="col text-center ms-5">
+            Front-end <span class="text-warning">{{versionFrontEnd}}</span> Beck-end <span class="text-warning">{{versionBackEnd}}</span>
+            </div>
           <div class="col text-center ms-5">
             Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
           </div>
@@ -95,13 +97,16 @@
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/footer-bbmri.svg"
 import eucaimLogo from "../assets/images/footer-eucaim.png"
+import { CURRENT_VERSION } from "@/config/consts.js"
 
 export default {
   name: "FooterPage",
   data () {
     return {
       logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
-      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
+      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
+      versionFrontEnd: CURRENT_VERSION.FRONT_END,
+      versionBackEnd: CURRENT_VERSION.BACK_END
     }
   }
 }
