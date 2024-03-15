@@ -44,7 +44,31 @@
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
             class="text-primary-text"
           >  <i class="bi bi-github" />
-            GitHub
+            GitHub FE
+          </a>
+          <a
+            href="https://github.com/BBMRI-ERIC/negotiator"
+            class="text-primary-text ps-2"
+          >  <i class="bi bi-git" />
+            GitHub BE
+          </a>
+        </div>
+
+        <div
+          v-if="isFooterFollowUsVisible"
+          class="mt-2 mb-2 mb-md-0"
+        >
+          <a
+            href="https://negotiator-v3.bbmri-eric.eu/api/swagger-ui/index.html"
+            class="text-primary-text"
+          > <i class="bi bi-braces-asterisk" />
+            Swagger Negotiator API
+          </a>
+          <a
+            href="https://status.bbmri-eric.eu/"
+            class="text-primary-text ps-2"
+          >  <i class="bi bi-check-circle" />
+            BBMRI-ERIC Status page
           </a>
         </div>
       </div>
@@ -74,6 +98,18 @@
           >
             Subscribe To Our Newsletter
           </button>
+        </div>
+        <div
+          v-if="isFooterFollowUsVisible"
+          class="ms-md-2 mt-2"
+        >
+          <a
+            class="link-dark text-primary-text me-5"
+            href="https://www.bbmri-eric.eu/privacy-notice/"
+          >
+
+            Privacy Notice
+          </a>
         </div>
       </div>
       <div>
