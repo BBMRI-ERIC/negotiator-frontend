@@ -61,9 +61,11 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ## Setting Theme of project
 
 Location of theme config file:
+```sh 
 src/
 └── config/
     └── theme.js
+```
 
 ### There are 3 variable
 
@@ -74,13 +76,14 @@ default
 activeThemeFile: "bbmri"
 ```
 Location of theme scss files:
+```sh 
 src/
 └── assets/
     └── scss/
         ├── theme-bbmri.js
         ├── theme-eucaim.js
         └── theme-canServ.js
-
+```
 You can change the values of the color variables as you see fit
 
 ### 2. activeLogosFiles - define the active logos files
@@ -90,6 +93,7 @@ default
 activeLogosFiles: "bbmri"
 ```
 Location of logos files:
+```sh 
 src/
 └── assets/
     └── images/
@@ -105,7 +109,7 @@ src/
                 ├── footer-eucaim.png
                 ├── home-eucaim.png
                 └── nav-bar-eucaim.png
-
+```
 If you want to change the image, you can replace the existing one with a new one, but with the same name, file type and size
 
 ### 3. isFooterFollowUsVisible - define if item in footer are visible (Follow Us, Subscribe To Our Newsletter...)
@@ -116,9 +120,11 @@ activeLogosFiles: "true"
 ## Config for matomo analytics
 
 Location of matomo config file:
+```sh 
 src/
 └── config/
     └── matomo.js
+```
 
 ### There are 2 variable
 
@@ -132,27 +138,31 @@ See [Configuration Reference](https://matomo.org/faq/new-to-piwik/how-do-i-insta
 ## Config for Feature Flags
 
 Location of featureFlags config file:
+```sh 
 src/
 └── config/
     └── featureFlags.js
-
+```
 You can adjust the visibility of features, components or code that is ready for testing but not intended for realese is hidden behind feature flags.
 
 ## Config for external links
 
 Location of external links config file:
+```sh 
 src/
 └── config/
     └── externalLinks.js
-
+```
 You can set which URLs external links lead to
 
 ## Config for vuex-oidc
 
 Location of matomo config file:
+```sh 
 src/
 └── config/
     └── oidc.js
+```
 
 ### About 
 Library to provide OpenID Connect (OIDC) and OAuth2 protocol support for client-side, browser-based JavaScript client applications. Also included is support for user session and access token management.
