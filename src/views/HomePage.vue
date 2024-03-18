@@ -60,6 +60,9 @@
           <i class="bi bi-github" />
           <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
         </div>
+        <div class="text-center ">
+          UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
+        </div>
         <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>
         </div>
@@ -73,25 +76,30 @@ import { mapActions, mapGetters } from "vuex"
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/home-bbmri.png"
 import eucaimLogo from "../assets/images/home-eucaim.png"
+const viteGitTag = import.meta.env.VITE_GIT_TAG
 
 export default {
   name: "HomePage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo
+      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
+      gitTag: viteGitTag,
+      backendVersion: ""
     }
   },
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
   },
-  beforeMount () {
+  async beforeMount () {
     if (this.oidcIsAuthenticated) {
       this.$router.push("/researcher")
     }
+    this.backendVersion = await this.retrieveBackendVersion()
   },
   methods: {
     ...mapActions([
-      "authenticateOidc"
+      "authenticateOidc",
+      "retrieveBackendVersion"
     ])
   }
 }
