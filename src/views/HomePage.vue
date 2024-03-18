@@ -64,6 +64,9 @@
         <div class="text-center ">
           UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
         </div>
+        <div class="text-center ">
+          UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
+        </div>
         <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>
         </div>
