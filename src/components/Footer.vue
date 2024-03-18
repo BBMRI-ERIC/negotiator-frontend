@@ -81,15 +81,9 @@
           <div class="col  text-center">
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
-<<<<<<< HEAD
           <div class="col text-center ">
             UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
           </div>
-=======
-          <div class="col text-center ms-5">
-            Front-end <span class="text-warning">{{gitTag}}</span> Beck-end <span class="text-warning">{{backendVersion}}</span>
-            </div>
->>>>>>> 605a627 (add dynamic version)
           <div class="col text-center ms-5">
             Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
           </div>
@@ -103,13 +97,8 @@
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/footer-bbmri.svg"
 import eucaimLogo from "../assets/images/footer-eucaim.png"
-<<<<<<< HEAD
-import { mapActions } from "vuex"
-const viteGitTag = import.meta.env.VITE_GIT_TAG
-=======
 const viteGitTag = import.meta.env.VITE_GIT_TAG
 import { mapActions } from "vuex"
->>>>>>> 605a627 (add dynamic version)
 
 export default {
   name: "FooterPage",
@@ -118,11 +107,7 @@ export default {
       logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
       isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
       gitTag: viteGitTag,
-<<<<<<< HEAD
-      backendVersion: ""
-=======
       backendVersion: ''
->>>>>>> 605a627 (add dynamic version)
     }
   },
   async beforeMount () {
@@ -130,13 +115,8 @@ export default {
   },
   methods: {
     ...mapActions([
-<<<<<<< HEAD
-      "retrieveBackendVersion"
-    ])
-=======
       "retrieveBackendVersion",
     ]),
->>>>>>> 605a627 (add dynamic version)
   }
 }
 </script>
