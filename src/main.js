@@ -13,6 +13,8 @@ import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import matomo from "./config/matomo.js"
 import activeTheme from "./config/theme.js"
+import Vue3Tour from "vue3-tour"
+import "vue3-tour/dist/vue3-tour.css"
 
 library.add(faSpinner)
 library.add(faPencil)
@@ -26,6 +28,7 @@ const app = createApp(App).use(VueMatomo, {
 
 app.use(router)
 app.use(store)
+app.use(Vue3Tour)
 
 app.component("FontAwesomeIcon", FontAwesomeIcon)
 

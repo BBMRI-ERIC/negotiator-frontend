@@ -5171,6 +5171,11 @@ jspdf@^2.5.1:
     dompurify "^2.2.0"
     html2canvas "^1.0.0-rc.5"
 
+jump.js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/jump.js/-/jump.js-1.0.2.tgz#e0641b47f40a38f2139c25fda0500bf28e43015a"
+  integrity sha512-oUkJJ/Y4ATU5qjkXBntCZSKctbSyS3ewe2jrLaUu/cc9jsQiAn0fnTUxQnZz3mJdDdem1Q279zrD6h3n+Cgxtg==
+
 jwt-decode@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
@@ -7676,7 +7681,17 @@ vue3-form-wizard@^0.1.8:
   resolved "https://registry.yarnpkg.com/vue3-form-wizard/-/vue3-form-wizard-0.1.9.tgz#17b6c113e6e3253aae543825777eec946c7685c8"
   integrity sha512-XTNjolQ/1gc2PTt/XXW11Ut6C6PIT8JLYzB6iSGVXPNFXRhes9LDgRQAfLjQwJ+XswiNIsHqfwVnVTPAfTZJ3w==
 
-vue@^3.2.47:
+vue3-tour@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/vue3-tour/-/vue3-tour-0.3.4.tgz#af20b92318eaeda3dabfe9f60d951b47916c54ac"
+  integrity sha512-Z9U5NQ4pkR4xPwwPTVEpGIqyroIKBULBzfqEj9RuKT5Sx+5rC4X7B8XEKc3Cf9Lb9PPCX7lbxDSrWq7O2dICog==
+  dependencies:
+    "@popperjs/core" "^2.11.6"
+    hash-sum "^2.0.0"
+    jump.js "^1.0.2"
+    vue "^3.2.37"
+
+vue@^3.2.37, vue@^3.2.47:
   version "3.4.21"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.4.21.tgz#69ec30e267d358ee3a0ce16612ba89e00aaeb731"
   integrity sha512-5hjyV/jLEIKD/jYl4cavMcnzKwjMKohureP8ejn3hhEjwhWIhWeuzL2kJAjzl/WyVsgPY56Sy4Z40C3lVshxXA==
