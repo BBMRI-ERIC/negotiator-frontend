@@ -23,6 +23,7 @@
     "bootstrap-vue-next": "^0.8.10",
     "core-js": "^3.8.3",
     "dotenv": "^16.0.3",
+    "git-rev-sync": "^3.0.2",
     "http-server": "^14.1.1",
     "jspdf": "^2.5.1",
     "moment": "^2.29.4",

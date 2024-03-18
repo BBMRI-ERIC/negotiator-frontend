@@ -82,7 +82,7 @@
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
           <div class="col text-center ms-5">
-            Front-end <span class="text-warning">{{versionFrontEnd}}</span> Beck-end <span class="text-warning">{{versionBackEnd}}</span>
+            Front-end <span class="text-warning">{{gitTag}}</span> Beck-end <span class="text-warning">{{backendVersion}}</span>
             </div>
           <div class="col text-center ms-5">
             Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
@@ -97,7 +97,8 @@
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/footer-bbmri.svg"
 import eucaimLogo from "../assets/images/footer-eucaim.png"
-import { CURRENT_VERSION } from "@/config/consts.js"
+const viteGitTag = import.meta.env.VITE_GIT_TAG
+import { mapActions } from "vuex"
 
 export default {
   name: "FooterPage",
@@ -105,9 +106,17 @@ export default {
     return {
       logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
       isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
-      versionFrontEnd: CURRENT_VERSION.FRONT_END,
-      versionBackEnd: CURRENT_VERSION.BACK_END
+      gitTag: viteGitTag,
+      backendVersion: ''
     }
+  },
+  async beforeMount () {
+    this.backendVersion = await this.retrieveBackendVersion()
+  },
+  methods: {
+    ...mapActions([
+      "retrieveBackendVersion",
+    ]),
   }
 }
 </script>
