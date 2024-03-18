@@ -35,7 +35,7 @@ export default {
   retrieveBackendVersion (store) {
     return axios.get(`${BACKEND_VERSION_PATH}`)
       .then((response) => {
-          return response.data.version
+        return response.data.version
       })
       .catch((error) => {
         if (error.response) {
