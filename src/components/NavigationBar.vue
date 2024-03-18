@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       roles: [],
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo),
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       featureFlagsFAQ: allFeatureFlags.faqPage
     }
   },

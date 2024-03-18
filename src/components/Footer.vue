@@ -95,8 +95,9 @@
 
 <script>
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/footer-bbmri.svg"
-import eucaimLogo from "../assets/images/footer-eucaim.png"
+import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
+import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
+import canservLogo from "../assets/images/canserv/home-canserv.png"
 import { mapActions } from "vuex"
 const viteGitTag = import.meta.env.VITE_GIT_TAG
 
@@ -104,7 +105,7 @@ export default {
   name: "FooterPage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
       gitTag: viteGitTag,
       backendVersion: ""

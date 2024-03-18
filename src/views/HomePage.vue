@@ -55,14 +55,17 @@
           >Website</a>.
         </div>
         <div class="text-center text-primary-text mb-2">
-          Need help? <a class="text-primary" href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+          Need help? <a
+            class="text-primary"
+            href="mailto:negotiator@helpdesk.bbmri-eric.eu"
+          >Contact us</a>.
         </div>
         <div class="text-center text-primary-text col mb-2">
           <i class="bi bi-github" />
-          <a class="text-primary" href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
-        </div>
-        <div class="text-center ">
-          UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
+          <a
+            class="text-primary"
+            href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
+          > GitHub</a>
         </div>
         <div class="text-center ">
           UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
@@ -87,13 +90,13 @@ export default {
   name: "HomePage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo)
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       gitTag: viteGitTag,
       backendVersion: ""
     }
   },
   computed: {
-    ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
+    ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
   },
   async beforeMount () {
     if (this.oidcIsAuthenticated) {
