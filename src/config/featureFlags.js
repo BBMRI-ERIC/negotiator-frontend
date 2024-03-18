@@ -1,9 +1,11 @@
 const devSettings = {
-  faqPage: false
+  faqPage: false,
+  vueTour: false
 }
 
 const prodSettings = {
-  faqPage: false
+  faqPage: false,
+  vueTour: false
 }
 
 let allFeatureFlags

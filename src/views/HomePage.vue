@@ -49,9 +49,10 @@
           class="text-center text-primary-text mt-2 mb-2"
         >
           Not familiar with LS Login? Visit their <a
+            class="text-primary"
             target="_blank"
             href="https://lifescience-ri.eu/ls-login.html"
-          >website</a>.
+          >Website</a>.
         </div>
         <div class="text-center text-primary-text col mb-2">
           <i class="bi bi-github me-1" />
@@ -93,18 +94,19 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/home-bbmri.png"
-import eucaimLogo from "../assets/images/home-eucaim.png"
+import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
+import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
+import canservLogo from "../assets/images/canserv/home-canserv.png"
 
 export default {
   name: "HomePage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo)
     }
   },
   computed: {
-    ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
+    ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
   },
   beforeMount () {
     if (this.oidcIsAuthenticated) {

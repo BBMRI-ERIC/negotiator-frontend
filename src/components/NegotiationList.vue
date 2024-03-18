@@ -9,7 +9,10 @@
     >
       <div class="row mb-2">
         <div class="d-flex flex-row flex-wrap">
-          <div class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start">
+          <div
+            id="v-step-3"
+            class="dropdown b-dropdown mb-2 mx-2 filter-dropdown position-static btn-group d-flex justify-content-start"
+          >
             <button
               id="dropdownSortingButton"
               aria-haspopup="true"
@@ -239,6 +242,7 @@
           </button>
 
           <button
+            id="v-step-1"
             type="button"
             class="btn btn-sm"
             :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
@@ -288,7 +292,10 @@
                 <th scope="col">
                   Author
                 </th>
-                <th scope="col">
+                <th
+                  id="v-step-2"
+                  scope="col"
+                >
                   Status
                 </th>
                 <th scope="col" />
