@@ -53,12 +53,34 @@
             href="https://lifescience-ri.eu/ls-login.html"
           >website</a>.
         </div>
+        <div class="text-center text-primary-text col mb-2">
+          <i class="bi bi-github me-1" />
+          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend">GitHub UI</a>
+          <span class="ms-2">
+            <i class="bi bi-github me-1" />
+            <a href="https://github.com/BBMRI-ERIC/negotiator">GitHub Application</a>
+          </span>
+        </div>
+        <div
+          class="text-center text-primary-text mt-2 mb-2"
+        >
+          <a
+            href="/api/swagger-ui/index.html"
+          > <i class="bi bi-braces-asterisk text-primary-text" />
+            Swagger Negotiator API
+          </a>
+          <a
+            href="https://status.bbmri-eric.eu/"
+            class="ps-2"
+          >  <i class="bi bi-check-circle text-primary-text" />
+            BBMRI-ERIC Status page
+          </a>
+        </div>
+        <div class="text-center text-primary-text mb-2">
+          <a href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdf">Privacy Policy</a>
+        </div>
         <div class="text-center text-primary-text mb-2">
           Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
-        </div>
-        <div class="text-center text-primary-text col mb-2">
-          <i class="bi bi-github" />
-          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
         </div>
         <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>
