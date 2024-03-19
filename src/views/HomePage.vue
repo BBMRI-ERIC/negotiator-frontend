@@ -68,7 +68,7 @@
           <a
             href="/api/swagger-ui/index.html"
           > <i class="bi bi-braces-asterisk text-primary-text" />
-            Swagger Negotiator API
+            API
           </a>
           <a
             href="https://status.bbmri-eric.eu/"
@@ -102,11 +102,11 @@ export default {
   name: "HomePage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo)
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
     }
   },
   computed: {
-    ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
+    ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
   },
   beforeMount () {
     if (this.oidcIsAuthenticated) {

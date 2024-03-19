@@ -61,7 +61,7 @@
             href="/api/swagger-ui/index.html"
             class="text-primary-text"
           > <i class="bi bi-braces-asterisk" />
-            Swagger Negotiator API
+            API
           </a>
           <a
             href="https://status.bbmri-eric.eu/"
@@ -117,7 +117,10 @@
           </div>
           <div class="col d-none d-lg-block" />
           <div class="col text-center ms-5">
-            Need help? <a class="text-primary" href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+            Need help? <a
+              class="text-primary"
+              href="mailto:negotiator@helpdesk.bbmri-eric.eu"
+            >Contact us</a>.
           </div>
         </div>
       </div>
@@ -135,7 +138,7 @@ export default {
   name: "FooterPage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo),
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
     }
   }
