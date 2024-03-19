@@ -43,7 +43,31 @@
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
             class="text-primary-text"
           >  <i class="bi bi-github" />
-            GitHub
+            GitHub UI
+          </a>
+          <a
+            href="https://github.com/BBMRI-ERIC/negotiator"
+            class="text-primary-text ps-2"
+          >  <i class="bi bi-github" />
+            GitHub Application
+          </a>
+        </div>
+
+        <div
+          v-if="isFooterFollowUsVisible"
+          class="mt-2 mb-2 mb-md-0"
+        >
+          <a
+            href="/api/swagger-ui/index.html"
+            class="text-primary-text"
+          > <i class="bi bi-braces-asterisk" />
+            API
+          </a>
+          <a
+            href="https://status.bbmri-eric.eu/"
+            class="text-primary-text ps-2"
+          >  <i class="bi bi-check-circle" />
+            BBMRI-ERIC Status page
           </a>
         </div>
       </div>
@@ -74,6 +98,17 @@
             Subscribe To Our Newsletter
           </button>
         </div>
+        <div
+          v-if="isFooterFollowUsVisible"
+          class="ms-md-2 mt-2"
+        >
+          <a
+            class="link-dark text-primary-text me-5"
+            href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdf"
+          >
+            Privacy Policy
+          </a>
+        </div>
       </div>
       <div>
         <div class="row mt-4">
@@ -82,7 +117,10 @@
           </div>
           <div class="col d-none d-lg-block" />
           <div class="col text-center ms-5">
-            Need help? <a class="text-primary" href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+            Need help? <a
+              class="text-primary"
+              href="mailto:negotiator@helpdesk.bbmri-eric.eu"
+            >Contact us</a>.
           </div>
         </div>
       </div>
@@ -100,7 +138,7 @@ export default {
   name: "FooterPage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo),
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
     }
   }
