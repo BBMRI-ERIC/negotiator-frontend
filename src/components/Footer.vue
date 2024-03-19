@@ -8,6 +8,7 @@
         <a href="https://bbmri-eric.eu">
           <img
             width="150"
+            height="40"
             :src="logoSrc"
             alt="logo negotiator"
           >
@@ -43,7 +44,31 @@
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
             class="text-primary-text"
           >  <i class="bi bi-github" />
-            GitHub
+            GitHub UI
+          </a>
+          <a
+            href="https://github.com/BBMRI-ERIC/negotiator"
+            class="text-primary-text ps-2"
+          >  <i class="bi bi-github" />
+            GitHub Application
+          </a>
+        </div>
+
+        <div
+          v-if="isFooterFollowUsVisible"
+          class="mt-2 mb-2 mb-md-0"
+        >
+          <a
+            href="/api/swagger-ui/index.html"
+            class="text-primary-text"
+          > <i class="bi bi-braces-asterisk" />
+            API
+          </a>
+          <a
+            href="https://status.bbmri-eric.eu/"
+            class="text-primary-text ps-2"
+          >  <i class="bi bi-check-circle" />
+            BBMRI-ERIC Status page
           </a>
         </div>
       </div>
@@ -74,15 +99,28 @@
             Subscribe To Our Newsletter
           </button>
         </div>
+        <div
+          v-if="isFooterFollowUsVisible"
+          class="ms-md-2 mt-2"
+        >
+          <a
+            class="link-dark text-primary-text me-5"
+            href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdf"
+          >
+            Privacy Policy
+          </a>
+        </div>
       </div>
       <div>
         <div class="row mt-4">
           <div class="col  text-center">
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
-          <div class="col d-none d-lg-block" />
+          <div class="col text-center ">
+            UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
+          </div>
           <div class="col text-center ms-5">
-            Need help? <a class="text-primary" href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+            Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
           </div>
         </div>
       </div>
@@ -92,17 +130,29 @@
 
 <script>
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/bbmri/footer-bbmri.svg"
-import eucaimLogo from "../assets/images/eucaim/footer-eucaim.png"
-import canservLogo from "../assets/images/canserv/footer-canserv.png"
+import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
+import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
+import canservLogo from "../assets/images/canserv/home-canserv.png"
+import { mapActions } from "vuex"
+const viteGitTag = import.meta.env.VITE_GIT_TAG
 
 export default {
   name: "FooterPage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo),
-      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
+      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
+      gitTag: viteGitTag,
+      backendVersion: ""
     }
+  },
+  async beforeMount () {
+    this.backendVersion = await this.retrieveBackendVersion()
+  },
+  methods: {
+    ...mapActions([
+      "retrieveBackendVersion"
+    ])
   }
 }
 </script>
