@@ -10,16 +10,7 @@
         class="me-2"
         alt="nav-bar-logo"
       >
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#menu-navbar"
-        aria-controls="menu-navbar"
-        aria-expanded="false"
-      >
-        <span class="navbar-toggler-icon" />
-      </button>
+
       <div
         id="menu-navbar"
         class="collapse navbar-collapse"
@@ -84,15 +75,23 @@
           v-if="oidcIsAuthenticated"
           class="navbar-text me-2 text-navbar-welcome-text"
         >
-          Welcome back {{ oidcUser.name }}
+          Welcome back {{ oidcUser.preferred_username }}
         </span>
+      </div>
+      <div>
+        <ProfileSettings
+          :user="oidcUser"
+          class="me-3"
+        />
         <button
-          v-if="oidcIsAuthenticated"
-          class="btn btn-outline-navbar-button-outline me-2"
-          aria-current="page"
-          @click.stop.prevent="signOutOidc"
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#menu-navbar"
+          aria-controls="menu-navbar"
+          aria-expanded="false"
         >
-          Logout
+          <span class="navbar-toggler-icon" />
         </button>
       </div>
     </div>
@@ -102,6 +101,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
+import ProfileSettings from "../components/ProfileSettings.vue"
 import activeTheme from "../config/theme.js"
 import allFeatureFlags from "@/config/featureFlags.js"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.svg"
@@ -110,6 +110,9 @@ import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 
 export default {
   name: "NavigationBar",
+  components: {
+    ProfileSettings
+  },
   data () {
     return {
       roles: [],
