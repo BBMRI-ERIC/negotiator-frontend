@@ -25,7 +25,7 @@ export default {
   },
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles=== 'canserv' ? canservLogo : bbmriLogo)
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
     }
   },
   methods: {
