@@ -49,5 +49,5 @@ jobs:
         push: true
         labels: ${{ steps.meta.outputs.labels }}
         tags: ${{ steps.meta.outputs.tags }}
-        cache-from: type=registry,ref=bbmrieric/negotiator-frontend:latest
-        cache-to: type=inline
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
