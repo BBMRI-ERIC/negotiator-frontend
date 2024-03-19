@@ -4,8 +4,12 @@ import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import Components from "unplugin-vue-components/vite"
 import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers"
+import git from "git-rev-sync"
 
 const PROXY_TARGET = "http://localhost:8081"
+
+process.env.VITE_GIT_COMMIT_HASH = git.short()
+process.env.VITE_GIT_TAG = git.tag()
 
 export default defineConfig({
   plugins: [

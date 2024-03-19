@@ -104,15 +104,16 @@ import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
 import activeTheme from "../config/theme.js"
 import allFeatureFlags from "@/config/featureFlags.js"
-import bbmriLogo from "../assets/images/nav-bar-bbmri.svg"
-import eucaimLogo from "../assets/images/nav-bar-eucaim.png"
+import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.svg"
+import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
+import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 
 export default {
   name: "NavigationBar",
   data () {
     return {
       roles: [],
-      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo,
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       featureFlagsFAQ: allFeatureFlags.faqPage
     }
   },

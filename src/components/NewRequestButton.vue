@@ -2,7 +2,7 @@
   <div>
     <button
       ref="openModal"
-      class="btn btn-sm bg-warning sm my-2 float-end"
+      class="btn btn-sm bg-new-request-button-color sm my-2 float-end"
       data-bs-toggle="modal"
       data-bs-target="#newRequestModal"
     >

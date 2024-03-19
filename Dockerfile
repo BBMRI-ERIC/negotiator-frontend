@@ -1,9 +1,7 @@
-FROM node:20.1.0-alpine as  build-stage
+FROM node:lts-bookworm as  build-stage
 WORKDIR /app
 COPY . .
-RUN yarn config set network-timeout 600000 -g
-RUN yarn cache clean
-RUN yarn --ignore-engines
+RUN yarn install
 RUN yarn build
 
 FROM bitnami/nginx:1.24 as production-stage

@@ -49,16 +49,49 @@
           class="text-center text-primary-text mt-2 mb-2"
         >
           Not familiar with LS Login? Visit their <a
+            class="text-primary"
             target="_blank"
             href="https://lifescience-ri.eu/ls-login.html"
-          >website</a>.
+          >Website</a>.
+        </div>
+        <div class="text-center text-primary-text col mb-2">
+          <i class="bi bi-github me-1" />
+          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend">GitHub UI</a>
+          <span class="ms-2">
+            <i class="bi bi-github me-1" />
+            <a href="https://github.com/BBMRI-ERIC/negotiator">GitHub Application</a>
+          </span>
+        </div>
+        <div
+          class="text-center text-primary-text mt-2 mb-2"
+        >
+          <a
+            href="/api/swagger-ui/index.html"
+          > <i class="bi bi-braces-asterisk text-primary-text" />
+            API
+          </a>
+          <a
+            href="https://status.bbmri-eric.eu/"
+            class="ps-2"
+          >  <i class="bi bi-check-circle text-primary-text" />
+            BBMRI-ERIC Status page
+          </a>
         </div>
         <div class="text-center text-primary-text mb-2">
-          Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+          Need help? <a
+            class="text-primary"
+            href="mailto:negotiator@helpdesk.bbmri-eric.eu"
+          >Contact us</a>.
         </div>
         <div class="text-center text-primary-text col mb-2">
           <i class="bi bi-github" />
-          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"> GitHub</a>
+          <a
+            class="text-primary"
+            href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
+          > GitHub</a>
+        </div>
+        <div class="text-center ">
+          UI version: <span class="text-warning pe-2">{{ gitTag }}</span>Server version: <span class="text-warning">{{ backendVersion }}</span>
         </div>
         <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>
@@ -71,27 +104,33 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/home-bbmri.png"
-import eucaimLogo from "../assets/images/home-eucaim.png"
+import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
+import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
+import canservLogo from "../assets/images/canserv/home-canserv.png"
+const viteGitTag = import.meta.env.VITE_GIT_TAG
 
 export default {
   name: "HomePage",
   data () {
     return {
-      logoSrc: activeTheme.activeLogosFiles === "bbmri" ? bbmriLogo : eucaimLogo
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
+      gitTag: viteGitTag,
+      backendVersion: ""
     }
   },
   computed: {
     ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
   },
-  beforeMount () {
+  async beforeMount () {
     if (this.oidcIsAuthenticated) {
       this.$router.push("/researcher")
     }
+    this.backendVersion = await this.retrieveBackendVersion()
   },
   methods: {
     ...mapActions([
-      "authenticateOidc"
+      "authenticateOidc",
+      "retrieveBackendVersion"
     ])
   }
 }
