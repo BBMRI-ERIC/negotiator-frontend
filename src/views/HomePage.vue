@@ -91,7 +91,7 @@
           > GitHub</a>
         </div>
         <div class="text-center text-light">
-          UI version: <span class="pe-2">{{ gitTag }}</span>Server version: <span class="text-light">{{ backendVersion }}</span>
+          UI version: <span class="pe-2">{{ gitTag }}</span>Server version: <span>{{ backendVersion }}</span>
         </div>
         <div class="text-center text-primary-text mb-5">
           <p>&copy; 2024 BBMRI-ERIC</p>

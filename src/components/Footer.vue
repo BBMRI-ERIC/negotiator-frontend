@@ -117,7 +117,7 @@
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
           <div class="col text-center text-light">
-            UI: <span class="pe-2">{{ gitTag }}</span>Application: <span class="text-light">v{{ backendVersion }}</span>
+            UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>v{{ backendVersion }}</span>
           </div>
           <div class="col text-center ms-5">
             Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
