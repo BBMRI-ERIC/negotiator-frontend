@@ -10,8 +10,8 @@
       aria-expanded="false"
     />
 
-    <ul class="dropdown-menu dropdown-menu-end">
-      <li class="container mb-5 mt-2">
+    <ul class="dropdown-menu dropdown-menu-end mt-1">
+      <li class="container mb-3 mt-2">
         <div class="d-flex flex-row">
           <b-avatar
             type="button"
@@ -22,11 +22,49 @@
             aria-expanded="false"
           />
           <div>
-            {{ user.email }}
-            {{ user.name }}
+            <div>{{ user.email }}</div>
+            <div class="text-muted">
+              {{ user.name }}
+            </div>
           </div>
+          <i class="bi bi-x ms-2 h3" />
         </div>
       </li>
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <a
+          href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
+          class="dropdown-item text-primary-text"
+        >  <i class="bi bi-github" />
+          GitHub UI
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://github.com/BBMRI-ERIC/negotiator"
+          class="dropdown-item text-primary-text"
+        >  <i class="bi bi-github" />
+          GitHub Application
+        </a>
+      </li>
+      <li>
+        <a
+          href="/api/swagger-ui/index.html"
+          class="dropdown-item text-primary-text"
+        > <i class="bi bi-braces-asterisk" />
+          API
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdfl"
+          class="dropdown-item text-primary-text"
+        > <i class="bi bi-shield-lock" />
+          Privacy Policy
+        </a>
+      </li>
+      <li><hr class="dropdown-divider"></li>
       <li>
         <a
           href="https://profile.aai.lifescience-ri.eu/profile"
