@@ -116,7 +116,7 @@
           <div class="col  text-center">
             <p>&copy; 2024 BBMRI-ERIC</p>
           </div>
-          <div class="col text-center text-light">
+          <div class="col text-center text-light ms-4">
             UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>v{{ backendVersion }}</span>
           </div>
           <div class="col text-center ms-5">
