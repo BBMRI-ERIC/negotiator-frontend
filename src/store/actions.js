@@ -9,7 +9,7 @@ const USER_PATH = `${BASE_API_PATH}/users`
 const USER_ROLES_PATH = `${BASE_API_PATH}/users/roles`
 const USER_RESOURCES_PATH = `${BASE_API_PATH}/users/resources`
 const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
-const BACKEND_VERSION_PATH = `${BASE_API_PATH}/actuator/info`
+const BACKEND_VERSION_PATH = "/api/actuator/info"
 
 function getBearerHeaders (token) {
   return { Authorization: `Bearer ${token}` }
@@ -35,7 +35,7 @@ export default {
   retrieveBackendVersion (store) {
     return axios.get(`${BACKEND_VERSION_PATH}`)
       .then((response) => {
-        return response.data.version
+        return response.data.build.version
       })
       .catch((error) => {
         if (error.response) {
