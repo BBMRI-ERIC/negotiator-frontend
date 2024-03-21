@@ -27,7 +27,7 @@
               {{ user.name }}
             </div>
           </div>
-          <i class="bi bi-x ms-2 h3" />
+          <i class="bi bi-x ms-2 h4" />
         </div>
       </li>
       <li><hr class="dropdown-divider"></li>
