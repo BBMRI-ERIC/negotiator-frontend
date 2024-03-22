@@ -81,6 +81,7 @@
       <div>
         <ProfileSettings
           :user="oidcUser"
+          :is-representative="isRepresentative"
           class="me-3"
         />
         <button

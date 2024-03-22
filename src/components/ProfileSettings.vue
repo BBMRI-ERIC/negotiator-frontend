@@ -31,7 +31,6 @@
         </div>
       </li>
       <li><hr class="dropdown-divider"></li>
-
       <li>
         <a
           href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
@@ -96,6 +95,10 @@ export default {
     user: {
       type: Object,
       default: {}
+    },
+    isRepresentative: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
