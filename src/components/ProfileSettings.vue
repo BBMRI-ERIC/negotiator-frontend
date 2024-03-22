@@ -39,6 +39,14 @@
           LSL Settings
         </a>
       </li>
+      <li v-if="isRepresentative">
+        <a
+          href=" https://perun.aai.lifescience-ri.eu/organizations/3353/groups/24879/subgroups"
+          class="dropdown-item text-primary-text"
+        >  <i class="bi bi-person-gear" />
+          Representatives Settings
+        </a>
+      </li>
       <li><hr class="dropdown-divider"></li>
       <li>
         <a
@@ -95,6 +103,10 @@ export default {
     user: {
       type: Object,
       default: {}
+    },
+    isRepresentative: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
