@@ -317,7 +317,7 @@
           <li class="list-group-item p-2 border-bottom-0">
             <div class="pt-2 abandon-text">
               <div
-                v-if="negotiation.status !== 'ABANDONED'"
+                v-if="negotiation.status !== 'ABANDONED' && isUserRoleResearcher"
                 type="button"
                 role="button"
                 data-bs-toggle="modal"
@@ -445,6 +445,9 @@ export default {
     },
     loading () {
       return this.negotiation === undefined
+    },
+    isUserRoleResearcher () {
+      return this.userRole === ROLES.RESEARCHER
     }
   },
   async beforeMount () {
