@@ -31,7 +31,15 @@
         </div>
       </li>
       <li><hr class="dropdown-divider"></li>
-
+      <li>
+        <a
+          href="https://profile.aai.lifescience-ri.eu/profile"
+          class="dropdown-item text-primary-text"
+        >  <i class="bi bi-gear" />
+          LSL Settings
+        </a>
+      </li>
+      <li><hr class="dropdown-divider"></li>
       <li>
         <a
           href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
@@ -62,15 +70,6 @@
           class="dropdown-item text-primary-text"
         > <i class="bi bi-shield-lock" />
           Privacy Policy
-        </a>
-      </li>
-      <li><hr class="dropdown-divider"></li>
-      <li>
-        <a
-          href="https://profile.aai.lifescience-ri.eu/profile"
-          class="dropdown-item text-primary-text"
-        >  <i class="bi bi-gear" />
-          Settings
         </a>
       </li>
       <li><hr class="dropdown-divider"></li>
