@@ -96,7 +96,7 @@ export default {
       })
   },
   retrieveNegotiations ({ state, commit }, { statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
+    return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { state: statusFilter, page: pageNumber } })
       .then((response) => {
         return response.data
       })
@@ -106,7 +106,7 @@ export default {
       })
   },
   retrieveNegotiationsByRole ({ state, commit }, { role, userId, statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { role, status: statusFilter, page: pageNumber } })
+    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { role, state: statusFilter, page: pageNumber } })
       .then((response) => {
         return response.data
       })
