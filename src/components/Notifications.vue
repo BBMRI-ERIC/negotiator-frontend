@@ -18,10 +18,9 @@
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
       <li class="dropdown-item alert-warning">
-        Notifications
+        Notifications:
       </li>
       <li><hr class="dropdown-divider"></li>
-
       <li
         v-for="notification in getAllNotifications"
         :key="notification"
@@ -48,3 +47,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.dropdown-menu {
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
+}
+</style>
