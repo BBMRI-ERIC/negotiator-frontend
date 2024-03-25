@@ -374,6 +374,7 @@
         </li>
         <li
           v-for="page in pagination.totalPages"
+          :key="page"
           class="page-item"
         >
           <a
@@ -550,7 +551,7 @@ export default {
       return this.negotiations === undefined
     },
     dateFilterLength () {
-      if (this.filters.dateStart !== "" && this.filters.dateEnd != "") {
+      if (this.filters.dateStart !== "" && this.filters.dateEnd !== "") {
         return 2
       }
       return 1
