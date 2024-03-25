@@ -6,6 +6,7 @@
       :class="getAllNotifications.length > 0 ? '' : 'disabled'"
       data-bs-toggle="dropdown"
       aria-expanded="false"
+      @click="resetNotification"
     >
       <i class="bi bi-bell" />
 
@@ -38,12 +39,18 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters, mapMutations } from "vuex"
 
 export default {
   name: "Notifications",
   computed: {
     ...mapGetters(["getAllNotifications"])
+  },
+  methods: {
+    ...mapMutations(["setNotification"]),
+    resetNotification () {
+      this.setNotification(undefined)
+    }
   }
 }
 </script>
