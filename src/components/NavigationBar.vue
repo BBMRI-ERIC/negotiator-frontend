@@ -80,6 +80,17 @@
             </router-link>
           </li>
         </ul>
+        <div
+          v-if="oidcIsAuthenticated && returnCurrentMode"
+          class="navbar-text me-2 text-navbar-welcome-text me-3"
+          :class="returnCurrentModeTextColor"
+        >
+          <div
+            class="spinner-grow spinner-grow-sm"
+            role="status"
+          />
+          {{ returnCurrentMode }}
+        </div>
         <span
           v-if="oidcIsAuthenticated"
           class="navbar-text me-2 text-navbar-welcome-text"
@@ -127,6 +138,22 @@ export default {
     },
     isRepresentative () {
       return this.roles.includes(ROLES.REPRESENTATIVE)
+    },
+    returnCurrentMode () {
+      if (import.meta.env.DEV) {
+        return "Development Server"
+      } else if (window.location.origin === "https://negotiator.acc.bbmri-eric.eu") {
+        return "Acceptance Server"
+      }
+      return ""
+    },
+    returnCurrentModeTextColor () {
+      if (import.meta.env.DEV) {
+        return "text-success"
+      } else if (window.location.origin === "https://negotiator.acc.bbmri-eric.eu") {
+        return "text-warning"
+      }
+      return ""
     }
   },
   watch: {
