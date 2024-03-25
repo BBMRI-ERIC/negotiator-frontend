@@ -86,6 +86,7 @@
         >
           Welcome back {{ oidcUser.name }}
         </span>
+        <Notifications class="me-3" />
         <button
           v-if="oidcIsAuthenticated"
           class="btn btn-outline-navbar-button-outline me-2"
@@ -107,6 +108,7 @@ import allFeatureFlags from "@/config/featureFlags.js"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.svg"
 import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
+import Notifications from "../components/Notifications.vue"
 
 export default {
   name: "NavigationBar",

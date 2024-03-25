@@ -1,0 +1,50 @@
+<template>
+  <div class="dropdown">
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-primary rounded-circle position-relative"
+      :class="getAllNotifications.length > 0 ? '' : 'disabled'"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <i class="bi bi-bell" />
+
+      <span
+        v-if="getAllNotifications.length > 0"
+        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+      >
+        {{ getAllNotifications.length }}
+      </span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li class="dropdown-item alert-warning">
+        Notifications
+      </li>
+      <li><hr class="dropdown-divider"></li>
+
+      <li
+        v-for="notification in getAllNotifications"
+        :key="notification"
+        class="dropdown-item"
+      >
+        <div
+          class="alert alert-warning mb-1"
+          role="alert"
+        >
+          {{ notification }}
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from "vuex"
+
+export default {
+  name: "Notifications",
+  computed: {
+    ...mapGetters(["getAllNotifications"])
+  }
+}
+</script>
