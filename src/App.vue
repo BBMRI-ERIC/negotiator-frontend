@@ -12,29 +12,10 @@
     v-if="$route.path !== '/'"
     class="mt-5 pt-4"
   >
+    <Alert />
 &nbsp;
   </div>
   <div class="container body d-flex flex-column">
-    <div
-      v-if="notification !== undefined"
-      class="row"
-    >
-      <div class="col-12">
-        <div
-          class="alert alert-warning alert-dismissible fade show"
-          role="alert"
-        >
-          {{ notification }}
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-            @click="resetNotification"
-          />
-        </div>
-      </div>
-    </div>
     <div class="row">
       <div
         id="v-step-0"
@@ -56,17 +37,18 @@
 
 <script>
 import { RouterView } from "vue-router"
-import { mapGetters, mapMutations } from "vuex"
 import allFeatureFlags from "@/config/featureFlags.js"
 
 import NavigationBar from "./components/NavigationBar.vue"
+import Alert from "./components/Alert.vue"
 import Footer from "./components/Footer.vue"
 
 export default {
   components: {
     RouterView,
     NavigationBar,
-    Footer
+    Footer,
+    Alert
   },
   data () {
     return {
@@ -111,15 +93,6 @@ export default {
     // Do not display after the first visit so that returning users are not annoyed!
     if (!localStorage.getItem("show_vue_tour_1")) {
       this.$tours.myTour.start()
-    }
-  },
-  computed: {
-    ...mapGetters({ notification: "getNotification" })
-  },
-  methods: {
-    ...mapMutations(["setNotification"]),
-    resetNotification () {
-      this.setNotification(undefined)
     }
   }
 }
