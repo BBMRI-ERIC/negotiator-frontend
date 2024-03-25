@@ -112,6 +112,9 @@ import Notifications from "../components/Notifications.vue"
 
 export default {
   name: "NavigationBar",
+  components: {
+    Notifications
+  },
   data () {
     return {
       roles: [],
