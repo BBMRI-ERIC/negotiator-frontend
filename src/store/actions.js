@@ -105,8 +105,16 @@ export default {
         return []
       })
   },
-  retrieveNegotiationsByRole ({ state, commit }, { role, userId, statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { role, status: statusFilter, page: pageNumber } })
+  retrieveNegotiationsByRoleAndStatus ({ state, commit }, { role, status, userId, pageNumber }) {
+    if (status instanceof Array) {
+      status = status.join(",")
+    }
+    const parameters = {
+      headers: getBearerHeaders(state.oidc.access_token),
+      params: { role, status, page: pageNumber }
+    }
+
+    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, parameters)
       .then((response) => {
         return response.data
       })
