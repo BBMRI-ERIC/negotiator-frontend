@@ -96,7 +96,7 @@ export default {
       })
   },
   retrieveNegotiations ({ state, commit }, { statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
+    return axios.get(`${state.serverUrl}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
       .then((response) => {
         return response.data
       })
@@ -114,7 +114,7 @@ export default {
       params: { role, status, page: pageNumber }
     }
 
-    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, parameters)
+    return axios.get(`${state.serverUrl}/users/${userId}/negotiations`, parameters)
       .then((response) => {
         return response.data
       })
@@ -124,7 +124,7 @@ export default {
       })
   },
   updateNegotiationStatus ({ state, commit }, { negotiationId, event }) {
-    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.put(`${state.serverUrl}/negotiations/${negotiationId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
         return response.data
@@ -135,7 +135,7 @@ export default {
       })
   },
   async retrievePossibleEvents ({ state, commit }, { negotiationId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle`, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.get(`${state.serverUrl}/negotiations/${negotiationId}/lifecycle`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -144,7 +144,7 @@ export default {
       })
   },
   retrievePossibleEventsForResource ({ state, commit }, { negotiationId, resourceId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle`, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.get(`${state.serverUrl}/negotiations/${negotiationId}/resources/${resourceId}/lifecycle`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -153,7 +153,7 @@ export default {
       })
   },
   updateResourceStatus ({ state, commit }, { negotiationId, resourceId, event }) {
-    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.put(`${state.serverUrl}/negotiations/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
         return response.data
@@ -164,7 +164,8 @@ export default {
       })
   },
   async retrieveNegotiationById ({ state, commit }, { negotiationId }) {
-    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, { headers: getBearerHeaders(state.oidc.access_token) })
+    console.log(state.serverUrl)
+    return axios.get(`${state.serverUrl}/negotiations/${negotiationId}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -173,7 +174,7 @@ export default {
       })
   },
   async retrievePostsByNegotiationId ({ state, commit }, { negotiationId, resourceId }) {
-    const url = `${NEGOTIATION_PATH}/${negotiationId}/posts`
+    const url = `${state.serverUrl}/negotiations/${negotiationId}/posts`
     const params = resourceId ? { resource: resourceId } : { }
     return axios.get(url, { headers: getBearerHeaders(state.oidc.access_token), params })
       .then((response) => {
@@ -184,7 +185,7 @@ export default {
       })
   },
   async retrieveAttachmentsByNegotiationId ({ state, commit }, { negotiationId }) {
-    const url = `${NEGOTIATION_PATH}/${negotiationId}/attachments`
+    const url = `${state.serverUrl}/negotiations/${negotiationId}/attachments`
     return axios.get(url, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
@@ -194,7 +195,7 @@ export default {
       })
   },
   addMessageToNegotiation ({ state, commit }, { data }) {
-    return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/posts`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.post(`${state.serverUrl}/negotiations/${data.negotiationId}/posts`, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -211,7 +212,7 @@ export default {
     formData.append("file", data.attachment)
     uploadFileHeaders["Content-type"] = "multipart/form-data"
 
-    return axios.post(`${NEGOTIATION_PATH}/${data.negotiationId}/attachments`, formData, uploadFileHeaders)
+    return axios.post(`${state.serverUrl}/negotiations/${data.negotiationId}/attachments`, formData, uploadFileHeaders)
       .then((response) => {
         return response.data
       })
@@ -221,7 +222,7 @@ export default {
       })
   },
   markMessageAsRead ({ state }, { data }) {
-    return axios.put(`${NEGOTIATION_PATH}/${data.negotiationId}/posts/${data.postId}`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.put(`${state.serverUrl}/negotiations/${data.negotiationId}/posts/${data.postId}`, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data.id
       })
@@ -259,7 +260,7 @@ export default {
       })
   },
   retrieveUserRepresentedResources ({ state, commit }) {
-    return axios.get(USER_RESOURCES_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.get(`${state.serverUrl}/users/resources`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -268,7 +269,7 @@ export default {
       })
   },
   downloadAttachment ({ state }, { id, name }) {
-    axios.get(`${ATTACHMENTS_PATH}/${id}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+    axios.get(`${state.serverUrl}/attachments/${id}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
       .then((response) => {
         const href = window.URL.createObjectURL(response.data)
 

@@ -1,4 +1,14 @@
 <template>
+  <div class="my-2">
+    <button
+      v-for="server in backendSettings.basePaths"
+      type="button"
+      class="btn btn-sm"
+      @click="setBackendServer(server)"
+    >
+      {{ server }}
+    </button>
+  </div>
   <NegotiationList
     :negotiations="negotiations"
     :pagination="pagination"
@@ -10,8 +20,9 @@
 <script>
 
 import NegotiationList from "@/components/NegotiationList.vue"
-import { mapActions } from "vuex"
+import { mapActions, mapGetters, mapMutations } from "vuex"
 import { ROLES } from "@/config/consts.js"
+import backendSettings from "@/config/backend"
 
 export default {
   components: {
@@ -36,12 +47,16 @@ export default {
       roles: []
     }
   },
+  computed: {
+    backendSettings () {
+      return backendSettings
+    }
+  },
   async mounted () {
     this.user = await this.retrieveUser()
     this.userId = this.user.users[0].id
-
     if (this.userRole === "ROLE_ADMIN") {
-      this.negotiations = await this.retrieveNegotiations({ statusFilter: "SUBMITTED", pageNumber: 0 })
+      this.negotiations = await this.retrieveNegotiations({ statusFilter: "SUBMITTED", pageNumber: 0, serverURL: backendSettings.basePaths.at(0) })
     }
 
     if (this.userRole === "ROLE_RESEARCHER") {
@@ -61,6 +76,29 @@ export default {
   },
   methods: {
     ...mapActions(["retrieveNegotiationsByRoleAndStatus", "retrieveNegotiations", "retrieveUser", "retrieveUserRoles"]),
+    ...mapGetters(["getServerUrl"]),
+    ...mapMutations(["setServerURL"]),
+    async setBackendServer (server) {
+      this.setServerURL(server)
+      if (this.userRole === "ROLE_ADMIN") {
+        this.negotiations = await this.retrieveNegotiations({ statusFilter: "SUBMITTED", pageNumber: 0, serverURL: backendSettings.basePaths.at(0) })
+      }
+
+      if (this.userRole === "ROLE_RESEARCHER") {
+        this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ role: "author", userId: this.userId, pageNumber: 0 })
+      }
+
+      if (this.userRole === "ROLE_REPRESENTATIVE") {
+        this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ role: "representative", status: ["IN_PROGRESS", "ABANDONED"], userId: this.userId, pageNumber: 0 })
+      }
+
+      this.pagination = this.negotiations.page
+      if (this.negotiations.page.totalElements === 0) {
+        this.negotiations = {}
+      } else {
+        this.negotiations = this.negotiations._embedded.negotiations
+      }
+    },
     async retrieveNegotiationsByPage (currentPageNumber) {
       if (this.userRole === "ROLE_ADMIN") {
         this.negotiations = await this.retrieveNegotiations({ status: "SUBMITTED", pageNumber: currentPageNumber - 1 })

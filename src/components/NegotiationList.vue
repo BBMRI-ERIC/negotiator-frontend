@@ -203,7 +203,6 @@
     </div>
 
     <NewRequestButton />
-
     <div>
       <div class="row row-cols-2 d-grid-row mt-5 ">
         <p>
@@ -453,6 +452,7 @@ import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
+import backendSettings from "@/config/backend"
 
 export default {
   name: "NegotiationsList",
@@ -519,6 +519,9 @@ export default {
     }
   },
   computed: {
+    backendSettings () {
+      return backendSettings
+    },
     filteredNegotiations: function () {
       const filterConditions = []
       if (this.filters.status.length > 0) {
@@ -567,7 +570,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      "setSavedNegotiationsView"
+      "setSavedNegotiationsView", "retrieveNegotiations"
     ]),
     triggerSort (column) {
       this.sortBy.sortColumn = column

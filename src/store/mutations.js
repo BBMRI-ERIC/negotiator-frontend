@@ -7,5 +7,8 @@ export default {
   },
   setSavedNegotiationsView (state, negotiationsView) {
     state.savedNegotiationsView = negotiationsView
+  },
+  setServerURL (state, url) {
+    state.serverUrl = url
   }
 }
