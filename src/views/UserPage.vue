@@ -4,18 +4,26 @@
     :pagination="pagination"
     :user-role="userRole"
     @current-page-number="retrieveNegotiationsByPage"
-    @filter-status="retrieveNegotiationsByFilterStatus"
+    @filters-sort-data="retrieveNegotiationsBySortAndFilter"
+  />
+  <Pagination
+    :negotiations="negotiations"
+    :pagination="pagination"
+    @current-page-number="retrieveNegotiationsByPage"
   />
 </template>
+
 <script>
 
 import NegotiationList from "@/components/NegotiationList.vue"
+import Pagination from "@/components/Pagination.vue"
 import { mapActions } from "vuex"
 import { ROLES } from "@/config/consts.js"
 
 export default {
   components: {
-    NegotiationList
+    NegotiationList,
+    Pagination
   },
 
   props: {
@@ -33,55 +41,53 @@ export default {
       pagination: undefined,
       user: undefined,
       userId: undefined,
-      roles: []
+      roles: [],
+      filtersSortData: {
+        status: [],
+        dateStart: "",
+        dateEnd: "",
+        sortBy: "",
+        sortDirection: "DESC"
+      }
     }
   },
   async mounted () {
     this.user = await this.retrieveUser()
     this.userId = this.user.users[0].id
 
-    if (this.userRole === "ROLE_ADMIN") {
-      this.negotiations = await this.retrieveNegotiations({ statusFilter: "SUBMITTED", pageNumber: 0 })
-    }
-
-    if (this.userRole === "ROLE_RESEARCHER") {
-      this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ role: "author", userId: this.userId, pageNumber: 0 })
-    }
-
-    if (this.userRole === "ROLE_REPRESENTATIVE") {
-      this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ role: "representative", status: ["IN_PROGRESS", "ABANDONED"], userId: this.userId, pageNumber: 0 })
-    }
-
-    this.pagination = this.negotiations.page
-    if (this.negotiations.page.totalElements === 0) {
-      this.negotiations = {}
-    } else {
-      this.negotiations = this.negotiations._embedded.negotiations
-    }
+    this.retrieveNegotiationsByUserRole(0)
   },
   methods: {
-    ...mapActions(["retrieveNegotiationsByRoleAndStatus", "retrieveNegotiations", "retrieveUser", "retrieveUserRoles"]),
-    async retrieveNegotiationsByPage (currentPageNumber) {
+    ...mapActions(["retrieveNegotiationsByUserId", "retrieveNegotiations", "retrieveUser", "retrieveUserRoles"]),
+    async retrieveNegotiationsByUserRole (pageNumber) {
       if (this.userRole === "ROLE_ADMIN") {
-        this.negotiations = await this.retrieveNegotiations({ status: "SUBMITTED", pageNumber: currentPageNumber - 1 })
+        this.filtersSortData.status = ["SUBMITTED"]
+        this.negotiations = await this.retrieveNegotiations({ filtersSortData: this.filtersSortData, pageNumber })
       }
 
       if (this.userRole === "ROLE_RESEARCHER") {
-        this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ role: "author", userId: this.userId, pageNumber: currentPageNumber - 1 })
+        this.negotiations = await this.retrieveNegotiationsByUserId({ role: "author", filtersSortData: this.filtersSortData, userId: this.userId, pageNumber })
       }
 
       if (this.userRole === "ROLE_REPRESENTATIVE") {
-        this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ role: "representative", status: ["IN_PROGRESS", "ABANDONED"], userId: this.userId, pageNumber: currentPageNumber - 1 })
+        this.filtersSortData.status = ["IN_PROGRESS", "ABANDONED"]
+        this.negotiations = await this.retrieveNegotiationsByUserId({ role: "representative", filtersSortData: this.filtersSortData, userId: this.userId, pageNumber })
       }
 
-      // this.negotiations = await this.retrieveNegotiationsByRole({ userId: this.userId, pageNumber: currentPageNumber })
-      if (this.negotiations._embedded) {
+      this.pagination = this.negotiations.page
+      if (this.negotiations.page.totalElements === 0) {
+        this.negotiations = {}
+      } else {
         this.negotiations = this.negotiations._embedded.negotiations
       }
     },
-    async retrieveNegotiationsByFilterStatus (filterStatus) {
-      this.negotiations = await this.retrieveNegotiationsByRoleAndStatus({ userId: this.userId, pageNumber: 0, status: filterStatus })
-      if (this.negotiations._embedded) { this.negotiations = this.negotiations._embedded.negotiations }
+    retrieveNegotiationsByPage (currentPageNumber) {
+      this.retrieveNegotiationsByUserRole(currentPageNumber - 1)
+    },
+    retrieveNegotiationsBySortAndFilter (filtersSortData) {
+      this.filtersSortData = filtersSortData
+
+      this.retrieveNegotiationsByUserRole(0)
     }
   }
 }
