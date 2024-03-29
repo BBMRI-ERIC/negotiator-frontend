@@ -95,8 +95,13 @@ export default {
         commit("setNotification", "There was an error saving the Negotiation")
       })
   },
-  retrieveNegotiations ({ state, commit }, { statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
+  retrieveNegotiations ({ state, commit }, { filtersSortData, pageNumber }) {
+    const parameters = {
+      headers: getBearerHeaders(state.oidc.access_token),
+      params: { status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection, page: pageNumber },
+      paramsSerializer: { indexes: null }
+    }
+    return axios.get(`${BASE_API_PATH}/negotiations`, parameters)
       .then((response) => {
         return response.data
       })
@@ -105,15 +110,12 @@ export default {
         return []
       })
   },
-  retrieveNegotiationsByRoleAndStatus ({ state, commit }, { role, status, userId, pageNumber }) {
-    if (status instanceof Array) {
-      status = status.join(",")
-    }
+  retrieveNegotiationsByUserId ({ state, commit }, { role, filtersSortData, userId, pageNumber }) {
     const parameters = {
       headers: getBearerHeaders(state.oidc.access_token),
-      params: { role, status, page: pageNumber }
+      params: { role, status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection, page: pageNumber },
+      paramsSerializer: { indexes: null }
     }
-
     return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, parameters)
       .then((response) => {
         return response.data
