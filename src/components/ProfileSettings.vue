@@ -33,28 +33,21 @@
       <li><hr class="dropdown-divider"></li>
       <li>
         <a
-          href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
+          href="https://profile.aai.lifescience-ri.eu/profile"
           class="dropdown-item text-primary-text"
-        >  <i class="bi bi-github" />
-          GitHub UI
+        >  <i class="bi bi-gear" />
+          Profile Settings
         </a>
       </li>
-      <li>
+      <li v-if="isRepresentative">
         <a
-          href="https://github.com/BBMRI-ERIC/negotiator"
+          href=" https://perun.aai.lifescience-ri.eu/organizations/3353/groups/24879/subgroups"
           class="dropdown-item text-primary-text"
-        >  <i class="bi bi-github" />
-          GitHub Application
+        >  <i class="bi bi-person-gear" />
+          Authorization Settings
         </a>
       </li>
-      <li>
-        <a
-          href="/api/swagger-ui/index.html"
-          class="dropdown-item text-primary-text"
-        > <i class="bi bi-braces-asterisk" />
-          API
-        </a>
-      </li>
+      <li><hr class="dropdown-divider"></li>
       <li>
         <a
           href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdfl"
@@ -63,23 +56,31 @@
           Privacy Policy
         </a>
       </li>
-      <li><hr class="dropdown-divider"></li>
       <li>
         <a
-          href="https://profile.aai.lifescience-ri.eu/profile"
+          href="https://www.bbmri-eric.eu/services/access-policies/"
           class="dropdown-item text-primary-text"
-        >  <i class="bi bi-gear" />
-          Settings
+        > <i class="bi bi-clipboard-check" />
+          Access Policy
         </a>
       </li>
+      <li v-if="featureFlagsFAQ">
+        <router-link
+          class="dropdown-item text-primary-text"
+          to="/FAQ"
+        >
+          <i class="bi bi-people" />
+          Support
+        </router-link>
+      </li>
       <li><hr class="dropdown-divider"></li>
-      <li class="text-center">
+      <li class="text-center sign-out">
         <button
-          class="btn btn-outline-navbar-button-outline me-2 "
+          class="btn me-2 "
           aria-current="page"
           @click.stop.prevent="signOutOidc"
         >
-          <i class="bi bi-box-arrow-right" /> Logout
+          <i class="bi bi-box-arrow-right" /> Sign Out
         </button>
       </li>
     </ul>
@@ -88,6 +89,7 @@
 
 <script>
 import { mapActions } from "vuex"
+import allFeatureFlags from "@/config/featureFlags.js"
 
 export default {
   name: "ProfileSettings",
@@ -99,6 +101,11 @@ export default {
     isRepresentative: {
       type: Boolean,
       default: false
+    }
+  },
+  data () {
+    return {
+      featureFlagsFAQ: allFeatureFlags.faqPage
     }
   },
   computed: {
@@ -124,5 +131,8 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+}
+.sign-out:hover {
+  color: #dc3545;
 }
 </style>
