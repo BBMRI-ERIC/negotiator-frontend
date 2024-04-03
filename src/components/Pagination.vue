@@ -63,6 +63,11 @@ export default {
       currentPageNumber: 1
     }
   },
+  mounted () {
+    if (this.$route?.query.currentPageNumber) {
+      this.currentPageNumber = parseInt(this.$route?.query.currentPageNumber)
+    }
+  },
   methods: {
     changeCurrentPage (pageNumber) {
       this.$emit("currentPageNumber", pageNumber)

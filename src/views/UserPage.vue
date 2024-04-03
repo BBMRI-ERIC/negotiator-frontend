@@ -1,10 +1,14 @@
 <template>
+  <FilterSort
+    v-if="!loading"
+    :filters-sort-data="filtersSortData"
+    :user-role="userRole"
+    @filters-sort-data="retrieveNegotiationsBySortAndFilter"
+  />
   <NegotiationList
     :negotiations="negotiations"
     :pagination="pagination"
     :user-role="userRole"
-    @current-page-number="retrieveNegotiationsByPage"
-    @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
   <Pagination
     :negotiations="negotiations"
@@ -17,13 +21,16 @@
 
 import NegotiationList from "@/components/NegotiationList.vue"
 import Pagination from "@/components/Pagination.vue"
+import FilterSort from "@/components/FilterSort.vue"
+
 import { mapActions } from "vuex"
 import { ROLES } from "@/config/consts.js"
 
 export default {
   components: {
     NegotiationList,
-    Pagination
+    Pagination,
+    FilterSort
   },
 
   props: {
@@ -46,16 +53,25 @@ export default {
         status: [],
         dateStart: "",
         dateEnd: "",
-        sortBy: "",
+        sortBy: "creationDate",
         sortDirection: "DESC"
       }
+    }
+  },
+  computed: {
+    loading () {
+      return this.negotiations === undefined
     }
   },
   async mounted () {
     this.user = await this.retrieveUser()
     this.userId = this.user.users[0].id
 
-    this.retrieveNegotiationsByUserRole(0)
+    if (Object.keys(this.$route?.query).length) {
+      this.loadActivefiltersSortDataFromURL()
+    } else {
+      this.retrieveNegotiationsByUserRole(0)
+    }
   },
   methods: {
     ...mapActions(["retrieveNegotiationsByUserId", "retrieveNegotiations", "retrieveUser", "retrieveUserRoles"]),
@@ -83,11 +99,26 @@ export default {
     },
     retrieveNegotiationsByPage (currentPageNumber) {
       this.retrieveNegotiationsByUserRole(currentPageNumber - 1)
+      this.updateRoutingParamsPage(currentPageNumber)
+    },
+    updateRoutingParamsPage (currentPageNumber) {
+      this.$router.push({ query: { ...this.$route.query, currentPageNumber } })
     },
     retrieveNegotiationsBySortAndFilter (filtersSortData) {
       this.filtersSortData = filtersSortData
 
       this.retrieveNegotiationsByUserRole(0)
+    },
+    loadActivefiltersSortDataFromURL () {
+      if (this.$route?.query.filtersSort) {
+        this.filtersSortData = JSON.parse(this.$route?.query.filtersSort)
+      }
+
+      if (this.$route?.query.currentPageNumber) {
+        this.retrieveNegotiationsByUserRole(this.$route?.query.currentPageNumber - 1)
+      } else {
+        this.retrieveNegotiationsByUserRole(0)
+      }
     }
   }
 }
