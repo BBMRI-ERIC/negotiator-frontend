@@ -88,7 +88,11 @@
                     @click="changeSortDirection('title'); emitFilterSortData();"
                   >
                     <i
-                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'title' ? 'bi bi-sort-alpha-up' : 'bi-sort-alpha-down'"
+                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'title' ? 'bi bi-sort-alpha-up-alt' : 'bi-sort-alpha-down'"
+                    />
+                    <i
+                      v-if="filtersSortData.sortBy !== 'title'"
+                      class="bi bi-sort-alpha-up-alt"
                     />
                   </button>
                 </th>
@@ -103,7 +107,11 @@
                     @click="changeSortDirection('creationDate'); emitFilterSortData();"
                   >
                     <i
-                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'creationDate' ? 'bi bi-sort-numeric-up' : 'bi-sort-numeric-down'"
+                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'creationDate' ? 'bi bi-sort-numeric-up-alt' : 'bi-sort-numeric-down'"
+                    />
+                    <i
+                      v-if="filtersSortData.sortBy !== 'creationDate'"
+                      class="bi bi-sort-numeric-up-alt"
                     />
                   </button>
                 </th>
@@ -121,7 +129,11 @@
                     @click="changeSortDirection('currentState'); emitFilterSortData();"
                   >
                     <i
-                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'currentState' ? 'bi bi-sort-up' : 'bi-sort-down'"
+                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'currentState' ? 'bi bi-sort-up-alt' : 'bi-sort-down'"
+                    />
+                    <i
+                      v-if="filtersSortData.sortBy !== 'creacurrentStatetionDate'"
+                      class="bi bi-sort-up-alt"
                     />
                   </button>
                 </th>
