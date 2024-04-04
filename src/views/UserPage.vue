@@ -9,6 +9,8 @@
     :negotiations="negotiations"
     :pagination="pagination"
     :user-role="userRole"
+    :filters-sort-data="filtersSortData"
+    @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
   <Pagination
     :negotiations="negotiations"
@@ -99,15 +101,17 @@ export default {
     },
     retrieveNegotiationsByPage (currentPageNumber) {
       this.retrieveNegotiationsByUserRole(currentPageNumber - 1)
-      this.updateRoutingParamsPage(currentPageNumber)
-    },
-    updateRoutingParamsPage (currentPageNumber) {
-      this.$router.push({ query: { ...this.$route.query, currentPageNumber } })
+      this.updateRoutingParams(currentPageNumber)
     },
     retrieveNegotiationsBySortAndFilter (filtersSortData) {
       this.filtersSortData = filtersSortData
 
       this.retrieveNegotiationsByUserRole(0)
+
+      this.updateRoutingParams(1)
+    },
+    updateRoutingParams (currentPageNumber) {
+      this.$router.push({ query: { filtersSort: JSON.stringify(this.filtersSortData), currentPageNumber } })
     },
     loadActivefiltersSortDataFromURL () {
       if (this.$route?.query.filtersSort) {
