@@ -12,7 +12,6 @@
         >
           Sort by
         </button>
-
         <ul
           class="dropdown-menu"
           aria-labelledby="dropdownSortingButton"
@@ -209,10 +208,6 @@ export default {
     },
     emitFilterSortData () {
       this.$emit("filtersSortData", this.filtersSortData)
-      this.updateRoutingParams()
-    },
-    updateRoutingParams () {
-      this.$router.push({ query: { filtersSort: JSON.stringify(this.filtersSortData), ...this.$route.query } })
     },
     changeSortDirection () {
       if (this.filtersSortData.sortDirection === "DESC") {

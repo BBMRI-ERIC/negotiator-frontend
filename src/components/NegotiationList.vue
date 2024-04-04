@@ -82,12 +82,30 @@
               <tr class="text-table-header-text">
                 <th scope="col">
                   Title
+                  <button
+                    class="btn btn-sm"
+                    type="button"
+                    @click="changeSortDirection('title'); emitFilterSortData();"
+                  >
+                    <i
+                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'title' ? 'bi bi-sort-alpha-up' : 'bi-sort-alpha-down'"
+                    />
+                  </button>
                 </th>
                 <th scope="col">
                   Negotiation ID
                 </th>
                 <th scope="col">
                   Created on
+                  <button
+                    class="btn btn-sm"
+                    type="button"
+                    @click="changeSortDirection('creationDate'); emitFilterSortData();"
+                  >
+                    <i
+                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'creationDate' ? 'bi bi-sort-numeric-up' : 'bi-sort-numeric-down'"
+                    />
+                  </button>
                 </th>
                 <th scope="col">
                   Author
@@ -97,6 +115,15 @@
                   scope="col"
                 >
                   Status
+                  <button
+                    class="btn btn-sm"
+                    type="button"
+                    @click="changeSortDirection('currentState'); emitFilterSortData();"
+                  >
+                    <i
+                      :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'currentState' ? 'bi bi-sort-up' : 'bi-sort-down'"
+                    />
+                  </button>
                 </th>
                 <th scope="col" />
               </tr>
@@ -229,6 +256,10 @@ export default {
       validator: function (value) {
         return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
       }
+    },
+    filtersSortData: {
+      type: Object,
+      default: undefined
     }
   },
   data () {
@@ -277,6 +308,18 @@ export default {
     },
     getBadgeIcon (badgeText) {
       return getBadgeIcon(badgeText)
+    },
+    changeSortDirection (sortBy) {
+      if (this.filtersSortData.sortDirection === "DESC") {
+        this.filtersSortData.sortBy = sortBy
+        this.filtersSortData.sortDirection = "ASC"
+      } else {
+        this.filtersSortData.sortBy = sortBy
+        this.filtersSortData.sortDirection = "DESC"
+      }
+    },
+    emitFilterSortData () {
+      this.$emit("filtersSortData", this.filtersSortData)
     }
   }
 }
