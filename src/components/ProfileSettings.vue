@@ -110,9 +110,18 @@ export default {
   },
   computed: {
     returnAcronymOfName () {
-      const str = this.user?.name
-      const matches = str.match(/\b(\w)/g)
-      const acronym = matches.join(" ")
+      const words = this.user?.name.split(" ")
+
+      // Initialize an empty string for the acronym
+      let acronym = ""
+
+      // Iterate over each word
+      words.forEach(word => {
+        // Get the first character of each word and append it to the acronym
+        if (word.length > 0) {
+          acronym += word[0].toUpperCase() + " "
+        }
+      })
       return acronym
     }
   },
