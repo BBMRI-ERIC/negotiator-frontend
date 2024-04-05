@@ -277,15 +277,6 @@ export default {
   data () {
     return {
       availableRoles: ROLES,
-      filtersStatus: [
-        { value: "SUBMITTED", label: "Submitted" },
-        { value: "APPROVED", label: "Approved" },
-        { value: "DECLINED", label: "Declined" },
-        { value: "IN_PROGRESS", label: "In progress" },
-        { value: "PAUSED", label: "Paused" },
-        { value: "CONCLUDED", label: "Concluded" },
-        { value: "ABANDONED", label: "Abandoned" }
-      ],
       sortBy: [
         { value: "title", label: "Title" },
         { value: "creationDate", label: "Creation Date" },

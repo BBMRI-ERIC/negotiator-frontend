@@ -77,7 +77,6 @@
             class="form-check mx-2 my-2"
           >
             <input
-              id="submitted"
               v-model="filtersSortData.status"
               class="form-check-input"
               type="checkbox"
@@ -86,7 +85,6 @@
             >
             <label
               class="form-check-label text-sort-filter-dropdown-text"
-              for="submitted"
             >
               {{ status.label }}
             </label>
@@ -178,7 +176,7 @@ export default {
   data () {
     return {
       filtersStatus: [
-        { value: "SUBMITTED", label: "Submitted" },
+        { value: "SUBMITTED", label: "Under Review" },
         { value: "APPROVED", label: "Approved" },
         { value: "DECLINED", label: "Declined" },
         { value: "IN_PROGRESS", label: "In progress" },
