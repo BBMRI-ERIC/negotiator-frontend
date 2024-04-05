@@ -79,7 +79,6 @@ export default {
     ...mapActions(["retrieveNegotiationsByUserId", "retrieveNegotiations", "retrieveUser", "retrieveUserRoles"]),
     async retrieveNegotiationsByUserRole (pageNumber) {
       if (this.userRole === "ROLE_ADMIN") {
-        this.filtersSortData.status = ["SUBMITTED"]
         this.negotiations = await this.retrieveNegotiations({ filtersSortData: this.filtersSortData, pageNumber })
       }
 

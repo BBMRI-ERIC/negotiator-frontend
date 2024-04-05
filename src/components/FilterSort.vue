@@ -198,10 +198,6 @@ export default {
   },
   methods: {
     setPredifinedFiltersForStatus () {
-      if (this.userRole === "ROLE_ADMIN") {
-        this.filtersStatus = [{ value: "SUBMITTED", label: "Submitted" }]
-      }
-
       if (this.userRole === "ROLE_REPRESENTATIVE") {
         this.filtersStatus = [{ value: "IN_PROGRESS", label: "In progress" }, { value: "ABANDONED", label: "Abandoned" }]
       }
