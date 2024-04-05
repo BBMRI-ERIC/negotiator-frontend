@@ -78,7 +78,7 @@
       <div v-if="savedNegotiationsView === 'Table'">
         <div class="table-responsive">
           <table class="table table-hover">
-            <thead>
+            <thead class="text-nowrap">
               <tr class="text-table-header-text">
                 <th scope="col">
                   Title
