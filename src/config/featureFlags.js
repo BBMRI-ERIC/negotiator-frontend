@@ -1,11 +1,11 @@
 const devSettings = {
-  faqPage: false,
+  faqPage: true,
   vueTour: false
 }
 
 const prodSettings = {
-  faqPage: false,
-  vueTour: false
+  faqPage: Boolean("FEATURE_FLAG_FAQPAGE_PLACEHOLDER"),
+  vueTour: Boolean("FEATURE_FLAG_VUETOUR_PLACEHOLDER")
 }
 
 let allFeatureFlags
