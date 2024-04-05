@@ -274,7 +274,7 @@
           </li>
 
           <li
-            v-if="userRole === availableRoles.ADMINISTRATOR"
+            v-if="userRole === availableRoles.ADMINISTRATOR && negotiation.status === 'SUBMITTED'"
             class="list-group-item p-2"
           >
             <div class="dropdown mt-3 mb-3">
