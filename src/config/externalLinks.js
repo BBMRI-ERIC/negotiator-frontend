@@ -3,7 +3,7 @@ const devSettings = {
 }
 
 const prodSettings = {
-  directory: "https://directory.bbmri-eric.eu"
+  directory: "EXTERNAL_LINK_DIRECTORY_PLACEHOLDER"
 }
 
 let allExternalLinks

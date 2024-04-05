@@ -114,6 +114,7 @@ If you want to change the image, you can replace the existing one with a new one
 
 ### 3. isFooterFollowUsVisible - define if item in footer are visible (Follow Us, Subscribe To Our Newsletter...)
 default
+
 ```sh
 isFooterFollowUsVisible: "true"
 ```
