@@ -110,11 +110,11 @@ export default {
       this.updateRoutingParams(1)
     },
     updateRoutingParams (currentPageNumber) {
-      this.$router.push({ query: { filtersSort: JSON.stringify(this.filtersSortData), currentPageNumber } })
+      this.$router.push({ query: { filtersSort: encodeURI(JSON.stringify(this.filtersSortData)), currentPageNumber } })
     },
     loadActivefiltersSortDataFromURL () {
       if (this.$route?.query.filtersSort) {
-        this.filtersSortData = JSON.parse(this.$route?.query.filtersSort)
+        this.filtersSortData = JSON.parse(decodeURI(this.$route?.query.filtersSort))
       }
 
       if (this.$route?.query.currentPageNumber) {
