@@ -119,11 +119,11 @@
                   Author
                 </th>
                 <th
-                  id="v-step-2"
                   scope="col"
                 >
                   Status
                   <button
+                    id="v-step-2"
                     class="btn btn-sm"
                     type="button"
                     @click="changeSortDirection('currentState'); emitFilterSortData();"

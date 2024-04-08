@@ -56,7 +56,10 @@
         />
       </button>
 
-      <div class="filter-by-status">
+      <div
+        id="v-step-3"
+        class="filter-by-status"
+      >
         <button
           class="btn btn-sm btn-outline-sort-filter-button-outline dropdown-toggle"
           :class="filtersSortData.status.length > 0 ? 'btn-primary show':''"
