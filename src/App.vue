@@ -70,7 +70,7 @@ export default {
   },
   data () {
     return {
-      vueTourFeatureFlag: allFeatureFlags.vueTour,
+      vueTourFeatureFlag: allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true ? true : false,
       steps: [
         {
           target: "#v-step-0", // We're using document.querySelector() under the hood
