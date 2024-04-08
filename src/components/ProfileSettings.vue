@@ -105,7 +105,7 @@ export default {
   },
   data () {
     return {
-      featureFlagsFAQ: allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true ? true : false
+      featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
     }
   },
   computed: {
