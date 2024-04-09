@@ -114,7 +114,8 @@ export default {
   data () {
     return {
       roles: [],
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
+      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
+      backendEnvironment: ""
     }
   },
   computed: {
@@ -131,7 +132,7 @@ export default {
     returnCurrentMode () {
       if (import.meta.env.DEV) {
         return "Development Server"
-      } else if (window.location.origin === "https://negotiator.acc.bbmri-eric.eu") {
+      } else if (this.backendEnvironment === "Acceptance") {
         return "Acceptance Server"
       }
       return ""
@@ -139,7 +140,7 @@ export default {
     returnCurrentModeTextColor () {
       if (import.meta.env.DEV) {
         return "text-success"
-      } else if (window.location.origin === "https://negotiator.acc.bbmri-eric.eu") {
+      } else if (this.backendEnvironment === "Acceptance") {
         return "text-warning"
       }
       return ""
@@ -150,11 +151,15 @@ export default {
       this.roles = await this.retrieveUserRoles()
     }
   },
+  async beforeMount () {
+    this.backendEnvironment = await this.retrieveBackendEnvironment()
+  },
   methods: {
     ...mapActions([
       "signOutOidc",
       "authenticateOidc",
-      "retrieveUserRoles"
+      "retrieveUserRoles",
+      "retrieveBackendEnvironment"
     ])
   }
 }
