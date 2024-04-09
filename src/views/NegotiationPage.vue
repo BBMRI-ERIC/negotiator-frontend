@@ -76,7 +76,6 @@
             </span>
             <NegotiationAttachment
               v-for="attachment in attachments"
-              v-if="dataReady"
               :id="attachment.id"
               :key="attachment.id"
               class="mb-2"
@@ -274,7 +273,7 @@
           </li>
 
           <li
-            v-if="userRole === availableRoles.ADMINISTRATOR"
+            v-if="userRole === availableRoles.ADMINISTRATOR && negotiation.status === 'SUBMITTED'"
             class="list-group-item p-2"
           >
             <div class="dropdown mt-3 mb-3">
@@ -389,7 +388,8 @@ export default {
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
-      ORGANIZATION_TYPE: "ORGANIZATION"
+      ORGANIZATION_TYPE: "ORGANIZATION",
+      attachments: []
     }
   },
   computed: {
@@ -477,14 +477,8 @@ export default {
       negotiationId: this.negotiation.id
     })
   },
-  async created () {
-    this.dataReady = false
-    await this.retrieveAttachmentsByNegotiationId({
-      negotiationId: this.negotiationId
-    }).then((response) => {
-      this.attachments = response
-      this.dataReady = true
-    })
+  created () {
+    this.retrieveAttachments()
   },
   methods: {
     ...mapActions([
@@ -498,6 +492,13 @@ export default {
       "updateResourceStatus",
       "downloadAttachment"
     ]),
+    async retrieveAttachments () {
+      await this.retrieveAttachmentsByNegotiationId({
+        negotiationId: this.negotiationId
+      }).then((response) => {
+        this.attachments = response
+      })
+    },
     isRepresentativeForResource (resourceId) {
       return this.representedResourcesIds.includes(resourceId)
     },
