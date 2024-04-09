@@ -12,7 +12,7 @@
     :filters-sort-data="filtersSortData"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
-  <Pagination
+  <NegotiationPagination
     :negotiations="negotiations"
     :pagination="pagination"
     @current-page-number="retrieveNegotiationsByPage"
@@ -22,7 +22,7 @@
 <script>
 
 import NegotiationList from "@/components/NegotiationList.vue"
-import Pagination from "@/components/Pagination.vue"
+import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import FilterSort from "@/components/FilterSort.vue"
 
 import { mapActions } from "vuex"
@@ -31,7 +31,7 @@ import { ROLES } from "@/config/consts.js"
 export default {
   components: {
     NegotiationList,
-    Pagination,
+    NegotiationPagination,
     FilterSort
   },
 

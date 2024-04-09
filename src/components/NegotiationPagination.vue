@@ -46,7 +46,7 @@
 
 <script>
 export default {
-  name: "Pagination",
+  name: "NegotiationPagination",
   props: {
     negotiations: {
       type: Array,

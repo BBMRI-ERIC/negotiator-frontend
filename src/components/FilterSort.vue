@@ -44,7 +44,7 @@
       <button
         class="btn btn-sm btn-outline-sort-filter-button-outline"
         type="button"
-        @click="changeSortDirection(); emitFilterSortData();"
+        @click="changeSortDirection()"
       >
         <i
           v-if="filtersSortData.sortDirection === 'DESC'"
@@ -212,6 +212,8 @@ export default {
       } else {
         this.filtersSortData.sortDirection = "DESC"
       }
+
+      this.$emit("filtersSortData", this.filtersSortData)
     },
     formatDate (date) {
       return moment(date).format("YYYY/MM/DD HH:mm")
