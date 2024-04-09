@@ -4,8 +4,8 @@ const devSettings = {
 }
 
 const prodSettings = {
-  faqPage: Boolean("FEATURE_FLAG_FAQPAGE_PLACEHOLDER"),
-  vueTour: Boolean("FEATURE_FLAG_VUETOUR_PLACEHOLDER")
+  faqPage: "FEATURE_FLAG_FAQPAGE_PLACEHOLDER",
+  vueTour: "FEATURE_FLAG_VUETOUR_PLACEHOLDER"
 }
 
 let allFeatureFlags
