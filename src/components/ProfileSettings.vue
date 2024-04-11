@@ -64,15 +64,6 @@
           Access Policy
         </a>
       </li>
-      <li v-if="featureFlagsFAQ">
-        <router-link
-          class="dropdown-item text-primary-text"
-          to="/FAQ"
-        >
-          <i class="bi bi-people" />
-          Support
-        </router-link>
-      </li>
       <li><hr class="dropdown-divider"></li>
       <li class="text-center sign-out">
         <button
@@ -89,7 +80,6 @@
 
 <script>
 import { mapActions } from "vuex"
-import allFeatureFlags from "@/config/featureFlags.js"
 
 export default {
   name: "ProfileSettings",
@@ -101,11 +91,6 @@ export default {
     isRepresentative: {
       type: Boolean,
       default: false
-    }
-  },
-  data () {
-    return {
-      featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
     }
   },
   computed: {

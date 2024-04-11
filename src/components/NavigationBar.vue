@@ -57,6 +57,19 @@
               Your biobank
             </router-link>
           </li>
+          <li
+            v-if="featureFlagsFAQ"
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active nav-option"
+              :class="$route.path === '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              to="/FAQ"
+            >
+              <i class="bi bi-people" />
+              Support
+            </router-link>
+          </li>
         </ul>
         <div
           v-if="oidcIsAuthenticated && returnCurrentMode"
@@ -105,6 +118,7 @@ import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
+import allFeatureFlags from "@/config/featureFlags.js"
 
 export default {
   name: "NavigationBar",
@@ -115,6 +129,7 @@ export default {
     return {
       roles: [],
       logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
+      featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true),
       backendEnvironment: ""
     }
   },
