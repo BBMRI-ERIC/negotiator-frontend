@@ -9,8 +9,10 @@
 
 <script>
 import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
+
 import activeTheme from "../config/theme.js"
-import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
+import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import moment from "moment"
@@ -31,7 +33,7 @@ export default {
   methods: {
     createPDF () {
       const pdfName = "negotiation"
-      const doc = new jsPDF()
+      const doc = new jsPDF({ compress: true })
 
       const negotiationUser = {
         Author: this.negotiationPdfData.author.name,
@@ -42,52 +44,70 @@ export default {
         "Report generated at": moment().format(dateFormat)
       }
 
-      doc.addImage(this.logoSrc, "JPEG", 15, 7, 50, 13)
+      doc.addImage(this.logoSrc, "JPEG", 15, 7, 50, 13, "FAST")
 
-      doc.setFont("calibri", "bold")
-      doc.text("REQUEST SUMMARY", 105, 20, null, null, "center")
+      doc.autoTable({
+        body: [
+          ["REQUEST SUMMARY"]
+        ],
+        columnStyles: {
+          0: { font: "calibri", fontStyle: "bold", halign: "center" }
+        },
+        startY: 25,
+        rowPageBreak: "auto",
+        bodyStyles: { valign: "top" }
+      })
 
-      doc.setFont("calibri", "bold")
-      doc.setFontSize(14)
-
-      // Iterate through highlighted information and add to PDF
-      let yPos = 30
       for (const [key, value] of Object.entries(negotiationUser)) {
-        doc.setFont("calibri", "bold")
-        doc.text(`${key}:`, 15, yPos)
-        const nekiBroj = 22 + (key.length * 2)
-        doc.setFont("calibri", "normal")
-        doc.text(`${value}`, nekiBroj, yPos)
-
-        yPos += 10
+        const keyLength = 2 + (key.length * 2)
+        doc.autoTable({
+          body: [
+            [`${key}:`, `${value}`]
+          ],
+          columnStyles: {
+            0: { cellWidth: 23, font: "calibri", fontStyle: "bold" },
+            1: { font: "calibri" }
+          },
+          theme: "plain",
+          startY: doc.lastAutoTable.finalY + 2,
+          rowPageBreak: "auto",
+          bodyStyles: { valign: "top" }
+        })
       }
 
-      doc.line(0, yPos, 220, yPos)
-
-      let paddingInLoop = 100 // Initial padding
-
       for (const key in this.negotiationPdfData.payload) {
-        doc.setFont("calibri", "bold")
-
-        doc.text(key.toUpperCase(), 15, paddingInLoop)
-        paddingInLoop += 10
-
-        doc.setFont("calibri", "normal")
+        doc.autoTable({
+          body: [
+            [key.toUpperCase()]
+          ],
+          columnStyles: {
+            0: { font: "calibri", fontStyle: "bold" }
+          },
+          startY: doc.lastAutoTable.finalY + 10,
+          rowPageBreak: "auto",
+          bodyStyles: { valign: "top" }
+        })
 
         for (const value in this.negotiationPdfData.payload[key]) {
           if (this.negotiationPdfData.payload[key][value]) {
-            // Split text to fit within specified width
-            const lines = doc.splitTextToSize(value + ": " + this.negotiationPdfData.payload[key][value], 180)
+            doc.autoTable({
+              body: [
+                [value + ": ", this.negotiationPdfData.payload[key][value]]
+              ],
+              startY: doc.lastAutoTable.finalY + 2,
+              columnStyles: {
+                0: { cellWidth: 25, font: "calibri", fontStyle: "bold" },
+                1: { font: "calibri" }
+              },
+              theme: "plain",
+              rowPageBreak: "auto",
+              bodyStyles: { valign: "top" }
 
-            // Add each line to the PDF
-            for (let i = 0; i < lines.length; i++) {
-              doc.text(lines[i], 15, paddingInLoop)
-              paddingInLoop += 5
-            }
+            })
           }
         }
-        paddingInLoop += 10
       }
+
       doc.save(pdfName + ".pdf")
     }
   }

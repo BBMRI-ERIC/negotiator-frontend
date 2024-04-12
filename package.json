@@ -26,6 +26,7 @@
     "git-rev-sync": "^3.0.2",
     "http-server": "^14.1.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "moment": "^2.29.4",
     "oidc-client-ts": "^2.1.0",
     "sass-loader": "^13.2.0",
