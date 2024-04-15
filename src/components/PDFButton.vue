@@ -17,6 +17,7 @@ import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import moment from "moment"
 import { dateFormat } from "@/config/consts"
+import { transformStatus } from "../composables/utils.js"
 
 export default {
   props: {
@@ -40,7 +41,7 @@ export default {
         Email: this.negotiationPdfData.author.email,
         "Negotiation ID": this.negotiationPdfData.id,
         "Submitted at": this.negotiationPdfData.creationDate,
-        Status: this.negotiationPdfData.status,
+        Status: transformStatus(this.negotiationPdfData.status),
         "Report generated at": moment().format(dateFormat)
       }
 
