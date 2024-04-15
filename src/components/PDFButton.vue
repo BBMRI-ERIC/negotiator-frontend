@@ -66,7 +66,7 @@ export default {
           ],
           columnStyles: {
             0: { cellWidth: 23, font: "calibri", fontStyle: "bold" },
-            1: { font: "calibri" }
+            1: { cellWidth: 100,font: "calibri" }
           },
           theme: "plain",
           startY: doc.lastAutoTable.finalY + 2,
@@ -97,7 +97,7 @@ export default {
               startY: doc.lastAutoTable.finalY + 2,
               columnStyles: {
                 0: { cellWidth: 25, font: "calibri", fontStyle: "bold" },
-                1: { font: "calibri" }
+                1: { cellWidth: 100,font: "calibri" }
               },
               theme: "plain",
               rowPageBreak: "auto",
