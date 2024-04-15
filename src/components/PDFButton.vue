@@ -35,7 +35,7 @@ export default {
     createPDF () {
       const pdfName = "negotiation"
       const doc = new jsPDF({ compress: true })
-      console.log(this.negotiationPdfData)
+      
       const negotiationUser = {
         Author: this.negotiationPdfData.author.name,
         Email: this.negotiationPdfData.author.email,
