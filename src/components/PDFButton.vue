@@ -35,12 +35,12 @@ export default {
     createPDF () {
       const pdfName = "negotiation"
       const doc = new jsPDF({ compress: true })
-
+      console.log(this.negotiationPdfData)
       const negotiationUser = {
         Author: this.negotiationPdfData.author.name,
         Email: this.negotiationPdfData.author.email,
         "Negotiation ID": this.negotiationPdfData.id,
-        "Submitted at": this.negotiationPdfData.creationDate,
+        "Submitted at": moment(this.negotiationPdfData.creationDate).format(dateFormat),
         Status: transformStatus(this.negotiationPdfData.status),
         "Report generated at": moment().format(dateFormat)
       }
@@ -67,7 +67,7 @@ export default {
           ],
           columnStyles: {
             0: { cellWidth: 23, font: "calibri", fontStyle: "bold" },
-            1: { cellWidth: 100,font: "calibri" }
+            1: { cellWidth: 100, font: "calibri" }
           },
           theme: "plain",
           startY: doc.lastAutoTable.finalY + 2,
@@ -98,7 +98,7 @@ export default {
               startY: doc.lastAutoTable.finalY + 2,
               columnStyles: {
                 0: { cellWidth: 25, font: "calibri", fontStyle: "bold" },
-                1: { cellWidth: 100,font: "calibri" }
+                1: { cellWidth: 100, font: "calibri" }
               },
               theme: "plain",
               rowPageBreak: "auto",
