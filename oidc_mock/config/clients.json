@@ -5,7 +5,7 @@
     "ClientSecrets": ["authorization-code-with-pkce-client-secret"],
     "AllowedGrantTypes": ["authorization_code"],
     "AllowAccessTokensViaBrowser": true,
-    "RedirectUris": ["http://localhost:8080/logged-in"],
+    "RedirectUris": ["http://localhost:8080/logged-in", "http://localhost:8081/api/swagger-ui/oauth2-redirect.html"],
     "AllowedScopes": ["openid", "profile", "email", "permissions", "some-app-scope-1"],
     "IdentityTokenLifetime": 36000,
     "AccessTokenLifetime": 3600,

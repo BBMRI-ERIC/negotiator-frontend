@@ -141,7 +141,7 @@ export default {
   data () {
     return {
       logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
-      isFooterFollowUsVisible: activeTheme.isFooterFollowUsVisible,
+      isFooterFollowUsVisible: !!(activeTheme.isFooterFollowUsVisible === "true" || activeTheme.isFooterFollowUsVisible === true),
       gitTag: viteGitTag,
       backendVersion: ""
     }

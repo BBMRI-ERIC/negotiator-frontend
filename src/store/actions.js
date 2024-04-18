@@ -9,7 +9,7 @@ const USER_PATH = `${BASE_API_PATH}/users`
 const USER_ROLES_PATH = `${BASE_API_PATH}/users/roles`
 const USER_RESOURCES_PATH = `${BASE_API_PATH}/users/resources`
 const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
-const BACKEND_VERSION_PATH = "/api/actuator/info"
+const BACKEND_ACTUATOR_INFO_PATH = "/api/actuator/info"
 
 function getBearerHeaders (token) {
   return { Authorization: `Bearer ${token}` }
@@ -33,9 +33,20 @@ export default {
       })
   },
   retrieveBackendVersion (store) {
-    return axios.get(`${BACKEND_VERSION_PATH}`)
+    return axios.get(`${BACKEND_ACTUATOR_INFO_PATH}`)
       .then((response) => {
         return response.data.build.version
+      })
+      .catch((error) => {
+        if (error.response) {
+          return "Error"
+        }
+      })
+  },
+  retrieveBackendEnvironment (store) {
+    return axios.get(`${BACKEND_ACTUATOR_INFO_PATH}`)
+      .then((response) => {
+        return response.data.application.environment
       })
       .catch((error) => {
         if (error.response) {
@@ -95,8 +106,13 @@ export default {
         commit("setNotification", "There was an error saving the Negotiation")
       })
   },
-  retrieveNegotiations ({ state, commit }, { statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { status: statusFilter, page: pageNumber } })
+  retrieveNegotiations ({ state, commit }, { filtersSortData, pageNumber }) {
+    const parameters = {
+      headers: getBearerHeaders(state.oidc.access_token),
+      params: { status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection, page: pageNumber },
+      paramsSerializer: { indexes: null }
+    }
+    return axios.get(`${BASE_API_PATH}/negotiations`, parameters)
       .then((response) => {
         return response.data
       })
@@ -105,8 +121,13 @@ export default {
         return []
       })
   },
-  retrieveNegotiationsByRole ({ state, commit }, { role, userId, statusFilter, pageNumber }) {
-    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token), params: { role, status: statusFilter, page: pageNumber } })
+  retrieveNegotiationsByUserId ({ state, commit }, { role, filtersSortData, userId, pageNumber }) {
+    const parameters = {
+      headers: getBearerHeaders(state.oidc.access_token),
+      params: { role, status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection, page: pageNumber },
+      paramsSerializer: { indexes: null }
+    }
+    return axios.get(`${BASE_API_PATH}/users/${userId}/negotiations`, parameters)
       .then((response) => {
         return response.data
       })

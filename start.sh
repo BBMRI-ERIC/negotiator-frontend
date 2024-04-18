@@ -15,6 +15,9 @@ do
   sed -i 's|ACTIVE_THEME_PLACEHOLDER|'${ACTIVE_THEME:-bbmri}'|g' $file
   sed -i 's|ACTIVE_LOGOS_PLACEHOLDER|'${ACTIVE_LOGOS:-bbmri}'|g' $file
   sed -i 's|FOLLOW_US_VISIBLE_PLACEHOLDER|'${FOLLOW_US_VISIBLE:-true}'|g' $file
+  sed -i 's|FEATURE_FLAG_FAQPAGE_PLACEHOLDER|'${FEATURE_FLAG_FAQPAGE:-false}'|g' $file
+  sed -i 's|FEATURE_FLAG_VUETOUR_PLACEHOLDER|'${FEATURE_FLAG_VUETOUR:-false}'|g' $file
+  sed -i 's|EXTERNAL_LINK_DIRECTORY_PLACEHOLDER|'${EXTERNAL_LINK_DIRECTORY:-https://directory.bbmri-eric.eu}'|g' $file
 
 done
 

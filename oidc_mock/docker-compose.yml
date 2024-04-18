@@ -2,7 +2,7 @@ version: '3'
 services:
   oidc-server-mock:
     container_name: oidc-server-mock
-    image: ghcr.io/soluto/oidc-server-mock:latest
+    image: ghcr.io/soluto/oidc-server-mock:0.8.6
     ports:
       - '4011:80'
     environment:

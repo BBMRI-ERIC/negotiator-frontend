@@ -10,16 +10,7 @@
         class="me-2"
         alt="nav-bar-logo"
       >
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#menu-navbar"
-        aria-controls="menu-navbar"
-        aria-expanded="false"
-      >
-        <span class="navbar-toggler-icon" />
-      </button>
+
       <div
         id="menu-navbar"
         class="collapse navbar-collapse"
@@ -75,25 +66,45 @@
               :class="$route.path === '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/FAQ"
             >
-              <i class="bi bi-question-square" />
-              FAQ
+              <i class="bi bi-people" />
+              Support
             </router-link>
           </li>
         </ul>
+        <div
+          v-if="oidcIsAuthenticated && returnCurrentMode"
+          class="navbar-text me-2 text-navbar-welcome-text me-3"
+          :class="returnCurrentModeTextColor"
+        >
+          <div
+            class="spinner-grow spinner-grow-sm"
+            role="status"
+          />
+          {{ returnCurrentMode }}
+        </div>
         <span
           v-if="oidcIsAuthenticated"
           class="navbar-text me-2 text-navbar-welcome-text"
         >
-          Welcome back {{ oidcUser.name }}
+          {{ oidcUser.preferred_username }}
         </span>
         <Notifications class="me-3" />
+      </div>
+      <div>
+        <ProfileSettings
+          :user="oidcUser"
+          :is-representative="isRepresentative"
+          class="me-3"
+        />
         <button
-          v-if="oidcIsAuthenticated"
-          class="btn btn-outline-navbar-button-outline me-2"
-          aria-current="page"
-          @click.stop.prevent="signOutOidc"
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#menu-navbar"
+          aria-controls="menu-navbar"
+          aria-expanded="false"
         >
-          Logout
+          <span class="navbar-toggler-icon" />
         </button>
       </div>
     </div>
@@ -103,23 +114,26 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import { ROLES } from "@/config/consts"
+import ProfileSettings from "../components/ProfileSettings.vue"
 import activeTheme from "../config/theme.js"
-import allFeatureFlags from "@/config/featureFlags.js"
-import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.svg"
+import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import Notifications from "../components/Notifications.vue"
+import allFeatureFlags from "@/config/featureFlags.js"
 
 export default {
   name: "NavigationBar",
   components: {
     Notifications
+    ProfileSettings
   },
   data () {
     return {
       roles: [],
       logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
-      featureFlagsFAQ: allFeatureFlags.faqPage
+      featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true),
+      backendEnvironment: ""
     }
   },
   computed: {
@@ -132,6 +146,22 @@ export default {
     },
     isRepresentative () {
       return this.roles.includes(ROLES.REPRESENTATIVE)
+    },
+    returnCurrentMode () {
+      if (import.meta.env.DEV) {
+        return "Development Server"
+      } else if (this.backendEnvironment === "Acceptance") {
+        return "Acceptance Server"
+      }
+      return ""
+    },
+    returnCurrentModeTextColor () {
+      if (import.meta.env.DEV) {
+        return "text-success"
+      } else if (this.backendEnvironment === "Acceptance") {
+        return "text-warning"
+      }
+      return ""
     }
   },
   watch: {
@@ -139,11 +169,15 @@ export default {
       this.roles = await this.retrieveUserRoles()
     }
   },
+  async beforeMount () {
+    this.backendEnvironment = await this.retrieveBackendEnvironment()
+  },
   methods: {
     ...mapActions([
       "signOutOidc",
       "authenticateOidc",
-      "retrieveUserRoles"
+      "retrieveUserRoles",
+      "retrieveBackendEnvironment"
     ])
   }
 }

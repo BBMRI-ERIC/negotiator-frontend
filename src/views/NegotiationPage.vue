@@ -64,7 +64,7 @@
               </span>
               <span
                 v-else
-                class="text-secondary-text"
+                class="text-secondary-text text-break"
               >
                 {{ subelement }}
               </span>
@@ -76,7 +76,6 @@
             </span>
             <NegotiationAttachment
               v-for="attachment in attachments"
-              v-if="dataReady"
               :id="attachment.id"
               :key="attachment.id"
               class="mb-2"
@@ -274,7 +273,7 @@
           </li>
 
           <li
-            v-if="userRole === availableRoles.ADMINISTRATOR"
+            v-if="userRole === availableRoles.ADMINISTRATOR && negotiation.status === 'SUBMITTED'"
             class="list-group-item p-2"
           >
             <div class="dropdown mt-3 mb-3">
@@ -317,7 +316,7 @@
           <li class="list-group-item p-2 border-bottom-0">
             <div class="pt-2 abandon-text">
               <div
-                v-if="negotiation.status !== 'ABANDONED'"
+                v-if="negotiation.status !== 'ABANDONED' && isUserRoleResearcher"
                 type="button"
                 role="button"
                 data-bs-toggle="modal"
@@ -389,7 +388,8 @@ export default {
       currentMultipleResourceStatus: undefined,
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
-      ORGANIZATION_TYPE: "ORGANIZATION"
+      ORGANIZATION_TYPE: "ORGANIZATION",
+      attachments: []
     }
   },
   computed: {
@@ -445,6 +445,9 @@ export default {
     },
     loading () {
       return this.negotiation === undefined
+    },
+    isUserRoleResearcher () {
+      return this.userRole === ROLES.RESEARCHER
     }
   },
   async beforeMount () {
@@ -474,14 +477,8 @@ export default {
       negotiationId: this.negotiation.id
     })
   },
-  async created () {
-    this.dataReady = false
-    await this.retrieveAttachmentsByNegotiationId({
-      negotiationId: this.negotiationId
-    }).then((response) => {
-      this.attachments = response
-      this.dataReady = true
-    })
+  created () {
+    this.retrieveAttachments()
   },
   methods: {
     ...mapActions([
@@ -495,6 +492,13 @@ export default {
       "updateResourceStatus",
       "downloadAttachment"
     ]),
+    async retrieveAttachments () {
+      await this.retrieveAttachmentsByNegotiationId({
+        negotiationId: this.negotiationId
+      }).then((response) => {
+        this.attachments = response
+      })
+    },
     isRepresentativeForResource (resourceId) {
       return this.representedResourcesIds.includes(resourceId)
     },
