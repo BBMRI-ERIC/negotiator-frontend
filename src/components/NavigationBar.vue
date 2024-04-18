@@ -82,13 +82,16 @@
           />
           {{ returnCurrentMode }}
         </div>
+        <Notifications
+          v-if="featureFlagsNotifications"
+          class="me-3"
+        />
         <span
           v-if="oidcIsAuthenticated"
           class="navbar-text me-2 text-navbar-welcome-text"
         >
           {{ oidcUser.preferred_username }}
         </span>
-        <Notifications class="me-3" />
       </div>
       <div>
         <ProfileSettings
@@ -133,6 +136,7 @@ export default {
       roles: [],
       logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true),
+      featureFlagsNotifications: !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true),
       backendEnvironment: ""
     }
   },
