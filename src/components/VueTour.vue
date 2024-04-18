@@ -29,6 +29,9 @@ export default {
           header: {
             title: "Status"
           },
+          params: {
+            placement: "top"
+          },
           content: "You can see the current status of your enquiry at a glance."
         },
         {
