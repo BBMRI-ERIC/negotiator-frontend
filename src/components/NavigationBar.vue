@@ -125,7 +125,7 @@ import allFeatureFlags from "@/config/featureFlags.js"
 export default {
   name: "NavigationBar",
   components: {
-    Notifications
+    Notifications,
     ProfileSettings
   },
   data () {
