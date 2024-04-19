@@ -170,7 +170,7 @@ export default {
     },
     filtersStatus: {
       type: Array,
-      default:  () => []
+      default: () => []
     },
     userRole: {
       type: String,

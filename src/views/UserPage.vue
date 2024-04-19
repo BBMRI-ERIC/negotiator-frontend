@@ -72,7 +72,7 @@ export default {
     this.userId = this.user.users[0].id
 
     if (this.userRole === "ROLE_REPRESENTATIVE") {
-      this.filtersStatus = [{value: 'IN_PROGRESS', label: 'In Progress', description: 'The negotiation is currently in progress.'}, {value: 'ABANDONED', label: 'Abandoned', description: 'The negotiation has been abandoned.'}]
+      this.filtersStatus = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
     } else {
       this.filtersStatus = await this.retrieveNegotiationLifecycleStates()
     }
@@ -81,7 +81,7 @@ export default {
       this.loadActivefiltersSortDataFromURL()
     } else {
       if (this.userRole === "ROLE_REPRESENTATIVE") {
-      this.filtersSortData.status = ["IN_PROGRESS", "ABANDONED"]
+        this.filtersSortData.status = ["IN_PROGRESS", "ABANDONED"]
       }
       this.retrieveNegotiationsByUserRole(0)
     }
