@@ -1,5 +1,4 @@
 <template>
-  <!-- Example single danger button -->
   <div class="btn-group">
     <b-avatar
       type="button"
