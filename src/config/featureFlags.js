@@ -1,6 +1,6 @@
 const devSettings = {
   faqPage: true,
-  vueTour: false
+  vueTour: true
 }
 
 const prodSettings = {

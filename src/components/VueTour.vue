@@ -11,7 +11,7 @@ export default {
     return {
       steps: [
         {
-          target: "#v-step-0", // We're using document.querySelector() under the hood
+          target: "#v-step-0",
           header: {
             title: "Welcome"
           },
@@ -46,6 +46,12 @@ export default {
           })
         }
       ]
+    }
+  },
+  mounted: function () {
+    // Do not display after the first visit so that returning users are not annoyed!
+    if (!localStorage.getItem("show_vue_tour_1")) {
+      this.$tours.myTour.start()
     }
   }
 }

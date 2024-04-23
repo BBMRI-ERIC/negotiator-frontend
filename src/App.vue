@@ -1,7 +1,6 @@
 <template>
-  <VueTour v-show="$route.path !== '/' && vueTourFeatureFlag" />
+  <VueTour v-show="$route.fullPath !== '/' && vueTourFeatureFlag" />
 
-  <VueTour />
   <header>
     <navigation-bar />
   </header>
@@ -69,12 +68,6 @@ export default {
   data () {
     return {
       vueTourFeatureFlag: !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true)
-    }
-  },
-  mounted: function () {
-    // Do not display after the first visit so that returning users are not annoyed!
-    if (!localStorage.getItem("show_vue_tour_1")) {
-      this.$tours.myTour.start()
     }
   },
   computed: {
