@@ -6,7 +6,6 @@ const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
 const USER_PATH = `${BASE_API_PATH}/userinfo`
-const USER_ROLES_PATH = `${BASE_API_PATH}/users/roles`
 const USER_RESOURCES_PATH = `${BASE_API_PATH}/users/resources`
 const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
 const BACKEND_ACTUATOR_INFO_PATH = "/api/actuator/info"
@@ -263,9 +262,9 @@ export default {
       })
   },
   retrieveUserRoles ({ state, commit }) {
-    return axios.get(USER_ROLES_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data
+        return response.data?.roles
       })
       .catch(() => {
         commit("setNotification", "Error sending message")
