@@ -67,7 +67,7 @@ export default {
   },
   async mounted () {
     this.user = await this.retrieveUser()
-    this.userId = this.user.users[0].id
+    this.userId = this.user?.id
 
     if (Object.keys(this.$route?.query).length) {
       this.loadActivefiltersSortDataFromURL()
