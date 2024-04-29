@@ -101,40 +101,39 @@
   </div>
 </template>
 
-<script>
-import { mapActions, mapGetters } from "vuex"
+<script setup>
+import { ref, onBeforeMount, computed } from "vue"
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 const viteGitTag = import.meta.env.VITE_GIT_TAG
 
-export default {
-  name: "HomePage",
-  data () {
-    return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
-      gitTag: viteGitTag,
-      backendVersion: ""
-    }
-  },
-  computed: {
-    ...mapGetters(["oidcIsAuthenticated", "oidcUser"])
-  },
-  async beforeMount () {
-    if (this.oidcIsAuthenticated) {
-      this.$router.push("/researcher")
-    }
-    this.backendVersion = await this.retrieveBackendVersion()
-  },
-  methods: {
-    ...mapActions([
-      "authenticateOidc",
-      "retrieveBackendVersion"
-    ])
+const store = useStore()
+const router = useRouter()
+
+const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
+const gitTag = ref(viteGitTag)
+const backendVersion = ref("")
+
+const oidcIsAuthenticated = computed(() => {
+  return store.getters.oidcIsAuthenticated
+})
+
+onBeforeMount(async () => {
+  if (oidcIsAuthenticated.value) {
+    router.push("/researcher")
   }
+  backendVersion.value = await store.dispatch("retrieveBackendVersion")
+})
+
+async function authenticateOidc () {
+  await store.dispatch("authenticateOidc")
 }
 </script>
+
 <style scoped>
 h1 {
   font-size: 3.5rem;

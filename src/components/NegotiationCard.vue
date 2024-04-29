@@ -33,43 +33,29 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 
-export default {
-  name: "NegotiationCard",
-  props: {
-    id: {
-      type: String,
-      default: ""
-    },
-    title: {
-      type: String,
-      default: ""
-    },
-    status: {
-      type: String,
-      default: ""
-    },
-    submitter: {
-      type: String,
-      default: ""
-    },
-    creationDate: {
-      type: Date,
-      default: undefined
-    }
+const props = defineProps({
+  id: {
+    type: String,
+    default: ""
   },
-  methods: {
-    transformStatus (string) {
-      return transformStatus(string)
-    },
-    getBadgeColor (badgeText) {
-      return getBadgeColor(badgeText)
-    },
-    getBadgeIcon (badgeText) {
-      return getBadgeIcon(badgeText)
-    }
+  title: {
+    type: String,
+    default: ""
+  },
+  status: {
+    type: String,
+    default: ""
+  },
+  submitter: {
+    type: String,
+    default: ""
+  },
+  creationDate: {
+    type: Date,
+    default: undefined
   }
-}
+})
 </script>

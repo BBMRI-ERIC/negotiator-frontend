@@ -19,24 +19,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import NewRequestModal from "@/components/modals/NewRequestModal.vue"
 import allExternalLinks from "../config/externalLinks.js"
 
-export default {
-  name: "NewRequestButton",
-  components: {
-    NewRequestModal
-  },
-  data () {
-    return {
-      directoryPath: allExternalLinks.directory
-    }
-  },
-  methods: {
-    startNewRequest () {
-      if (this.directoryPath) { window.open(this.directoryPath, "_blank") }
-    }
-  }
+const directoryPath = allExternalLinks.directory
+
+function startNewRequest () {
+  if (directoryPath) { window.open(directoryPath, "_blank") }
 }
 </script>

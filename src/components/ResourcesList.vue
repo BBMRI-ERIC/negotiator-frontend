@@ -41,47 +41,47 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "ResourcesList",
-  props: {
-    resources: {
-      type: Array[Object],
-      default: []
-    }
-  },
-  computed: {
-    organizations () {
-      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name } })
-    },
-    organizationsById () {
-      return this.resources.reduce((organizations, resource) => {
-        if (resource.organization.externalId in organizations) {
-          organizations[resource.organization.externalId].resources.push(
-            resource)
-        } else {
-          organizations[resource.organization.externalId] = {
-            name: resource.organization.name,
-            resources: [resource]
-          }
-        }
-        return organizations
-      }, {})
-    },
-    resourcesById () {
-      return this.resources.reduce((resourcesObjects, resource) => {
-        resourcesObjects[resource.id] = resource
-        return resourcesObjects
-      }, {})
-    },
-    numberOfResources () {
-      return this.resources.length
-    }
-  },
-  methods: {
-    getElementIdFromResourceId (resourceId) {
-      return resourceId.replaceAll(":", "_")
-    }
+<script setup>
+import { computed } from "vue"
+
+const props = defineProps({
+  resources: {
+    type: Array[Object],
+    default: []
   }
+})
+
+const organizations = computed(() => {
+  return Object.entries(organizationsById).map(([k, v]) => { return { externalId: k, name: v.name } })
+})
+
+const organizationsById = computed(() => {
+  return props.resources.reduce((organizations, resource) => {
+    if (resource.organization.externalId in organizations) {
+      organizations[resource.organization.externalId].resources.push(
+        resource)
+    } else {
+      organizations[resource.organization.externalId] = {
+        name: resource.organization.name,
+        resources: [resource]
+      }
+    }
+    return organizations
+  }, {})
+})
+
+const resourcesById = computed(() => {
+  return props.resources.reduce((resourcesObjects, resource) => {
+    resourcesObjects[resource.id] = resource
+    return resourcesObjects
+  }, {})
+})
+
+const numberOfResources = computed(() => {
+  return props.resources.length
+})
+
+function getElementIdFromResourceId (resourceId) {
+  return resourceId.replaceAll(":", "_")
 }
 </script>

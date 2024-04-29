@@ -21,38 +21,36 @@
     </template>
   </NegotiatorModal>
 </template>
-<script>
+
+<script setup>
 import NegotiatorModal from "./NegotiatorModal.vue"
 
-export default {
-  components: { NegotiatorModal },
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    title: {
-      type: String,
-      required: true
-    },
-    text: {
-      type: String,
-      required: true
-    },
-    fade: {
-      type: Boolean,
-      default: false
-    },
-    dismissButtonText: {
-      type: String,
-      default: "OK"
-    }
+const props = defineProps({
+  id: {
+    type: String,
+    required: true
   },
-  emits: ["dismiss"],
-  methods: {
-    emitDismiss () {
-      this.$emit("dismiss")
-    }
+  title: {
+    type: String,
+    required: true
+  },
+  text: {
+    type: String,
+    required: true
+  },
+  fade: {
+    type: Boolean,
+    default: false
+  },
+  dismissButtonText: {
+    type: String,
+    default: "OK"
   }
+})
+
+const emit = defineEmits(["dismiss"])
+
+function emitDismiss () {
+  emit("dismiss")
 }
 </script>

@@ -128,32 +128,31 @@
   </footer>
 </template>
 
-<script>
+<script setup>
+import { onBeforeMount, ref } from "vue"
 import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
-import { mapActions } from "vuex"
+import { useStore } from "vuex"
+
+const store = useStore()
+
 const viteGitTag = import.meta.env.VITE_GIT_TAG
 
-export default {
-  name: "FooterPage",
-  data () {
-    return {
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
-      isFooterFollowUsVisible: !!(activeTheme.isFooterFollowUsVisible === "true" || activeTheme.isFooterFollowUsVisible === true),
-      gitTag: viteGitTag,
-      backendVersion: ""
-    }
-  },
-  async beforeMount () {
-    this.backendVersion = await this.retrieveBackendVersion()
-  },
-  methods: {
-    ...mapActions([
-      "retrieveBackendVersion"
-    ])
-  }
+const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
+const isFooterFollowUsVisible = !!(activeTheme.isFooterFollowUsVisible === "true" || activeTheme.isFooterFollowUsVisible === true)
+const gitTag = viteGitTag
+const backendVersion = ref("")
+
+onBeforeMount(() => {
+  retrieveBackendVersion()
+})
+
+async function retrieveBackendVersion () {
+  await store.dispatch("retrieveBackendVersion").then((res) => {
+    backendVersion.value = res
+  })
 }
 </script>
 

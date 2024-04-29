@@ -23,25 +23,23 @@
   </NegotiatorModal>
 </template>
 
-<script>
-export default {
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    resourceId: {
-      type: String,
-      required: true
-    },
-    negotiation: {
-      type: Object,
-      required: true
-    },
-    userRole: {
-      type: String,
-      required: true
-    }
+<script setup>
+const props = defineProps({
+  id: {
+    type: String,
+    required: true
+  },
+  resourceId: {
+    type: String,
+    required: true
+  },
+  negotiation: {
+    type: Object,
+    required: true
+  },
+  userRole: {
+    type: String,
+    required: true
   }
-}
+})
 </script>
