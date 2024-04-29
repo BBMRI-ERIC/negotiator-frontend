@@ -1,11 +1,13 @@
 const devSettings = {
   faqPage: true,
-  vueTour: true
+  vueTour: true,
+  notifications: true
 }
 
 const prodSettings = {
   faqPage: "FEATURE_FLAG_FAQPAGE_PLACEHOLDER",
-  vueTour: "FEATURE_FLAG_VUETOUR_PLACEHOLDER"
+  vueTour: "FEATURE_FLAG_VUETOUR_PLACEHOLDER",
+  notifications: "FEATURE_FLAG_NOTIFICATIONS"
 }
 
 let allFeatureFlags

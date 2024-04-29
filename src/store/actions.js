@@ -5,8 +5,7 @@ const BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
 const REQUESTS_PATH = `${BASE_API_PATH}/requests`
 const NEGOTIATION_PATH = `${BASE_API_PATH}/negotiations`
-const USER_PATH = `${BASE_API_PATH}/users`
-const USER_ROLES_PATH = `${BASE_API_PATH}/users/roles`
+const USER_PATH = `${BASE_API_PATH}/userinfo`
 const USER_RESOURCES_PATH = `${BASE_API_PATH}/users/resources`
 const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
 const BACKEND_ACTUATOR_INFO_PATH = "/api/actuator/info"
@@ -256,16 +255,16 @@ export default {
   retrieveUser ({ state, commit }) {
     return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data._embedded
+        return response.data
       })
       .catch(() => {
         commit("setNotification", "Error sending message")
       })
   },
   retrieveUserRoles ({ state, commit }) {
-    return axios.get(USER_ROLES_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
+    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data
+        return response.data?.roles
       })
       .catch(() => {
         commit("setNotification", "Error sending message")
@@ -298,5 +297,15 @@ export default {
   },
   setSavedNegotiationsView ({ state, commit }, { negotiationsView }) {
     commit("setSavedNegotiationsView", negotiationsView)
+  },
+  async retrieveNegotiationLifecycleStates ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/negotiation-lifecycle/states`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.states
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting negotiation lifecycle states request data from server")
+        return null
+      })
   }
 }

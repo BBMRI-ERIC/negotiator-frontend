@@ -82,6 +82,10 @@
           />
           {{ returnCurrentMode }}
         </div>
+        <Notifications
+          v-if="featureFlagsNotifications"
+          class="me-3"
+        />
         <span
           v-if="oidcIsAuthenticated"
           class="navbar-text me-2 text-navbar-welcome-text"
@@ -118,11 +122,13 @@ import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
+import Notifications from "../components/Notifications.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
 
 export default {
   name: "NavigationBar",
   components: {
+    Notifications,
     ProfileSettings
   },
   data () {
@@ -130,6 +136,7 @@ export default {
       roles: [],
       logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
       featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true),
+      featureFlagsNotifications: !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true),
       backendEnvironment: ""
     }
   },

@@ -3,6 +3,7 @@
     v-if="!loading"
     :filters-sort-data="filtersSortData"
     :user-role="userRole"
+    :filters-status="filtersStatus"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
   <NegotiationList
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-
+import moment from "moment"
 import NegotiationList from "@/components/NegotiationList.vue"
 import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import FilterSort from "@/components/FilterSort.vue"
@@ -51,6 +52,7 @@ export default {
       user: undefined,
       userId: undefined,
       roles: [],
+      filtersStatus: [],
       filtersSortData: {
         status: [],
         dateStart: "",
@@ -67,16 +69,25 @@ export default {
   },
   async mounted () {
     this.user = await this.retrieveUser()
-    this.userId = this.user.users[0].id
+    this.userId = this.user?.id
+
+    if (this.userRole === "ROLE_REPRESENTATIVE") {
+      this.filtersStatus = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
+    } else {
+      this.filtersStatus = await this.retrieveNegotiationLifecycleStates()
+    }
 
     if (Object.keys(this.$route?.query).length) {
       this.loadActivefiltersSortDataFromURL()
     } else {
+      if (this.userRole === "ROLE_REPRESENTATIVE") {
+        this.filtersSortData.status = ["IN_PROGRESS", "ABANDONED"]
+      }
       this.retrieveNegotiationsByUserRole(0)
     }
   },
   methods: {
-    ...mapActions(["retrieveNegotiationsByUserId", "retrieveNegotiations", "retrieveUser", "retrieveUserRoles"]),
+    ...mapActions(["retrieveNegotiationsByUserId", "retrieveNegotiations", "retrieveNegotiationLifecycleStates", "retrieveUser", "retrieveUserRoles"]),
     async retrieveNegotiationsByUserRole (pageNumber) {
       if (this.userRole === "ROLE_ADMIN") {
         this.negotiations = await this.retrieveNegotiations({ filtersSortData: this.filtersSortData, pageNumber })
@@ -87,7 +98,6 @@ export default {
       }
 
       if (this.userRole === "ROLE_REPRESENTATIVE") {
-        this.filtersSortData.status = ["IN_PROGRESS", "ABANDONED"]
         this.negotiations = await this.retrieveNegotiationsByUserId({ role: "representative", filtersSortData: this.filtersSortData, userId: this.userId, pageNumber })
       }
 
@@ -105,6 +115,7 @@ export default {
     retrieveNegotiationsBySortAndFilter (filtersSortData) {
       this.filtersSortData = filtersSortData
 
+      this.incriseDateEndIfSame()
       this.retrieveNegotiationsByUserRole(0)
 
       this.updateRoutingParams(1)
@@ -121,6 +132,11 @@ export default {
         this.retrieveNegotiationsByUserRole(this.$route?.query.currentPageNumber - 1)
       } else {
         this.retrieveNegotiationsByUserRole(0)
+      }
+    },
+    incriseDateEndIfSame () {
+      if (this.filtersSortData.dateStart && this.filtersSortData.dateStart === this.filtersSortData.dateEnd) {
+        this.filtersSortData.dateEnd = moment(this.filtersSortData.dateEnd).add(1, "days").format("YYYY-MM-DD")
       }
     }
   }

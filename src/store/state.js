@@ -1,4 +1,5 @@
 export default {
   notification: undefined,
-  savedNegotiationsView: ""
+  savedNegotiationsView: "",
+  allNotifications: []
 }

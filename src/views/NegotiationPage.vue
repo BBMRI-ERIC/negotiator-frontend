@@ -64,7 +64,7 @@
               </span>
               <span
                 v-else
-                class="text-secondary-text"
+                class="text-secondary-text text-break"
               >
                 {{ subelement }}
               </span>
