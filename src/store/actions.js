@@ -297,15 +297,5 @@ export default {
   },
   setSavedNegotiationsView ({ state, commit }, { negotiationsView }) {
     commit("setSavedNegotiationsView", negotiationsView)
-  },
-  async retrieveNegotiationLifecycleStates ({ state, commit }) {
-    return axios.get(`${BASE_API_PATH}/negotiation-lifecycle/states`, { headers: getBearerHeaders(state.oidc.access_token) })
-      .then((response) => {
-        return response.data._embedded.states
-      })
-      .catch(() => {
-        commit("setNotification", "Error getting negotiation lifecycle states request data from server")
-        return null
-      })
   }
 }

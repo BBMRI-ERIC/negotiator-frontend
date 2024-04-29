@@ -7,7 +7,7 @@
           :class="filtersSortData.sortBy !== '' ? 'btn-primary show': ''"
           type="button"
           data-bs-toggle="dropdown"
-          data-bs-auto-close="outside"
+          data-bs-auto-close="true"
           aria-expanded="false"
         >
           Sort by
@@ -65,7 +65,6 @@
           :class="filtersSortData.status.length > 0 ? 'btn-primary show':''"
           type="button"
           data-bs-toggle="dropdown"
-          data-bs-auto-close="outside"
           aria-expanded="false"
         >
           Filter by status
@@ -100,9 +99,9 @@
         <button
           class="btn btn-sm btn-outline-sort-filter-button-outline dropdown-toggle"
           :class="filtersSortData.dateStart !== '' || filtersSortData.dateEnd !== '' ? 'btn-primary show':''"
+
           type="button"
           data-bs-toggle="dropdown"
-          data-bs-auto-close="outside"
           aria-expanded="false"
         >
           Filter by date
@@ -168,10 +167,6 @@ export default {
       type: Object,
       default: undefined
     },
-    filtersStatus: {
-      type: Array,
-      default: () => []
-    },
     userRole: {
       type: String,
       required: true,
@@ -183,6 +178,15 @@ export default {
   emits: ["filtersSortData"],
   data () {
     return {
+      filtersStatus: [
+        { value: "SUBMITTED", label: "Under Review" },
+        { value: "APPROVED", label: "Approved" },
+        { value: "DECLINED", label: "Declined" },
+        { value: "IN_PROGRESS", label: "In progress" },
+        { value: "PAUSED", label: "Paused" },
+        { value: "CONCLUDED", label: "Concluded" },
+        { value: "ABANDONED", label: "Abandoned" }
+      ],
       sortBy: [
         { value: "title", label: "Title" },
         { value: "creationDate", label: "Creation Date" },
@@ -190,7 +194,15 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.setPredifinedFiltersForStatus()
+  },
   methods: {
+    setPredifinedFiltersForStatus () {
+      if (this.userRole === "ROLE_REPRESENTATIVE") {
+        this.filtersStatus = [{ value: "IN_PROGRESS", label: "In progress" }, { value: "ABANDONED", label: "Abandoned" }]
+      }
+    },
     emitFilterSortData () {
       this.$emit("filtersSortData", this.filtersSortData)
     },
@@ -213,8 +225,8 @@ export default {
       this.filtersSortData.sortBy = ""
       this.filtersSortData.sortDirection = "DESC"
 
-      this.$emit("filtersSortData", this.filtersSortData)
       this.$router.push({ query: { } })
+      this.$emit("filtersSortData", this.filtersSortData)
     },
     isChecked (value) {
       return this.filtersSortData.sortBy === value
