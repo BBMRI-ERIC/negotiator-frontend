@@ -40,73 +40,71 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "NegotiationAttachment",
-  props: {
-    id: {
-      type: String,
-      default: undefined
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    contentType: {
-      type: String,
-      required: true
-    },
-    // Array of possible recipients for messages.
-    size: {
-      type: Number,
-      required: true
-    }
+<script setup>
+import { computed } from "vue"
+const props = defineProps({
+  id: {
+    type: String,
+    default: undefined
   },
-  emits: ["removed", "download"],
-  computed: {
-    downloadable () {
-      return this.id !== undefined
-    }
+  name: {
+    type: String,
+    required: true
   },
-  methods: {
-    getHumanFileSize (bytes, dp = 1) {
-      const thresh = 1024
-
-      if (Math.abs(bytes) < thresh) {
-        return bytes + " B"
-      }
-
-      const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-      let u = -1
-      const r = 10 ** dp
-
-      do {
-        bytes /= thresh
-        ++u
-      } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
-      return bytes.toFixed(dp) + " " + units[u]
-    },
-    getFileTypeIconClass (fileType) {
-      if (fileType === "application/pdf") {
-        return { "bi-file-pdf": true }
-      } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
-        return { "bi-file-word": true }
-      } else {
-        return { "bi-file-earmark": true }
-      }
-    },
-    getFileTypeName (fileType) {
-      if (fileType === "application/pdf") {
-        return "PDF"
-      } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        return "DOCX"
-      } else if (fileType === "application/msword") {
-        return "DOC"
-      }
-    },
-    emitRemoved () {
-      this.$emit("removed")
-    }
+  contentType: {
+    type: String,
+    required: true
+  },
+  // Array of possible recipients for messages.
+  size: {
+    type: Number,
+    required: true
   }
+})
+
+const emit = defineEmits(["removed", "download"])
+
+const downloadable = computed(() => {
+  props.id !== undefined
+})
+
+function getHumanFileSize (bytes, dp = 1) {
+  const thresh = 1024
+
+  if (Math.abs(bytes) < thresh) {
+    return bytes + " B"
+  }
+
+  const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+  let u = -1
+  const r = 10 ** dp
+
+  do {
+    bytes /= thresh
+    ++u
+  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
+  return bytes.toFixed(dp) + " " + units[u]
+}
+
+function getFileTypeIconClass (fileType) {
+  if (fileType === "application/pdf") {
+    return { "bi-file-pdf": true }
+  } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
+    return { "bi-file-word": true }
+  } else {
+    return { "bi-file-earmark": true }
+  }
+}
+function getFileTypeName (fileType) {
+  if (fileType === "application/pdf") {
+    return "PDF"
+  } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+    return "DOCX"
+  } else if (fileType === "application/msword") {
+    return "DOC"
+  }
+}
+function emitRemoved () {
+  emit("removed")
 }
 </script>

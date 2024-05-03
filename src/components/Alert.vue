@@ -21,25 +21,23 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapMutations } from "vuex"
+<script setup>
+import { computed, watch } from "vue"
+import { useStore } from "vuex"
 
-export default {
-  computed: {
-    ...mapGetters({ notification: "getNotification" })
-  },
-  methods: {
-    ...mapMutations(["setNotification"]),
-    resetNotification () {
-      this.setNotification(undefined)
-    }
-  },
-  watch: {
-    notification: function () {
-      if (this.notification) {
-        setTimeout(() => this.resetNotification(), 5000)
-      }
-    }
-  }
+const store = useStore()
+
+const notification = computed(() => {
+  return store.getters.getNotification
+})
+
+function resetNotification () {
+  store.commit("setNotification", undefined)
 }
+
+watch(notification, () => {
+  if (notification.value) {
+    setTimeout(() => resetNotification(), 5000)
+  }
+})
 </script>

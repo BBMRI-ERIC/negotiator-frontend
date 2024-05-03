@@ -44,35 +44,35 @@
   </nav>
 </template>
 
-<script>
-export default {
-  name: "NegotiationPagination",
-  props: {
-    negotiations: {
-      type: Array,
-      default: undefined
-    },
-    pagination: {
-      type: Object,
-      default: undefined
-    }
+<script setup>
+import { ref, onMounted } from "vue"
+import { useRoute } from "vue-router"
+
+const route = useRoute()
+
+const props = defineProps({
+  negotiations: {
+    type: Array,
+    default: undefined
   },
-  emits: ["currentPageNumber"],
-  data () {
-    return {
-      currentPageNumber: 1
-    }
-  },
-  mounted () {
-    if (this.$route?.query.currentPageNumber) {
-      this.currentPageNumber = parseInt(this.$route?.query.currentPageNumber)
-    }
-  },
-  methods: {
-    changeCurrentPage (pageNumber) {
-      this.$emit("currentPageNumber", pageNumber)
-      this.currentPageNumber = pageNumber
-    }
+  pagination: {
+    type: Object,
+    default: undefined
   }
+})
+
+const emit = defineEmits(["currentPageNumber"])
+
+const currentPageNumber = ref(1)
+
+onMounted(() => {
+  if (route?.query.currentPageNumber) {
+    currentPageNumber.value = parseInt(route?.query.currentPageNumber)
+  }
+})
+
+function changeCurrentPage (pageNumber) {
+  emit("currentPageNumber", pageNumber)
+  currentPageNumber.value = pageNumber
 }
 </script>

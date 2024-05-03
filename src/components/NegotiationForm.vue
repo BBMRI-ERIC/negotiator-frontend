@@ -190,136 +190,135 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onBeforeMount, onMounted } from "vue"
 import { Tooltip } from "bootstrap"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
-import { mapActions } from "vuex"
 import { ROLES } from "@/config/consts"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
-export default {
-  name: "NegotiationForm",
-  components: {
-    FormWizard,
-    TabContent,
-    ConfirmationModal,
-    ResourcesList
-  },
-  props: {
-    requestId: {
-      type: String,
-      default: undefined
-    }
-  },
-  data () {
-    return {
-      notificationTitle: "",
-      notificationText: "",
-      negotiationCriteria: {},
-      accessForm: undefined,
-      resources: [],
-      humanReadableSearchParameters: [],
-      showStepFeedback: false,
-      roles: []
-    }
-  },
-  computed: {
-    isAdmin () {
-      return this.roles.includes(ROLES.ADMINISTRATOR)
-    },
-    loading () {
-      return this.accessForm === undefined
-    },
-    queryParameters () {
-      return this.humanReadableSearchParameters.split("\r\n")
-    }
-  },
-  async beforeMount () {
-    const result = await this.retrieveRequestById({
-      requestId: this.requestId
-    })
+const store = useStore()
+const router = useRouter()
 
-    this.roles = await this.retrieveUserRoles()
+const props = defineProps({
+  requestId: {
+    type: String,
+    default: undefined
+  }
+})
 
-    if (result.code) {
-      if (result.code === 404) {
-        this.showNotification("Error", "Request not found")
-      } else {
-        this.showNotification("Error", "Cannot contact the server to get request information")
-      }
-    } else if (result.negotiationId) {
-      this.showNotification("Error", "Request already submitted")
+const notificationTitle = ref("")
+const notificationText = ref("")
+const negotiationCriteria = ref({})
+const accessForm = ref(undefined)
+const resources = ref([])
+const humanReadableSearchParameters = ref([])
+const showStepFeedback = ref(false)
+const roles = ref([])
+const openModal = ref(null)
+
+const isAdmin = computed(() => {
+  return roles.value.includes(ROLES.ADMINISTRATOR)
+})
+
+const loading = computed(() => {
+  return accessForm.value === undefined
+})
+
+const queryParameters = computed(() => {
+  return humanReadableSearchParameters.value.split("\r\n")
+})
+
+onBeforeMount(async () => {
+  const result = await store.dispatch("retrieveRequestById", { requestId: props.requestId })
+  retrieveUserRoles()
+
+  if (result.code) {
+    if (result.code === 404) {
+      showNotification("Error", "Request not found")
     } else {
-      this.resources = result.resources
-      this.humanReadableSearchParameters = result.humanReadable
-      this.accessForm = await this.retrieveCombinedAccessForm({
-        requestId: this.requestId
-      })
-      if (this.accessForm !== undefined) {
-        this.initNegotiationCriteria()
-      }
+      showNotification("Error", "Cannot contact the server to get request information")
     }
-  },
-  mounted () {
-    new Tooltip(document.body, {
-      selector: "[data-bs-toggle='tooltip']"
-    })
-  },
-  methods: {
-    ...mapActions(["retrieveUserRoles", "retrieveRequestById", "retrieveAccessCriteriaByResourceId", "createNegotiation", "retrieveCombinedAccessForm"]),
-    backToNegotiation (id) {
-      this.$router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
-    },
-    async startNegotiation () {
-      await this.createNegotiation({
-        data: {
-          requests: [this.requestId],
-          payload: this.negotiationCriteria
-        }
-      }).then((negotiationId) => {
-        if (negotiationId) {
-          this.backToNegotiation(negotiationId)
-        }
-      })
-    },
-    async startModal () {
-      this.showNotification(
-        "Confirm submission",
-        "You will be redirected to the negotiation page where you can monitor the status. Click 'Confirm' to proceed.")
-    },
-    isAttachment (value) {
-      return value instanceof File || value instanceof Object
-    },
-    handleFileUpload (event, section, criteria) {
-      this.negotiationCriteria[section][criteria] = event.target.files[0]
-    },
-    showNotification (header, body) {
-      this.$refs.openModal.click()
-      this.notificationTitle = header
-      this.notificationText = body
-    },
-    initNegotiationCriteria () {
-      for (const section of this.accessForm.sections) {
-        this.negotiationCriteria[section.name] = {}
-        for (const criteria of section.elements) {
-          this.negotiationCriteria[section.name][criteria.name] = null
-        }
-      }
-    },
-    getElementIdFromResourceId (collection) {
-      return collection.replaceAll(":", "_")
-    },
-    isSectionValid (section) {
-      return () => {
-        const valid = section.elements.every(ac => !ac.required || this.negotiationCriteria[section.name][ac.name])
-        this.showStepFeedback = !valid
-        return valid
-      }
+  } else if (result.negotiationId) {
+    showNotification("Error", "Request already submitted")
+  } else {
+    resources.value = result.resources
+    humanReadableSearchParameters.value = result.humanReadable
+    accessForm.value = await store.dispatch("retrieveCombinedAccessForm", { requestId: props.requestId })
+    if (accessForm.value !== undefined) {
+      initNegotiationCriteria()
+    }
+  }
+})
+
+async function retrieveUserRoles () {
+  await store.dispatch("retrieveUserRoles").then((res) => {
+    roles.value = res
+  })
+}
+
+onMounted(() => {
+  new Tooltip(document.body, {
+    selector: "[data-bs-toggle='tooltip']"
+  })
+})
+
+function backToNegotiation (id) {
+  router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
+}
+
+async function startNegotiation () {
+  const data = {
+    requests: [props.requestId],
+    payload: negotiationCriteria.value
+  }
+  await store.dispatch("createNegotiation", { data }).then((negotiationId) => {
+    if (negotiationId) {
+      backToNegotiation(negotiationId)
+    }
+  })
+}
+
+function startModal () {
+  showNotification(
+    "Confirm submission",
+    "You will be redirected to the negotiation page where you can monitor the status. Click 'Confirm' to proceed."
+  )
+}
+function isAttachment (value) {
+  return value instanceof File || value instanceof Object
+}
+
+function handleFileUpload (event, section, criteria) {
+  negotiationCriteria.value[section][criteria] = event.target.files[0]
+}
+function showNotification (header, body) {
+  openModal.value.click()
+  notificationTitle.value = header
+  notificationText.value = body
+}
+
+function initNegotiationCriteria () {
+  for (const section of accessForm.value.sections) {
+    negotiationCriteria.value[section.name] = {}
+    for (const criteria of section.elements) {
+      negotiationCriteria.value[section.name][criteria.name] = null
     }
   }
 }
+
+function isSectionValid (section) {
+  return () => {
+    const valid = section.elements.every(ac => !ac.required || negotiationCriteria.value[section.name][ac.name])
+    showStepFeedback.value = !valid
+    return valid
+  }
+}
+
 </script>
 
 <style scoped>

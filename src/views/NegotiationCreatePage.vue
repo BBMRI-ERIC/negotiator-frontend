@@ -4,15 +4,8 @@
   />
 </template>
 
-<script>
+<script setup>
 import NegotiationForm from "@/components/NegotiationForm.vue"
-
-export default {
-  name: "HomePage",
-  components: {
-    NegotiationForm
-  }
-}
 </script>
 
 <style scoped>

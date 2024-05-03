@@ -56,7 +56,7 @@
       <div class="d-flex flex-row-reverse mt-3 mb-2">
         <span
           data-bs-toggle="tooltip"
-          :data-bs-title="negotiation.postsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
+          :title="negotiation.postsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
         >
           <button
             type="submit"
@@ -107,174 +107,188 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onBeforeMount, computed } from "vue"
 import { Tooltip } from "bootstrap"
-import { mapActions, mapGetters } from "vuex"
-import { dateFormat, MESSAGE_STATUS, POST_TYPE } from "@/config/consts"
+import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
+import { useStore } from "vuex"
 
-export default {
-  name: "NegotiationPosts",
-  components: { NegotiationAttachment },
-  props: {
-    negotiation: {
-      type: Object,
-      default: undefined
-    },
-    userRole: {
-      type: String,
-      default: undefined
-    },
-    // Array of possible recipients for messages.
-    recipients: {
-      type: Array,
-      default (rawProps) { // eslint-disable-line no-unused-vars
-        return []
-      }
-    },
-    organizations: {
-      type: Object,
-      default (rawProps) { // eslint-disable-line no-unused-vars
-        return {}
-      }
+const store = useStore()
+
+const props = defineProps({
+  negotiation: {
+    type: Object,
+    default: undefined
+  },
+  userRole: {
+    type: String,
+    default: undefined
+  },
+  // Array of possible recipients for messages.
+  recipients: {
+    type: Array,
+    default (rawProps) { // eslint-disable-line no-unused-vars
+      return []
     }
   },
-  data () {
-    return {
-      posts: [],
-      message: "",
-      recipientId: "",
-      messageStatus: MESSAGE_STATUS,
-      attachment: undefined
+  organizations: {
+    type: Object,
+    default (rawProps) { // eslint-disable-line no-unused-vars
+      return {}
     }
-  },
-  computed: {
-    ...mapGetters(["oidcUser"]),
-    readyToSend () {
-      return (this.message !== "" || this.attachment !== undefined) && this.recipientId !== "" && this.negotiation.postsEnabled
-    },
-    recipientsById () {
-      return this.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
+  }
+})
+
+const posts = ref([])
+const message = ref("")
+const recipientId = ref("")
+const attachment = ref(undefined)
+
+const oidcUser = computed(() => {
+  return store.getters.oidcUser
+})
+
+const readyToSend = computed(() => {
+  return (message.value !== "" || attachment.value !== undefined) && recipientId.value !== "" && props.negotiation.postsEnabled
+})
+
+const recipientsById = computed(() => {
+  return props.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
+})
+
+onMounted(() => {
+  new Tooltip(document.body, {
+    selector: "[data-bs-toggle='tooltip']"
+  })
+})
+
+onBeforeMount(() => {
+  retrievePostsByNegotiationId()
+})
+
+async function retrievePostsByNegotiationId () {
+  await store.dispatch("retrievePostsByNegotiationId", { negotiationId: props.negotiation.id }).then((res) => {
+    posts.value
+  })
+}
+
+async function addMessageToNegotiation () {
+  const data = {
+    organizationId: recipientId.value !== "Everyone" ? recipientId.value : null,
+    text: message.value,
+    negotiationId: props.negotiation.id,
+    type: recipientId.value === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
+  }
+  await store.dispatch("addMessageToNegotiation", { data }).then((post) => {
+    if (post) {
+      posts.value.push(post)
     }
-  },
-  mounted () {
-    new Tooltip(document.body, {
-      selector: "[data-bs-toggle='tooltip']"
-    })
-  },
-  async beforeMount () {
-    this.posts = await this.retrievePostsByNegotiationId({
-      negotiationId: this.negotiation.id
-    })
-  },
-  methods: {
-    ...mapActions([
-      "retrievePostsByNegotiationId",
-      "addMessageToNegotiation",
-      "addAttachmentToNegotiation",
-      "markMessageAsRead"
-    ]),
-    resetForm () {
-      this.message = ""
-      this.recipientId = ""
-      this.resetAttachment()
-    },
-    resetAttachment () {
-      this.attachment = undefined
-    },
-    printDate: function (date) {
-      return moment(date).format(dateFormat)
-    },
-    showAttachment (event) {
-      const file = event.target.files[0]
-      this.attachment = file
-    },
-    async sendMessage () {
-      if (!this.readyToSend) {
-        return
-      }
-      if (this.attachment !== undefined) {
-        await this.addAttachmentToNegotiation({
-          data: {
-            organizationId: this.recipientId !== "Everyone" ? this.recipientId : null,
-            negotiationId: this.negotiation.id,
-            attachment: this.attachment
-          }
-        }).then((attachment) => {
-          console.log(`Successfully uploaded file: ${attachment.name}`)
-        })
-      } else {
-        // send a message and add the newly created post
-        await this.addMessageToNegotiation({
-          data: {
-            organizationId: this.recipientId !== "Everyone" ? this.recipientId : null,
-            text: this.message,
-            negotiationId: this.negotiation.id,
-            type: this.recipientId === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
-          }
-        }).then((post) => {
-          if (post) {
-            this.posts.push(post)
-          }
-        })
-      }
-      this.resetForm()
-    },
-    transformId (id) {
-      return id.replaceAll(":", "_")
-    },
-    getAuthorName (post) {
-      if (post.createdBy.authSubject === this.oidcUser.sub) {
-        return "You"
-      } else {
-        return `${post.createdBy.name}`
-      }
-    },
-    getRecipientPostColor (post) {
-      return post.type === POST_TYPE.PUBLIC ? { "bg-dark": true } : { "bg-primary": true }
-    },
-    getRecipientName (post) {
-      if (post.organizationId !== undefined) {
-        return this.organizations[post.organizationId].name
-      } else if (post.personRecipient !== undefined) {
-        return post.personRecipient.authSubject === this.oidcUser.sub ? "You" : post.personRecipient.name
-      } else {
-        return "Everyone"
-      }
-    },
-    getHumanFileSize (bytes, dp = 1) {
-      const thresh = 1024
-      if (Math.abs(bytes) < thresh) {
-        return bytes + " B"
-      }
-      const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-      let u = -1
-      const r = 10 ** dp
-      do {
-        bytes /= thresh
-        ++u
-      } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
-      return bytes.toFixed(dp) + " " + units[u]
-    },
-    getFileTypeIconClass (fileType) {
-      if (fileType === "application/pdf") {
-        return { "bi-file-pdf": true }
-      } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
-        return { "bi-file-word": true }
-      } else {
-        return { "bi-file-earmark": true }
-      }
-    },
-    getFileTypeName (fileType) {
-      if (fileType === "application/pdf") {
-        return "PDF"
-      } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        return "DOCX"
-      } else if (fileType === "application/msword") {
-        return "DOC"
-      }
+  })
+}
+
+async function addAttachmentToNegotiation () {
+  const data = {
+    organizationId: recipientId.value !== "Everyone" ? recipientId.value : null,
+    negotiationId: props.negotiation.id,
+    attachment: attachment.value
+  }
+  await store.dispatch("addAttachmentToNegotiation", { data }).then((post) => {
+    if (attachment.value) {
+      console.log(`Successfully uploaded file: ${attachment.value.name}`)
     }
+  })
+}
+
+function resetForm () {
+  message.value = ""
+  recipientId.value = ""
+  resetAttachment()
+}
+
+function resetAttachment () {
+  attachment.value = undefined
+}
+function printDate (date) {
+  return moment(date).format(dateFormat)
+}
+function showAttachment (event) {
+  const file = event.target.files[0]
+  attachment.value = file
+}
+
+async function sendMessage () {
+  if (!readyToSend.value) {
+    return
+  }
+  if (attachment.value !== undefined) {
+    await addAttachmentToNegotiation()
+  } else {
+    // send a message and add the newly created post
+    await addMessageToNegotiation()
+  }
+  resetForm()
+}
+
+function transformId (id) {
+  return id.replaceAll(":", "_")
+}
+
+function getAuthorName (post) {
+  if (post.createdBy.authSubject === oidcUser.value.sub) {
+    return "You"
+  } else {
+    return `${post.createdBy.name}`
+  }
+}
+
+function getRecipientPostColor (post) {
+  return post.type === POST_TYPE.PUBLIC ? { "bg-dark": true } : { "bg-primary": true }
+}
+
+function getRecipientName (post) {
+  if (post.organizationId !== undefined) {
+    return props.organizations[post.organizationId].name
+  } else if (post.personRecipient !== undefined) {
+    return post.personRecipient.authSubject === oidcUser.value.sub ? "You" : post.personRecipient.name
+  } else {
+    return "Everyone"
+  }
+}
+
+function getHumanFileSize (bytes, dp = 1) {
+  const thresh = 1024
+  if (Math.abs(bytes) < thresh) {
+    return bytes + " B"
+  }
+  const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+  let u = -1
+  const r = 10 ** dp
+  do {
+    bytes /= thresh
+    ++u
+  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
+  return bytes.toFixed(dp) + " " + units[u]
+}
+
+function getFileTypeIconClass (fileType) {
+  if (fileType === "application/pdf") {
+    return { "bi-file-pdf": true }
+  } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
+    return { "bi-file-word": true }
+  } else {
+    return { "bi-file-earmark": true }
+  }
+}
+
+function getFileTypeName (fileType) {
+  if (fileType === "application/pdf") {
+    return "PDF"
+  } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+    return "DOCX"
+  } else if (fileType === "application/msword") {
+    return "DOC"
   }
 }
 </script>

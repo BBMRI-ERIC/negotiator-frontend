@@ -132,7 +132,7 @@
                       :class="filtersSortData.sortDirection === 'ASC' && filtersSortData.sortBy === 'currentState' ? 'bi bi-sort-up-alt' : 'bi-sort-down'"
                     />
                     <i
-                      v-if="filtersSortData.sortBy !== 'creacurrentStatetionDate'"
+                      v-if="filtersSortData.sortBy !== 'currentState'"
                       class="bi bi-sort-up-alt"
                     />
                   </button>
@@ -242,88 +242,78 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onBeforeMount } from "vue"
 import NegotiationCard from "@/components/NegotiationCard.vue"
-import { ROLES, NEGOTIATION_STATUS } from "@/config/consts"
-import { mapGetters, mapActions } from "vuex"
+import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
+import { useStore } from "vuex"
 
-export default {
-  name: "NegotiationsList",
-  components: { NegotiationCard, NewRequestButton },
-  props: {
-    negotiations: {
-      type: Array,
-      default: undefined
-    },
-    pagination: {
-      type: Object,
-      default: undefined
-    },
-    userRole: {
-      type: String,
-      required: true,
-      validator: function (value) {
-        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
-      }
-    },
-    filtersSortData: {
-      type: Object,
-      default: undefined
-    }
-  },
-  data () {
-    return {
-      availableRoles: ROLES,
-      sortBy: [
-        { value: "title", label: "Title" },
-        { value: "creationDate", label: "Creation Date" },
-        { value: "currentState", label: "Current State" }
-      ]
-    }
-  },
-  computed: {
-    loading () {
-      return this.negotiations === undefined
-    },
+const store = useStore()
 
-    ...mapGetters({ savedNegotiationsView: "getSavedNegotiationsView" })
+const props = defineProps({
+  negotiations: {
+    type: Array,
+    default: undefined
   },
-  beforeMount () {
-    if (this.savedNegotiationsView === "") {
-      this.setSavedNegotiationsView({ negotiationsView: "Table" })
-    }
+  pagination: {
+    type: Object,
+    default: undefined
   },
-  methods: {
-    ...mapActions([
-      "setSavedNegotiationsView"
-    ]),
-    formatDate (date) {
-      return moment(date).format("YYYY/MM/DD HH:mm")
-    },
-    transformStatus (string) {
-      return transformStatus(string)
-    },
-    getBadgeColor (badgeText) {
-      return getBadgeColor(badgeText)
-    },
-    getBadgeIcon (badgeText) {
-      return getBadgeIcon(badgeText)
-    },
-    changeSortDirection (sortBy) {
-      if (this.filtersSortData.sortDirection === "DESC") {
-        this.filtersSortData.sortBy = sortBy
-        this.filtersSortData.sortDirection = "ASC"
-      } else {
-        this.filtersSortData.sortBy = sortBy
-        this.filtersSortData.sortDirection = "DESC"
-      }
-    },
-    emitFilterSortData () {
-      this.$emit("filtersSortData", this.filtersSortData)
-    }
+  userRole: {
+    type: String,
+    required: true,
+    validator: (prop) => [ROLES.RESEARCHER, ROLES.REPRESENTATIVE, ROLES.ADMINISTRATOR].includes(prop)
+  },
+  filtersSortData: {
+    type: Object,
+    default: undefined
   }
+})
+
+const sortBy = ref([
+  { value: "title", label: "Title" },
+  { value: "creationDate", label: "Creation Date" },
+  { value: "currentState", label: "Current State" }
+])
+
+const loading = computed(() => {
+  return props.negotiations === undefined
+})
+
+const savedNegotiationsView = computed(() => {
+  return store.getters.getSavedNegotiationsView
+})
+
+onBeforeMount(() => {
+  if (savedNegotiationsView.value === "") {
+    setSavedNegotiationsView({ negotiationsView: "Table" })
+  }
+})
+
+function setSavedNegotiationsView (view) {
+  store.dispatch("setSavedNegotiationsView", view)
+}
+
+function formatDate (date) {
+  return moment(date).format("YYYY/MM/DD HH:mm")
+}
+
+function changeSortDirection (sortBy) {
+  if (props.filtersSortData.sortDirection === "DESC") {
+    props.filtersSortData.sortBy = sortBy
+    props.filtersSortData.sortDirection = "ASC"
+  } else {
+    props.filtersSortData.sortBy = sortBy
+    props.filtersSortData.sortDirection = "DESC"
+  }
+}
+
+const emit = defineEmits(["filtersSortData"])
+
+function emitFilterSortData () {
+  emit("filtersSortData", props.filtersSortData)
 }
 </script>

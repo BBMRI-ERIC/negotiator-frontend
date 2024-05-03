@@ -114,8 +114,8 @@
   </nav>
 </template>
 
-<script>
-import { mapActions, mapGetters } from "vuex"
+<script setup>
+import { ref, computed, watch, onBeforeMount } from "vue"
 import { ROLES } from "@/config/consts"
 import ProfileSettings from "../components/ProfileSettings.vue"
 import activeTheme from "../config/theme.js"
@@ -124,66 +124,65 @@ import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import Notifications from "../components/Notifications.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
+import { useStore } from "vuex"
 
-export default {
-  name: "NavigationBar",
-  components: {
-    Notifications,
-    ProfileSettings
-  },
-  data () {
-    return {
-      roles: [],
-      logoSrc: activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo),
-      featureFlagsFAQ: !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true),
-      featureFlagsNotifications: !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true),
-      backendEnvironment: ""
-    }
-  },
-  computed: {
-    ...mapGetters(["oidcIsAuthenticated", "oidcUser"]),
-    isAdmin () {
-      return this.roles.includes(ROLES.ADMINISTRATOR)
-    },
-    isResearcher () {
-      return this.roles.includes(ROLES.RESEARCHER)
-    },
-    isRepresentative () {
-      return this.roles.includes(ROLES.REPRESENTATIVE)
-    },
-    returnCurrentMode () {
-      if (import.meta.env.DEV) {
-        return "Development Server"
-      } else if (this.backendEnvironment === "Acceptance") {
-        return "Acceptance Server"
-      }
-      return ""
-    },
-    returnCurrentModeTextColor () {
-      if (import.meta.env.DEV) {
-        return "text-success"
-      } else if (this.backendEnvironment === "Acceptance") {
-        return "text-warning"
-      }
-      return ""
-    }
-  },
-  watch: {
-    async oidcIsAuthenticated () {
-      this.roles = await this.retrieveUserRoles()
-    }
-  },
-  async beforeMount () {
-    this.backendEnvironment = await this.retrieveBackendEnvironment()
-  },
-  methods: {
-    ...mapActions([
-      "signOutOidc",
-      "authenticateOidc",
-      "retrieveUserRoles",
-      "retrieveBackendEnvironment"
-    ])
+const store = useStore()
+
+const roles = ref([])
+const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
+const featureFlagsFAQ = !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
+const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true)
+const backendEnvironment = ref("")
+
+const oidcIsAuthenticated = computed(() => {
+  return store.getters.oidcIsAuthenticated
+})
+const oidcUser = computed(() => {
+  return store.getters.oidcUser
+})
+const isAdmin = computed(() => {
+  return roles.value.includes(ROLES.ADMINISTRATOR)
+})
+const isResearcher = computed(() => {
+  return roles.value.includes(ROLES.RESEARCHER)
+})
+const isRepresentative = computed(() => {
+  return roles.value.includes(ROLES.REPRESENTATIVE)
+})
+const returnCurrentMode = computed(() => {
+  if (import.meta.env.DEV) {
+    return "Development Server"
+  } else if (backendEnvironment.value === "Acceptance") {
+    return "Acceptance Server"
   }
+  return ""
+})
+const returnCurrentModeTextColor = computed(() => {
+  if (import.meta.env.DEV) {
+    return "text-success"
+  } else if (backendEnvironment.value === "Acceptance") {
+    return "text-warning"
+  }
+  return ""
+})
+
+watch(oidcIsAuthenticated, () => {
+  retrieveUserRoles()
+})
+
+onBeforeMount(() => {
+  retrieveBackendEnvironment()
+})
+
+async function retrieveBackendEnvironment () {
+  await store.dispatch("retrieveBackendEnvironment").then((res) => {
+    backendEnvironment.value = res
+  })
+}
+async function retrieveUserRoles () {
+  await store.dispatch("retrieveUserRoles").then((res) => {
+    roles.value = res
+  })
 }
 </script>
 

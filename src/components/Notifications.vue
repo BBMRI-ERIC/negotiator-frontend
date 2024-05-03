@@ -38,20 +38,18 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapMutations } from "vuex"
+<script setup>
+import { computed } from "vue"
+import { useStore } from "vuex"
 
-export default {
-  name: "Notifications",
-  computed: {
-    ...mapGetters(["getAllNotifications"])
-  },
-  methods: {
-    ...mapMutations(["setNotification"]),
-    resetNotification () {
-      this.setNotification(undefined)
-    }
-  }
+const store = useStore()
+
+const getAllNotifications = computed(() => {
+  return store.getters.getAllNotifications
+})
+
+async function resetNotification () {
+  await store.commit("setNotification", undefined)
 }
 </script>
 

@@ -77,44 +77,41 @@
   </div>
 </template>
 
-<script>
-import { mapActions } from "vuex"
+<script setup>
+import { computed } from "vue"
+import { useStore } from "vuex"
 
-export default {
-  name: "ProfileSettings",
-  props: {
-    user: {
-      type: Object,
-      default: {}
-    },
-    isRepresentative: {
-      type: Boolean,
-      default: false
-    }
+const store = useStore()
+
+const props = defineProps({
+  user: {
+    type: Object,
+    default: {}
   },
-  computed: {
-    returnAcronymOfName () {
-      const words = this.user?.name.split(" ")
-
-      // Initialize an empty string for the acronym
-      let acronym = ""
-
-      // Iterate over each word
-      words.forEach(word => {
-        // Get the first character of each word and append it to the acronym
-        if (word.length > 0) {
-          acronym += word[0].toUpperCase() + " "
-        }
-      })
-      return acronym
-    }
-  },
-  methods: {
-    ...mapActions([
-      "signOutOidc"
-    ])
+  isRepresentative: {
+    type: Boolean,
+    default: false
   }
+})
 
+const returnAcronymOfName = computed(() => {
+  const words = props.user?.name.split(" ")
+
+  // Initialize an empty string for the acronym
+  let acronym = ""
+
+  // Iterate over each word
+  words.forEach(word => {
+  // Get the first character of each word and append it to the acronym
+    if (word.length > 0) {
+      acronym += word[0].toUpperCase() + " "
+    }
+  })
+  return acronym
+})
+
+function signOutOidc () {
+  store.dispatch("signOutOidc")
 }
 </script>
 

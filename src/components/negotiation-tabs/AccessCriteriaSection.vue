@@ -28,16 +28,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "AccessCriteriaSection",
-  props: {
-    elements: {
-      type: Array,
-      default () {
-        return []
-      }
+<script setup>
+const props = defineProps({
+  elements: {
+    type: Array,
+    default () {
+      return []
     }
   }
-}
+})
 </script>

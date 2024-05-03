@@ -351,266 +351,252 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onBeforeMount, computed } from "vue"
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
-import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import { mapActions, mapGetters } from "vuex"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { useRouter } from "vue-router"
+import { useStore } from "vuex"
 
-export default {
-  name: "NegotiationPage",
-  components: {
-    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton
+const store = useStore()
+const router = useRouter()
+
+const props = defineProps({
+  negotiationId: {
+    type: String,
+    default: undefined
   },
-  props: {
-    negotiationId: {
-      type: String,
-      default: undefined
-    },
-    userRole: {
-      type: String,
-      default: undefined
+  userRole: {
+    type: String,
+    default: undefined
+  }
+})
+
+const negotiation = ref(undefined)
+const representedResourcesIds = ref([])
+const negotiationStatusOptions = ref([])
+const availableRoles = ref(ROLES)
+const currentResourceEvents = ref([])
+const savedResourceId = ref(undefined)
+const selection = ref({})
+const currentMultipleResourceStatus = ref(undefined)
+const selectedStatus = ref(undefined)
+const RESOURCE_TYPE = ref("RESOURCE")
+const ORGANIZATION_TYPE = ref("ORGANIZATION")
+const attachments = ref([])
+
+const resources = computed(() => {
+  return negotiation.value.resources
+})
+
+const organizations = computed(() => {
+  return Object.entries(organizationsById.value).map(([k, v]) => { return { externalId: k, name: v.name } })
+})
+
+const organizationsById = computed(() => {
+  return resources.value.reduce((organizations, resource) => {
+    if (resource.organization.externalId in organizations) {
+      organizations[resource.organization.externalId].resources.push(
+        resource)
+    } else {
+      organizations[resource.organization.externalId] = {
+        name: resource.organization.name,
+        resources: [resource]
+      }
     }
-  },
-  data () {
-    return {
-      negotiation: undefined,
-      representedResourcesIds: [],
-      negotiationStatusOptions: [],
-      availableRoles: ROLES,
-      currentResourceEvents: [],
-      savedResourceId: undefined,
-      selection: {},
-      currentMultipleResourceStatus: undefined,
-      selectedStatus: undefined,
-      RESOURCE_TYPE: "RESOURCE",
-      ORGANIZATION_TYPE: "ORGANIZATION",
-      attachments: []
+    return organizations
+  }, {})
+})
+const resourcesById = computed(() => {
+  return resources.value.reduce((resourcesObjects, resource) => {
+    resourcesObjects[resource.id] = resource
+    return resourcesObjects
+  }, {})
+})
+
+const numberOfResources = computed(() => {
+  return resources.value.length
+})
+
+const representedResources = computed(() => {
+  return resources.value.filter(resource => isRepresentativeForResource(resource.id))
+})
+
+const representedOrganizations = computed(() => {
+  return representedResources.value.map(resource => resource.organization).filter((value, index, self) =>
+    index === self.findIndex((t) => (
+      t.externalId === value.externalId
+    ))
+  )
+})
+
+const postsRecipients = computed(() => {
+  if (props.userRole === ROLES.RESEARCHER) {
+    return organizations.value.map(org => { return { id: org.externalId, name: org.name } })
+  } else {
+    return representedOrganizations.value.map(org => { return { id: org.externalId, name: org.name } })
+  }
+})
+
+const author = computed(() => {
+  return negotiation.value.author
+})
+const loading = computed(() => {
+  return negotiation.value === undefined
+})
+const isUserRoleResearcher = computed(() => {
+  return props.userRole === ROLES.RESEARCHER
+})
+
+onBeforeMount(async () => {
+  negotiation.value = await store.dispatch("retrieveNegotiationById", { negotiationId: props.negotiationId })
+
+  // initialize checkboxes selection
+  let organizationsData
+  let resourcesData
+  if (props.userRole === ROLES.REPRESENTATIVE) {
+    representedResourcesIds.value = await store.dispatch("retrieveUserRepresentedResources", {
+      organizations: representedOrganizations.value,
+      resources: representedResources.value
+    })
+  } else { // role is researcher
+    organizationsData = organizations.value
+    resourcesData = resources.value
+  }
+
+  organizationsData.forEach(org => {
+    selection.value[org.externalId] = { checked: false, type: ORGANIZATION_TYPE.value }
+  })
+  resourcesData.forEach(res => {
+    selection.value[res.id] = { checked: false, type: RESOURCE_TYPE.value }
+  })
+
+  negotiationStatusOptions.value = await store.dispatch("retrievePossibleEvents", { negotiationId: negotiation.value.id })
+})
+
+retrieveAttachments()
+
+async function retrievePossibleEventsForResource (resourceId) {
+  await store.dispatch("retrievePossibleEventsForResource", { negotiationId: negotiation.value.id, resourceId }).then((data) => {
+    currentMultipleResourceStatus.value = getStatusForResource(resourceId)
+    savedResourceId.value = resourceId
+    currentResourceEvents.value = data
+  })
+}
+
+async function retrieveAttachmentsByNegotiationId () {
+  await store.dispatch("retrieveAttachmentsByNegotiationId", { negotiationId: props.negotiationId }).then((res) => {
+    attachments.value = res
+  })
+}
+
+async function updateNegotiationStatus (action) {
+  await store.dispatch("updateNegotiationStatus", { negotiationId: props.negotiationId, event: action }).then(() => {
+    router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
+  })
+}
+
+async function updateResourceStatus (event) {
+  await store.dispatch("updateResourceStatus", { negotiationId: negotiation.value.id, resourceId: resource.value, event }).then(() => {
+    // update status and status select
+    router.go(0)
+  })
+}
+
+async function downloadAttachment (attachment) {
+  await store.dispatch("downloadAttachment", attachment)
+}
+
+async function retrieveAttachments () {
+  await retrieveAttachmentsByNegotiationId()
+}
+function isRepresentativeForResource (resourceId) {
+  return representedResourcesIds.value.includes(resourceId)
+}
+function isRepresentativeForOrganization (organizationId) {
+  return representedOrganizations.value.map((org) => org.externalId).includes(organizationId)
+}
+function getStatusForResource (resourceId) {
+  const resource = resourcesById.value[resourceId].status
+  return transformStatus(resource)
+}
+function isAttachment (value) {
+  return value instanceof Object
+}
+function printDate (date) {
+  return moment(date).format(dateFormat)
+}
+async function updateNegotiation (action) {
+  await updateNegotiationStatus(action)
+}
+function getElementIdFromResourceId (resourceId) {
+  return resourceId.replaceAll(":", "_")
+}
+function selectAllOrganizationResource (org, event) {
+  let checkedResource
+  // sets the resource
+  organizationsById.value[org]?.resources?.forEach(resource => {
+    if (selection.value[resource.id]) {
+      selection.value[resource.id].checked = event.target.checked
     }
-  },
-  computed: {
-    ...mapGetters(["oidcUser"]),
-    resources () {
-      return this.negotiation.resources
-    },
-    organizations () {
-      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name } })
-    },
-    organizationsById () {
-      return this.resources.reduce((organizations, resource) => {
-        if (resource.organization.externalId in organizations) {
-          organizations[resource.organization.externalId].resources.push(
-            resource)
-        } else {
-          organizations[resource.organization.externalId] = {
-            name: resource.organization.name,
-            resources: [resource]
-          }
-        }
-        return organizations
-      }, {})
-    },
-    resourcesById () {
-      return this.resources.reduce((resourcesObjects, resource) => {
-        resourcesObjects[resource.id] = resource
-        return resourcesObjects
-      }, {})
-    },
-    numberOfResources () {
-      return this.resources.length
-    },
-    representedResources () {
-      return this.resources.filter(resource => this.isRepresentativeForResource(resource.id))
-    },
-    representedOrganizations () {
-      return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
-        index === self.findIndex((t) => (
-          t.externalId === value.externalId
-        ))
-      )
-    },
-    postsRecipients () {
-      if (this.userRole === ROLES.RESEARCHER) {
-        return this.organizations.map(org => { return { id: org.externalId, name: org.name } })
-      } else {
-        return this.representedOrganizations.map(org => { return { id: org.externalId, name: org.name } })
-      }
-    },
-    author () {
-      return this.negotiation.author
-    },
-    loading () {
-      return this.negotiation === undefined
-    },
-    isUserRoleResearcher () {
-      return this.userRole === ROLES.RESEARCHER
+    // checkedResource === undefined avoid overwriting the checkedResource each iteration
+    if (checkedResource === undefined && selection.value[resource.id].checked === true) {
+      checkedResource = resource.id
     }
-  },
-  async beforeMount () {
-    this.negotiation = await this.retrieveNegotiationById({
-      negotiationId: this.negotiationId
-    })
-
-    // initialize checkboxes selection
-    let organizations, resources
-    if (this.userRole === ROLES.REPRESENTATIVE) {
-      this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-      organizations = this.representedOrganizations
-      resources = this.representedResources
-    } else { // role is researcher
-      organizations = this.organizations
-      resources = this.resources
+  })
+  // if at least one resource has been checked, set the multiple status for the resource as it happens by clicking
+  // a single resource instead of the overall organisation multiple selection
+  setCurrentMultipleStatus(checkedResource)
+}
+function isOrganizationButtonDisabled (resources) {
+  const currentStatus = getStatusForResource(resources[0].id)
+  // if this status is different from the current set multiple status (maybe coming from a
+  // resource of another organization, then disable the button)
+  if (currentMultipleResourceStatus.value !== undefined && currentStatus !== currentMultipleResourceStatus.value) {
+    return true
+  }
+  for (let i = 1; i < resources.length; i++) {
+    if (getStatusForResource(resources[i].id) !== currentStatus) {
+      return true
     }
+  }
+  return false
+}
 
-    organizations.forEach(org => {
-      this.selection[org.externalId] = { checked: false, type: this.ORGANIZATION_TYPE }
-    })
-    resources.forEach(res => {
-      this.selection[res.id] = { checked: false, type: this.RESOURCE_TYPE }
-    })
-
-    this.negotiationStatusOptions = await this.retrievePossibleEvents({
-      negotiationId: this.negotiation.id
-    })
-  },
-  created () {
-    this.retrieveAttachments()
-  },
-  methods: {
-    ...mapActions([
-      "retrieveNegotiationById",
-      "retrievePostsByNegotiationId",
-      "retrieveUserRepresentedResources",
-      "retrievePossibleEvents",
-      "retrievePossibleEventsForResource",
-      "retrieveAttachmentsByNegotiationId",
-      "updateNegotiationStatus",
-      "updateResourceStatus",
-      "downloadAttachment"
-    ]),
-    async retrieveAttachments () {
-      await this.retrieveAttachmentsByNegotiationId({
-        negotiationId: this.negotiationId
-      }).then((response) => {
-        this.attachments = response
-      })
-    },
-    isRepresentativeForResource (resourceId) {
-      return this.representedResourcesIds.includes(resourceId)
-    },
-    isRepresentativeForOrganization (organizationId) {
-      return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
-    },
-    getStatusForResource (resourceId) {
-      const resource = this.resourcesById[resourceId].status
-      return this.transformStatus(resource)
-    },
-    isAttachment (value) {
-      return value instanceof Object
-    },
-    printDate: function (date) {
-      return moment(date).format(dateFormat)
-    },
-    async updateNegotiation (action) {
-      await this.updateNegotiationStatus({
-        negotiationId: this.negotiation.id,
-        event: action
-      }).then(() => {
-        this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
-      })
-    },
-    getElementIdFromResourceId (resourceId) {
-      return resourceId.replaceAll(":", "_")
-    },
-    selectAllOrganizationResource (org, event) {
-      let checkedResource
-      // sets the resource
-      this.organizationsById[org]?.resources?.forEach(resource => {
-        if (this.selection[resource.id]) { this.selection[resource.id].checked = event.target.checked }
-        // checkedResource === undefined avoid overwriting the checkedResource each iteration
-        if (checkedResource === undefined && this.selection[resource.id].checked === true) {
-          checkedResource = resource.id
-        }
-      })
-
-      // if at least one resource has been checked, set the multiple status for the resource as it happens by clicking
-      // a single resource instead of the overall organisation multiple selection
-      this.setCurrentMultipleStatus(checkedResource)
-    },
-    isOrganizationButtonDisabled (resources) {
-      const currentStatus = this.getStatusForResource(resources[0].id)
-      // if this status is different from the current set multiple status (maybe coming from a
-      // resource of another organization, then disable the button)
-      if (this.currentMultipleResourceStatus !== undefined && currentStatus !== this.currentMultipleResourceStatus) {
-        return true
-      }
-      for (let i = 1; i < resources.length; i++) {
-        if (this.getStatusForResource(resources[i].id) !== currentStatus) {
-          return true
-        }
-      }
-      return false
-    },
-    isResourceButtonDisabled (resourceId) {
-      return this.currentMultipleResourceStatus !== undefined && this.getStatusForResource(resourceId) !== this.currentMultipleResourceStatus
-    },
-    async setCurrentMultipleStatus (resourceId) {
-      // If no resource is selected, it reset events and status
-      if (resourceId === undefined ||
-          !Object.values(this.selection).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
-        this.currentMultipleResourceStatus = undefined
-        this.currentResourceEvents = []
-      } else {
-        if (this.currentMultipleResourceStatus === undefined) {
-          this.currentResourceEvents = await this.retrievePossibleEventsForResource({
-            negotiationId: this.negotiation.id,
-            resourceId
-          }).then((data) => {
-            this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
-            this.savedResourceId = resourceId
-            // gets the orgId of the organization of the checked resource
-            return data
-          })
-        }
-      }
-      if (resourceId !== undefined) {
-        const orgId = this.resourcesById[resourceId].organization.externalId
-        // checks if all its resources are checked
-        const allChecked = this.organizationsById[orgId].resources
-          .every(res => res.id in this.selection && this.selection[res.id].checked === true)
-        this.selection[orgId].checked = allChecked
-      }
-    },
-    isStatusComboDisabled () {
-      return this.currentMultipleResourceStatus === undefined
-    },
-    async updateCheckedResourcesStatus (event) {
-      // For each of the settled resources, update the status to the one chosen in the combo
-      for (const resource in this.selection) {
-        if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
-          await this.updateResourceStatus({
-            negotiationId: this.negotiation.id,
-            resourceId: resource,
-            event
-          }).then(() => {
-            // update status and status select
-            this.$router.go(0)
-          })
-        }
-      }
-    },
-    transformStatus (badgeText) {
-      return transformStatus(badgeText)
-    },
-    getBadgeColor (badgeText) {
-      return getBadgeColor(badgeText)
-    },
-    getBadgeIcon (badgeText) {
-      return getBadgeIcon(badgeText)
+function isResourceButtonDisabled (resourceId) {
+  return currentMultipleResourceStatus.value !== undefined && getStatusForResource(resourceId) !== currentMultipleResourceStatus.value
+}
+async function setCurrentMultipleStatus (resourceId) {
+  // If no resource is selected, it reset events and status
+  if (resourceId === undefined ||
+          !Object.values(selection.value).some((res) => res.type === RESOURCE_TYPE.value && res.checked === true)) {
+    currentMultipleResourceStatus.value = undefined
+    currentResourceEvents.value = []
+  } else {
+    if (currentMultipleResourceStatus.value === undefined) {
+      retrievePossibleEventsForResource(resourceId)
+    }
+  }
+  if (resourceId !== undefined) {
+    const orgId = resourcesById.value[resourceId].organization.externalId
+    // checks if all its resources are checked
+    const allChecked = organizationsById.value[orgId].resources
+      .every(res => res.id in selection.value && selection.value[res.id].checked === true)
+    selection.value[orgId].checked = allChecked
+  }
+}
+function isStatusComboDisabled () {
+  return currentMultipleResourceStatus.value === undefined
+}
+async function updateCheckedResourcesStatus (event) {
+  // For each of the settled resources, update the status to the one chosen in the combo
+  for (const resource in selection.value) {
+    if (selection.value[resource].checked === true && selection.value[resource].type === RESOURCE_TYPE.value) {
+      await updateResourceStatus(event)
     }
   }
 }

@@ -2,25 +2,24 @@
   <div />
 </template>
 
-<script>
-import { mapActions } from "vuex"
+<script setup>
+import { onMounted } from "vue"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
-export default {
-  name: "OidcCallback",
-  mounted () {
-    this.oidcSignInCallback()
-      .then((redirectPath) => {
-        this.$router.push(redirectPath)
-      })
-      .catch((err) => {
-        console.error(err)
-        this.$router.push("/oidc-callback-error") // Handle errors any way you want
-      })
-  },
-  methods: {
-    ...mapActions([
-      "oidcSignInCallback"
-    ])
-  }
+const store = useStore()
+const router = useRouter()
+
+onMounted(() => {
+  oidcSignInCallback()
+})
+
+async function oidcSignInCallback () {
+  await store.dispatch("oidcSignInCallback").then((redirectPath) => {
+    router.push(redirectPath)
+  }).catch((err) => {
+    console.error(err)
+    router.push("/oidc-callback-error") // Handle errors any way you want
+  })
 }
 </script>

@@ -28,31 +28,27 @@
   </NegotiatorModal>
 </template>
 
-<script>
-
+<script setup>
 import NegotiatorModal from "./NegotiatorModal.vue"
 
-export default {
-  components: { NegotiatorModal },
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    title: {
-      type: String,
-      required: true
-    },
-    text: {
-      type: String,
-      required: true
-    }
+const props = defineProps({
+  id: {
+    type: String,
+    required: true
   },
-  emits: ["confirm"],
-  methods: {
-    emitConfirm () {
-      this.$emit("confirm")
-    }
+  title: {
+    type: String,
+    required: true
+  },
+  text: {
+    type: String,
+    required: true
   }
+})
+
+const emit = defineEmits(["confirm"])
+
+function emitConfirm () {
+  emit("confirm")
 }
 </script>
