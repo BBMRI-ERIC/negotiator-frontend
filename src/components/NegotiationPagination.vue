@@ -20,7 +20,7 @@
         v-for="page in pagination.totalPages"
         :key="page"
         class="page-item"
-        :class="page === currentPageNumber ? 'disabled' : ''"
+        :class="page === (pagination.number + 1) ? 'disabled' : ''"
       >
         <a
           class="page-link text-primary-text"
@@ -32,7 +32,7 @@
       </li>
       <li
         class="page-item"
-        :class="currentPageNumber < pagination.totalPages ? '' : 'disabled'"
+        :class="(pagination.number + 1) < pagination.totalPages ? '' : 'disabled'"
       >
         <a
           class="page-link text-primary-text"

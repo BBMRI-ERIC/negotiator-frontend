@@ -20,125 +20,151 @@
   />
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, computed } from "vue"
 import moment from "moment"
 import NegotiationList from "@/components/NegotiationList.vue"
 import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import FilterSort from "@/components/FilterSort.vue"
-
-import { mapActions } from "vuex"
+import { mapActions, useStore } from "vuex"
 import { ROLES } from "@/config/consts.js"
+import { useRouter, useRoute } from "vue-router"
 
-export default {
-  components: {
-    NegotiationList,
-    NegotiationPagination,
-    FilterSort
-  },
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
 
-  props: {
-    userRole: {
-      type: String,
-      required: true,
-      validator: function (value) {
-        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE, ROLES.ADMINISTRATOR].includes(value)
-      }
+const props = defineProps({
+  userRole: {
+    type: String,
+    required: true,
+    validator: (prop) => [ROLES.RESEARCHER, ROLES.REPRESENTATIVE, ROLES.ADMINISTRATOR].includes(prop)
+  }
+})
+
+const negotiations = ref(undefined)
+const pagination = ref(undefined)
+const user = ref(undefined)
+const userId = ref(undefined)
+const filtersStatus = ref([])
+const filtersSortData = ref({
+  status: [],
+  dateStart: "",
+  dateEnd: "",
+  sortBy: "creationDate",
+  sortDirection: "DESC"
+})
+
+const loading = computed(() => {
+  return negotiations.value === undefined
+})
+
+onMounted(async () => {
+  user.value = await store.dispatch("retrieveUser")
+
+  userId.value = user.value?.id
+
+  if (props.userRole === "ROLE_REPRESENTATIVE") {
+    filtersStatus.value = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
+  } else {
+    filtersStatus.value = await store.dispatch("retrieveNegotiationLifecycleStates")
+  }
+
+  if (Object.keys(route?.query).length) {
+    loadActivefiltersSortDataFromURL()
+  } else {
+    if (props.userRole === "ROLE_REPRESENTATIVE") {
+      filtersSortData.value.status = ["IN_PROGRESS", "ABANDONED"]
     }
-  },
-  data () {
-    return {
-      negotiations: undefined,
-      pagination: undefined,
-      user: undefined,
-      userId: undefined,
-      roles: [],
-      filtersStatus: [],
-      filtersSortData: {
-        status: [],
-        dateStart: "",
-        dateEnd: "",
-        sortBy: "creationDate",
-        sortDirection: "DESC"
-      }
-    }
-  },
-  computed: {
-    loading () {
-      return this.negotiations === undefined
-    }
-  },
-  async mounted () {
-    this.user = await this.retrieveUser()
-    this.userId = this.user?.id
+    retrieveNegotiationsByUserRole(0)
+  }
+})
 
-    if (this.userRole === "ROLE_REPRESENTATIVE") {
-      this.filtersStatus = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
-    } else {
-      this.filtersStatus = await this.retrieveNegotiationLifecycleStates()
-    }
+async function retrieveNegotiationsByUserRole (pageNumber) {
+  if (props.userRole === "ROLE_ADMIN") {
+    negotiations.value = await store.dispatch("retrieveNegotiations", {
+      filtersSortData: filtersSortData.value,
+      pageNumber
+    })
+  }
 
-    if (Object.keys(this.$route?.query).length) {
-      this.loadActivefiltersSortDataFromURL()
-    } else {
-      if (this.userRole === "ROLE_REPRESENTATIVE") {
-        this.filtersSortData.status = ["IN_PROGRESS", "ABANDONED"]
-      }
-      this.retrieveNegotiationsByUserRole(0)
-    }
-  },
-  methods: {
-    ...mapActions(["retrieveNegotiationsByUserId", "retrieveNegotiations", "retrieveNegotiationLifecycleStates", "retrieveUser", "retrieveUserRoles"]),
-    async retrieveNegotiationsByUserRole (pageNumber) {
-      if (this.userRole === "ROLE_ADMIN") {
-        this.negotiations = await this.retrieveNegotiations({ filtersSortData: this.filtersSortData, pageNumber })
-      }
+  if (props.userRole === "ROLE_RESEARCHER") {
+    negotiations.value = await store.dispatch("retrieveNegotiationsByUserId", {
+      role: "author",
+      filtersSortData: filtersSortData.value,
+      userId: userId.value,
+      pageNumber
+    })
+  }
 
-      if (this.userRole === "ROLE_RESEARCHER") {
-        this.negotiations = await this.retrieveNegotiationsByUserId({ role: "author", filtersSortData: this.filtersSortData, userId: this.userId, pageNumber })
-      }
+  if (props.userRole === "ROLE_REPRESENTATIVE") {
+    negotiations.value = await store.dispatch("retrieveNegotiationsByUserId", {
+      role: "representative",
+      filtersSortData: filtersSortData.value,
+      userId: userId.value,
+      pageNumber
+    })
+  }
 
-      if (this.userRole === "ROLE_REPRESENTATIVE") {
-        this.negotiations = await this.retrieveNegotiationsByUserId({ role: "representative", filtersSortData: this.filtersSortData, userId: this.userId, pageNumber })
-      }
-
-      this.pagination = this.negotiations.page
-      if (this.negotiations.page.totalElements === 0) {
-        this.negotiations = {}
-      } else {
-        this.negotiations = this.negotiations._embedded.negotiations
-      }
-    },
-    retrieveNegotiationsByPage (currentPageNumber) {
-      this.retrieveNegotiationsByUserRole(currentPageNumber - 1)
-      this.updateRoutingParams(currentPageNumber)
-    },
-    retrieveNegotiationsBySortAndFilter (filtersSortData) {
-      this.filtersSortData = filtersSortData
-
-      this.incriseDateEndIfSame()
-      this.retrieveNegotiationsByUserRole(0)
-
-      this.updateRoutingParams(1)
-    },
-    updateRoutingParams (currentPageNumber) {
-      this.$router.push({ query: { filtersSort: encodeURI(JSON.stringify(this.filtersSortData)), currentPageNumber } })
-    },
-    loadActivefiltersSortDataFromURL () {
-      if (this.$route?.query.filtersSort) {
-        this.filtersSortData = JSON.parse(decodeURI(this.$route?.query.filtersSort))
-      }
-
-      if (this.$route?.query.currentPageNumber) {
-        this.retrieveNegotiationsByUserRole(this.$route?.query.currentPageNumber - 1)
-      } else {
-        this.retrieveNegotiationsByUserRole(0)
-      }
-    },
-    incriseDateEndIfSame () {
-      if (this.filtersSortData.dateStart && this.filtersSortData.dateStart === this.filtersSortData.dateEnd) {
-        this.filtersSortData.dateEnd = moment(this.filtersSortData.dateEnd).add(1, "days").format("YYYY-MM-DD")
-      }
-    }
+  pagination.value = negotiations.value.page
+  if (negotiations.value.page.totalElements === 0) {
+    negotiations.value = {}
+  } else {
+    negotiations.value = negotiations.value._embedded.negotiations
   }
 }
+
+function retrieveNegotiationsByPage (currentPageNumber) {
+  retrieveNegotiationsByUserRole(currentPageNumber - 1)
+  updateRoutingParams(currentPageNumber)
+}
+
+function retrieveNegotiationsBySortAndFilter (filtersSortData) {
+  filtersSortData.value = filtersSortData
+
+  incriseDateEndIfSame()
+  retrieveNegotiationsByUserRole(0)
+
+  updateRoutingParams(1)
+}
+
+function updateRoutingParams (currentPageNumber) {
+  router.push({ query: { filtersSort: encodeURI(stringify(filtersSortData.value)), currentPageNumber } })
+}
+
+function stringify (obj) {
+  let cache = []
+  const str = JSON.stringify(obj, function (key, value) {
+    if (typeof value === "object" && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        return
+      }
+      // Store value in our collection
+      cache.push(value)
+    }
+    return value
+  })
+  cache = null // reset the cache
+  return str
+}
+
+function loadActivefiltersSortDataFromURL () {
+  if (route?.query.filtersSort) {
+    filtersSortData.value = JSON.parse(decodeURI(route?.query.filtersSort))
+  }
+
+  if (route?.query.currentPageNumber) {
+    retrieveNegotiationsByUserRole(route?.query.currentPageNumber - 1)
+  } else {
+    retrieveNegotiationsByUserRole(0)
+  }
+}
+
+function incriseDateEndIfSame () {
+  if (filtersSortData.value.dateStart && filtersSortData.value.dateStart === filtersSortData.value.dateEnd) {
+    filtersSortData.value.dateEnd = moment(filtersSortData.value.dateEnd).add(1, "days").format("YYYY-MM-DD")
+  }
+}
+
 </script>
