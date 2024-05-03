@@ -1,9 +1,5 @@
 <template>
-  <v-tour
-    v-show="$route.path !== '/' && vueTourFeatureFlag"
-    name="myTour"
-    :steps="steps"
-  />
+  <VueTour v-show="$route.fullPath !== '/' && vueTourFeatureFlag" />
 
   <header>
     <navigation-bar />
@@ -39,6 +35,7 @@
 import { RouterView } from "vue-router"
 import allFeatureFlags from "@/config/featureFlags.js"
 
+import VueTour from "./components/VueTour.vue"
 import NavigationBar from "./components/NavigationBar.vue"
 import Alert from "./components/Alert.vue"
 import Footer from "./components/Footer.vue"
@@ -52,53 +49,14 @@ export default {
   },
   data () {
     return {
-      vueTourFeatureFlag: !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true),
-      steps: [
-        {
-          target: "#v-step-0", // We're using document.querySelector() under the hood
-          header: {
-            title: "Welcome"
-          },
-          content: "In the <strong>Negotiator</strong>, you can view the status of your negotiations and stay in contact with the providers of the desired resources."
-        },
-        {
-          target: "#v-step-1",
-          header: {
-            title: "Selection of the view."
-          },
-          content: "You can present your enquiries in a compact table or an informative card layout."
-        },
-        {
-          target: "#v-step-2",
-          header: {
-            title: "Status"
-          },
-          content: "You can see the current status of your enquiry at a glance."
-        },
-        {
-          target: "#v-step-3",
-          header: {
-            title: "Filter"
-          },
-          content: "You also have the option of sorting and filtering your negotiations.",
-          before: type => new Promise((resolve, reject) => {
-            localStorage.setItem("show_vue_tour_1", true)
-            resolve("foo")
-          })
-        }
-      ]
-    }
-  },
-  mounted: function () {
-    // Do not display after the first visit so that returning users are not annoyed!
-    if (!localStorage.getItem("show_vue_tour_1")) {
-      this.$tours.myTour.start()
+      vueTourFeatureFlag: !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true)
     }
   }
 }
 </script>
 
 <style scoped>
+
 .box {
   inline-size: 300px;
 }
