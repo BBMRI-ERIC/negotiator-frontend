@@ -1,5 +1,5 @@
 <template>
-  <VueTour v-show="$route.fullPath !== '/' && vueTourFeatureFlag" />
+  <VueTour v-show="isVueTourVisible" />
 
   <header>
     <navigation-bar />
@@ -31,36 +31,28 @@
   </div>
 </template>
 
-<script>
-import { RouterView } from "vue-router"
+<script setup>
+import { computed } from "vue"
+import { RouterView, useRoute } from "vue-router"
 import allFeatureFlags from "@/config/featureFlags.js"
-
 import VueTour from "./components/VueTour.vue"
 import NavigationBar from "./components/NavigationBar.vue"
 import Alert from "./components/Alert.vue"
 import Footer from "./components/Footer.vue"
 
-export default {
-  components: {
-    RouterView,
-    NavigationBar,
-    Footer,
-    Alert
-  },
-  data () {
-    return {
-      vueTourFeatureFlag: !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true)
-    }
-  }
-}
+const route = useRoute()
+
+const vueTourFeatureFlag = !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true)
+
+const isVueTourVisible = computed(() => {
+  return (route.fullPath === "/researcher" || route.fullPath === "/admin" || route.fullPath === "/biobanker") && vueTourFeatureFlag
+})
 </script>
 
 <style scoped>
-
 .box {
   inline-size: 300px;
 }
-
 header {
   line-height: 1.5;
   max-height: 100vh;
