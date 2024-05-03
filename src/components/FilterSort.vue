@@ -197,7 +197,6 @@ function changeSortDirection () {
   } else {
     props.filtersSortData.sortDirection = "DESC"
   }
-
   emit("filtersSortData", props.filtersSortData)
 }
 
