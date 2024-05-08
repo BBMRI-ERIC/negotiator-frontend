@@ -14,7 +14,6 @@
   <div class="container body d-flex flex-column">
     <div class="row">
       <div
-        id="v-step-0"
         class="col-12"
       >
         <router-view :key="$route.path" />

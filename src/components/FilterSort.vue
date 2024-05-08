@@ -157,68 +157,61 @@
   </div>
 </template>
 
-<script>
-import moment from "moment"
+<script setup>
 import { ROLES } from "@/config/consts"
+import { useRouter } from "vue-router"
 
-export default {
-  name: "NegotiationsList",
-  props: {
-    filtersSortData: {
-      type: Object,
-      default: undefined
-    },
-    filtersStatus: {
-      type: Array,
-      default: () => []
-    },
-    userRole: {
-      type: String,
-      required: true,
-      validator: function (value) {
-        return [ROLES.RESEARCHER, ROLES.REPRESENTATIVE].includes(value)
-      }
-    }
+const router = useRouter()
+
+const props = defineProps({
+  filtersSortData: {
+    type: Object,
+    default: undefined
   },
-  emits: ["filtersSortData"],
-  data () {
-    return {
-      sortBy: [
-        { value: "title", label: "Title" },
-        { value: "creationDate", label: "Creation Date" },
-        { value: "currentState", label: "Current State" }
-      ]
-    }
+  filtersStatus: {
+    type: Array,
+    default: () => []
   },
-  methods: {
-    emitFilterSortData () {
-      this.$emit("filtersSortData", this.filtersSortData)
-    },
-    changeSortDirection () {
-      if (this.filtersSortData.sortDirection === "DESC") {
-        this.filtersSortData.sortDirection = "ASC"
-      } else {
-        this.filtersSortData.sortDirection = "DESC"
-      }
-
-      this.$emit("filtersSortData", this.filtersSortData)
-    },
-    formatDate (date) {
-      return moment(date).format("YYYY/MM/DD HH:mm")
-    },
-    clearAllFilters () {
-      this.filtersSortData.status = []
-      this.filtersSortData.dateStart = ""
-      this.filtersSortData.dateEnd = ""
-      this.filtersSortData.sortBy = ""
-      this.filtersSortData.sortDirection = "DESC"
-
-      this.$emit("filtersSortData", this.filtersSortData)
-      this.$router.push({ query: { } })
-    },
-    isChecked (value) {
-      return this.filtersSortData.sortBy === value
-    }
+  userRole: {
+    type: String,
+    required: true,
+    validator: (prop) => [ROLES.RESEARCHER, ROLES.REPRESENTATIVE, ROLES.ADMINISTRATOR].includes(prop)
   }
+})
+
+const emit = defineEmits(["filtersSortData"])
+
+const sortBy = [
+  { value: "title", label: "Title" },
+  { value: "creationDate", label: "Creation Date" },
+  { value: "currentState", label: "Current State" }
+]
+
+function emitFilterSortData () {
+  emit("filtersSortData", props.filtersSortData)
+}
+
+function changeSortDirection () {
+  if (props.filtersSortData.sortDirection === "DESC") {
+    props.filtersSortData.sortDirection = "ASC"
+  } else {
+    props.filtersSortData.sortDirection = "DESC"
+  }
+  emit("filtersSortData", props.filtersSortData)
+}
+
+function clearAllFilters () {
+  props.filtersSortData.status = []
+  props.filtersSortData.dateStart = ""
+  props.filtersSortData.dateEnd = ""
+  props.filtersSortData.sortBy = ""
+  props.filtersSortData.sortDirection = "DESC"
+
+  emit("filtersSortData", props.filtersSortData)
+  router.push({ query: { } })
+}
+
+function isChecked (value) {
+  return props.filtersSortData.sortBy === value
 }
 </script>

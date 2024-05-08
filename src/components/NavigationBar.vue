@@ -1,6 +1,7 @@
 <template>
   <nav
     v-if="oidcIsAuthenticated"
+    id="v-step-0"
     class="navbar fixed-top navbar-expand-lg navbar-light bg-navbar-background"
   >
     <div class="container-fluid">
