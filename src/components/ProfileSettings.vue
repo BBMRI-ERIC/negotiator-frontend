@@ -40,7 +40,7 @@
       </li>
       <li v-if="isRepresentative">
         <a
-          href=" https://perun.aai.lifescience-ri.eu/organizations/3353/groups/24879/subgroups"
+          href="{{externalLinks.auth_management_link}}"
           class="dropdown-item text-primary-text"
         >  <i class="bi bi-person-gear" />
           Authorization Settings
@@ -80,6 +80,7 @@
 <script setup>
 import { computed } from "vue"
 import { useStore } from "vuex"
+import externalLinks from "@/config/externalLinks"
 
 const store = useStore()
 
