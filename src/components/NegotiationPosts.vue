@@ -170,7 +170,7 @@ onBeforeMount(() => {
 
 async function retrievePostsByNegotiationId () {
   await store.dispatch("retrievePostsByNegotiationId", { negotiationId: props.negotiation.id }).then((res) => {
-    posts.value
+    posts.value = res
   })
 }
 
