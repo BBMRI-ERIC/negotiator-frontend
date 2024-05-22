@@ -598,7 +598,7 @@ export default {
             event
           }).then(() => {
             // update status and status select
-            this.$router.go(0)
+            location.reload()
           })
         }
       }
