@@ -40,7 +40,7 @@
       </li>
       <li v-if="isRepresentative">
         <a
-          href="{{externalLinks.auth_management_link}}"
+          :href="externalLinks.auth_management_link"
           class="dropdown-item text-primary-text"
         >  <i class="bi bi-person-gear" />
           Authorization Settings
