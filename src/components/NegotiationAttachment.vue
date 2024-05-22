@@ -65,7 +65,7 @@ const props = defineProps({
 const emit = defineEmits(["removed", "download"])
 
 const downloadable = computed(() => {
-  props.id !== undefined
+  return props.id !== undefined
 })
 
 function getHumanFileSize (bytes, dp = 1) {
