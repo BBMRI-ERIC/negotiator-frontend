@@ -1,5 +1,24 @@
 import { ROLES } from "@/config/consts"
 import axios from "axios"
+import axiosRetry from "axios-retry"
+
+axiosRetry(axios, {
+  retries: 5,
+  retryDelay: (...arg) => axiosRetry.exponentialDelay(...arg, 1000),
+  retryCondition (error) {
+    switch (error.response.status) {
+    // retry only if status is 500 or 501
+    case 500:
+    case 501:
+      return true
+    default:
+      return false
+    }
+  },
+  onRetry: (retryCount, error) => {
+    console.log("retry count: ", retryCount)
+  }
+})
 
 const BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
