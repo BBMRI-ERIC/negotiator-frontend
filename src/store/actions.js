@@ -1,24 +1,5 @@
 import { ROLES } from "@/config/consts"
 import axios from "axios"
-import axiosRetry from "axios-retry"
-
-axiosRetry(axios, {
-  retries: 5,
-  retryDelay: (...arg) => axiosRetry.exponentialDelay(...arg, 1000),
-  retryCondition (error) {
-    switch (error.response.status) {
-    // retry only if status is 500 or 501
-    case 500:
-    case 501:
-      return true
-    default:
-      return false
-    }
-  },
-  onRetry: (retryCount, error) => {
-    console.log("retry count: ", retryCount)
-  }
-})
 
 const BASE_API_PATH = "/api/v3"
 const ACCESS_CRITERIA_PATH = `${BASE_API_PATH}/access-criteria`
@@ -271,19 +252,10 @@ export default {
         return "Failed"
       })
   },
-  retrieveUser ({ state, commit }) {
-    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
+  async retrieveUser ({ state, commit }) {
+    return await axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data
-      })
-      .catch(() => {
-        commit("setNotification", "Error sending message")
-      })
-  },
-  retrieveUserRoles ({ state, commit }) {
-    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
-      .then((response) => {
-        return response.data?.roles
+        commit("setUserInfo", response.data)
       })
       .catch(() => {
         commit("setNotification", "Error sending message")

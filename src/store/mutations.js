@@ -10,5 +10,8 @@ export default {
   },
   setSavedNegotiationsView (state, negotiationsView) {
     state.savedNegotiationsView = negotiationsView
+  },
+  setUserInfo (state, userInfo) {
+    state.userInfo = userInfo
   }
 }
