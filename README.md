@@ -118,6 +118,9 @@ default
 ```sh
 isFooterFollowUsVisible: "true"
 ```
+
+Additional configuration for the footer to be found in [Footer Configuration](docs/FOOTER_CONFIGURATION.md)
+
 ## Config for matomo analytics
 
 Location of matomo config file:
