@@ -166,8 +166,11 @@ const returnCurrentModeTextColor = computed(() => {
   }
   return ""
 })
+const userInfo = computed(() => {
+  return store.getters.getUserInfo
+})
 
-watch(oidcIsAuthenticated, () => {
+watch(userInfo, () => {
   retrieveUserRoles()
 })
 
@@ -180,10 +183,8 @@ async function retrieveBackendEnvironment () {
     backendEnvironment.value = res
   })
 }
-async function retrieveUserRoles () {
-  await store.dispatch("retrieveUserRoles").then((res) => {
-    roles.value = res
-  })
+function retrieveUserRoles () {
+  roles.value = userInfo.value.roles
 }
 </script>
 

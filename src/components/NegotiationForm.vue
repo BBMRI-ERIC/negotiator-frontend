@@ -197,7 +197,6 @@ import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
-import { ROLES } from "@/config/consts"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 
@@ -218,12 +217,7 @@ const accessForm = ref(undefined)
 const resources = ref([])
 const humanReadableSearchParameters = ref([])
 const showStepFeedback = ref(false)
-const roles = ref([])
 const openModal = ref(null)
-
-const isAdmin = computed(() => {
-  return roles.value.includes(ROLES.ADMINISTRATOR)
-})
 
 const loading = computed(() => {
   return accessForm.value === undefined
@@ -235,7 +229,6 @@ const queryParameters = computed(() => {
 
 onBeforeMount(async () => {
   const result = await store.dispatch("retrieveRequestById", { requestId: props.requestId })
-  retrieveUserRoles()
 
   if (result.code) {
     if (result.code === 404) {
@@ -254,12 +247,6 @@ onBeforeMount(async () => {
     }
   }
 })
-
-async function retrieveUserRoles () {
-  await store.dispatch("retrieveUserRoles").then((res) => {
-    roles.value = res
-  })
-}
 
 onMounted(() => {
   new Tooltip(document.body, {

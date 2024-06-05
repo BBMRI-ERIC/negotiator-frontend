@@ -60,7 +60,7 @@ const loading = computed(() => {
 })
 
 onMounted(async () => {
-  user.value = await store.dispatch("retrieveUser")
+  user.value = store.getters.getUserInfo
 
   userId.value = user.value?.id
 

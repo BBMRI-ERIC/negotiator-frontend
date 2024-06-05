@@ -252,19 +252,10 @@ export default {
         return "Failed"
       })
   },
-  retrieveUser ({ state, commit }) {
-    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
+  async retrieveUser ({ state, commit }) {
+    return await axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data
-      })
-      .catch(() => {
-        commit("setNotification", "Error sending message")
-      })
-  },
-  retrieveUserRoles ({ state, commit }) {
-    return axios.get(USER_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
-      .then((response) => {
-        return response.data?.roles
+        commit("setUserInfo", response.data)
       })
       .catch(() => {
         commit("setNotification", "Error sending message")
