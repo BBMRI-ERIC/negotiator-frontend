@@ -66,27 +66,6 @@
         :before-change="isSectionValid(section)"
       >
         <div
-          v-if="showStepFeedback"
-          class="row"
-        >
-          <div class="col-12">
-            <div
-              class="alert alert-warning alert-dismissible fade show"
-              role="alert"
-            >
-              Please fill all the required fields
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                @click="resetNotification"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div
           v-if="section.description"
           class="mx-3 d-flex justify-content-end"
         >
@@ -109,8 +88,155 @@
             {{ criteria.label }}
           </label>
 
+          <span
+            v-if="criteria.description"
+            class="ms-2 text-muted"
+          >
+            <i
+              class="py-1 bi bi-info-circle"
+              data-bs-toggle="tooltip"
+              :data-bs-title="criteria.description"
+            />
+          </span>
+
+          <div v-if="criteria.type === 'TEXT'">
+            <input
+              v-model="negotiationCriteria[section.name][criteria.name]"
+              :type="criteria.type"
+              :placeholder="criteria.description"
+              class="form-control text-secondary-text"
+              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+              :required="criteria.required"
+            >
+          </div>
+
+          <div v-else-if="criteria.type === 'BOOLEAN'">
+            <b-form-checkbox
+              v-model="negotiationCriteria[section.name][criteria.name]"
+              :indeterminate="true"
+              :required="criteria.required"
+              class="form-check-input"
+              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+            >
+              <label class="form-check-label">{{ criteria.description }}</label>
+            </b-form-checkbox>
+          </div>
+
+          <div v-else-if="criteria.type === 'MULTIPLE_CHOICE'">
+            <div
+              v-for="(value, index) in negotiationValueSets[criteria.id]?.availableValues"
+              :key="index"
+            >
+              <div class="form-check form-check-inline">
+                <input
+                  id="inlineCheckbox1"
+                  v-model="negotiationCriteria[section.name][criteria.name]"
+                  :value="value"
+                  :required="criteria.required"
+                  class="form-check-input"
+                  :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+                  type="checkbox"
+                >
+                <label
+                  class="form-check-label"
+                  for="inlineCheckbox1"
+                >{{ value }}</label>
+              </div>
+            </div>
+            <div v-if="negotiationValueSets[criteria.id]?.externalDocumentation && negotiationValueSets[criteria.id]?.externalDocumentation !== 'none'">
+              <span class="text-muted"> External Documentation - </span>
+              <a :href="negotiationValueSets[criteria.id]?.externalDocumentation"> {{ negotiationValueSets[criteria.id]?.externalDocumentation }} </a>
+            </div>
+          </div>
+
+          <div v-else-if="criteria.type === 'SINGLE_CHOICE'">
+            <div
+              v-for="(value, index) in negotiationValueSets[criteria.id]?.availableValues"
+              :key="index"
+            >
+              <div class="form-check form-check-inline">
+                <input
+                  id="inlineRadio1"
+                  v-model="negotiationCriteria[section.name][criteria.name]"
+                  :value="value"
+                  :required="criteria.required"
+                  class="form-check-input"
+                  :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+                  type="radio"
+                  @click="uncheckRadioButton(value, section.name, criteria.name)"
+                >
+                <label
+                  class="form-check-label"
+                  for="inlineCheckbox1"
+                >{{ value }}</label>
+              </div>
+            </div>
+          </div>
+
+          <div v-else-if="criteria.type === 'TEXT_LARGE'">
+            <textarea
+              v-model="negotiationCriteria[section.name][criteria.name]"
+              :placeholder="criteria.description"
+              class="form-control text-secondary-text"
+              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+              :required="criteria.required"
+            />
+          </div>
+
+          <div v-else-if="criteria.type === 'NUMBER'">
+            <input
+              v-model="negotiationCriteria[section.name][criteria.name]"
+              :type="criteria.type"
+              :placeholder="criteria.description"
+              class="form-control text-secondary-text"
+              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+              :required="criteria.required"
+            >
+          </div>
+
+          <div v-else-if="criteria.type === 'FILE'">
+            <input
+              accept=".pdf"
+              class="form-control text-secondary-text"
+              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+              :required="criteria.required"
+              :placeholder="criteria.description"
+              :type="criteria.type"
+              @change="handleFileUpload($event, section.name, criteria.name)"
+            >
+          </div>
+
+          <div
+            v-else-if="criteria.type === 'DATE'"
+            class="w-25"
+          >
+            <p
+              v-if="criteria.description"
+              class="text-muted"
+            >
+              {{ criteria.description }}
+            </p>
+            <input
+              id="startDate"
+              v-model="negotiationCriteria[section.name][criteria.name]"
+              value=""
+              class="form-control form-control-sm"
+              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+              type="date"
+            >
+          </div>
+
+          <div v-else-if="criteria.type === 'INFORMATION'">
+            <p
+              v-if="criteria.description"
+              class="text-muted"
+            >
+              {{ criteria.description }}
+            </p>
+          </div>
+
           <textarea
-            v-if="criteria.type === 'textarea'"
+            v-else-if="criteria.type === 'textarea'"
             v-model="negotiationCriteria[section.name][criteria.name]"
             :placeholder="criteria.description"
             class="form-control text-secondary-text"
@@ -133,6 +259,20 @@
             class="form-control text-secondary-text"
             :required="criteria.required"
           >
+
+          <div
+            v-if="validationColorHighlight.includes(criteria.name)"
+            class="invalidText"
+          >
+            Please provide a {{ criteria.label }}!
+          </div>
+          <div
+            v-if="negotiationValueSets[criteria.id]?.externalDocumentation && negotiationValueSets[criteria.id]?.externalDocumentation !== 'none'"
+            class="mt-2"
+          >
+            <span class="text-muted"> External Documentation - </span>
+            <a :href="negotiationValueSets[criteria.id]?.externalDocumentation"> {{ negotiationValueSets[criteria.id]?.externalDocumentation }} </a>
+          </div>
         </div>
       </tab-content>
       <tab-content
@@ -158,10 +298,15 @@
           >
             <label class="me-2 fw-bold">{{ accessFormElement.label }}:</label>
             <span v-if="isAttachment(negotiationCriteria[section.name][accessFormElement.name])">
-              {{ negotiationCriteria[section.name][accessFormElement.name].name }}
+              <span v-if="negotiationCriteria[section.name][accessFormElement.name].name">{{ negotiationCriteria[section.name][accessFormElement.name].name }}</span>
+              <div
+                v-for="(choice,index) in negotiationCriteria[section.name][accessFormElement.name]"
+                v-else
+                :key="index"
+              >{{ choice }}</div>
             </span>
             <span v-else>
-              {{ negotiationCriteria[section.name][accessFormElement.name] }}
+              {{ translateTrueFalse(negotiationCriteria[section.name][accessFormElement.name]) }}
             </span>
           </div>
         </div>
@@ -213,10 +358,12 @@ const props = defineProps({
 const notificationTitle = ref("")
 const notificationText = ref("")
 const negotiationCriteria = ref({})
+const negotiationValueSets = ref({})
+const validationColorHighlight = ref([])
+
 const accessForm = ref(undefined)
 const resources = ref([])
 const humanReadableSearchParameters = ref([])
-const showStepFeedback = ref(false)
 const openModal = ref(null)
 
 const loading = computed(() => {
@@ -258,6 +405,12 @@ function backToNegotiation (id) {
   router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
 }
 
+async function getValueSet (id) {
+  await store.dispatch("retrieveDynamicAccessFormsValueSetByID", { id }).then((res) => {
+    negotiationValueSets.value[id] = res
+  })
+}
+
 async function startNegotiation () {
   const data = {
     requests: [props.requestId],
@@ -293,19 +446,55 @@ function initNegotiationCriteria () {
   for (const section of accessForm.value.sections) {
     negotiationCriteria.value[section.name] = {}
     for (const criteria of section.elements) {
-      negotiationCriteria.value[section.name][criteria.name] = null
+      if (criteria.type === "MULTIPLE_CHOICE") {
+        negotiationCriteria.value[section.name][criteria.name] = []
+        getValueSet(criteria.id)
+      } else if (criteria.type === "SINGLE_CHOICE") {
+        getValueSet(criteria.id)
+      } else {
+        negotiationCriteria.value[section.name][criteria.name] = null
+      }
     }
   }
 }
 
 function isSectionValid (section) {
   return () => {
-    const valid = section.elements.every(ac => !ac.required || negotiationCriteria.value[section.name][ac.name])
-    showStepFeedback.value = !valid
+    let valid = true
+    validationColorHighlight.value = []
+    section.elements.forEach(ac => {
+      if (ac.required) {
+        if (ac.type === "BOOLEAN" && (typeof negotiationCriteria.value[section.name][ac.name] !== "boolean")) {
+          validationColorHighlight.value.push(ac.name)
+          valid = false
+        } else if (ac.type === "MULTIPLE_CHOICE" && Object.keys(negotiationCriteria.value[section.name][ac.name]).length === 0) {
+          validationColorHighlight.value.push(ac.name)
+          valid = false
+        } else if (ac.type !== "BOOLEAN" && ac.type !== "MULTIPLE_CHOICE" && (typeof negotiationCriteria.value[section.name][ac.name] !== "string" || negotiationCriteria.value[section.name][ac.name] === "")) {
+          validationColorHighlight.value.push(ac.name)
+          valid = false
+        }
+      } else if (valid) {
+        valid = true
+      }
+    })
+    if (!valid) { store.commit("setNotification", "Please fill all the required fields") }
     return valid
   }
 }
 
+function uncheckRadioButton (value, sectionName, criteriaName) {
+  if (negotiationCriteria.value[sectionName][criteriaName] === value) {
+    negotiationCriteria.value[sectionName][criteriaName] = ""
+  }
+}
+
+function translateTrueFalse (value) {
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No"
+  }
+  return value
+}
 </script>
 
 <style scoped>
@@ -316,5 +505,12 @@ function isSectionValid (section) {
 
 .bi:hover {
   color: #7c7c7c;
+}
+
+.invalidText {
+     width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: var(--bs-form-invalid-color);
 }
 </style>

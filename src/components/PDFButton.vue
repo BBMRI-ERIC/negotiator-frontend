@@ -86,9 +86,15 @@ function createPDF (view) {
 
     for (const value in props.negotiationPdfData.payload[key]) {
       if (props.negotiationPdfData.payload[key][value]) {
+        let negotiationPdfData
+        if(value === 'ethics-vote-attachment'){
+           negotiationPdfData = props.negotiationPdfData.payload[key][value].name + " " + props.negotiationPdfData.payload[key][value].id
+        }else {
+           negotiationPdfData = props.negotiationPdfData.payload[key][value]
+        }
         doc.autoTable({
           body: [
-            [value + ": ", props.negotiationPdfData.payload[key][value]]
+            [value + ": ", negotiationPdfData]
           ],
           startY: doc.lastAutoTable.finalY + 2,
           columnStyles: {
