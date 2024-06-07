@@ -1,5 +1,5 @@
 <template>
-  <VueTour v-show="isVueTourVisible" />
+  <VueTour v-if="isVueTourVisible" />
 
   <header>
     <navigation-bar />
