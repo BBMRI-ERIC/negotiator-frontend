@@ -111,15 +111,36 @@
           </div>
 
           <div v-else-if="criteria.type === 'BOOLEAN'">
-            <b-form-checkbox
-              v-model="negotiationCriteria[section.name][criteria.name]"
-              :indeterminate="true"
-              :required="criteria.required"
-              class="form-check-input"
-              :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
-            >
-              <label class="form-check-label">{{ criteria.description }}</label>
-            </b-form-checkbox>
+            <div class="form-check form-check-inline">
+              <input
+                id="inlineRadio1"
+                v-model="negotiationCriteria[section.name][criteria.name]"
+                value="Yes"
+                :required="criteria.required"
+                class="form-check-input"
+                :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+                type="radio"
+              >
+              <label
+                class="form-check-label"
+                for="inlineRadio1"
+              > Yes </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                id="inlineRadio2"
+                v-model="negotiationCriteria[section.name][criteria.name]"
+                value="No"
+                :required="criteria.required"
+                class="form-check-input"
+                :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
+                type="radio"
+              >
+              <label
+                class="form-check-label"
+                for="inlineRadio2"
+              > No </label>
+            </div>
           </div>
 
           <div v-else-if="criteria.type === 'MULTIPLE_CHOICE'">
@@ -167,7 +188,7 @@
                 >
                 <label
                   class="form-check-label"
-                  for="inlineCheckbox1"
+                  for="inlineRadio1"
                 >{{ value }}</label>
               </div>
             </div>
@@ -448,13 +469,10 @@ function isSectionValid (section) {
     validationColorHighlight.value = []
     section.elements.forEach(ac => {
       if (ac.required) {
-        if (ac.type === "BOOLEAN" && (typeof negotiationCriteria.value[section.name][ac.name] !== "boolean")) {
+        if (ac.type === "MULTIPLE_CHOICE" && Object.keys(negotiationCriteria.value[section.name][ac.name]).length === 0) {
           validationColorHighlight.value.push(ac.name)
           valid = false
-        } else if (ac.type === "MULTIPLE_CHOICE" && Object.keys(negotiationCriteria.value[section.name][ac.name]).length === 0) {
-          validationColorHighlight.value.push(ac.name)
-          valid = false
-        } else if (ac.type !== "BOOLEAN" && ac.type !== "MULTIPLE_CHOICE" && (typeof negotiationCriteria.value[section.name][ac.name] !== "string" || negotiationCriteria.value[section.name][ac.name] === "")) {
+        } else if (ac.type !== "MULTIPLE_CHOICE" && (typeof negotiationCriteria.value[section.name][ac.name] !== "string" || negotiationCriteria.value[section.name][ac.name] === "")) {
           validationColorHighlight.value.push(ac.name)
           valid = false
         }
@@ -498,4 +516,3 @@ function translateTrueFalse (value) {
     color: var(--bs-form-invalid-color);
 }
 </style>
-
