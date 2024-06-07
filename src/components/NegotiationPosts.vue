@@ -56,7 +56,7 @@
       <div class="d-flex flex-row-reverse mt-3 mb-2">
         <span
           data-bs-toggle="tooltip"
-          :title="negotiation.postsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
+          :title="negotiation.privatePostsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
         >
           <button
             type="submit"
@@ -94,13 +94,16 @@
           <option value="Everyone">
             Everyone
           </option>
-          <option
-            v-for="recipient in recipients"
-            :key="recipient.id"
-            :value="recipient.id"
-          >
-            {{ recipient.name }}
-          </option>
+          <optgroup :label="privatePostsGroupLabel">
+            <option
+              v-for="recipient in recipients"
+              :key="recipient.id"
+              :value="recipient.id"
+              :disabled="!negotiation.privatePostsEnabled"
+            >
+              {{ recipient.name }}
+            </option>
+          </optgroup>
         </select>
       </div>
     </form>
@@ -151,11 +154,19 @@ const oidcUser = computed(() => {
 })
 
 const readyToSend = computed(() => {
-  return (message.value !== "" || attachment.value !== undefined) && recipientId.value !== "" && props.negotiation.postsEnabled
+  return (message.value !== "" || attachment.value !== undefined) && recipientId.value !== "" &&
+  (props.negotiation.publicPostsEnabled || props.negotiation.privatePostsEnabled)
 })
 
 const recipientsById = computed(() => {
   return props.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
+})
+
+const privatePostsGroupLabel = computed(() => {
+  if (props.negotiation.privatePostsEnabled) {
+    return "Private messages"
+  }
+  return "Private messages will be enabled after an administrator will approve the negotiation"
 })
 
 onMounted(() => {
