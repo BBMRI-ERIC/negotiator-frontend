@@ -5,7 +5,9 @@
     <hr class="mt-10 mb-10">
     <div class="row d-flex flex-column flex-md-row">
       <div class="col text-center mb-4 mb-md-0">
-        <a href="https://bbmri-eric.eu">
+        <a 
+          v-if="activeTheme.isFooterLeftSideIconVisible"
+          :href="activeTheme.footerLeftSideIconLink">
           <img
             width="150"
             height="40"
@@ -19,22 +21,22 @@
           Follow Us:
         </span>
         <a
-          v-if="isFooterFollowUsVisible"
-          href="https://www.linkedin.com/company/bbmri-eric"
+          v-if="activeTheme.isFooterFollowUsVisible"
+          :href="activeTheme.footerFollowUsLinkedin"
           class="link-dark ms-2"
         >
           <i class="bi bi-linkedin mr-3" />
         </a>
         <a
-          v-if="isFooterFollowUsVisible"
-          href="https://twitter.com/BBMRIERIC"
+          v-if="activeTheme.isFooterFollowUsVisible"
+          :href="activeTheme.footerFollowUsX"
           class="link-dark ms-2"
         >
           <i class="bi bi-twitter-x" />
         </a>
         <a
-          v-if="isFooterFollowUsVisible"
-          href="https://www.bbmri-eric.eu/bbmri-eric/bbmri-eric-podcast/"
+          v-if="activeTheme.isFooterFollowUsVisible"
+          :href="activeTheme.footerFollowUsX"
           class="link-dark ms-2"
         >
           <i class="bi bi-mic-fill" />
@@ -55,7 +57,7 @@
         </div>
 
         <div
-          v-if="isFooterFollowUsVisible"
+          v-if="activeTheme.isFooterFollowUsVisible"
           class="mt-2 mb-2 mb-md-0"
         >
           <a
@@ -65,47 +67,49 @@
             API
           </a>
           <a
-            href="https://status.bbmri-eric.eu/"
+            v-if="activeTheme.isFooterStatusPageVisible"
+            :href="activeTheme.footerStatusPageLink"
             class="text-primary-text ps-2"
           >  <i class="bi bi-check-circle" />
-            BBMRI-ERIC Status page
+            {{ activeTheme.footerStatusPageText }}
           </a>
         </div>
       </div>
 
       <div class="col text-center">
         <a
+          v-if="activeTheme.isFooterWorkProgrammeVisible"
           class="link-dark text-primary-text"
-          href="https://www.bbmri-eric.eu/wp-content/uploads/BBMRI-ERIC_work-program_2022-2024_DIGITAL.pdf"
+          :href="activeTheme.footerWorkProgrammeLink"
         >
           <img
             width="22"
             height="22"
             class="col"
-            src="../assets/images/work-programme.png"
+            src="@/assets/images/work-programme.png"
             alt="Work programme image"
           >
           Work Programme
         </a>
         <div
-          v-if="isFooterFollowUsVisible"
+          v-if="activeTheme.isFooterNewsletterVisible"
           class="ms-md-3 mt-2"
         >
           <button
             type="button"
             class="btn btn-light ms-md-5 text-primary-text"
-            href="https://www.bbmri-eric.eu/news-event/"
+            :href="activeTheme.footerNewsletter"
           >
             Subscribe To Our Newsletter
           </button>
         </div>
         <div
-          v-if="isFooterFollowUsVisible"
+          v-if="activeTheme.isFooterPrivacyPolicyVisible"
           class="ms-md-2 mt-2"
         >
           <a
             class="link-dark text-primary-text me-5"
-            href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdf"
+            :href="activeTheme.footerPrivacyPolicy"
           >
             Privacy Policy
           </a>
@@ -113,14 +117,18 @@
       </div>
       <div>
         <div class="row mt-4">
-          <div class="col  text-center">
-            <p>&copy; 2024 BBMRI-ERIC</p>
+          <div 
+            v-if="activeTheme.isFooterCopyRightVisible"
+            class="col  text-center">
+            <p>{{ activeTheme.footerCopyRight }}</p>
           </div>
           <div class="col text-center text-light ms-4">
             UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>v{{ backendVersion }}</span>
           </div>
-          <div class="col text-center ms-5">
-            Need help? <a href="mailto:negotiator@helpdesk.bbmri-eric.eu">Contact us</a>.
+          <div 
+            v-if="activeTheme.isFooterHelpLinkVisible"
+            class="col text-center ms-5">
+            Need help? <a :href="activeTheme.footerHelpLink">Contact us</a>.
           </div>
         </div>
       </div>
@@ -153,6 +161,10 @@ async function retrieveBackendVersion () {
   await store.dispatch("retrieveBackendVersion").then((res) => {
     backendVersion.value = res
   })
+}
+
+function getWorkProgrammeIcon() {
+  return new URL(`${activeTheme.footerWorkProgrammeIcon}`)
 }
 </script>
 
