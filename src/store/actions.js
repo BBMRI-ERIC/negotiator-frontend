@@ -9,6 +9,7 @@ const USER_PATH = `${BASE_API_PATH}/userinfo`
 const USER_RESOURCES_PATH = `${BASE_API_PATH}/users/resources`
 const ATTACHMENTS_PATH = `${BASE_API_PATH}/attachments`
 const BACKEND_ACTUATOR_INFO_PATH = "/api/actuator/info"
+const VALUE_SETS = `${BASE_API_PATH}/value-sets`
 
 function getBearerHeaders (token) {
   return { Authorization: `Bearer ${token}` }
@@ -70,6 +71,16 @@ export default {
       })
       .catch(() => {
         commit("setNotification", "Error getting request data from server")
+        return null
+      })
+  },
+  retrieveDynamicAccessFormsValueSetByID ({ state, commit }, { id }) {
+    return axios.get(`${VALUE_SETS}/${id}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting value-sets request data from server")
         return null
       })
   },

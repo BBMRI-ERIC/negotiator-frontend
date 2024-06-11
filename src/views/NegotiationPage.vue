@@ -53,20 +53,30 @@
                 v-if="isAttachment(subelement)"
                 class="text-secondary-text"
               >
-                {{ subelement.name }}
-                <font-awesome-icon
-                  v-if="isAttachment(subelement)"
-                  class="ms-1 cursor-pointer"
-                  icon="fa fa-download"
-                  fixed-width
-                  @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
-                />
+                <span v-if="subelement.name">
+                  {{ subelement.name }}
+                  <font-awesome-icon
+                    v-if="isAttachment(subelement)"
+                    class="ms-1 cursor-pointer"
+                    icon="fa fa-download"
+                    fixed-width
+                    @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
+                  />
+                </span>
+                <span v-else>
+                  <div
+                    v-for="(choice,index) in subelement"
+                    :key="index"
+                  >
+                    {{ choice }}
+                  </div>
+                </span>
               </span>
               <span
                 v-else
                 class="text-secondary-text text-break"
               >
-                {{ subelement }}
+                {{ translateTrueFalse(subelement) }}
               </span>
             </div>
           </li>
@@ -611,6 +621,12 @@ export default {
     },
     getBadgeIcon (badgeText) {
       return getBadgeIcon(badgeText)
+    },
+    translateTrueFalse (value) {
+      if (typeof value === "boolean") {
+        return value ? "Yes" : "No"
+      }
+      return value
     }
   }
 }
