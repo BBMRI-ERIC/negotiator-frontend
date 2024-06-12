@@ -297,6 +297,14 @@ export default {
         window.URL.revokeObjectURL(href)
       })
   },
+  async getAttachmentData ({ state, commit }, { id }) {
+    return await axios.get(`${ATTACHMENTS_PATH}/${id}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+      .then((response) => {
+        return response.data
+      }).catch(() => {
+        commit("setNotification", "There was an error getting attachment")
+      })
+  },
   setSavedNegotiationsView ({ state, commit }, { negotiationsView }) {
     commit("setSavedNegotiationsView", negotiationsView)
   },
