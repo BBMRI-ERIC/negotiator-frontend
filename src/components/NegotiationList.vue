@@ -143,6 +143,7 @@
             <tbody>
               <tr
                 v-for="(fn,index) in negotiations"
+                style="cursor: pointer;"
                 :key="index"
                 @click="$router.push({
                   name: 'negotiation-page',
