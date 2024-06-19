@@ -2,6 +2,7 @@
 const devSettings = {
   activeThemeFile: "bbmri",
   activeLogosFiles: "bbmri",
+  isCommunicationToEveryoneEnabled: false,
   isFooterStatusPageVisible: true,
   footerStatusPageLink: "https://status.bbmri-eric.eu/",
   footerStatusPageText: "BBMRI-ERIC Status Page",
@@ -27,6 +28,7 @@ const devSettings = {
 const prodSettings = {
   activeThemeFile: "ACTIVE_THEME_PLACEHOLDER",
   activeLogosFiles: "ACTIVE_LOGOS_PLACEHOLDER",
+  isCommunicationToEveryoneEnabled: "IS_COMMUNICATION_TO_EVERYONE_ENABLED_PLACEHOLDER",
   isFooterStatusPageVisible: "FOOTER_BBMRIERIC_STATUS_PAGE_VISIBLE_PLACEHOLDER",
   footerStatusPageLink: "FOOTER_STATUS_PAGE_LINK_PLACEHOLDER",
   footerStatusPageText: "FOOTER_STATUS_PAGE_TEXT_PLACEHOLDER",

@@ -121,6 +121,10 @@ isFooterFollowUsVisible: "true"
 
 Additional configuration for the footer to be found in [Footer Configuration](docs/FOOTER_CONFIGURATION.md)
 
+### 4. Additional configuration for themes
+
+Additional configuration for themes to be found in [Theme Configuration](docs/THEME_CONFIGURATION.md)
+
 ## Config for matomo analytics
 
 Location of matomo config file:

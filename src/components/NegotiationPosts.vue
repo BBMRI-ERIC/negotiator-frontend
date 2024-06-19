@@ -91,7 +91,10 @@
           >
             -- Select recipient --
           </option>
-          <option value="Everyone">
+          <option 
+            v-if="activeTheme.isCommunicationToEveryoneEnabled" 
+            value="Everyone"
+          >
             Everyone
           </option>
           <optgroup :label="privatePostsGroupLabel">
@@ -117,6 +120,9 @@ import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
 import { useStore } from "vuex"
+import activeTheme from "../config/theme.js"
+
+//const logoSrc = activeTheme.activeLogosFiles
 
 const store = useStore()
 
