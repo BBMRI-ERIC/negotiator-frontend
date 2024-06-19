@@ -1,6 +1,7 @@
 <template>
   <div
     class="container-fluid d-flex justify-content-center align-items-center vh-100  mt-5"
+    v-if="!oidcIsAuthenticated"
   >
     <div class="row">
       <div class="col-1" />
