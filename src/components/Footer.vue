@@ -10,9 +10,8 @@
           :href="activeTheme.footerLeftSideIconLink">
           <img
             width="150"
-            height="40"
             :src="logoSrc"
-            alt="logo negotiator"
+            alt="logo footer"
           >
         </a>
       </div>
