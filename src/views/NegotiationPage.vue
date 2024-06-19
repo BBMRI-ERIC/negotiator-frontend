@@ -2,16 +2,7 @@
   <div
     v-if="!loading"
   >
-    <button
-      type="button"
-      class="btn btn-primary"
-      @click="
-        $router.go(-1)
-      "
-    >
-      <i class="bi-arrow-left" />
-      Go back
-    </button>
+    <GoBackButton />
     <confirmation-modal
       id="abandonModal"
       title="Are you sure you want to abandon this Negotiation?"
@@ -365,6 +356,8 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
+import GoBackButton from "@/components/GoBackButton.vue"
+
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
@@ -374,7 +367,7 @@ import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/uti
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton
+    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton, GoBackButton
   },
   props: {
     negotiationId: {
