@@ -140,7 +140,7 @@ async function downloadAllFiles () {
   const pdfName = "negotiation" + ".pdf"
 
   const doc = createPDF()
-  const zip = new JSZip()
+  const zip = JSZip()
 
   zip.file(pdfName, doc.output("blob"), { binary: true })
 
