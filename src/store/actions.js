@@ -297,6 +297,23 @@ export default {
         window.URL.revokeObjectURL(href)
       })
   },
+  downloadAllAttachment ({ state }, { id, name }) {
+    const data = []
+    axios.post(`${NEGOTIATION_PATH}/${id}/attachments/merge-to-pdf`, data, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+      .then((response) => {
+        const href = window.URL.createObjectURL(response.data)
+
+        const anchorElement = document.createElement("a")
+        anchorElement.href = href
+        anchorElement.download = name
+
+        document.body.appendChild(anchorElement)
+        anchorElement.click()
+
+        document.body.removeChild(anchorElement)
+        window.URL.revokeObjectURL(href)
+      })
+  },
   async getAttachmentData ({ state, commit }, { id }) {
     return await axios.get(`${ATTACHMENTS_PATH}/${id}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
       .then((response) => {

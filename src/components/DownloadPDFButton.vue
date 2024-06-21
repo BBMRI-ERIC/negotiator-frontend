@@ -136,28 +136,29 @@ function downloadPdf () {
 }
 
 async function downloadAllFiles () {
-  const zipName = "negotiation_" + props.negotiationPdfData?.payload?.project?.title
-  const pdfName = "negotiation" + ".pdf"
+  await store.dispatch("downloadAllAttachment", { id: props.negotiationPdfData.id, name: props.negotiationPdfData?.payload?.project?.title})
+  // const zipName = "negotiation_" + props.negotiationPdfData?.payload?.project?.title
+  // const pdfName = "negotiation" + ".pdf"
 
-  const doc = createPDF()
-  //@ignore-ts
-  const zip = JSZip()
+  // const doc = createPDF()
+  // //@ignore-ts
+  // const zip = JSZip()
 
-  zip.file(pdfName, doc.output("blob"), { binary: true })
+  // zip.file(pdfName, doc.output("blob"), { binary: true })
 
-  if (props.attachments.length > 0) {
-    const file = zip.folder("Attachments")
+  // if (props.attachments.length > 0) {
+  //   const file = zip.folder("Attachments")
 
-    for (const attachment of props.attachments) {
-      await store.dispatch("getAttachmentData", { id: attachment.id }).then((response) => {
-        file.file(attachment.name, response, { binary: true })
-      })
-    }
-  }
+  //   for (const attachment of props.attachments) {
+  //     await store.dispatch("getAttachmentData", { id: attachment.id }).then((response) => {
+  //       file.file(attachment.name, response, { binary: true })
+  //     })
+  //   }
+  // }
 
-  zip.generateAsync({ type: "blob" }).then(function (content) {
-    FileSaver.saveAs(content, zipName.toString())
-  })
+  // zip.generateAsync({ type: "blob" }).then(function (content) {
+  //   FileSaver.saveAs(content, zipName.toString())
+  // })
 }
 </script>
 
