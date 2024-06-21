@@ -315,6 +315,7 @@
             />
           </li>
           <li class="list-group-item p-2 btn-sm border-bottom-0">
+            <!-- @vue-ignore -->
             <DownloadPDFButton
               class="mt-2"
               :download-all-is-enabled="true"
