@@ -593,17 +593,19 @@ export default {
     },
     async updateCheckedResourcesStatus (event) {
       // For each of the settled resources, update the status to the one chosen in the combo
-      for (const resource in this.selection) {
-        if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
-          await this.updateResourceStatus({
-            negotiationId: this.negotiation.id,
-            resourceId: resource,
-            event
-          }).then(() => {
-            // update status and status select
-            location.reload()
-          })
+      try {
+        for (const resource in this.selection) {
+          if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
+            await this.updateResourceStatus({
+              negotiationId: this.negotiation.id,
+              resourceId: resource,
+              event
+            })
+          }
         }
+      } finally {
+        // update status and status select
+        location.reload()
       }
     },
     transformStatus (badgeText) {
