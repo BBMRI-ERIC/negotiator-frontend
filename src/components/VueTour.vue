@@ -2,6 +2,7 @@
   <v-tour
     name="myTour"
     :steps="steps"
+    :callbacks="myCallbacks"
   />
 </template>
 
@@ -9,6 +10,10 @@
 export default {
   data () {
     return {
+      myCallbacks: {
+        onSkip: this.dontShowVueTour,
+        onFinish: this.dontShowVueTour
+      },
       steps: [
         {
           target: "#v-step-0",
@@ -39,11 +44,7 @@ export default {
           header: {
             title: "Filter"
           },
-          content: "You also have the option of sorting and filtering your negotiations.",
-          before: type => new Promise((resolve, reject) => {
-            localStorage.setItem("show_vue_tour_1", true)
-            resolve("foo")
-          })
+          content: "You also have the option of sorting and filtering your negotiations."
         }
       ]
     }
@@ -52,6 +53,11 @@ export default {
     // Do not display after the first visit so that returning users are not annoyed!
     if (!localStorage.getItem("show_vue_tour_1")) {
       this.$tours.myTour.start()
+    }
+  },
+  methods: {
+    dontShowVueTour () {
+      localStorage.setItem("show_vue_tour_1", true)
     }
   }
 }
