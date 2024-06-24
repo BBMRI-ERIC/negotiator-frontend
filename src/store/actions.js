@@ -299,19 +299,9 @@ export default {
   },
   downloadAllAttachment ({ state }, { id, name }) {
     const data = []
-    axios.post(`${NEGOTIATION_PATH}/${id}/attachments/merge-to-pdf`, data, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+    return axios.post(`${NEGOTIATION_PATH}/${id}/attachments/merge-to-pdf`, data, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
       .then((response) => {
-        const href = window.URL.createObjectURL(response.data)
-
-        const anchorElement = document.createElement("a")
-        anchorElement.href = href
-        anchorElement.download = name
-
-        document.body.appendChild(anchorElement)
-        anchorElement.click()
-
-        document.body.removeChild(anchorElement)
-        window.URL.revokeObjectURL(href)
+        return response.data
       })
   },
   async getAttachmentData ({ state, commit }, { id }) {
