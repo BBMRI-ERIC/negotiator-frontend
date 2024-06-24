@@ -309,8 +309,17 @@
           </li>
 
           <li class="list-group-item p-2 btn-sm border-bottom-0">
-            <PDFButton
+            <DownloadPDFButton
               class="mt-2"
+              :negotiation-pdf-data="negotiation"
+            />
+          </li>
+          <li class="list-group-item p-2 btn-sm border-bottom-0">
+            <!-- @vue-ignore -->
+            <DownloadPDFButton
+              class="mt-2"
+              :download-all-is-enabled="true"
+              :attachments="attachments"
               :negotiation-pdf-data="negotiation"
             />
           </li>
@@ -357,8 +366,7 @@ import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
-
-import PDFButton from "@/components/PDFButton.vue"
+import DownloadPDFButton from "@/components/DownloadPDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
@@ -367,7 +375,7 @@ import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/uti
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton, GoBackButton
+    ConfirmationModal, NegotiationPosts, NegotiationAttachment, DownloadPDFButton, GoBackButton
   },
   props: {
     negotiationId: {
