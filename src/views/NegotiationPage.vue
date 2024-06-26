@@ -99,6 +99,46 @@
                 type="button"
               >
                 <span class="fs-5 fw-bold text-primary-text mt-3">
+                  <i class="bi bi-diagram-3" />
+                  SEARCH PARAMETERS
+                </span>
+              </div>
+              <div
+                data-bs-toggle="collapse"
+                data-bs-target="#requestsHumanReadable"
+                aria-controls="requestsHumanReadable"
+                aria-expanded="false"
+                type="button"
+                class="collections-header justify-content-end pt-1"
+              >
+                <i class="bi bi-chevron-down" />
+                <i class="bi bi-chevron-up" />
+              </div>
+            </div>
+            <div
+              id="requestsHumanReadable"
+              class="collapse"
+            >
+              <pre v-if="negotiation?.requests[0]?.humanReadable">{{ negotiation?.requests[0]?.humanReadable }}</pre>
+              <pre
+                v-else
+                class="text-muted"
+              > There are no data available </pre>
+            </div>
+          </li>
+          <li class="list-group-item p-3">
+            <div
+              class="d-flex flex-row mb-3 justify-content-between"
+              style="min-height: 38px;"
+            >
+              <div
+                data-bs-toggle="collapse"
+                data-bs-target="#resourcesList"
+                aria-controls="resourcesList"
+                aria-expanded="true"
+                type="button"
+              >
+                <span class="fs-5 fw-bold text-primary-text mt-3">
                   <i class="bi bi-card-list" />
                   COLLECTIONS ({{ numberOfResources }})
                 </span>
@@ -218,6 +258,9 @@
                       <span class="badge rounded-pill bg-status-badge ms-4">
                         {{ getStatusForResource(resource.id) }}
                       </span>
+                      <div class="text-muted">
+                        {{ resource.id }} <CopyTextButton :text="resource.id" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -357,6 +400,7 @@ import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
+import CopyTextButton from "@/components/CopyTextButton.vue"
 
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
@@ -367,7 +411,7 @@ import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/uti
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton, GoBackButton
+    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton, GoBackButton, CopyTextButton
   },
   props: {
     negotiationId: {
