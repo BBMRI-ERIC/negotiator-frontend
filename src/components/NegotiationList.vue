@@ -3,7 +3,6 @@
     v-if="!loading"
     class="container"
   >
-    <NewRequestButton />
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 ">
         <p>
@@ -143,8 +142,8 @@
             <tbody>
               <tr
                 v-for="(fn,index) in negotiations"
-                style="cursor: pointer;"
                 :key="index"
+                style="cursor: pointer;"
                 @click="$router.push({
                   name: 'negotiation-page',
                   params: { negotiationId: fn.id, userRole: userRole, filters: filtersData, sortBy: sortby }
@@ -249,7 +248,6 @@ import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
-import NewRequestButton from "../components/NewRequestButton.vue"
 import { useStore } from "vuex"
 
 const store = useStore()
