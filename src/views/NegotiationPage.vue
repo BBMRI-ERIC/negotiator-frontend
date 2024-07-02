@@ -9,6 +9,11 @@
       text="Confirming, you will not be able to access this negotiation again."
       @confirm="updateNegotiation('ABANDON')"
     />
+    <vote-negotiation-modal
+      id="voteNegotiationModal"
+      title="canSERV Scientific Management Board - Voting for application to be approved and granted"
+      text="Voting section"
+    />
     <div class="row mt-4">
       <div class="row-col-2">
         <h1 class="text-primary fw-bold">
@@ -373,6 +378,21 @@
               </div>
             </div>
           </li>
+          <li v-if="featureFlagsVoteNegotiation" class="list-group-item p-2 border-bottom-0">
+            <div class="pt-2 vote-text">
+              <div
+                type="button"
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#voteNegotiationModal"
+              >
+                <span>
+                  <i class="bi bi-check2-circle pe-1" />
+                  <span>Vote for Negotiation to be approved and granted</span>
+                </span>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -398,9 +418,11 @@
 <script>
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
+import VoteNegotiationModal from "@/components/modals/VoteNegotiationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import CopyTextButton from "@/components/CopyTextButton.vue"
+import allFeatureFlags from "@/config/featureFlags.js"
 
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
@@ -436,7 +458,8 @@ export default {
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
       ORGANIZATION_TYPE: "ORGANIZATION",
-      attachments: []
+      attachments: [],
+      featureFlagsVoteNegotiation: !!(allFeatureFlags.voteNegotiation === "true" || allFeatureFlags.voteNegotiation === true)
     }
   },
   computed: {
@@ -696,5 +719,11 @@ export default {
 }
 .abandon-text:hover {
   color: #dc3545;
+}
+.vote-text {
+  color: #3c3c3d;
+}
+.vote-text:hover {
+  color: #3B8501;
 }
 </style>
