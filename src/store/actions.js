@@ -146,6 +146,35 @@ export default {
         return []
       })
   },
+  retrieveNetworkNegotiations ({ state, commit }, { networkId, filtersSortData, pageNumber }) {
+    const parameters = {
+      headers: getBearerHeaders(state.oidc.access_token),
+      params: { status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection, page: pageNumber },
+      paramsSerializer: { indexes: null }
+    }
+    return axios.get(`${BASE_API_PATH}/networks/${networkId}/negotiations`, parameters)
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+        return []
+      })
+  },
+  retrieveNetworksNegotiations ({ state, commit }, { data, filtersSortData, pageNumber }) {
+    const config = {
+      headers: getBearerHeaders(state.oidc.access_token),
+      params: { status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection, page: pageNumber },
+      paramsSerializer: { indexes: null }
+    }
+    return axios.post(`${BASE_API_PATH}/networks/negotiations`, data, config)
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error sending message")
+      })
+  },
   updateNegotiationStatus ({ state, commit }, { negotiationId, event }) {
     return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
@@ -276,6 +305,15 @@ export default {
     return axios.get(USER_RESOURCES_PATH, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error sending message")
+      })
+  },
+  async retrieveUserNetworks ({ state, commit }, { userId }) {
+    return await axios.get(`${BASE_API_PATH}/users/${userId}/networks`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.networks
       })
       .catch(() => {
         commit("setNotification", "Error sending message")

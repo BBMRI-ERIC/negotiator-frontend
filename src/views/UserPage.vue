@@ -1,4 +1,5 @@
 <template>
+  <NegotiationsStatistics />
   <FilterSort
     v-if="!loading"
     :filters-sort-data="filtersSortData"
@@ -6,6 +7,15 @@
     :filters-status="filtersStatus"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
+  <div class="container d-flex flex-row flex-wrap justify-content-between">
+    <NetworkSelect
+      v-if="userNetworks.length > 0"
+      :user-networks="userNetworks"
+      @user-networks-selected="userNetworksSelected"
+    />
+    <NewRequestButton />
+  </div>
+
   <NegotiationList
     :negotiations="negotiations"
     :pagination="pagination"
@@ -26,7 +36,10 @@ import moment from "moment"
 import NegotiationList from "@/components/NegotiationList.vue"
 import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import FilterSort from "@/components/FilterSort.vue"
-import { mapActions, useStore } from "vuex"
+import NewRequestButton from "../components/NewRequestButton.vue"
+import NetworkSelect from "../components/NetworkSelect.vue"
+import NegotiationsStatistics from "../components/NegotiationsStatistics.vue"
+import { useStore } from "vuex"
 import { ROLES } from "@/config/consts.js"
 import { useRouter, useRoute } from "vue-router"
 
@@ -54,6 +67,8 @@ const filtersSortData = ref({
   sortBy: "creationDate",
   sortDirection: "DESC"
 })
+const userNetworksSelectedData = ref([])
+const userNetworks = ref([])
 
 const loading = computed(() => {
   return negotiations.value === undefined
@@ -76,7 +91,12 @@ onMounted(async () => {
     if (props.userRole === "ROLE_REPRESENTATIVE") {
       filtersSortData.value.status = ["IN_PROGRESS", "ABANDONED"]
     }
-    retrieveNegotiationsByUserRole(0)
+
+    await store.dispatch("retrieveUserNetworks", { userId: 1 }).then((res) => {
+      userNetworks.value = res
+      retrieveNetworkNegotiationsByUserRole(0, userNetworks.value)
+    })
+    // retrieveNegotiationsByUserRole(0)
   }
 })
 
@@ -107,6 +127,27 @@ async function retrieveNegotiationsByUserRole (pageNumber) {
   }
 
   pagination.value = negotiations.value.page
+  console.log(pagination.value)
+  if (negotiations.value.page.totalElements === 0) {
+    negotiations.value = {}
+  } else {
+    negotiations.value = negotiations.value._embedded.negotiations
+  }
+}
+
+async function retrieveNetworkNegotiationsByUserRole (pageNumber, userNetworks) {
+  const data = []
+  userNetworks.forEach(network => {
+    data.push(network?.id)
+  })
+
+  negotiations.value = await store.dispatch("retrieveNetworksNegotiations", {
+    filtersSortData: filtersSortData.value,
+    pageNumber,
+    data
+  })
+
+  pagination.value = negotiations.value.page
   if (negotiations.value.page.totalElements === 0) {
     negotiations.value = {}
   } else {
@@ -115,7 +156,8 @@ async function retrieveNegotiationsByUserRole (pageNumber) {
 }
 
 function retrieveNegotiationsByPage (currentPageNumber) {
-  retrieveNegotiationsByUserRole(currentPageNumber - 1)
+  retrieveNetworkNegotiationsByUserRole(currentPageNumber - 1, userNetworksSelectedData.value)
+  // retrieveNegotiationsByUserRole(currentPageNumber - 1)
   updateRoutingParams(currentPageNumber)
 }
 
@@ -123,7 +165,9 @@ function retrieveNegotiationsBySortAndFilter (filtersSortData) {
   filtersSortData.value = filtersSortData
 
   incriseDateEndIfSame()
-  retrieveNegotiationsByUserRole(0)
+  retrieveNetworkNegotiationsByUserRole(0, userNetworksSelectedData.value)
+
+  // retrieveNegotiationsByUserRole(0)
 
   updateRoutingParams(1)
 }
@@ -155,9 +199,12 @@ function loadActivefiltersSortDataFromURL () {
   }
 
   if (route?.query.currentPageNumber) {
-    retrieveNegotiationsByUserRole(route?.query.currentPageNumber - 1)
+    retrieveNetworkNegotiationsByUserRole(route?.query.currentPageNumber - 1, userNetworksSelectedData.value)
+
+    // retrieveNegotiationsByUserRole(route?.query.currentPageNumber - 1)
   } else {
-    retrieveNegotiationsByUserRole(0)
+    retrieveNetworkNegotiationsByUserRole(0, userNetworksSelectedData.value)
+    // retrieveNegotiationsByUserRole(0)
   }
 }
 
@@ -165,6 +212,11 @@ function incriseDateEndIfSame () {
   if (filtersSortData.value.dateStart && filtersSortData.value.dateStart === filtersSortData.value.dateEnd) {
     filtersSortData.value.dateEnd = moment(filtersSortData.value.dateEnd).add(1, "days").format("YYYY-MM-DD")
   }
+}
+
+function userNetworksSelected (userNetworks) {
+  userNetworksSelectedData.value = userNetworks
+  retrieveNetworkNegotiationsByUserRole(0, userNetworksSelectedData.value)
 }
 
 </script>
