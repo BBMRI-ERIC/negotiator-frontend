@@ -3,12 +3,12 @@
     v-if="!loading"
     class="container"
   >
-    <NewRequestButton />
+    <!--<NewRequestButton />-->
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 ">
         <p>
           <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
-          <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
+          <span class="text-muted">{{ pagination.totalElements }} Proposals found</span>
         </p>
 
         <div class="text-end my-2">
@@ -97,7 +97,7 @@
                   </button>
                 </th>
                 <th scope="col">
-                  Negotiation ID
+                  Proposal ID
                 </th>
                 <th scope="col">
                   Created on

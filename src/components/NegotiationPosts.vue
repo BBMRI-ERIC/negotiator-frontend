@@ -91,12 +91,14 @@
           >
             -- Select recipient --
           </option>
+          <!--
           <option 
             v-if="activeTheme.isCommunicationToEveryoneEnabled" 
             value="Everyone"
           >
             Everyone
           </option>
+          -->
           <optgroup :label="privatePostsGroupLabel">
             <option
               v-for="recipient in recipients"

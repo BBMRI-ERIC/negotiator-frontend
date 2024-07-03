@@ -29,7 +29,7 @@
               to="/admin"
             >
               <i class="bi bi-clipboard-check" />
-              Review requests
+              Administrate proposals
             </router-link>
           </li>
           <li
@@ -42,7 +42,7 @@
               to="/researcher"
             >
               <i class="bi bi-chat-left-dots" />
-              Your negotiations
+              Your proposals
             </router-link>
           </li>
           <li
@@ -55,7 +55,7 @@
               to="/biobanker"
             >
               <i class="bi bi-bank" />
-              Your biobank
+              Review proposals
             </router-link>
           </li>
           <li

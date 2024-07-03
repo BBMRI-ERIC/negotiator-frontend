@@ -20,7 +20,7 @@
       </h5>
       <div class="card-body">
         <h6 class="card-subtitle mb-2 text-muted">
-          Negotiation ID: {{ id }}
+          Proposal ID: {{ id }}
         </h6>
         <h6 class="card-subtitle mb-2 text-muted">
           Created on: {{ creationDate }}
