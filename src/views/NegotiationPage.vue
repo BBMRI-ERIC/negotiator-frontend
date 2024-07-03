@@ -14,6 +14,11 @@
       title="canSERV Scientific Management Board - Voting for application to be approved and granted"
       text="Voting section"
     />
+    <feasibility-check-modal
+      id="feasibilityCheckModal"
+      title="CanSERV Open Call "
+      text="Form for feasibility check "
+    />
     <div class="row mt-4">
       <div class="row-col-2">
         <h1 class="text-primary fw-bold">
@@ -378,7 +383,10 @@
               </div>
             </div>
           </li>
-          <li v-if="featureFlagsVoteNegotiation" class="list-group-item p-2 border-bottom-0">
+          <li
+            v-if="featureFlagsVoteNegotiation"
+            class="list-group-item p-2 border-bottom-0"
+          >
             <div class="pt-2 vote-text">
               <div
                 type="button"
@@ -389,6 +397,24 @@
                 <span>
                   <i class="bi bi-check2-circle pe-1" />
                   <span>Vote for Negotiation to be approved and granted</span>
+                </span>
+              </div>
+            </div>
+          </li>
+          <li
+            v-if="featureFlagsVoteNegotiation"
+            class="list-group-item p-2 border-bottom-0"
+          >
+            <div class="pt-2 vote-text">
+              <div
+                type="button"
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#feasibilityCheckModal"
+              >
+                <span>
+                  <i class="bi bi-check2-circle pe-1" />
+                  <span>Form for feasibility check </span>
                 </span>
               </div>
             </div>
@@ -419,6 +445,8 @@
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import VoteNegotiationModal from "@/components/modals/VoteNegotiationModal.vue"
+import FeasibilityCheckModal from "@/components/modals/FeasibilityCheckModal.vue"
+
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import CopyTextButton from "@/components/CopyTextButton.vue"
