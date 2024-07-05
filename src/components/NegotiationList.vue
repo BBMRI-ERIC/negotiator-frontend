@@ -5,7 +5,7 @@
   >
     <NewRequestButton />
     <div class="pt-1">
-      <div class="row row-cols-2 d-grid-row mt-5 ">
+      <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
           <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
           <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
@@ -83,7 +83,7 @@
                 <th scope="col">
                   Title
                   <button
-                    class="btn btn-sm"
+                    class="btn btn-sm py-0"
                     type="button"
                     @click="changeSortDirection('title'); emitFilterSortData();"
                   >
@@ -102,7 +102,7 @@
                 <th scope="col">
                   Created on
                   <button
-                    class="btn btn-sm"
+                    class="btn btn-sm py-0"
                     type="button"
                     @click="changeSortDirection('creationDate'); emitFilterSortData();"
                   >
@@ -124,7 +124,7 @@
                   Status
                   <button
                     id="v-step-2"
-                    class="btn btn-sm"
+                    class="btn btn-sm py-0"
                     type="button"
                     @click="changeSortDirection('currentState'); emitFilterSortData();"
                   >
@@ -137,14 +137,18 @@
                     />
                   </button>
                 </th>
-                <th scope="col" />
+                <th
+                  scope="col"
+                >
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="(fn,index) in negotiations"
-                style="cursor: pointer;"
                 :key="index"
+                style="cursor: pointer;"
                 @click="$router.push({
                   name: 'negotiation-page',
                   params: { negotiationId: fn.id, userRole: userRole, filters: filtersData, sortBy: sortby }
@@ -179,7 +183,14 @@
                   </span>
                 </td>
                 <td>
-                  <i class="bi bi-chevron-right float-end" />
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-none py-0 ms-2"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="'View ' + fn.payload.project.title"
+                  >
+                    <i class="bi bi-eye pb-0" />
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -244,13 +255,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from "vue"
+import { ref, computed, onBeforeMount, onMounted } from "vue"
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
 import { useStore } from "vuex"
+import { Tooltip } from "bootstrap"
 
 const store = useStore()
 
@@ -292,6 +304,12 @@ onBeforeMount(() => {
   if (savedNegotiationsView.value === "") {
     setSavedNegotiationsView({ negotiationsView: "Table" })
   }
+})
+
+onMounted(() => {
+  new Tooltip(document.body, {
+    selector: "[data-bs-toggle='tooltip']"
+  })
 })
 
 function setSavedNegotiationsView (view) {
