@@ -16,7 +16,7 @@
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
-            @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+            @click="setSavedNegotiationsView('Card-one-column')"
           >
             <i class="bi bi-card-heading" />
           </button>
@@ -26,7 +26,7 @@
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
-            @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+            @click="setSavedNegotiationsView('Card-one-column')"
           >
             <i class="bi bi-list" />
           </button>
@@ -36,7 +36,7 @@
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
-            @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView({negotiationsView:'Card-two-column'})"
+            @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView('Card-two-column')"
           >
             <i class="bi bi-grid" />
           </button>
@@ -46,7 +46,7 @@
             type="button"
             class="btn btn-sm"
             :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
-            @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
+            @click="savedNegotiationsView = 'Table', setSavedNegotiationsView('Table')"
           >
             <i class="bi bi-table" />
           </button>
@@ -143,8 +143,8 @@
             <tbody>
               <tr
                 v-for="(fn,index) in negotiations"
-                style="cursor: pointer;"
                 :key="index"
+                style="cursor: pointer;"
                 @click="$router.push({
                   name: 'negotiation-page',
                   params: { negotiationId: fn.id, userRole: userRole, filters: filtersData, sortBy: sortby }
@@ -250,9 +250,9 @@ import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
-import { useStore } from "vuex"
+import { useNegotiationsViewStore } from "../storeP/negotiationsView"
 
-const store = useStore()
+const negotiationsViewStore = useNegotiationsViewStore()
 
 const props = defineProps({
   negotiations: {
@@ -285,17 +285,18 @@ const loading = computed(() => {
 })
 
 const savedNegotiationsView = computed(() => {
-  return store.getters.getSavedNegotiationsView
+  return negotiationsViewStore.savedNegotiationsView
 })
 
 onBeforeMount(() => {
-  if (savedNegotiationsView.value === "") {
-    setSavedNegotiationsView({ negotiationsView: "Table" })
+  if (negotiationsViewStore.savedNegotiationsView === "") {
+    setSavedNegotiationsView("Table")
   }
 })
 
 function setSavedNegotiationsView (view) {
-  store.dispatch("setSavedNegotiationsView", view)
+  console.log(negotiationsViewStore.savedNegotiationsView)
+  negotiationsViewStore.savedNegotiationsView = view
 }
 
 function formatDate (date) {

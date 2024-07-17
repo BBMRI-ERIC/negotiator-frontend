@@ -29,6 +29,8 @@
     "jspdf-autotable": "^3.8.2",
     "moment": "^2.29.4",
     "oidc-client-ts": "^2.1.0",
+    "pinia": "^2.1.7",
+    "pinia-oidc": "^1.0.10",
     "sass-loader": "^13.2.0",
     "vue": "^3.2.47",
     "vue-matomo": "^4.2.0",
