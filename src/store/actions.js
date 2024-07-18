@@ -146,6 +146,16 @@ export default {
         return []
       })
   },
+  retrieveNetworkNegotiations ({ state, commit }, { networkId }) {
+    return axios.get(`${BASE_API_PATH}/networks/${networkId}/negotiations`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+        return []
+      })
+  },
   updateNegotiationStatus ({ state, commit }, { negotiationId, event }) {
     return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
@@ -279,6 +289,12 @@ export default {
       })
       .catch(() => {
         commit("setNotification", "Error sending message")
+      })
+  },
+  async retrieveUserNetworks ({ state, commit }, { userId }) {
+    return await axios.get(`${BASE_API_PATH}/users/${userId}/networks`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.networks
       })
   },
   downloadAttachment ({ state }, { id, name }) {

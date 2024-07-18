@@ -46,6 +46,19 @@
             </router-link>
           </li>
           <li
+            v-if="isAdmin && showNetworksTab && featureFlagsNetworks"
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active nav-option"
+              :class="$route.path === '/networks' || $route.params.userRole === 'ROLE_RESEARCHER' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              to="/networks"
+            >
+              <i class="bi bi-diagram-3" />
+              Your networks
+            </router-link>
+          </li>
+          <li
             v-if="isRepresentative"
             class="nav-item"
           >
@@ -132,9 +145,10 @@ const store = useStore()
 const roles = ref([])
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
 const featureFlagsFAQ = !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
+const featureFlagsNetworks = !!(allFeatureFlags.networks === "true" || allFeatureFlags.networks === true)
 const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true)
 const backendEnvironment = ref("")
-
+const userNetworks = ref([])
 const oidcIsAuthenticated = computed(() => {
   return store.getters.oidcIsAuthenticated
 })
@@ -169,6 +183,17 @@ const returnCurrentModeTextColor = computed(() => {
 const userInfo = computed(() => {
   return store.getters.getUserInfo
 })
+
+const showNetworksTab = computed(() => {
+   store.dispatch("retrieveUserNetworks", { userId: userInfo.value.id }).then((res) => {
+        userNetworks.value = res
+  })
+  if(userNetworks.value.length > 0) {
+    return true
+  }
+  return false
+})
+
 
 watch(userInfo, () => {
   retrieveUserRoles()

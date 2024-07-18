@@ -7,6 +7,7 @@ import FaqPage from "../views/FaqPage.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
+import NetworksPage from "@/views/NetworksPage.vue"
 import { ROLES } from "@/config/consts"
 import hasUser from "@/middlewares/hasUser.js"
 import middlewarePipeline from "@/middlewares/middleware-pipeline.js"
@@ -33,6 +34,12 @@ const router = createRouter({
     name: "researcher",
     component: UserPage,
     props: { userRole: ROLES.RESEARCHER },
+    meta: { isPublic: false, middleware: [hasUser] }
+  }, {
+    path: "/networks",
+    name: "networks",
+    component: NetworksPage,
+    props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false, middleware: [hasUser] }
   }, {
     path: "/biobanker",
