@@ -234,8 +234,10 @@ async function sendMessage () {
     return
   }
   if (attachment.value !== undefined) {
+    // send attachment
     await addAttachmentToNegotiation()
-  } else {
+  }
+  if (message.value !== "") {
     // send a message and add the newly created post
     await addMessageToNegotiation()
   }
