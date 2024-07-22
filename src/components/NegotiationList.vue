@@ -5,7 +5,7 @@
   >
     <NewRequestButton v-if="!networkActivated" />
     <div class="pt-1">
-      <div class="row row-cols-2 d-grid-row mt-5 ">
+      <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
           <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
           <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
@@ -78,7 +78,7 @@
                 <th scope="col">
                   Title
                   <button
-                    class="btn btn-sm"
+                    class="btn btn-sm py-0"
                     type="button"
                     @click="changeSortDirection('title'); emitFilterSortData();"
                   >
@@ -97,7 +97,7 @@
                 <th scope="col">
                   Created on
                   <button
-                    class="btn btn-sm"
+                    class="btn btn-sm py-0"
                     type="button"
                     @click="changeSortDirection('creationDate'); emitFilterSortData();"
                   >
@@ -119,7 +119,7 @@
                   Status
                   <button
                     id="v-step-2"
-                    class="btn btn-sm"
+                    class="btn btn-sm py-0"
                     type="button"
                     @click="changeSortDirection('currentState'); emitFilterSortData();"
                   >
@@ -132,7 +132,6 @@
                     />
                   </button>
                 </th>
-                <th scope="col" />
               </tr>
             </thead>
             <tbody>
@@ -169,9 +168,6 @@
                     />
                     {{ transformStatus(fn.status) }}
                   </span>
-                </td>
-                <td >
-                  <i v-if="!networkActivated" class="bi bi-chevron-right float-end" />
                 </td>
               </tr>
             </tbody>
@@ -236,13 +232,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from "vue"
+import { ref, computed, onBeforeMount, onMounted } from "vue"
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
 import { useStore } from "vuex"
+import { Tooltip } from "bootstrap"
 
 const store = useStore()
 
@@ -288,6 +285,12 @@ onBeforeMount(() => {
   if (savedNegotiationsView.value === "") {
     setSavedNegotiationsView({ negotiationsView: "Table" })
   }
+})
+
+onMounted(() => {
+  new Tooltip(document.body, {
+    selector: "[data-bs-toggle='tooltip']"
+  })
 })
 
 function setSavedNegotiationsView (view) {

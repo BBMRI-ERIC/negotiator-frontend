@@ -2,7 +2,7 @@
   <div class="dropdown">
     <button
       type="button"
-      class="btn btn-sm btn-outline-primary rounded-circle position-relative"
+      class="btn btn-sm btn-outline-primary rounded-circle position-relative py-0 px-1"
       :class="getAllNotifications.length > 0 ? '' : 'disabled'"
       data-bs-toggle="dropdown"
       aria-expanded="false"
@@ -12,7 +12,7 @@
 
       <span
         v-if="getAllNotifications.length > 0"
-        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger pb-0 px-1"
       >
         {{ getAllNotifications.length }}
       </span>
