@@ -137,11 +137,6 @@
                     />
                   </button>
                 </th>
-                <th
-                  scope="col"
-                >
-                  Action
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -181,16 +176,6 @@
                     />
                     {{ transformStatus(fn.status) }}
                   </span>
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-none py-0 ms-2"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="'View ' + fn.payload.project.title"
-                  >
-                    <i class="bi bi-eye pb-0" />
-                  </button>
                 </td>
               </tr>
             </tbody>
