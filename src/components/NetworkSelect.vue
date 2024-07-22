@@ -28,7 +28,7 @@
             type="radio"
             v-model="userNetworksSelected"
             :checked="isChecked(network.id)"
-            @change="emitUserNetworksSelected()"
+            @change="emitUserNetworksSelected(),emitUserNetworksSelectedName()"
           >
           <label class="form-check-label text-sort-filter-dropdown-text">
             {{ network.name }}
@@ -41,7 +41,7 @@
   <script setup>
   import { ref, onMounted } from "vue"
   
-  const emit = defineEmits(["userNetworksSelected"])
+  const emit = defineEmits(["userNetworksSelected","userNetworksSelectedName"])
   
   const props = defineProps({
   userNetworks: {
@@ -55,11 +55,17 @@
   onMounted(() => {
     userNetworksSelected.value = props.userNetworks[0].id
     emit("userNetworksSelected", props.userNetworks[0].id)
+    emit("userNetworksSelectedName", props.userNetworks[0].name)
   })
   
   function emitUserNetworksSelected () {
     emit("userNetworksSelected", userNetworksSelected.value)
   }
+
+  function emitUserNetworksSelectedName (name) {
+    emit("userNetworksSelectedName", name)
+  }
+  
 
   function isChecked (value) {
   return userNetworksSelected.value === value

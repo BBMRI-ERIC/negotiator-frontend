@@ -1,15 +1,23 @@
 <template>
+      <div class="container mt-5 text-center" v-if="pagination">
+        <h2>{{ userNetworksSelectedDataName }}</h2>
+    </div>
     <div class="container d-flex flex-row flex-wrap justify-content-between">
       <NetworkSelect
         v-if="userNetworks.length > 0"
         :user-networks="userNetworks"
         @user-networks-selected="userNetworksSelected"
+        @user-networks-selected-name="userNetworksSelectedName"
       />
+      <NegotiationList
+    :negotiations="negotiations"
+    :pagination="pagination"
+    :user-role="userRole"
+    :filters-sort-data="filtersSortData"
+    :network-activated=true
+    @filters-sort-data="retrieveNegotiationsBySortAndFilter"
+  />
     </div>
-    <div class="container mt-5" v-if="pagination">
-        <h3>Total negotiations: {{ pagination.totalElements }}</h3>
-    </div>
-
   
   </template>
   
@@ -48,6 +56,7 @@
     sortDirection: "DESC"
   })
   const userNetworksSelectedData = ref("")
+  const userNetworksSelectedDataName = ref("")
   const userNetworks = ref([])
   
   const loading = computed(() => {
@@ -191,4 +200,9 @@
     retrieveNetworkNegotiationsById()
   }
   
+    
+  function userNetworksSelectedName (networkName) {
+    userNetworksSelectedDataName.value = networkName
+  }
+
   </script>

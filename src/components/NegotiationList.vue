@@ -3,7 +3,7 @@
     v-if="!loading"
     class="container"
   >
-    <NewRequestButton />
+    <NewRequestButton v-if="!networkActivated" />
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 ">
         <p>
@@ -65,13 +65,8 @@
           :status="fn.status"
           :submitter="fn.author.name"
           :creation-date="formatDate(fn.creationDate)"
-          class="cursor-pointer"
-          @click="
-            $router.push({
-              name: 'negotiation-page',
-              params: { negotiationId: fn.id, userRole: userRole, filters: filtersData, sortBy: sortby },
-            })
-          "
+          :class="networkActivated === true ? '' : 'cursor-pointer'"
+          @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
         />
       </div>
 
@@ -143,12 +138,9 @@
             <tbody>
               <tr
                 v-for="(fn,index) in negotiations"
-                style="cursor: pointer;"
+                :style="[networkActivated === true ? {cursor: pointer} : {cursor: none}]"
                 :key="index"
-                @click="$router.push({
-                  name: 'negotiation-page',
-                  params: { negotiationId: fn.id, userRole: userRole, filters: filtersData, sortBy: sortby }
-                })"
+                @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
               >
                 <th
                   scope="row"
@@ -178,8 +170,8 @@
                     {{ transformStatus(fn.status) }}
                   </span>
                 </td>
-                <td>
-                  <i class="bi bi-chevron-right float-end" />
+                <td >
+                  <i v-if="!networkActivated" class="bi bi-chevron-right float-end" />
                 </td>
               </tr>
             </tbody>
@@ -271,6 +263,10 @@ const props = defineProps({
   filtersSortData: {
     type: Object,
     default: undefined
+  },
+  networkActivated: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -317,4 +313,13 @@ const emit = defineEmits(["filtersSortData"])
 function emitFilterSortData () {
   emit("filtersSortData", props.filtersSortData)
 }
+
+function goToNegotiation(id,userRole,filtersData,sortby) {
+  if(!props.networkActivated){
+  router.push({
+                  name: 'negotiation-page',
+                  params: { negotiationId: id, userRole: userRole, filters: filtersData, sortBy: sortby }
+                })
+    }
+  }
 </script>

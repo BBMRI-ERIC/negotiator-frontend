@@ -39,7 +39,6 @@ const router = createRouter({
     path: "/networks",
     name: "networks",
     component: NetworksPage,
-    props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false, middleware: [hasUser] }
   }, {
     path: "/biobanker",

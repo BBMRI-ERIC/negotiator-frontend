@@ -46,15 +46,15 @@
             </router-link>
           </li>
           <li
-            v-if="isAdmin && showNetworksTab && featureFlagsNetworks"
+            v-if="showNetworksTab && featureFlagsNetworks"
             class="nav-item"
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path === '/networks' || $route.params.userRole === 'ROLE_RESEARCHER' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :class="$route.path === '/networks' ? 'text-navbar-active-text' : 'text-navbar-text'"
               to="/networks"
             >
-              <i class="bi bi-diagram-3" />
+              <i class="bi bi-globe" />
               Your networks
             </router-link>
           </li>
