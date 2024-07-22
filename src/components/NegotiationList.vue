@@ -240,7 +240,9 @@ import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/uti
 import NewRequestButton from "../components/NewRequestButton.vue"
 import { useStore } from "vuex"
 import { Tooltip } from "bootstrap"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 const store = useStore()
 
 const props = defineProps({
