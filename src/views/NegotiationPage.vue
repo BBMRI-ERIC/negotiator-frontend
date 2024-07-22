@@ -92,8 +92,8 @@
             >
               <div
                 data-bs-toggle="collapse"
-                data-bs-target="#resourcesList"
-                aria-controls="resourcesList"
+                data-bs-target="#requestsHumanReadable"
+                aria-controls="requestsHumanReadable"
                 aria-expanded="true"
                 type="button"
               >
