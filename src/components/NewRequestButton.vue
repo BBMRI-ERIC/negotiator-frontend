@@ -20,12 +20,29 @@
 </template>
 
 <script setup>
+import { computed } from "vue"
 import NewRequestModal from "@/components/modals/NewRequestModal.vue"
 import allExternalLinks from "../config/externalLinks.js"
+import { useStore } from "vuex"
 
+const store = useStore()
 const directoryPath = allExternalLinks.directory
 
-function startNewRequest () {
+async function startNewRequest () {
+  if(import.meta.env.DEV){
+    const data =  {
+    "url": "https://bbmritestnn.gcc.rug.nl",
+    "humanReadable": "#1: No filters used.\r\n#2: No filters used.\r\n#3: No filters used.\r\n#4: No filters used.\r\n#5: No filters used.",
+    "resources": [{
+        "id": "bbmri-eric:ID:CZ_MMCI:collection:LTS"
+    }]
+}
+
+    await store.dispatch("createRequests", { data }).then((redirect) => {
+      window.open(redirect.redirectUrl, '_blank');
+  })
+  }else{
   if (directoryPath) { window.open(directoryPath, "_blank") }
+}
 }
 </script>

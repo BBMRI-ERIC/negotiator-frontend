@@ -309,5 +309,16 @@ export default {
         commit("setNotification", "Error getting negotiation lifecycle states request data from server")
         return null
       })
-  }
+  },
+  createRequests ({ state, commit }, { data }) {
+    return axios.post(`${REQUESTS_PATH}`, data)
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "There was an error saving the attachment")
+        return null
+      })
+  },
+
 }
