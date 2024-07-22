@@ -4,10 +4,10 @@
 
 <script setup>
 import { onMounted } from "vue"
-import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import { useOidcStore } from "../storeP/oidc"
 
-const store = useStore()
+const oidcStore = useOidcStore()
 const router = useRouter()
 
 onMounted(() => {
@@ -15,7 +15,7 @@ onMounted(() => {
 })
 
 async function oidcSignInCallback () {
-  await store.dispatch("oidcSignInCallback").then((redirectPath) => {
+  await oidcStore.oidcSignInCallback().then((redirectPath) => {
     router.push(redirectPath)
   }).catch((err) => {
     console.error(err)

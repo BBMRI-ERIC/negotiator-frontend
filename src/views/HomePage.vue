@@ -1,7 +1,7 @@
 <template>
   <div
-    class="container-fluid d-flex justify-content-center align-items-center vh-100  mt-5"
     v-if="!oidcIsAuthenticated"
+    class="container-fluid d-flex justify-content-center align-items-center vh-100  mt-5"
   >
     <div class="row">
       <div class="col-1" />
@@ -110,7 +110,12 @@ import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import { useActuatorInfoStore } from "../storeP/actuatorInfo"
+import { useOidcStore } from "../storeP/oidc"
+
 const viteGitTag = import.meta.env.VITE_GIT_TAG
+
+const actuatorInfoStore = useActuatorInfoStore()
 
 const store = useStore()
 const router = useRouter()
@@ -122,16 +127,21 @@ const backendVersion = ref("")
 const oidcIsAuthenticated = computed(() => {
   return store.getters.oidcIsAuthenticated
 })
+const oidcStore = useOidcStore()
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   if (oidcIsAuthenticated.value) {
     router.push("/researcher")
   }
-  backendVersion.value = await store.dispatch("retrieveBackendVersion")
+  actuatorInfoStore.retrieveBackendActuatorInfo().then(() => {
+    backendVersion.value = actuatorInfoStore.actuatorInfoBuildVersion
+  })
 })
 
 async function authenticateOidc () {
-  await store.dispatch("authenticateOidc")
+  oidcStore.authenticateOidc()
+
+  // await store.dispatch("authenticateOidc")
 }
 </script>
 

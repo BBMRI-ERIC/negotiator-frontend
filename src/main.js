@@ -3,6 +3,7 @@ import App from "./App.vue"
 import VueMatomo from "vue-matomo"
 import router from "./router"
 import store from "./store"
+import { createPinia } from "pinia"
 import { sync } from "vuex-router-sync"
 import { library } from "@fortawesome/fontawesome-svg-core"
 import { faDownload, faPencil, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons"
@@ -15,19 +16,20 @@ import matomo from "./config/matomo.js"
 import activeTheme from "./config/theme.js"
 import Vue3Tour from "vue3-tour"
 import "vue3-tour/dist/vue3-tour.css"
-
 library.add(faSpinner)
 library.add(faPencil)
 library.add(faTrash)
 library.add(faDownload)
 
+const pinia = createPinia()
+
 const app = createApp(App).use(VueMatomo, {
   host: matomo.matomoHost,
   siteId: matomo.matomoId
 })
-
 app.use(router)
 app.use(store)
+app.use(pinia)
 app.use(Vue3Tour)
 
 app.component("FontAwesomeIcon", FontAwesomeIcon)

@@ -6,6 +6,13 @@ import NegotiationPage from "../views/NegotiationPage.vue"
 import FaqPage from "../views/FaqPage.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
+
+import { useUserStore } from "../storeP/user.js"
+import { useOidcStore } from "../storeP/oidc"
+import {
+  piniaOidcCreateRouterMiddleware
+} from "pinia-oidc"
+
 import UserPage from "@/views/UserPage.vue"
 import { ROLES } from "@/config/consts"
 import hasUser from "@/middlewares/hasUser.js"
@@ -63,9 +70,33 @@ const router = createRouter({
 })
 
 router.beforeEach(vuexOidcCreateRouterMiddleware(store))
+// router.beforeEach((to, from, next) => {
+//     const oidcStore = useOidcStore()
+
+// oidcStore.oidcCheckAccess(useOidcStore()).then((response) => {
+//   if(response){
+//     return next()
+//   }
+// })
+// })
 
 router.beforeEach((to, from, next) => {
+  // piniaOidcCreateRouterMiddleware(useOidcStore())
   /** Navigate to next if middleware is not applied */
+  // const oidcStore = useOidcStore()
+  // console.log('---==',piniaOidcCreateRouterMiddleware(useOidcStore()))
+  // console.log('---==',oidcStore)
+  // oidcStore.oidcCheckAccess(useOidcStore()).then((response) => {
+
+  // console.log('---1111111==',to.meta)
+
+  // console.log('---1111111==',to.meta)
+  //   // if(response){
+  //   //   return next()
+  //   // }
+  // })
+  const userStore = useUserStore()
+
   if (!to.meta.middleware) {
     return next()
   }
@@ -75,7 +106,8 @@ router.beforeEach((to, from, next) => {
     to,
     from,
     next,
-    store
+    store,
+    userStore
   }
 
   return middleware[0]({

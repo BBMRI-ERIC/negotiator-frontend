@@ -126,7 +126,11 @@ import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import Notifications from "../components/Notifications.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
 import { useStore } from "vuex"
+import { useActuatorInfoStore } from "../storeP/actuatorInfo"
+import { useUserStore } from "../storeP/user"
 
+const actuatorInfoStore = useActuatorInfoStore()
+const userStore = useUserStore()
 const store = useStore()
 
 const roles = ref([])
@@ -167,7 +171,7 @@ const returnCurrentModeTextColor = computed(() => {
   return ""
 })
 const userInfo = computed(() => {
-  return store.getters.getUserInfo
+  return userStore.userInfo
 })
 
 watch(userInfo, () => {
@@ -178,10 +182,8 @@ onBeforeMount(() => {
   retrieveBackendEnvironment()
 })
 
-async function retrieveBackendEnvironment () {
-  await store.dispatch("retrieveBackendEnvironment").then((res) => {
-    backendEnvironment.value = res
-  })
+function retrieveBackendEnvironment () {
+  backendEnvironment.value = actuatorInfoStore.actuatorInfoApplicationEnvironment
 }
 function retrieveUserRoles () {
   roles.value = userInfo.value.roles
