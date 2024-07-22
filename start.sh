@@ -26,7 +26,7 @@ do
   sed -i 's|FOOTER_FOLLOW_US_YOUTUBE_PLACEHOLDER|'${FOOTER_FOLLOW_US_YOUTUBE:-https://www.bbmri-eric.eu/bbmri-eric/bbmri-eric-podcast/}'|g' $file
   sed -i 's|FOOTER_BBMRIERIC_STATUS_PAGE_VISIBLE_PLACEHOLDER|'${FOOTER_BBMRIERIC_STATUS_PAGE_VISIBLE:-true}'|g' $file
   sed -i 's|FOOTER_STATUS_PAGE_LINK_PLACEHOLDER|'${FOOTER_STATUS_PAGE_LINK:-https://status.bbmri-eric.eu/}'|g' $file
-  sed -i 's|FOOTER_STATUS_PAGE_TEXT_PLACEHOLDER|'${FOOTER_STATUS_PAGE_TEXT:-BBMRI-ERIC Status Page}'|g' $file
+  sed -i 's|FOOTER_STATUS_PAGE_TEXT_PLACEHOLDER|'${FOOTER_STATUS_PAGE_TEXT:-BBMRI-ERIC#Status_Page}'|g' $file
   sed -i 's|FOOTER_WORK_PROGRAMME_VISIBLE_PLACEHOLDER|'${FOOTER_WORK_PROGRAMME_VISIBLE:-true}'|g' $file
   sed -i 's|FOOTER_WORK_PROGRAMME_LINK_PLACEHOLDER|'${FOOTER_WORK_PROGRAMME_LINK:-https://www.bbmri-eric.eu/wp-content/uploads/BBMRI-ERIC_work-program_2022-2024_DIGITAL.pdf}'|g' $file
   sed -i 's|FOOTER_PRIVACY_POLICY_VISIBLE_PLACEHOLDER|'${FOOTER_PRIVACY_POLICY_VISIBLE:-true}'|g' $file
@@ -34,7 +34,7 @@ do
   sed -i 's|FOOTER_HELP_LINK_VISIBLE_PLACEHOLDER|'${FOOTER_HELP_LINK_VISIBLE:-true}'|g' $file
   sed -i 's|FOOTER_HELP_LINK_PLACEHOLDER|'${FOOTER_HELP_LINK:-mailto:negotiator@helpdesk.bbmri-eric.eu}'|g' $file
   sed -i 's|FOOTER_COPYRIGHT_VISIBLE_PLACEHOLDER|'${FOOTER_COPYRIGHT_VISIBLE:-true}'|g' $file
-  sed -i 's|FOOTER_COPYRIGHT_PLACEHOLDER|'${FOOTER_COPYRIGHT:-© 2024 BBMRI-ERIC}'|g' $file
+  sed -i 's|FOOTER_COPYRIGHT_PLACEHOLDER|'${FOOTER_COPYRIGHT:-©2024#BBMRI-ERIC}'|g' $file
   sed -i 's|FOOTER_LEFT_SIDE_ICON_VISIBLE_PLACEHOLDER|'${FOOTER_LEFT_SIDE_ICON_VISIBLE:-true}'|g' $file  
   sed -i 's|FOOTER_LEFT_SIDE_ICON_PLACEHOLDER|'${FOOTER_LEFT_SIDE_ICON:-@/assets/images/bbmri/home-bbmri-png}'|g' $file
   sed -i 's|FOOTER_LEFT_SIDE_ICON_LINK_PLACEHOLDER|'${FOOTER_LEFT_SIDE_ICON_LINK:-https://www.bbmri-eric.eu/}'|g' $file
