@@ -5,9 +5,10 @@
     <hr class="mt-10 mb-10">
     <div class="row d-flex flex-column flex-md-row">
       <div class="col text-center mb-4 mb-md-0">
-        <a 
+        <a
           v-if="activeTheme.isFooterLeftSideIconVisible"
-          :href="activeTheme.footerLeftSideIconLink">
+          :href="activeTheme.footerLeftSideIconLink"
+        >
           <img
             width="150"
             :src="logoSrc"
@@ -116,17 +117,19 @@
       </div>
       <div>
         <div class="row mt-4">
-          <div 
+          <div
             v-if="activeTheme.isFooterCopyRightVisible"
-            class="col  text-center">
+            class="col  text-center"
+          >
             <p>{{ activeTheme.footerCopyRight }}</p>
           </div>
           <div class="col text-center text-light ms-4">
             UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>v{{ backendVersion }}</span>
           </div>
-          <div 
+          <div
             v-if="activeTheme.isFooterHelpLinkVisible"
-            class="col text-center ms-5">
+            class="col text-center ms-5"
+          >
             Need help? <a :href="activeTheme.footerHelpLink">Contact us</a>.
           </div>
         </div>
@@ -162,7 +165,7 @@ async function retrieveBackendVersion () {
   })
 }
 
-function getWorkProgrammeIcon() {
+function getWorkProgrammeIcon () {
   return new URL(`${activeTheme.footerWorkProgrammeIcon}`)
 }
 </script>

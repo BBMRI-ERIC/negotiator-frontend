@@ -21,9 +21,8 @@
           :class="getBadgeIcon(negotiation.status)"
           class="px-1"
         /> {{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
-        <hr>
       </div>
-      <div class="col-8">
+      <div class="col-12 col-md-8 order-2 order-md-1">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li
             v-for="(element, key) in negotiation.payload"
@@ -278,7 +277,7 @@
         />
       </div>
       <div
-        class="col-4"
+        class="col-12 col-md-4 order-1 order-md-2"
       >
         <ul class="list-group list-group-flush my-3">
           <li class="list-group-item p-2">
