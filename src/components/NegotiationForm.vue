@@ -204,7 +204,10 @@
             />
           </div>
 
-          <div v-else-if="criteria.type === 'NUMBER'">
+          <div
+            v-else-if="criteria.type === 'NUMBER'"
+            class="col-5"
+          >
             <input
               v-model="negotiationCriteria[section.name][criteria.name]"
               :type="criteria.type"
@@ -212,6 +215,7 @@
               class="form-control text-secondary-text"
               :class="validationColorHighlight.includes(criteria.name) ? 'is-invalid': ''"
               :required="criteria.required"
+              @keypress="isNumber($event)"
             >
           </div>
 
@@ -269,7 +273,7 @@
             v-if="validationColorHighlight.includes(criteria.name)"
             class="invalidText"
           >
-            Please provide a {{ criteria.label }}!
+            {{ transformMessage(criteria.type) }}
           </div>
           <div
             v-if="negotiationValueSets[criteria.id]?.externalDocumentation && negotiationValueSets[criteria.id]?.externalDocumentation !== 'none'"
@@ -480,7 +484,7 @@ function isSectionValid (section) {
         valid = true
       }
     })
-    if (!valid) { store.commit("setNotification", "Please fill all the required fields") }
+    if (!valid) { store.commit("setNotification", "Please fill out all required fields correctly") }
     return valid
   }
 }
@@ -496,6 +500,29 @@ function translateTrueFalse (value) {
     return value ? "Yes" : "No"
   }
   return value
+}
+
+function isNumber (evt) {
+  const charCode = evt.which ? evt.which : evt.keyCode
+  if (
+    charCode > 31 &&
+        (charCode < 48 || charCode > 57) &&
+        charCode !== 46
+  ) {
+    evt.preventDefault()
+  }
+}
+
+function transformMessage (text) {
+  if (text == "SINGLE_CHOICE" || text == "BOOLEAN") {
+    return "Please select one of available values"
+  } else if (text == "MULTIPLE_CHOICE") {
+    return "Please select at least one of the available values"
+  } else if (text == "TEXT_LARGE") {
+    return "Please provide a text"
+  } else {
+    return "Please provide a " + text?.toLowerCase()
+  }
 }
 </script>
 
