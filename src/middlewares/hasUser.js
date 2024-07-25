@@ -6,11 +6,5 @@ export default async function hasUser ({ next, userStore }) {
       return next()
     })
   }
-
-  // if (Object.keys(store.getters.getUserInfo).length === 0) {
-  //   await store.dispatch("retrieveUser").then(() => {
-  //     return next()
-  //   })
-  // }
   return next()
 }

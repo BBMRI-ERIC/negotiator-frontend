@@ -28,8 +28,8 @@ import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import FilterSort from "@/components/FilterSort.vue"
 import { ROLES } from "@/config/consts.js"
 import { useRouter, useRoute } from "vue-router"
-import { useUserStore } from "../storeP/user"
-import { useNegotiationsStore } from "../storeP/negotiations"
+import { useUserStore } from "../store/user"
+import { useNegotiationsStore } from "../store/negotiations"
 
 const userStore = useUserStore()
 const negotiationsStore = useNegotiationsStore()
@@ -63,6 +63,9 @@ const loading = computed(() => {
 })
 
 onMounted(async () => {
+  if (Object.keys(userStore.userInfo).length === 0) {
+    await userStore.retrieveUser()
+  }
   user.value = userStore.userInfo
   userId.value = user.value?.id
 

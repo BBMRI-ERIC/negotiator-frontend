@@ -40,7 +40,6 @@ import Alert from "./components/Alert.vue"
 import Footer from "./components/Footer.vue"
 
 const route = useRoute()
-
 const vueTourFeatureFlag = !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true)
 
 const isVueTourVisible = computed(() => {

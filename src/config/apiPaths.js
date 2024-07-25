@@ -1,5 +1,4 @@
-import state from "../store/state.js"
-
+import { useOidcStore } from "../store/oidc"
 const BASE_API_PATH = "/api/v3"
 
 const apiPaths = {
@@ -15,7 +14,8 @@ const apiPaths = {
 }
 
 function getBearerHeaders () {
-  return { Authorization: `Bearer ${state.oidc.access_token}` }
+  const oidcStore = useOidcStore()
+  return { Authorization: `Bearer ${oidcStore.access_token}` }
 }
 
 export { apiPaths, getBearerHeaders }

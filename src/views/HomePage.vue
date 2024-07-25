@@ -108,26 +108,24 @@ import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
-import { useStore } from "vuex"
 import { useRouter } from "vue-router"
-import { useActuatorInfoStore } from "../storeP/actuatorInfo"
-import { useOidcStore } from "../storeP/oidc"
+import { useActuatorInfoStore } from "../store/actuatorInfo.js"
+import { useOidcStore } from "../store/oidc.js"
 
 const viteGitTag = import.meta.env.VITE_GIT_TAG
 
 const actuatorInfoStore = useActuatorInfoStore()
 
-const store = useStore()
 const router = useRouter()
 
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
 const gitTag = ref(viteGitTag)
 const backendVersion = ref("")
+const oidcStore = useOidcStore()
 
 const oidcIsAuthenticated = computed(() => {
-  return store.getters.oidcIsAuthenticated
+  return oidcStore.oidcIsAuthenticated
 })
-const oidcStore = useOidcStore()
 
 onBeforeMount(() => {
   if (oidcIsAuthenticated.value) {
@@ -138,10 +136,8 @@ onBeforeMount(() => {
   })
 })
 
-async function authenticateOidc () {
-  oidcStore.authenticateOidc()
-
-  // await store.dispatch("authenticateOidc")
+ function authenticateOidc () {
+   oidcStore.authenticateOidc()
 }
 </script>
 

@@ -144,7 +144,7 @@ import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
-import { useActuatorInfoStore } from "../storeP/actuatorInfo.js"
+import { useActuatorInfoStore } from "../store/actuatorInfo.js"
 
 const actuatorInfoStore = useActuatorInfoStore()
 const viteGitTag = import.meta.env.VITE_GIT_TAG

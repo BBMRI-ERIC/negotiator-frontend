@@ -51,7 +51,7 @@
                     class="ms-1 cursor-pointer"
                     icon="fa fa-download"
                     fixed-width
-                    @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
+                    @click.prevent="downloadAttachment(subelement.id, subelement.name)"
                   />
                 </span>
                 <span v-else>
@@ -83,7 +83,7 @@
               :name="attachment.name"
               :size="attachment.size"
               :content-type="attachment.contentType"
-              @download="downloadAttachment({id: attachment.id, name: attachment.name})"
+              @download="downloadAttachment(attachment.id, attachment.name)"
             />
           </li>
           <li class="list-group-item p-3">
@@ -405,8 +405,10 @@ import CopyTextButton from "@/components/CopyTextButton.vue"
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
-import { mapActions, mapGetters } from "vuex"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { useNegotiationPageStore } from '../store/negotiationPage.js'
+import { useUserStore } from '../store/user.js'
+
 
 export default {
   name: "NegotiationPage",
@@ -436,11 +438,18 @@ export default {
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
       ORGANIZATION_TYPE: "ORGANIZATION",
-      attachments: []
+      attachments: [],
     }
   },
   computed: {
-    ...mapGetters(["oidcUser"]),
+    userStore() {
+      const userStore = useUserStore()
+      return userStore
+    },
+    negotiationPageStore() {
+      const negotiationPageStore = useNegotiationPageStore()
+      return negotiationPageStore
+    },
     resources () {
       return this.negotiation.resources
     },
@@ -498,14 +507,14 @@ export default {
     }
   },
   async beforeMount () {
-    this.negotiation = await this.retrieveNegotiationById({
-      negotiationId: this.negotiationId
-    })
+    this.negotiation = await this.negotiationPageStore.retrieveNegotiationById(
+      this.negotiationId
+    )
 
     // initialize checkboxes selection
     let organizations, resources
     if (this.userRole === ROLES.REPRESENTATIVE) {
-      this.representedResourcesIds = await this.retrieveUserRepresentedResources()
+      this.representedResourcesIds = await this.negotiationPageStore.retrieveUserRepresentedResources()
       organizations = this.representedOrganizations
       resources = this.representedResources
     } else { // role is researcher
@@ -520,29 +529,23 @@ export default {
       this.selection[res.id] = { checked: false, type: this.RESOURCE_TYPE }
     })
 
-    this.negotiationStatusOptions = await this.retrievePossibleEvents({
-      negotiationId: this.negotiation.id
-    })
+    this.negotiationStatusOptions = await this.negotiationPageStore.retrievePossibleEvents(
+     this.negotiation.id
+    )
   },
   created () {
     this.retrieveAttachments()
   },
+  async mounted () {
+    if (Object.keys(this.userStore.userInfo).length === 0) {
+    await this.userStore.retrieveUser()
+  }
+  },
   methods: {
-    ...mapActions([
-      "retrieveNegotiationById",
-      "retrievePostsByNegotiationId",
-      "retrieveUserRepresentedResources",
-      "retrievePossibleEvents",
-      "retrievePossibleEventsForResource",
-      "retrieveAttachmentsByNegotiationId",
-      "updateNegotiationStatus",
-      "updateResourceStatus",
-      "downloadAttachment"
-    ]),
     async retrieveAttachments () {
-      await this.retrieveAttachmentsByNegotiationId({
-        negotiationId: this.negotiationId
-      }).then((response) => {
+      await this.negotiationPageStore.retrieveAttachmentsByNegotiationId(
+        this.negotiationId
+      ).then((response) => {
         this.attachments = response
       })
     },
@@ -563,10 +566,10 @@ export default {
       return moment(date).format(dateFormat)
     },
     async updateNegotiation (action) {
-      await this.updateNegotiationStatus({
-        negotiationId: this.negotiation.id,
-        event: action
-      }).then(() => {
+      await this.negotiationPageStore.updateNegotiationStatus(
+        this.negotiation.id,
+        action
+      ).then(() => {
         this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
       })
     },
@@ -613,10 +616,10 @@ export default {
         this.currentResourceEvents = []
       } else {
         if (this.currentMultipleResourceStatus === undefined) {
-          this.currentResourceEvents = await this.retrievePossibleEventsForResource({
-            negotiationId: this.negotiation.id,
+          this.currentResourceEvents = await this.negotiationPageStore.retrievePossibleEventsForResource(
+            this.negotiation.id,
             resourceId
-          }).then((data) => {
+          ).then((data) => {
             this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
             this.savedResourceId = resourceId
             // gets the orgId of the organization of the checked resource
@@ -640,11 +643,11 @@ export default {
       try {
         for (const resource in this.selection) {
           if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
-            await this.updateResourceStatus({
-              negotiationId: this.negotiation.id,
-              resourceId: resource,
+            await this.negotiationPageStore.updateResourceStatus(
+              this.negotiation.id,
+              resource,
               event
-            })
+            )
           }
         }
       } finally {
@@ -666,6 +669,9 @@ export default {
         return value ? "Yes" : "No"
       }
       return value
+    },
+    downloadAttachment(id,name) {
+      this.negotiationPageStore.downloadAttachment(id,name)
     }
   }
 }

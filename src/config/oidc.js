@@ -7,7 +7,12 @@ const devSettings = {
   responseType: "code",
   resource: "https://negotiator.bbmri-eric.eu",
   scope: "openid profile email permissions some-app-scope-1",
-  automaticSilentRenew: true
+  automaticSilentRenew: true,
+  client_id: 'client-credentials-mock-client',
+  client_secret:"authorization-code-with-pkce-client-secret",
+  redirect_uri: "http://localhost:8080/logged-in",
+  post_logout_redirect_uri: "http://localhost:8080",
+  response_type: "code"
 }
 
 const prodSettings = {
@@ -18,7 +23,11 @@ const prodSettings = {
   resource: "RESOURCES_PLACEHOLDER",
   responseType: "code",
   scope: "openid profile email offline_access eduperson_entitlement",
-  automaticSilentRenew: true
+  automaticSilentRenew: true,
+  client_id: 'CLIENT_ID_PLACEHOLDER',
+  redirect_uri: "REDIRECT_URI_PLACEHOLDER",
+  post_logout_redirect_uri: "LOGOUT_URI_PLACEHOLDER",
+  response_type: "code"
 }
 
 let oidcSettings

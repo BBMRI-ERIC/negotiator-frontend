@@ -159,7 +159,7 @@ src/
 ```
 You can set which URLs external links lead to
 
-## Config for vuex-oidc
+## Config for pinia-oidc
 
 Location of matomo config file:
 ```sh 

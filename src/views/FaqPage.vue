@@ -200,6 +200,19 @@
   </div>
 </template>
 
+<script setup>
+  import { onMounted } from "vue"
+  import { useUserStore } from "../store/user"
+  
+  const userStore = useUserStore()
+  
+  onMounted(async () => {
+    if (Object.keys(userStore.userInfo).length === 0) {
+      await userStore.retrieveUser()
+    }
+  })
+</script>
+
 <style scoped>
 a:link {
     text-decoration: none;

@@ -79,10 +79,10 @@
 
 <script setup>
 import { computed } from "vue"
-import { useStore } from "vuex"
 import externalLinks from "@/config/externalLinks"
+import { useOidcStore } from "@/store/oidc";
 
-const store = useStore()
+const oidcStore = useOidcStore()
 
 const props = defineProps({
   user: {
@@ -112,7 +112,7 @@ const returnAcronymOfName = computed(() => {
 })
 
 function signOutOidc () {
-  store.dispatch("signOutOidc")
+  oidcStore.signOutOidc()
 }
 </script>
 

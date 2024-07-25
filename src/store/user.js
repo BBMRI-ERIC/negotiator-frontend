@@ -6,7 +6,6 @@ import { useNotificationsStore } from "./notifications"
 
 export const useUserStore = defineStore("user", () => {
   const notifications = useNotificationsStore()
-
   const userInfo = ref({})
 
   async function retrieveUser () {
@@ -15,7 +14,7 @@ export const useUserStore = defineStore("user", () => {
         userInfo.value = response.data
       })
       .catch(() => {
-        notifications.setNotification("Error sending message")
+        // notifications.setNotification("Error sending message")
       })
   }
 

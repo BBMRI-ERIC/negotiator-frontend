@@ -250,7 +250,7 @@ import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
-import { useNegotiationsViewStore } from "../storeP/negotiationsView"
+import { useNegotiationsViewStore } from "../store/negotiationsView.js"
 
 const negotiationsViewStore = useNegotiationsViewStore()
 
@@ -295,7 +295,6 @@ onBeforeMount(() => {
 })
 
 function setSavedNegotiationsView (view) {
-  console.log(negotiationsViewStore.savedNegotiationsView)
   negotiationsViewStore.savedNegotiationsView = view
 }
 

@@ -5,7 +5,7 @@
 <script setup>
 import { onMounted } from "vue"
 import { useRouter } from "vue-router"
-import { useOidcStore } from "../storeP/oidc"
+import { useOidcStore } from "../store/oidc"
 
 const oidcStore = useOidcStore()
 const router = useRouter()

@@ -125,13 +125,13 @@ import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import Notifications from "../components/Notifications.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
-import { useStore } from "vuex"
-import { useActuatorInfoStore } from "../storeP/actuatorInfo"
-import { useUserStore } from "../storeP/user"
+import { useActuatorInfoStore } from "../store/actuatorInfo"
+import { useUserStore } from "../store/user"
+import { useOidcStore } from "../store/oidc"
 
 const actuatorInfoStore = useActuatorInfoStore()
 const userStore = useUserStore()
-const store = useStore()
+const oidcStore = useOidcStore()
 
 const roles = ref([])
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
@@ -140,10 +140,10 @@ const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" ||
 const backendEnvironment = ref("")
 
 const oidcIsAuthenticated = computed(() => {
-  return store.getters.oidcIsAuthenticated
+  return oidcStore.oidcIsAuthenticated
 })
 const oidcUser = computed(() => {
-  return store.getters.oidcUser
+  return oidcStore.oidcUser
 })
 const isAdmin = computed(() => {
   return roles.value.includes(ROLES.ADMINISTRATOR)

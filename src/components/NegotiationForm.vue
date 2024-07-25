@@ -347,8 +347,8 @@ import { useRouter } from "vue-router"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
-import { useNegotiationFormStore } from "../storeP/negotiationForm"
-import { useNotificationsStore } from "../storeP/notifications"
+import { useNegotiationFormStore } from "../store/negotiationForm"
+import { useNotificationsStore } from "../store/notifications"
 import "vue3-form-wizard/dist/style.css"
 
 const negotiationFormStore = useNegotiationFormStore()

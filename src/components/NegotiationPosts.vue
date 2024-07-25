@@ -116,10 +116,10 @@ import { Tooltip } from "bootstrap"
 import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
-import { useNegotiationPageStore } from "../storeP/negotiationPage"
-import { useStore } from "vuex"
+import { useNegotiationPageStore } from "../store/negotiationPage"
+import { useOidcStore } from "@/store/oidc"
 
-const store = useStore()
+const oidcStore = useOidcStore()
 const negotiationPageStore = useNegotiationPageStore()
 
 const props = defineProps({
@@ -152,7 +152,7 @@ const recipientId = ref("")
 const attachment = ref(undefined)
 
 const oidcUser = computed(() => {
-  return store.getters.oidcUser
+  return oidcStore.oidcUser
 })
 
 const readyToSend = computed(() => {
