@@ -309,5 +309,32 @@ export default {
         commit("setNotification", "Error getting negotiation lifecycle states request data from server")
         return null
       })
+  },
+  async retrieveResourceAllEvents ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/resource-lifecycle/events`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.events
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting all resource events data from server")
+      })
+  },
+  async setInfoRequirements ({ state, commit }, {data}) {
+    return axios.post(`${BASE_API_PATH}/info-requirements`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+    .then((response) => {
+      return response.data
+    })
+    .catch(() => {
+      commit("setNotification", "Error sending message")
+    })
+  },
+  async retrieveInfoRequirements ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/info-requirements`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting Info Requirements data from server")
+      })
   }
 }

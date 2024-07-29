@@ -4,6 +4,7 @@ import HomePage from "../views/HomePage.vue"
 import NegotiationCreatePage from "../views/NegotiationCreatePage.vue"
 import NegotiationPage from "../views/NegotiationPage.vue"
 import FaqPage from "../views/FaqPage.vue"
+import AdminSettingsPage from "../views/AdminSettingsPage.vue"
 import store from "@/store"
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
@@ -52,6 +53,13 @@ const router = createRouter({
     name: "FAQ",
     component: FaqPage,
     meta: { isPublic: true, middleware: [hasUser] }
+  },
+  ,
+  {
+    path: "/settings",
+    name: "settings",
+    component: AdminSettingsPage,
+    meta: { isPublic: false, middleware: [hasUser] }
   },
   {
     path: "/negotiations/:negotiationId/:userRole",
