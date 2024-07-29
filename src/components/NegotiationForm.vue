@@ -476,7 +476,10 @@ function isSectionValid (section) {
         if (ac.type === "MULTIPLE_CHOICE" && Object.keys(negotiationCriteria.value[section.name][ac.name]).length === 0) {
           validationColorHighlight.value.push(ac.name)
           valid = false
-        } else if (ac.type !== "MULTIPLE_CHOICE" && (typeof negotiationCriteria.value[section.name][ac.name] !== "string" || negotiationCriteria.value[section.name][ac.name] === "")) {
+        } else if (ac.type === "FILE" && (typeof negotiationCriteria.value[section.name][ac.name] !== "object" || negotiationCriteria.value[section.name][ac.name] === null)) {
+          validationColorHighlight.value.push(ac.name)
+          valid = false
+        } else if (ac.type !== "MULTIPLE_CHOICE" && ac.type !== "FILE" && (typeof negotiationCriteria.value[section.name][ac.name] !== "string" || negotiationCriteria.value[section.name][ac.name] === "")) {
           validationColorHighlight.value.push(ac.name)
           valid = false
         }
