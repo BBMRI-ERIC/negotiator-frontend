@@ -98,6 +98,7 @@
         <ProfileSettings
           :user="oidcUser"
           :is-representative="isRepresentative"
+          :is-admin="isAdmin"
           class="me-3"
         />
         <button

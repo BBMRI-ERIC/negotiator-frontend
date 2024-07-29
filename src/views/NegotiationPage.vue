@@ -3,6 +3,12 @@
     v-if="!loading"
   >
     <GoBackButton />
+    <admin-setings-modal
+      id="adminSetingsModal"
+      :title="requiredAccessForm.name"
+      :requiredAccessForm="requiredAccessForm"
+      @confirm="hideAdminSetingsModal()"
+    />
     <confirmation-modal
       id="abandonModal"
       title="Are you sure you want to abandon this Negotiation?"
@@ -397,9 +403,11 @@
 <script>
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
+import AdminSetingsModal from "@/components/modals/AdminSetingsModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import CopyTextButton from "@/components/CopyTextButton.vue"
+import { Modal } from "bootstrap"
 
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
@@ -424,6 +432,7 @@ export default {
   },
   data () {
     return {
+      infoRequirements: undefined,
       negotiation: undefined,
       representedResourcesIds: [],
       negotiationStatusOptions: [],
@@ -435,7 +444,9 @@ export default {
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
       ORGANIZATION_TYPE: "ORGANIZATION",
-      attachments: []
+      attachments: [],
+      requiredAccessForm: {},
+      adminSetingsModal: null,
     }
   },
   computed: {
@@ -501,6 +512,9 @@ export default {
       negotiationId: this.negotiationId
     })
 
+    this.infoRequirements = await this.retrieveInfoRequirements()
+    
+
     // initialize checkboxes selection
     let organizations, resources
     if (this.userRole === ROLES.REPRESENTATIVE) {
@@ -536,7 +550,8 @@ export default {
       "retrieveAttachmentsByNegotiationId",
       "updateNegotiationStatus",
       "updateResourceStatus",
-      "downloadAttachment"
+      "downloadAttachment",
+      "retrieveInfoRequirements"
     ]),
     async retrieveAttachments () {
       await this.retrieveAttachmentsByNegotiationId({
@@ -635,21 +650,32 @@ export default {
       return this.currentMultipleResourceStatus === undefined
     },
     async updateCheckedResourcesStatus (event) {
-      // For each of the settled resources, update the status to the one chosen in the combo
-      try {
-        for (const resource in this.selection) {
-          if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
-            await this.updateResourceStatus({
-              negotiationId: this.negotiation.id,
-              resourceId: resource,
-              event
-            })
+      let openModal = false
+      this.infoRequirements['info-requirements'].forEach((element) => {
+        if (element.forResourceEvent === event){
+          openModal = true
+          this.requiredAccessForm = element.requiredAccessForm
+          this.adminSetingsModal = new Modal(document.querySelector("#adminSetingsModal"))
+          this.adminSetingsModal.show()
+      }
+      })
+      if(!openModal){
+          // For each of the settled resources, update the status to the one chosen in the combo
+          try {
+            for (const resource in this.selection) {
+              if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
+                await this.updateResourceStatus({
+                  negotiationId: this.negotiation.id,
+                  resourceId: resource,
+                  event
+                })
+              }
+            }
+          } finally {
+            // update status and status select
+            // location.reload()
           }
         }
-      } finally {
-        // update status and status select
-        location.reload()
-      }
     },
     transformStatus (badgeText) {
       return transformStatus(badgeText)
@@ -665,6 +691,9 @@ export default {
         return value ? "Yes" : "No"
       }
       return value
+    },
+    hideAdminSetingsModal() {
+      this.adminSetingsModal.hide()
     }
   }
 }
