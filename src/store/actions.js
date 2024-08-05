@@ -184,8 +184,8 @@ export default {
         commit("setNotification", "Error getting request data from server")
       })
   },
-  updateResourceStatus ({ state, commit }, { negotiationId, resourceId, event }) {
-    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
+  updateResourceStatus ({ state, commit }, { link }) {
+    return axios.put(`${link}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
         return response.data
@@ -346,10 +346,19 @@ export default {
         commit("setNotification", "Error sending message")
       })
   },
-  async retrieveInfoRequirements ({ state }, { link }) {
+  async retrieveInfoRequirement ({ state }, { link }) {
     return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting Info Requirements data from server")
+      })
+  },
+  async retrieveInfoRequirements ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/info-requirements`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded
       })
       .catch(() => {
         commit("setNotification", "Error getting Info Requirements data from server")

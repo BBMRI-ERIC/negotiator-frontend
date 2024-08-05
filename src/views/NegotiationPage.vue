@@ -251,16 +251,6 @@
                     class="card-body"
                   >
                     <div class="form-check">
-                      <input
-                        v-if="userRole === availableRoles.RESEARCHER ||
-                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId)) && selection[resource.id]"
-                        :id="getElementIdFromResourceId(resource.sourceId)"
-                        v-model="selection[resource.id]['checked']"
-                        class="form-check-input"
-                        type="checkbox"
-                        :disabled="isResourceButtonDisabled(resource.id)"
-                        @change="setCurrentMultipleStatus(resource.id)"
-                      >
                       <label
                         class="form-check-label text-primary-text"
                         :for="getElementIdFromResourceId(resource.sourceId)"
@@ -279,19 +269,28 @@
                         class="text-muted"
                       >
                         <a
-                          class="pdf-text cursor-pointer"
+                          class="submission-text cursor-pointer"
                           @click.prevent="openFormModal(link.href)"
-                        ><i class="bi bi-filetype-pdf" />
-                          {{ link.title }} </a>
+                        ><i class="bi bi-check-circle" />
+                          {{ link.name }} </a>
                       </div>
                       <div
                         v-for="link in getRequirementLinks(resource._links)"
                         class="text-muted"
                       >
                         <a
-                          class="pdf-text cursor-pointer"
+                          class="requirement-text cursor-pointer"
                           @click="openModal(link.href, resource.id)"
                         ><i class="bi bi-exclamation-circle-fill" /> {{ link.title }} </a>
+                      </div>
+                      <div
+                        v-for="link in getLifecycleLinks(resource._links)"
+                        class="text-muted"
+                      >
+                        <a
+                          class="pdf-text cursor-pointer"
+                          @click="updateResourceState(link.href)"
+                        ><i class="bi bi-highlighter" /> {{ link.name }} </a>
                       </div>
                     </div>
                   </div>
@@ -523,7 +522,7 @@ export default {
       return this.getResources.length
     },
     representedResources () {
-      return this.getResources.filter(resource => this.isRepresentativeForResource(resource.id))
+      return this.getResources.filter(resource => this.isRepresentativeForResource(resource.sourceId))
     },
     representedOrganizations () {
       return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
@@ -560,24 +559,6 @@ export default {
     this.resources = await this.retrieveResourcesByNegotiationId({
       negotiationId: this.negotiationId
     })
-    // this.infoRequirements = await this.retrieveInfoRequirements()
-    // initialize checkboxes selection
-    let organizations, resources
-    if (this.userRole === ROLES.REPRESENTATIVE) {
-      this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-      organizations = this.representedOrganizations
-      resources = this.representedResources
-    } else { // role is researcher
-      organizations = this.organizations
-      resources = this.resources
-    }
-
-    organizations.forEach(org => {
-      this.selection[org.externalId] = { checked: false, type: this.ORGANIZATION_TYPE }
-    })
-    resources.forEach(res => {
-      this.selection[res.id] = { checked: false, type: this.RESOURCE_TYPE }
-    })
 
     this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
@@ -597,7 +578,7 @@ export default {
       "updateNegotiationStatus",
       "updateResourceStatus",
       "downloadAttachment",
-      "retrieveInfoRequirements",
+      "retrieveInfoRequirement",
       "retrieveResourcesByNegotiationId",
       "retrieveInformationSubmission"
     ]),
@@ -654,6 +635,15 @@ export default {
         }
       }
       return requirementLinks
+    },
+    getLifecycleLinks (links) {
+      const lifecycleLinks = []
+      for (const key in links) {
+        if (links[key].title === "Next Lifecycle event") {
+          lifecycleLinks.push(links[key])
+        }
+      }
+      return lifecycleLinks
     },
     selectAllOrganizationResource (org, event) {
       let checkedResource
@@ -721,7 +711,7 @@ export default {
     },
     async openModal (href, resourceId) {
       let requirement
-      requirement = await this.retrieveInfoRequirements({
+      requirement = await this.retrieveInfoRequirement({
         link: href
       })
       this.resourceId = resourceId
@@ -739,33 +729,13 @@ export default {
       this.formViewModal = new Modal(document.querySelector("#formViewModal"))
       this.formViewModal.show()
     },
-    async updateCheckedResourcesStatus (event) {
-      let openModal = false
-      this.infoRequirements["info-requirements"].forEach((element) => {
-        if (element.forResourceEvent === event) {
-          openModal = true
-          this.requiredAccessForm = element.requiredAccessForm
-          this.formSubmissionModal = new Modal(document.querySelector("#formSubmissionModal"))
-          this.formSubmissionModal.show()
-        }
+    async updateResourceState (link) {
+      await this.updateResourceStatus({
+        link
       })
-      if (!openModal) {
-        // For each of the settled resources, update the status to the one chosen in the combo
-        try {
-          for (const resource in this.selection) {
-            if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
-              await this.updateResourceStatus({
-                negotiationId: this.negotiation.id,
-                resourceId: resource,
-                event
-              })
-            }
-          }
-        } finally {
-          // update status and status select
-          // location.reload()
-        }
-      }
+      this.resources = await this.retrieveResourcesByNegotiationId({
+        negotiationId: this.negotiationId
+      })
     },
     transformStatus (badgeText) {
       return transformStatus(badgeText)
@@ -782,8 +752,11 @@ export default {
       }
       return value
     },
-    hideFormSubmissionModal () {
+    async hideFormSubmissionModal () {
       this.formSubmissionModal.hide()
+      this.resources = await this.retrieveResourcesByNegotiationId({
+        negotiationId: this.negotiationId
+      })
     }
   }
 }
@@ -813,7 +786,12 @@ export default {
 .collections-header[aria-expanded=false] .bi-chevron-up {
   display: none;
 }
-
+.submission-text{
+  color: green;
+}
+.requirement-text{
+  color: red;
+}
 .abandon-text {
   color: #3c3c3d;
 }
