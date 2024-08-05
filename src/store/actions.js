@@ -116,6 +116,15 @@ export default {
         commit("setNotification", "There was an error saving the Negotiation")
       })
   },
+  async submitRequiredInformation ({ state, commit }, { data, negotiationId, requirementId }) {
+    return axios.post(`/api/v3/negotiations/${negotiationId}/info-requirements/${requirementId}`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data.id
+      })
+      .catch(() => {
+        commit("setNotification", "There was an error saving the Negotiation")
+      })
+  },
   retrieveNegotiations ({ state, commit }, { filtersSortData, pageNumber }) {
     const parameters = {
       headers: getBearerHeaders(state.oidc.access_token),
@@ -190,6 +199,15 @@ export default {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+      })
+  },
+  async retrieveResourcesByNegotiationId ({ state, commit }, { negotiationId }) {
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.resources
       })
       .catch(() => {
         commit("setNotification", "Error getting request data from server")
@@ -319,22 +337,31 @@ export default {
         commit("setNotification", "Error getting all resource events data from server")
       })
   },
-  async setInfoRequirements ({ state, commit }, {data}) {
+  async setInfoRequirements ({ state, commit }, { data }) {
     return axios.post(`${BASE_API_PATH}/info-requirements`, data, { headers: getBearerHeaders(state.oidc.access_token) })
-    .then((response) => {
-      return response.data
-    })
-    .catch(() => {
-      commit("setNotification", "Error sending message")
-    })
-  },
-  async retrieveInfoRequirements ({ state, commit }) {
-    return axios.get(`${BASE_API_PATH}/info-requirements`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data._embedded
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error sending message")
+      })
+  },
+  async retrieveInfoRequirements ({ state }, { link }) {
+    return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
       })
       .catch(() => {
         commit("setNotification", "Error getting Info Requirements data from server")
+      })
+  },
+  async retrieveInformationSubmission ({ state }, { href }) {
+    return axios.get(`${href}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
       })
   }
 }
