@@ -236,7 +236,7 @@
                         <a
                           class="requirement-text cursor-pointer"
                           @click="openModal(link.href, resource.id)"
-                        ><i class="bi bi-exclamation-circle-fill" /> {{ link.title }} </a>
+                        ><i class="bi bi-exclamation-circle-fill" /> {{ link.title }} required</a>
                       </div>
                       <div
                         v-for="link in getLifecycleLinks(resource._links)"
@@ -245,7 +245,7 @@
                         <a
                           class="pdf-text cursor-pointer"
                           @click="updateResourceState(link.href)"
-                        ><i class="bi bi-highlighter" /> {{ link.name }} </a>
+                        ><i class="bi bi-highlighter" /> {{ link.name }} submitted</a>
                       </div>
                     </div>
                   </div>
