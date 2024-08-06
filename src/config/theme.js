@@ -1,7 +1,7 @@
 // This file is used to define the active theme for the website.
 const devSettings = {
-  activeThemeFile: "canserv",
-  activeLogosFiles: "canserv",
+  activeThemeFile: "bbmri",
+  activeLogosFiles: "bbmri",
   isFooterStatusPageVisible: true,
   footerStatusPageLink: "https://status.bbmri-eric.eu/",
   footerStatusPageText: "BBMRI-ERIC Status Page",
