@@ -206,19 +206,39 @@
                     class="card-body"
                   >
                     <div class="form-check">
-                      <label
-                        class="form-check-label text-primary-text"
-                        :for="getElementIdFromResourceId(resource.sourceId)"
-                      >
-                        {{ resource.name }}
-                      </label>
-                      <span class="badge rounded-pill bg-status-badge ms-4">
-                        {{ getStatusForResource(resource.id) }}
-                      </span>
-                      <div class="text-muted">
-                        {{ resource.sourceId }}
-                        <CopyTextButton :text="resource.sourceId" />
+                      <div class="d-flex flex-row align-items-center flex-row">
+                        <div>
+                          <label
+                            class="form-check-label text-primary-text"
+                            :for="getElementIdFromResourceId(resource.sourceId)"
+                          >
+                            {{ resource.name }}
+                          </label>
+                          <span class="badge rounded-pill bg-status-badge ms-4">
+                            {{ getStatusForResource(resource.id) }}
+                          </span>
+                          <div class="text-muted">
+                            {{ resource.sourceId }}
+                            <CopyTextButton :text="resource.sourceId" />
+                          </div>
+                        </div>
+                        <div
+                          v-if="getLifecycleLinks(resource._links).length > 0"
+                          class="ms-4"
+                        >
+                          Update status:
+                          <div
+                            v-for="link in getLifecycleLinks(resource._links)"
+                            class="lifecycle-links flex-column ms-4"
+                          >
+                            <a
+                              class="lifecycle-text cursor-pointer"
+                              @click="updateResourceState(link.href)"
+                            ><i class="bi bi-patch-check" /> {{ link.name }}</a>
+                          </div>
+                        </div>
                       </div>
+
                       <div
                         v-for="link in getSubmissionLinks(resource._links)"
                         class="text-muted"
@@ -239,14 +259,8 @@
                         ><i class="bi bi-exclamation-circle-fill" /> {{ link.title }} required</a>
                       </div>
                       <div
-                        v-for="link in getLifecycleLinks(resource._links)"
-                        class="text-muted"
-                      >
-                        <a
-                          class="pdf-text cursor-pointer"
-                          @click="updateResourceState(link.href)"
-                        ><i class="bi bi-highlighter" /> {{ link.name }} submitted</a>
-                      </div>
+                        class="col-12 col-md-4 order-2 order-md-2"
+                      />
                     </div>
                   </div>
                 </div>
@@ -480,6 +494,7 @@ export default {
       return this.getResources.filter(resource => this.isRepresentativeForResource(resource.sourceId))
     },
     representedOrganizations () {
+      console.log(this.representedResources)
       return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.externalId === value.externalId
@@ -514,6 +529,7 @@ export default {
     this.resources = await this.retrieveResourcesByNegotiationId({
       negotiationId: this.negotiationId
     })
+    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
 
     this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
@@ -682,6 +698,9 @@ export default {
 }
 .requirement-text{
   color: red;
+}
+.lifecycle-text:hover {
+  color: orange;
 }
 .abandon-text {
   color: #3c3c3d;
