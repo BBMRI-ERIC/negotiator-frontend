@@ -315,6 +315,22 @@ export default {
         window.URL.revokeObjectURL(href)
       })
   },
+  downloadAttachmentFromLink ({ state }, { href }) {
+    axios.get(`${href}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+      .then((response) => {
+        const href = window.URL.createObjectURL(response.data)
+
+        const anchorElement = document.createElement("a")
+        anchorElement.href = href
+        anchorElement.download = "summary.csv"
+
+        document.body.appendChild(anchorElement)
+        anchorElement.click()
+
+        document.body.removeChild(anchorElement)
+        window.URL.revokeObjectURL(href)
+      })
+  },
   setSavedNegotiationsView ({ state, commit }, { negotiationsView }) {
     commit("setSavedNegotiationsView", negotiationsView)
   },

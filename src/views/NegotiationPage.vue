@@ -356,6 +356,13 @@
               class="mt-2"
               :negotiation-pdf-data="negotiation"
             />
+            <div>
+              <a
+                v-for="link in getSummaryLinks(negotiation._links)"
+                class="pdf-text cursor-pointer"
+                @click="downloadAttachmentFromLink({href: link.href})"
+              ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
+            </div>
           </li>
           <li class="list-group-item p-2 border-bottom-0">
             <div class="pt-2 abandon-text">
@@ -516,7 +523,7 @@ export default {
       return this.negotiation.author
     },
     loading () {
-      return this.negotiation === undefined && this.resources.length === 0
+      return (this.negotiation === undefined && this.resources.length === 0)
     },
     isUserRoleResearcher () {
       return this.userRole === ROLES.RESEARCHER
@@ -549,6 +556,7 @@ export default {
       "updateNegotiationStatus",
       "updateResourceStatus",
       "downloadAttachment",
+      "downloadAttachmentFromLink",
       "retrieveInfoRequirement",
       "retrieveResourcesByNegotiationId",
       "retrieveInformationSubmission"
@@ -615,6 +623,17 @@ export default {
         }
       }
       return lifecycleLinks
+    },
+    getSummaryLinks (links) {
+      console.log(links)
+      const summaryLinks = []
+      for (const key in links) {
+        if (key === "Requirement summary") {
+          summaryLinks.push(links[key])
+        }
+      }
+      console.log(summaryLinks)
+      return summaryLinks
     },
     async openModal (href, resourceId) {
       let requirement
