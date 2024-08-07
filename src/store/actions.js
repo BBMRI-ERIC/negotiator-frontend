@@ -318,11 +318,21 @@ export default {
   downloadAttachmentFromLink ({ state }, { href }) {
     axios.get(`${href}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
       .then((response) => {
+        const disposition = response.headers["Content-Disposition"]
+        let filename = "summary.csv"
+        console.log(response.headers)
+        if (disposition) {
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+          const matches = filenameRegex.exec(disposition)
+          if (matches != null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, "")
+          }
+        }
         const href = window.URL.createObjectURL(response.data)
 
         const anchorElement = document.createElement("a")
         anchorElement.href = href
-        anchorElement.download = "summary.csv"
+        anchorElement.download = filename
 
         document.body.appendChild(anchorElement)
         anchorElement.click()

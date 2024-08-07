@@ -356,13 +356,13 @@
               class="mt-2"
               :negotiation-pdf-data="negotiation"
             />
-            <div>
-              <a
-                v-for="link in getSummaryLinks(negotiation._links)"
-                class="pdf-text cursor-pointer"
-                @click="downloadAttachmentFromLink({href: link.href})"
-              ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
-            </div>
+          </li>
+          <li class="list-group-item p-2 border-bottom-0 flex-column d-flex">
+            <a
+              v-for="link in getSummaryLinks(negotiation._links)"
+              class="cursor-pointer"
+              @click="downloadAttachmentFromLink({href: link.href})"
+            ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
           </li>
           <li class="list-group-item p-2 border-bottom-0">
             <div class="pt-2 abandon-text">
@@ -628,7 +628,7 @@ export default {
       console.log(links)
       const summaryLinks = []
       for (const key in links) {
-        if (key === "Requirement summary") {
+        if (key.startsWith("Requirement summary")) {
           summaryLinks.push(links[key])
         }
       }
