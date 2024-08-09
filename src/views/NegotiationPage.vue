@@ -9,7 +9,7 @@
       :negotiation-id="negotiationId"
       :requirement-id="requirementId"
       :resource-id="resourceId"
-      :required-access-form="requiredAccessForm"
+      :required-access-form-id="requiredAccessForm.id"
       @confirm="hideFormSubmissionModal()"
     />
     <form-view-modal

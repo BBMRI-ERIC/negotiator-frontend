@@ -74,8 +74,28 @@ export default {
         return null
       })
   },
+  retrieveAccessFormById ({ state, commit }, { id }) {
+    return axios.get(`${BASE_API_PATH}/access-forms/${id}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+        return null
+      })
+  },
   retrieveDynamicAccessFormsValueSetByID ({ state, commit }, { id }) {
     return axios.get(`${VALUE_SETS}/${id}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting value-sets request data from server")
+        return null
+      })
+  },
+  retrieveDynamicAccessFormsValueSetByLink ({ state, commit }, { link }) {
+    return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })

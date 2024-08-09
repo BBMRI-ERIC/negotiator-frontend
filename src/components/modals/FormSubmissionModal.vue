@@ -368,9 +368,9 @@ const props = defineProps({
     required: false,
     default: true
   },
-  requiredAccessForm: {
-    type: Object,
-    required: false,
+  requiredAccessFormId: {
+    type: String,
+    required: true,
     default: undefined
   },
   requirementLink: {
@@ -402,10 +402,9 @@ const queryParameters = computed(() => {
   return humanReadableSearchParameters.value.split("\r\n")
 })
 
-watch(() => props.requiredAccessForm, (first, second) => {
-  if (props.requiredAccessForm !== undefined) {
-    accessForm.value = props.requiredAccessForm
-
+watch(() => props.requiredAccessFormId, async (first, second) => {
+  if (props.requiredAccessFormId !== undefined) {
+    accessForm.value = await loadAccessForm(props.requiredAccessFormId)
     if (accessForm.value !== undefined) {
       initNegotiationCriteria()
     }
@@ -416,12 +415,14 @@ onMounted(() => {
     selector: "[data-bs-toggle='tooltip']"
   })
 })
-
+async function loadAccessForm (id) {
+  return store.dispatch("retrieveAccessFormById", { id })
+}
 function backToNegotiation (id) {
   router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
 }
-async function getValueSet (id) {
-  await store.dispatch("retrieveDynamicAccessFormsValueSetByID", { id }).then((res) => {
+async function getValueSet (link, id) {
+  await store.dispatch("retrieveDynamicAccessFormsValueSetByLink", { link }).then((res) => {
     negotiationValueSets.value[id] = res
   })
 }
@@ -463,9 +464,9 @@ function initNegotiationCriteria () {
     for (const criteria of section.elements) {
       if (criteria.type === "MULTIPLE_CHOICE") {
         negotiationCriteria.value[section.name][criteria.name] = []
-        getValueSet(criteria.id)
+        getValueSet(criteria._links["value-set"].href)
       } else if (criteria.type === "SINGLE_CHOICE") {
-        getValueSet(criteria.id)
+        getValueSet(criteria._links["value-set"].href, criteria.id)
       } else {
         negotiationCriteria.value[section.name][criteria.name] = null
       }
