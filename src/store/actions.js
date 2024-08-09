@@ -119,6 +119,7 @@ export default {
   async submitRequiredInformation ({ state, commit }, { data, negotiationId, requirementId }) {
     return axios.post(`/api/v3/negotiations/${negotiationId}/info-requirements/${requirementId}`, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
+        commit("setNotification", "Thank you. Your response was successfully submitted. ")
         return response.data.id
       })
       .catch(() => {
@@ -187,7 +188,7 @@ export default {
   updateResourceStatus ({ state, commit }, { link }) {
     return axios.put(`${link}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
+        commit("setNotification", `Than you. Your action for Negotiation ${response.data.id} was submitted successfully`)
         return response.data
       })
       .catch(() => {

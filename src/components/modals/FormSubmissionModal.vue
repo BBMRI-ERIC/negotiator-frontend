@@ -270,13 +270,6 @@
               title="Overview"
               class="form-step overflow-auto"
             >
-              <div class="border rounded-2 input-group p-3 mb-2 mb-3">
-                <span class="mb-3 fs-4 fw-bold text-secondary">Overview*</span>
-                <span class="text-primary">Upon confirmation, your request will undergo content review. Our reviewers
-                  may contact you via email for further details. Upon approval, the respective biobanks you wish to
-                  contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to
-                  proceed.</span>
-              </div>
               <div
                 v-for="section in accessForm.sections"
                 :key="section.name"
@@ -449,11 +442,6 @@ async function startRequiredAccessForm () {
 }
 
 function startModal () {
-  showNotification(
-    "Confirm submission",
-    "the form has been submitted successfully"
-  )
-
   startRequiredAccessForm()
   emitConfirm()
 }
@@ -546,6 +534,10 @@ function transformMessage (text) {
 const emit = defineEmits(["confirm"])
 
 function emitConfirm () {
+  showNotification(
+    "Confirm submission",
+    "Thank you. Your response has been submitted successfully"
+  )
   emit("confirm")
 }
 </script>

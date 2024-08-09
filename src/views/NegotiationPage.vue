@@ -417,6 +417,7 @@ import { mapActions, mapGetters } from "vuex"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import FormViewModal from "@/components/modals/FormViewModal.vue"
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
+import { computed, ref } from "vue"
 
 export default {
   name: "NegotiationPage",
@@ -438,6 +439,22 @@ export default {
     userRole: {
       type: String,
       default: undefined
+    }
+  },
+  setup () {
+    const getSubmissionLinks = (links) => {
+      const submissionLinks = []
+      for (const key in links) {
+        // Check if the key starts with "submission-"
+        if (key.startsWith("submission-")) {
+          // Push the href value of the link to the submissionLinks array
+          submissionLinks.push(links[key])
+        }
+      }
+      return submissionLinks
+    }
+    return {
+      getSubmissionLinks
     }
   },
   data () {
@@ -594,17 +611,6 @@ export default {
     },
     getElementIdFromResourceId (resourceId) {
       return resourceId.replaceAll(":", "_")
-    },
-    getSubmissionLinks (links) {
-      const submissionLinks = []
-      for (const key in links) {
-        // Check if the key starts with "submission-"
-        if (key.startsWith("submission-")) {
-          // Push the href value of the link to the submissionLinks array
-          submissionLinks.push(links[key])
-        }
-      }
-      return submissionLinks
     },
     getRequirementLinks (links) {
       const requirementLinks = []

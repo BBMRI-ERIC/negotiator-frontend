@@ -37,6 +37,13 @@
     <h5 class="text-primary">
       Send a message
     </h5>
+    <div
+      v-if="showMessageRecipientInfo"
+      class="text-muted"
+    >
+      <i class="bi bi-exclamation-diamond" />
+      This message will be visible to the request Author, representatives and the Administrator
+    </div>
     <form
       class="border rounded mb-4 p-2"
       @submit.prevent="sendMessage"
@@ -111,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount, computed } from "vue"
+import { ref, onMounted, onBeforeMount, computed, watch } from "vue"
 import { Tooltip } from "bootstrap"
 import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
@@ -143,7 +150,6 @@ const props = defineProps({
     }
   }
 })
-
 const posts = ref([])
 const message = ref("")
 const recipientId = ref("")
@@ -168,7 +174,15 @@ const privatePostsGroupLabel = computed(() => {
   }
   return "Private messages will be enabled after an administrator will approve the negotiation"
 })
-
+const showMessageRecipientInfo = ref(false)
+watch(recipientId, (newValue, oldValue) => {
+  if (newValue === "Everyone") {
+    showMessageRecipientInfo.value = true
+  } else {
+    showMessageRecipientInfo.value = false
+  }
+  console.log("recipientId changed from", oldValue, "to", newValue)
+})
 onMounted(() => {
   new Tooltip(document.body, {
     selector: "[data-bs-toggle='tooltip']"
@@ -321,5 +335,8 @@ function getFileTypeName (fileType) {
     outline: none;
     cursor: inherit;
     display: block;
+}
+.bi-exclamation-diamond{
+  color: orange;
 }
 </style>
