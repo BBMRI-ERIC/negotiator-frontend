@@ -74,8 +74,28 @@ export default {
         return null
       })
   },
+  retrieveAccessFormById ({ state, commit }, { id }) {
+    return axios.get(`${BASE_API_PATH}/access-forms/${id}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+        return null
+      })
+  },
   retrieveDynamicAccessFormsValueSetByID ({ state, commit }, { id }) {
     return axios.get(`${VALUE_SETS}/${id}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting value-sets request data from server")
+        return null
+      })
+  },
+  retrieveDynamicAccessFormsValueSetByLink ({ state, commit }, { link }) {
+    return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
       })
@@ -110,6 +130,16 @@ export default {
     }
     return axios.post(NEGOTIATION_PATH, data, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
+        return response.data.id
+      })
+      .catch(() => {
+        commit("setNotification", "There was an error saving the Negotiation")
+      })
+  },
+  async submitRequiredInformation ({ state, commit }, { data, negotiationId, requirementId }) {
+    return axios.post(`/api/v3/negotiations/${negotiationId}/info-requirements/${requirementId}`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        commit("setNotification", "Thank you. Your response was successfully submitted. ")
         return response.data.id
       })
       .catch(() => {
@@ -175,10 +205,10 @@ export default {
         commit("setNotification", "Error getting request data from server")
       })
   },
-  updateResourceStatus ({ state, commit }, { negotiationId, resourceId, event }) {
-    return axios.put(`${NEGOTIATION_PATH}/${negotiationId}/resources/${resourceId}/lifecycle/${event}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
+  updateResourceStatus ({ state, commit }, { link }) {
+    return axios.put(`${link}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        commit("setNotification", `Negotiation updated correctly with data ${response.data.id}`)
+        commit("setNotification", `Than you. Your action for Negotiation ${response.data.id} was submitted successfully`)
         return response.data
       })
       .catch(() => {
@@ -190,6 +220,15 @@ export default {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+      })
+  },
+  async retrieveResourcesByNegotiationId ({ state, commit }, { negotiationId }) {
+    return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.resources
       })
       .catch(() => {
         commit("setNotification", "Error getting request data from server")
@@ -297,6 +336,32 @@ export default {
         window.URL.revokeObjectURL(href)
       })
   },
+  downloadAttachmentFromLink ({ state }, { href }) {
+    axios.get(`${href}`, { headers: getBearerHeaders(state.oidc.access_token), responseType: "blob" })
+      .then((response) => {
+        const disposition = response.headers["Content-Disposition"]
+        let filename = "summary.csv"
+        console.log(response.headers)
+        if (disposition) {
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+          const matches = filenameRegex.exec(disposition)
+          if (matches != null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, "")
+          }
+        }
+        const href = window.URL.createObjectURL(response.data)
+
+        const anchorElement = document.createElement("a")
+        anchorElement.href = href
+        anchorElement.download = filename
+
+        document.body.appendChild(anchorElement)
+        anchorElement.click()
+
+        document.body.removeChild(anchorElement)
+        window.URL.revokeObjectURL(href)
+      })
+  },
   setSavedNegotiationsView ({ state, commit }, { negotiationsView }) {
     commit("setSavedNegotiationsView", negotiationsView)
   },
@@ -310,6 +375,48 @@ export default {
         return null
       })
   },
+  async retrieveResourceAllEvents ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/resource-lifecycle/events`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.events
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting all resource events data from server")
+      })
+  },
+  async setInfoRequirements ({ state, commit }, { data }) {
+    return axios.post(`${BASE_API_PATH}/info-requirements`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error sending message")
+      })
+  },
+  async retrieveInfoRequirement ({ state }, { link }) {
+    return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .catch(() => {
+        commit("setNotification", "Error getting Info Requirements data from server")
+      })
+  },
+  async retrieveInfoRequirements ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/info-requirements`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting Info Requirements data from server")
+      })
+  },
+  async retrieveInformationSubmission ({ state }, { href }) {
+    return axios.get(`${href}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+      })
+  },
   createRequests ({ state, commit }, { data }) {
     return axios.post(`${REQUESTS_PATH}`, data)
       .then((response) => {
@@ -319,6 +426,5 @@ export default {
         commit("setNotification", "There was an error saving the attachment")
         return null
       })
-  },
-
+  }
 }

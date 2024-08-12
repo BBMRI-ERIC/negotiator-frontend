@@ -3,6 +3,19 @@
     v-if="!loading"
   >
     <GoBackButton />
+    <form-submission-modal
+      id="formSubmissionModal"
+      :title="requiredAccessForm.name"
+      :negotiation-id="negotiationId"
+      :requirement-id="requirementId"
+      :resource-id="resourceId"
+      :required-access-form-id="requiredAccessForm.id"
+      @confirm="hideFormSubmissionModal()"
+    />
+    <form-view-modal
+      id="formViewModal"
+      :payload="submittedForm"
+    />
     <confirmation-modal
       id="abandonModal"
       title="Are you sure you want to abandon this Negotiation?"
@@ -153,42 +166,6 @@
                 <i class="bi bi-chevron-down" />
                 <i class="bi bi-chevron-up" />
               </div>
-              <div
-                v-if="currentMultipleResourceStatus !== undefined && currentResourceEvents.length > 0"
-                id="statusChange"
-                class="ms-auto d-flex w-50"
-              >
-                <select
-                  v-model="selectedStatus"
-                  class="form-select me-2"
-                  :disabled="isStatusComboDisabled()"
-                >
-                  <option selected>
-                    Select new state...
-                  </option>
-                  <option
-                    v-for="key in currentResourceEvents"
-                    :key="key"
-                    :value="key"
-                  >
-                    {{ transformStatus(key) }}
-                  </option>
-                </select>
-                <button
-                  class="btn btn-secondary me-md-2 float-end"
-                  type="submit"
-                  @click.prevent="updateCheckedResourcesStatus(selectedStatus)"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-            <div
-              v-if="currentMultipleResourceStatus !== undefined && currentResourceEvents.length === 0"
-              class="alert alert-danger"
-              role="alert"
-            >
-              No selectable status for this resource(s), wait for the other part to respond
             </div>
             <div
               id="resourcesList"
@@ -207,15 +184,6 @@
                 >
                   <div class="form-check d-flex justify-content-between cursor-pointer">
                     <div>
-                      <input
-                        v-if="userRole === availableRoles.RESEARCHER || (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId) && selection[orgId])"
-                        :id="getElementIdFromResourceId(orgId)"
-                        v-model="selection[orgId]['checked']"
-                        class="form-check-input justify-content-start"
-                        type="checkbox"
-                        :disabled="isOrganizationButtonDisabled(org.resources)"
-                        @change="selectAllOrganizationResource(orgId, $event)"
-                      >
                       <label
                         class="text-primary fw-bold ml-2 cursor-pointer"
                       >
@@ -238,28 +206,61 @@
                     class="card-body"
                   >
                     <div class="form-check">
-                      <input
-                        v-if="userRole === availableRoles.RESEARCHER ||
-                          (userRole === availableRoles.REPRESENTATIVE && isRepresentativeForOrganization(orgId)) && selection[resource.id]"
-                        :id="getElementIdFromResourceId(resource.id)"
-                        v-model="selection[resource.id]['checked']"
-                        class="form-check-input"
-                        type="checkbox"
-                        :disabled="isResourceButtonDisabled(resource.id)"
-                        @change="setCurrentMultipleStatus(resource.id)"
-                      >
-                      <label
-                        class="form-check-label text-primary-text"
-                        :for="getElementIdFromResourceId(resource.id)"
-                      >
-                        {{ resource.name }}
-                      </label>
-                      <span class="badge rounded-pill bg-status-badge ms-4">
-                        {{ getStatusForResource(resource.id) }}
-                      </span>
-                      <div class="text-muted">
-                        {{ resource.id }} <CopyTextButton :text="resource.id" />
+                      <div class="d-flex flex-row align-items-center flex-row">
+                        <div>
+                          <label
+                            class="form-check-label text-primary-text"
+                            :for="getElementIdFromResourceId(resource.sourceId)"
+                          >
+                            {{ resource.name }}
+                          </label>
+                          <span class="badge rounded-pill bg-status-badge ms-4">
+                            {{ getStatusForResource(resource.id) }}
+                          </span>
+                          <div class="text-muted">
+                            {{ resource.sourceId }}
+                            <CopyTextButton :text="resource.sourceId" />
+                          </div>
+                        </div>
+                        <div
+                          v-if="getLifecycleLinks(resource._links).length > 0"
+                          class="ms-4"
+                        >
+                          Update status:
+                          <div
+                            v-for="link in getLifecycleLinks(resource._links)"
+                            class="lifecycle-links flex-column ms-4"
+                          >
+                            <a
+                              class="lifecycle-text cursor-pointer"
+                              @click="updateResourceState(link.href)"
+                            ><i class="bi bi-patch-check" /> {{ link.name }}</a>
+                          </div>
+                        </div>
                       </div>
+
+                      <div
+                        v-for="link in getSubmissionLinks(resource._links)"
+                        class="text-muted"
+                      >
+                        <a
+                          class="submission-text cursor-pointer"
+                          @click.prevent="openFormModal(link.href)"
+                        ><i class="bi bi-check-circle" />
+                          {{ link.name }} </a>
+                      </div>
+                      <div
+                        v-for="link in getRequirementLinks(resource._links)"
+                        class="text-muted"
+                      >
+                        <a
+                          class="requirement-text cursor-pointer"
+                          @click="openModal(link.href, resource.id)"
+                        ><i class="bi bi-exclamation-circle-fill" /> {{ link.title }} required</a>
+                      </div>
+                      <div
+                        class="col-12 col-md-4 order-2 order-md-2"
+                      />
                     </div>
                   </div>
                 </div>
@@ -356,6 +357,13 @@
               :negotiation-pdf-data="negotiation"
             />
           </li>
+          <li class="list-group-item p-2 border-bottom-0 flex-column d-flex">
+            <a
+              v-for="link in getSummaryLinks(negotiation._links)"
+              class="cursor-pointer"
+              @click="downloadAttachmentFromLink({href: link.href})"
+            ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
+          </li>
           <li class="list-group-item p-2 border-bottom-0">
             <div class="pt-2 abandon-text">
               <div
@@ -400,17 +408,28 @@ import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import CopyTextButton from "@/components/CopyTextButton.vue"
+import { Modal } from "bootstrap"
 
 import PDFButton from "@/components/PDFButton.vue"
 import { ROLES, dateFormat } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import FormViewModal from "@/components/modals/FormViewModal.vue"
+import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
+import { computed, ref } from "vue"
 
 export default {
   name: "NegotiationPage",
   components: {
-    ConfirmationModal, NegotiationPosts, NegotiationAttachment, PDFButton, GoBackButton, CopyTextButton
+    FormSubmissionModal,
+    FormViewModal,
+    ConfirmationModal,
+    NegotiationPosts,
+    NegotiationAttachment,
+    PDFButton,
+    GoBackButton,
+    CopyTextButton
   },
   props: {
     negotiationId: {
@@ -422,9 +441,29 @@ export default {
       default: undefined
     }
   },
+  setup () {
+    const getSubmissionLinks = (links) => {
+      const submissionLinks = []
+      for (const key in links) {
+        // Check if the key starts with "submission-"
+        if (key.startsWith("submission-")) {
+          // Push the href value of the link to the submissionLinks array
+          submissionLinks.push(links[key])
+        }
+      }
+      return submissionLinks
+    }
+    return {
+      getSubmissionLinks
+    }
+  },
   data () {
     return {
+      infoRequirements: undefined,
       negotiation: undefined,
+      requirementId: undefined,
+      resources: [],
+      resourceId: undefined,
       representedResourcesIds: [],
       negotiationStatusOptions: [],
       availableRoles: ROLES,
@@ -435,19 +474,25 @@ export default {
       selectedStatus: undefined,
       RESOURCE_TYPE: "RESOURCE",
       ORGANIZATION_TYPE: "ORGANIZATION",
-      attachments: []
+      attachments: [],
+      requiredAccessForm: {},
+      formSubmissionModal: null,
+      submittedForm: undefined,
+      formViewModal: null
     }
   },
   computed: {
     ...mapGetters(["oidcUser"]),
-    resources () {
-      return this.negotiation.resources
+    getResources () {
+      return this.resources
     },
     organizations () {
-      return Object.entries(this.organizationsById).map(([k, v]) => { return { externalId: k, name: v.name } })
+      return Object.entries(this.organizationsById).map(([k, v]) => {
+        return { externalId: k, name: v.name }
+      })
     },
     organizationsById () {
-      return this.resources.reduce((organizations, resource) => {
+      return this.getResources.reduce((organizations, resource) => {
         if (resource.organization.externalId in organizations) {
           organizations[resource.organization.externalId].resources.push(
             resource)
@@ -461,18 +506,19 @@ export default {
       }, {})
     },
     resourcesById () {
-      return this.resources.reduce((resourcesObjects, resource) => {
+      return this.getResources.reduce((resourcesObjects, resource) => {
         resourcesObjects[resource.id] = resource
         return resourcesObjects
       }, {})
     },
     numberOfResources () {
-      return this.resources.length
+      return this.getResources.length
     },
     representedResources () {
-      return this.resources.filter(resource => this.isRepresentativeForResource(resource.id))
+      return this.getResources.filter(resource => this.isRepresentativeForResource(resource.sourceId))
     },
     representedOrganizations () {
+      console.log(this.representedResources)
       return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.externalId === value.externalId
@@ -481,16 +527,20 @@ export default {
     },
     postsRecipients () {
       if (this.userRole === ROLES.RESEARCHER) {
-        return this.organizations.map(org => { return { id: org.externalId, name: org.name } })
+        return this.organizations.map(org => {
+          return { id: org.externalId, name: org.name }
+        })
       } else {
-        return this.representedOrganizations.map(org => { return { id: org.externalId, name: org.name } })
+        return this.representedOrganizations.map(org => {
+          return { id: org.externalId, name: org.name }
+        })
       }
     },
     author () {
       return this.negotiation.author
     },
     loading () {
-      return this.negotiation === undefined
+      return (this.negotiation === undefined && this.resources.length === 0)
     },
     isUserRoleResearcher () {
       return this.userRole === ROLES.RESEARCHER
@@ -500,24 +550,10 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId
     })
-
-    // initialize checkboxes selection
-    let organizations, resources
-    if (this.userRole === ROLES.REPRESENTATIVE) {
-      this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-      organizations = this.representedOrganizations
-      resources = this.representedResources
-    } else { // role is researcher
-      organizations = this.organizations
-      resources = this.resources
-    }
-
-    organizations.forEach(org => {
-      this.selection[org.externalId] = { checked: false, type: this.ORGANIZATION_TYPE }
+    this.resources = await this.retrieveResourcesByNegotiationId({
+      negotiationId: this.negotiationId
     })
-    resources.forEach(res => {
-      this.selection[res.id] = { checked: false, type: this.RESOURCE_TYPE }
-    })
+    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
 
     this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
@@ -536,7 +572,11 @@ export default {
       "retrieveAttachmentsByNegotiationId",
       "updateNegotiationStatus",
       "updateResourceStatus",
-      "downloadAttachment"
+      "downloadAttachment",
+      "downloadAttachmentFromLink",
+      "retrieveInfoRequirement",
+      "retrieveResourcesByNegotiationId",
+      "retrieveInformationSubmission"
     ]),
     async retrieveAttachments () {
       await this.retrieveAttachmentsByNegotiationId({
@@ -552,7 +592,7 @@ export default {
       return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
     },
     getStatusForResource (resourceId) {
-      const resource = this.resourcesById[resourceId].status
+      const resource = this.resourcesById[resourceId].currentState
       return this.transformStatus(resource)
     },
     isAttachment (value) {
@@ -572,84 +612,62 @@ export default {
     getElementIdFromResourceId (resourceId) {
       return resourceId.replaceAll(":", "_")
     },
-    selectAllOrganizationResource (org, event) {
-      let checkedResource
-      // sets the resource
-      this.organizationsById[org]?.resources?.forEach(resource => {
-        if (this.selection[resource.id]) { this.selection[resource.id].checked = event.target.checked }
-        // checkedResource === undefined avoid overwriting the checkedResource each iteration
-        if (checkedResource === undefined && this.selection[resource.id].checked === true) {
-          checkedResource = resource.id
+    getRequirementLinks (links) {
+      const requirementLinks = []
+      for (const key in links) {
+        if (key.startsWith("requirement-")) {
+          requirementLinks.push(links[key])
         }
+      }
+      return requirementLinks
+    },
+    getLifecycleLinks (links) {
+      const lifecycleLinks = []
+      for (const key in links) {
+        if (links[key].title === "Next Lifecycle event") {
+          lifecycleLinks.push(links[key])
+        }
+      }
+      return lifecycleLinks
+    },
+    getSummaryLinks (links) {
+      console.log(links)
+      const summaryLinks = []
+      for (const key in links) {
+        if (key.startsWith("Requirement summary")) {
+          summaryLinks.push(links[key])
+        }
+      }
+      console.log(summaryLinks)
+      return summaryLinks
+    },
+    async openModal (href, resourceId) {
+      let requirement
+      requirement = await this.retrieveInfoRequirement({
+        link: href
       })
-
-      // if at least one resource has been checked, set the multiple status for the resource as it happens by clicking
-      // a single resource instead of the overall organisation multiple selection
-      this.setCurrentMultipleStatus(checkedResource)
+      this.resourceId = resourceId
+      this.requiredAccessForm = requirement.requiredAccessForm
+      this.requirementId = requirement.id
+      this.formSubmissionModal = new Modal(document.querySelector("#formSubmissionModal"))
+      this.formSubmissionModal.show()
     },
-    isOrganizationButtonDisabled (resources) {
-      const currentStatus = this.getStatusForResource(resources[0].id)
-      // if this status is different from the current set multiple status (maybe coming from a
-      // resource of another organization, then disable the button)
-      if (this.currentMultipleResourceStatus !== undefined && currentStatus !== this.currentMultipleResourceStatus) {
-        return true
-      }
-      for (let i = 1; i < resources.length; i++) {
-        if (this.getStatusForResource(resources[i].id) !== currentStatus) {
-          return true
-        }
-      }
-      return false
+    async openFormModal (href) {
+      let payload
+      payload = await this.retrieveInformationSubmission({
+        href
+      })
+      this.submittedForm = payload.payload
+      this.formViewModal = new Modal(document.querySelector("#formViewModal"))
+      this.formViewModal.show()
     },
-    isResourceButtonDisabled (resourceId) {
-      return this.currentMultipleResourceStatus !== undefined && this.getStatusForResource(resourceId) !== this.currentMultipleResourceStatus
-    },
-    async setCurrentMultipleStatus (resourceId) {
-      // If no resource is selected, it reset events and status
-      if (resourceId === undefined ||
-          !Object.values(this.selection).some((res) => res.type === this.RESOURCE_TYPE && res.checked === true)) {
-        this.currentMultipleResourceStatus = undefined
-        this.currentResourceEvents = []
-      } else {
-        if (this.currentMultipleResourceStatus === undefined) {
-          this.currentResourceEvents = await this.retrievePossibleEventsForResource({
-            negotiationId: this.negotiation.id,
-            resourceId
-          }).then((data) => {
-            this.currentMultipleResourceStatus = this.getStatusForResource(resourceId)
-            this.savedResourceId = resourceId
-            // gets the orgId of the organization of the checked resource
-            return data
-          })
-        }
-      }
-      if (resourceId !== undefined) {
-        const orgId = this.resourcesById[resourceId].organization.externalId
-        // checks if all its resources are checked
-        const allChecked = this.organizationsById[orgId].resources
-          .every(res => res.id in this.selection && this.selection[res.id].checked === true)
-        this.selection[orgId].checked = allChecked
-      }
-    },
-    isStatusComboDisabled () {
-      return this.currentMultipleResourceStatus === undefined
-    },
-    async updateCheckedResourcesStatus (event) {
-      // For each of the settled resources, update the status to the one chosen in the combo
-      try {
-        for (const resource in this.selection) {
-          if (this.selection[resource].checked === true && this.selection[resource].type === this.RESOURCE_TYPE) {
-            await this.updateResourceStatus({
-              negotiationId: this.negotiation.id,
-              resourceId: resource,
-              event
-            })
-          }
-        }
-      } finally {
-        // update status and status select
-        location.reload()
-      }
+    async updateResourceState (link) {
+      await this.updateResourceStatus({
+        link
+      })
+      this.resources = await this.retrieveResourcesByNegotiationId({
+        negotiationId: this.negotiationId
+      })
     },
     transformStatus (badgeText) {
       return transformStatus(badgeText)
@@ -665,6 +683,12 @@ export default {
         return value ? "Yes" : "No"
       }
       return value
+    },
+    async hideFormSubmissionModal () {
+      this.formSubmissionModal.hide()
+      this.resources = await this.retrieveResourcesByNegotiationId({
+        negotiationId: this.negotiationId
+      })
     }
   }
 }
@@ -674,9 +698,11 @@ export default {
 .card-header[aria-expanded=true] .bi-chevron-down {
   display: none;
 }
+
 .card-header:not([aria-expanded]) .bi-chevron-up {
   display: none;
 }
+
 .card-header[aria-expanded=false] .bi-chevron-up {
   display: none;
 }
@@ -684,15 +710,27 @@ export default {
 .collections-header[aria-expanded=true] .bi-chevron-down {
   display: none;
 }
+
 .collections-header:not([aria-expanded]) .bi-chevron-up {
   display: none;
 }
+
 .collections-header[aria-expanded=false] .bi-chevron-up {
   display: none;
+}
+.submission-text{
+  color: green;
+}
+.requirement-text{
+  color: red;
+}
+.lifecycle-text:hover {
+  color: orange;
 }
 .abandon-text {
   color: #3c3c3d;
 }
+
 .abandon-text:hover {
   color: #dc3545;
 }
