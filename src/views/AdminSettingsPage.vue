@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!isLoading">
     <h1 class="mb-5 text-center">
       Administrator Console
     </h1>
@@ -94,7 +94,7 @@
 
       <div class="row row-cols-1 row-cols-md-2 d-grid-row" />
       <h4>
-        Saved requirements: {{ infoRequirements['info-requirements'] ? infoRequirements['info-requirements'].length : 0 }}
+        Saved requirements: {{ infoRequirements?.['info-requirements'] ? infoRequirements?.['info-requirements'].length : 0 }}
       </h4>
       <div
         class="table"
@@ -148,6 +148,22 @@
       </div>
     </div>
   </div>
+  <div
+    v-else
+    class="d-flex justify-content-center flex-row"
+  >
+    <div class="d-flex justify-content-center">
+      <div
+        class="spinner-border d-flex justify-content-center "
+        role="status"
+      />
+      <div class="d-flex justify-content-center">
+        <h4 class="mb-3 ms-3">
+          Loading ...
+        </h4>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -162,15 +178,15 @@ const accessForms = ref([])
 const selectedAccessForm = ref({})
 const selectedEvent = ref({})
 const summaryOnlyForAdmin = ref(true)
-
+const isLoading = ref(true)
 onMounted(async () => {
   resourceAllEvents.value = await store.dispatch("retrieveResourceAllEvents")
   infoRequirements.value = await store.dispatch("retrieveInfoRequirements")
   accessForms.value = await store.dispatch("retrieveAllAccessForms")
   selectedEvent.value = resourceAllEvents.value[0]
   selectedAccessForm.value = accessForms.value[0]
+  isLoading.value = false
 })
-
 async function setInfoRequirements () {
   const data = {}
   console.log(selectedEvent.value)
