@@ -540,7 +540,7 @@ export default {
       return this.negotiation.author
     },
     loading () {
-      return (this.negotiation === undefined && this.resources.length === 0)
+      return (this.negotiation === undefined || this.resources.length === 0)
     },
     isUserRoleResearcher () {
       return this.userRole === ROLES.RESEARCHER
