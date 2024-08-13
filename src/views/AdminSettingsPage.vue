@@ -1,109 +1,151 @@
 <template>
   <div>
-    <h1 class="text-left mb-5">
-      Information requirements
+    <h1 class="mb-5 text-center">
+      Administrator Console
     </h1>
-
-    <div class="d-flex flex-row">
-      <div class="col-2 ">
-        <input
-          v-model="accessFormId"
-          class="form-control text-secondary-text form-control-sm"
-          type="number"
-          placeholder="Access-form id"
-          number
-        >
+    <hr>
+    <div class="specific-area panel panel-default border-">
+      <h2 class="mb-1 text-left">
+        Information Requirements
+      </h2>
+      <div class="text-muted mb-3">
+        Setup an information requirement for all Negotiations. A Representative of each Resource in a Negotiation will be asked to supply additional information before advancing to a chosen state.
       </div>
-
-      <div class="col-2 ms-3">
-        <button
-          class="btn btn-sm btn-outline-sort-filter-button-outline dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          data-bs-auto-close="outside"
-          aria-expanded="false"
-        >
-          Resource All Events
-        </button>
-        <ul
-          class="dropdown-menu"
-          aria-labelledby="dropdownSortingButton"
-          role="menu"
-        >
-          <div
-            v-for="(event, index) in resourceAllEvents"
-            :key="index"
-            class="form-check mx-2 my-2 text-sort-filter-dropdown-text"
-          >
-            <input
-              :id="index"
-              class="form-check-input"
-              type="radio"
-              name="sort"
-              :value="event.value"
-              @change="selectedResourceAllEvents = event"
+      <h4>
+        Create:
+      </h4>
+      <div class="col-8">
+        <div class="d-flex flex-row justify-content-between mb-3">
+          Linked access form:
+          <div class="col-3">
+            <select
+              v-model="selectedAccessForm"
+              class="form-select form-select-sm btn-outline-sort-filter-button-outline"
             >
-            <label class="form-check-label text-sort-filter-dropdown-text">
-              {{ event.label }}
-            </label>
+              <option
+                disabled
+                value=""
+              >
+                Select a form...
+              </option>
+              <option
+                v-for="(form, index) in accessForms"
+                :key="index"
+                :value="form"
+              >
+                {{ form.name }}
+              </option>
+            </select>
           </div>
-        </ul>
+        </div>
+        <div class="d-flex flex-row justify-content-between mb-3">
+          Linked lifecycle event:
+          <div class="col-3">
+            <select
+              v-model="selectedEvent"
+              class="form-select form-select-sm btn-outline-sort-filter-button-outline"
+            >
+              <option
+                disabled
+                value=""
+              >
+                Select an event...
+              </option>
+              <option
+                v-for="(event, index) in resourceAllEvents"
+                :key="index"
+                :value="event"
+              >
+                {{ event.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex flex-row justify-content-between">
+          Should only an Administrator see the summary:
+          <div class="col-3">
+            <select
+              v-model="summaryOnlyForAdmin"
+              class="form-select form-select-sm btn-outline-sort-filter-button-outline"
+            >
+              <option
+                value="true"
+                selected
+              >
+                Yes
+              </option>
+              <option value="false">
+                No
+              </option>
+            </select>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="col-2 my-4">
-      <button
-        class="btn btn-sm bg-new-request-button-color"
-        @click="setInfoRequirements()"
-      >
-        <span class="text-white">Set Info Requirements</span>
-      </button>
-    </div>
 
-    <div class="row row-cols-1 row-cols-md-2 d-grid-row" />
+      <div class="d-flex flex-row" />
+      <div class="col-2 my-4">
+        <button
+          class="btn btn-sm bg-new-request-button-color"
+          @click="setInfoRequirements()"
+        >
+          <span class="text-white">Save</span>
+        </button>
+      </div>
 
-    <div
-      class="table"
-    >
-      <table
-        v-if="infoRequirements"
+      <div class="row row-cols-1 row-cols-md-2 d-grid-row" />
+      <h4>
+        Saved requirements: {{ infoRequirements['info-requirements'] ? infoRequirements['info-requirements'].length : 0 }}
+      </h4>
+      <div
         class="table"
       >
-        <thead>
-          <tr>
-            <th scope="col">
-              #
-            </th>
-            <th scope="col">
-              Access-form id
-            </th>
-            <th scope="col">
-              Acces-form name
-            </th>
-            <th scope="col">
-              event
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(requirements, index) in infoRequirements['info-requirements']"
-            :key="index"
-          >
-            <th scope="row">
-              {{ requirements.id }}
-            </th>
-            <td class="text-muted">
-              {{ requirements.id }}
-            </td>
-            <td class="text-muted">
-              {{ requirements.requiredAccessForm.name }}
-            </td>
-            <td class="text-muted">
-              {{ requirements.forResourceEvent }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <table
+          v-if="infoRequirements"
+          class="table"
+        >
+          <thead>
+            <tr>
+              <th scope="col">
+                #
+              </th>
+              <th scope="col">
+                Access-form id
+              </th>
+              <th scope="col">
+                Acces-form name
+              </th>
+              <th scope="col">
+                For event
+              </th>
+              <th scope="col">
+                Only for Admin
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(requirements, index) in infoRequirements['info-requirements']"
+              :key="index"
+            >
+              <th scope="row">
+                {{ requirements.id }}
+              </th>
+              <td class="text-muted">
+                {{ requirements.id }}
+              </td>
+              <td class="text-muted">
+                {{ requirements.requiredAccessForm.name }}
+              </td>
+              <td class="text-muted">
+                {{ requirements.forResourceEvent }}
+              </td>
+              <td class="text-muted">
+                {{ requirements.viewableOnlyByAdmin }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -115,20 +157,27 @@ import { useStore } from "vuex"
 const store = useStore()
 
 const resourceAllEvents = ref({})
-const infoRequirements = ref({})
-
-const accessFormId = ref("")
-const selectedResourceAllEvents = ref({})
+const infoRequirements = ref([])
+const accessForms = ref([])
+const selectedAccessForm = ref({})
+const selectedEvent = ref({})
+const summaryOnlyForAdmin = ref(true)
 
 onMounted(async () => {
   resourceAllEvents.value = await store.dispatch("retrieveResourceAllEvents")
   infoRequirements.value = await store.dispatch("retrieveInfoRequirements")
+  accessForms.value = await store.dispatch("retrieveAllAccessForms")
+  selectedEvent.value = resourceAllEvents.value[0]
+  selectedAccessForm.value = accessForms.value[0]
 })
 
 async function setInfoRequirements () {
   const data = {}
-  data.requiredAccessFormId = accessFormId.value
-  data.forResourceEvent = selectedResourceAllEvents.value.value
+  console.log(selectedEvent.value)
+  data.requiredAccessFormId = selectedAccessForm.value.id
+  data.forResourceEvent = selectedEvent.value.value
+  data.viewableOnlyByAdmin = summaryOnlyForAdmin.value
+  console.log(data)
   await store.dispatch("setInfoRequirements", { data })
   infoRequirements.value = await store.dispatch("retrieveInfoRequirements")
 }

@@ -84,6 +84,16 @@ export default {
         return null
       })
   },
+  retrieveAllAccessForms ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/access-forms`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded["access-forms"]
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting request data from server")
+        return null
+      })
+  },
   retrieveDynamicAccessFormsValueSetByID ({ state, commit }, { id }) {
     return axios.get(`${VALUE_SETS}/${id}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
