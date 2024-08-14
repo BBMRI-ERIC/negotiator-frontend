@@ -124,23 +124,23 @@
           </thead>
           <tbody>
             <tr
-              v-for="(requirements, index) in infoRequirements['info-requirements']"
+              v-for="(requirement, index) in infoRequirements['info-requirements']"
               :key="index"
             >
               <th scope="row">
-                {{ requirements.id }}
+                {{ requirement.id }}
               </th>
               <td class="text-muted">
-                {{ requirements.id }}
+                {{ requirement.requiredAccessForm.id }}
               </td>
               <td class="text-muted">
-                {{ requirements.requiredAccessForm.name }}
+                {{ requirement.requiredAccessForm.name }}
               </td>
               <td class="text-muted">
-                {{ requirements.forResourceEvent }}
+                {{ requirement.forResourceEvent }}
               </td>
               <td class="text-muted">
-                {{ requirements.viewableOnlyByAdmin }}
+                {{ requirement.viewableOnlyByAdmin }}
               </td>
             </tr>
           </tbody>
