@@ -124,7 +124,7 @@
             <p>{{ activeTheme.footerCopyRight }}</p>
           </div>
           <div class="col text-center text-light ms-4">
-            UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>v{{ backendVersion }}</span>
+            UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>{{ backendVersion }}</span>
           </div>
           <div
             v-if="activeTheme.isFooterHelpLinkVisible"
