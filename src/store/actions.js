@@ -405,6 +405,9 @@ export default {
   },
   async retrieveInfoRequirement ({ state }, { link }) {
     return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data
+      })
       .catch(() => {
         commit("setNotification", "Error getting Info Requirements data from server")
       })
