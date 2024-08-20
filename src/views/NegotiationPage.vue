@@ -27,13 +27,6 @@
         <h1 class="text-primary fw-bold">
           {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
         </h1>
-        <span
-          :class="getBadgeColor(negotiation.status)"
-          class="badge py-2 rounded-pill"
-        ><i
-          :class="getBadgeIcon(negotiation.status)"
-          class="px-1"
-        /> {{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
       </div>
       <div class="col-12 col-md-8 order-2 order-md-1">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
@@ -222,21 +215,6 @@
                             <CopyTextButton :text="resource.sourceId" />
                           </div>
                         </div>
-                        <div
-                          v-if="getLifecycleLinks(resource._links).length > 0"
-                          class="ms-4"
-                        >
-                          Update status:
-                          <div
-                            v-for="link in getLifecycleLinks(resource._links)"
-                            class="lifecycle-links flex-column ms-4"
-                          >
-                            <a
-                              class="lifecycle-text cursor-pointer"
-                              @click="updateResourceState(link.href)"
-                            ><i class="bi bi-patch-check" /> {{ link.name }}</a>
-                          </div>
-                        </div>
                       </div>
 
                       <div
@@ -275,6 +253,7 @@
           :resources="resources"
           :organizations="organizationsById"
           :recipients="postsRecipients"
+          @new_attachment="retrieveAttachments()"
         />
       </div>
       <div
@@ -306,14 +285,6 @@
               Submitted at:
             </div>
             <span class="text-secondary-text"> {{ negotiation ? printDate(negotiation.creationDate) : "" }}</span>
-          </li>
-          <li class="list-group-item p-2 d-flex justify-content-between">
-            <div>
-              <div class="fw-bold text-primary-text">
-                Status:
-              </div>
-              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
-            </div>
           </li>
 
           <li
@@ -363,22 +334,6 @@
               class="cursor-pointer"
               @click="downloadAttachmentFromLink({href: link.href})"
             ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
-          </li>
-          <li class="list-group-item p-2 border-bottom-0">
-            <div class="pt-2 abandon-text">
-              <div
-                v-if="negotiation.status !== 'ABANDONED' && isUserRoleResearcher"
-                type="button"
-                role="button"
-                data-bs-toggle="modal"
-                data-bs-target="#abandonModal"
-              >
-                <span>
-                  <i class="bi bi-trash pe-1" />
-                  <span>Abandon</span>
-                </span>
-              </div>
-            </div>
           </li>
         </ul>
       </div>

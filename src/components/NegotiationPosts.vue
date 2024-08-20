@@ -224,6 +224,7 @@ async function addAttachmentToNegotiation () {
       console.log(`Successfully uploaded file: ${attachment.value.name}`)
     }
   })
+  emit("new_attachment")
 }
 
 function resetForm () {
@@ -318,6 +319,7 @@ function getFileTypeName (fileType) {
     return "DOC"
   }
 }
+const emit = defineEmits(["new_attachment"])
 </script>
 
 <style scoped>

@@ -56,46 +56,6 @@
         />
       </button>
 
-      <div
-        id="v-step-3"
-        class="filter-by-status"
-      >
-        <button
-          class="btn btn-sm btn-outline-sort-filter-button-outline dropdown-toggle"
-          :class="filtersSortData.status.length > 0 ? 'btn-primary show':''"
-          type="button"
-          data-bs-toggle="dropdown"
-          data-bs-auto-close="outside"
-          aria-expanded="false"
-        >
-          Filter by status
-        </button>
-        <ul
-          class="dropdown-menu"
-          aria-labelledby="dropdownSortingButton"
-          role="menu"
-        >
-          <div
-            v-for="(status, index) in filtersStatus"
-            :key="index"
-            class="form-check mx-2 my-2"
-          >
-            <input
-              v-model="filtersSortData.status"
-              class="form-check-input"
-              type="checkbox"
-              :value="status.value"
-              @change="emitFilterSortData"
-            >
-            <label
-              class="form-check-label text-sort-filter-dropdown-text"
-            >
-              {{ status.label }}
-            </label>
-          </div>
-        </ul>
-      </div>
-
       <div class="filter-by-date">
         <button
           class="btn btn-sm btn-outline-sort-filter-button-outline dropdown-toggle"
