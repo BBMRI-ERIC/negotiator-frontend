@@ -276,7 +276,7 @@
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-primary-text">
-              Negotiation ID:
+              Proposal ID:
             </div>
             <span class="text-secondary-text"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>

@@ -96,7 +96,7 @@
                   </button>
                 </th>
                 <th scope="col">
-                  Negotiation ID
+                  Proposal ID
                 </th>
                 <th scope="col">
                   Created on
