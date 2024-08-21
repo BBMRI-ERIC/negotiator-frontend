@@ -36,15 +36,17 @@
             class="list-group-item p-3"
           >
             <span class="fs-5 fw-bold text-primary-text mt-3">
-              {{ key.toUpperCase() }}</span>
+              {{ key.toUpperCase() }}
+            </span>
             <div
               v-for="(subelement, subelementkey) in element"
               :key="subelement"
               class="mt-3"
             >
-              <label
+              <div
                 class="me-2 fw-bold text-secondary-text"
-              >{{ subelementkey.toUpperCase() }}:</label>
+                v-html="decodeHTML(subelementkey)"
+              />
               <span
                 v-if="isAttachment(subelement)"
                 class="text-secondary-text"
@@ -134,19 +136,28 @@
           <li class="list-group-item p-3">
             <div
               class="d-flex flex-row mb-3 justify-content-between"
-              style="min-height: 38px;"
             >
               <div
-                data-bs-toggle="collapse"
-                data-bs-target="#resourcesList"
-                aria-controls="resourcesList"
-                aria-expanded="true"
-                type="button"
+                class="d-flex flex-row"
               >
-                <span class="fs-5 fw-bold text-primary-text mt-3">
-                  <i class="bi bi-card-list" />
-                  COLLECTIONS ({{ numberOfResources }})
-                </span>
+                <div
+                  data-bs-toggle="collapse"
+                  data-bs-target="#resourcesList"
+                  aria-controls="resourcesList"
+                  aria-expanded="true"
+                  type="button"
+                >
+                  <span class="fs-5 fw-bold text-primary-text mt-3">
+                    <i class="bi bi-card-list" />
+                    COLLECTIONS ({{ numberOfResources }})
+                  </span>
+                </div>
+                <add-resources-button
+                  v-if="isAddResourcesButtonVisible"
+                  class="mb-1"
+                  :negotiation-id="negotiationId"
+                  @new-resources="reloadResources()"
+                />
               </div>
               <div
                 data-bs-toggle="collapse"
@@ -366,17 +377,18 @@ import CopyTextButton from "@/components/CopyTextButton.vue"
 import { Modal } from "bootstrap"
 
 import PDFButton from "@/components/PDFButton.vue"
-import { ROLES, dateFormat } from "@/config/consts"
+import { dateFormat, ROLES } from "@/config/consts"
 import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
-import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { getBadgeColor, getBadgeIcon, transformStatus } from "../composables/utils.js"
 import FormViewModal from "@/components/modals/FormViewModal.vue"
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
-import { computed, ref } from "vue"
+import AddResourcesButton from "@/components/AddResourcesButton.vue"
 
 export default {
   name: "NegotiationPage",
   components: {
+    AddResourcesButton,
     FormSubmissionModal,
     FormViewModal,
     ConfirmationModal,
@@ -433,7 +445,9 @@ export default {
       requiredAccessForm: {},
       formSubmissionModal: null,
       submittedForm: undefined,
-      formViewModal: null
+      formViewModal: null,
+      isAddResourcesButtonVisible: false,
+      toParse: "Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below"
     }
   },
   computed: {
@@ -505,11 +519,12 @@ export default {
     this.negotiation = await this.retrieveNegotiationById({
       negotiationId: this.negotiationId
     })
-    this.resources = await this.retrieveResourcesByNegotiationId({
+    const resourceResponse = await this.retrieveResourcesByNegotiationId({
       negotiationId: this.negotiationId
     })
+    if (resourceResponse._embedded.resources !== undefined) { this.resources = resourceResponse._embedded.resources }
+    this.isAddResourcesButtonVisible = this.hasRightsToAddResources(resourceResponse._links)
     this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-
     this.negotiationStatusOptions = await this.retrievePossibleEvents({
       negotiationId: this.negotiation.id
     })
@@ -539,6 +554,16 @@ export default {
       }).then((response) => {
         this.attachments = response
       })
+    },
+    hasRightsToAddResources (links) {
+      console.log(links)
+      for (const key in links) {
+        console.log(key)
+        if (key === "add_resources") {
+          return true
+        }
+      }
+      return false
     },
     isRepresentativeForResource (resourceId) {
       return this.representedResourcesIds.includes(resourceId)
@@ -585,6 +610,13 @@ export default {
       }
       return lifecycleLinks
     },
+    decodeHTML (htmlString) {
+      const parser = new DOMParser()
+      const decodedString = parser.parseFromString(htmlString, "text/html").body.textContent
+      const txt = document.createElement("div")
+      txt.innerHTML = decodedString
+      return txt.innerHTML
+    },
     getSummaryLinks (links) {
       console.log(links)
       const summaryLinks = []
@@ -620,9 +652,10 @@ export default {
       await this.updateResourceStatus({
         link
       })
-      this.resources = await this.retrieveResourcesByNegotiationId({
+      const resourceResponse = await this.retrieveResourcesByNegotiationId({
         negotiationId: this.negotiationId
       })
+      if (resourceResponse._embedded.resources !== undefined) { this.resources = resourceResponse._embedded.resources }
     },
     transformStatus (badgeText) {
       return transformStatus(badgeText)
@@ -639,11 +672,17 @@ export default {
       }
       return value
     },
-    async hideFormSubmissionModal () {
-      this.formSubmissionModal.hide()
-      this.resources = await this.retrieveResourcesByNegotiationId({
+    async reloadResources () {
+      const resourceResponse = await this.retrieveResourcesByNegotiationId({
         negotiationId: this.negotiationId
       })
+      if (resourceResponse._embedded.resources !== undefined) {
+        this.resources = resourceResponse._embedded.resources
+      }
+    },
+    async hideFormSubmissionModal () {
+      this.formSubmissionModal.hide()
+      await this.reloadResources()
     }
   }
 }

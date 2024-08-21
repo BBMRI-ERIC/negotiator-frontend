@@ -238,7 +238,7 @@ export default {
   async retrieveResourcesByNegotiationId ({ state, commit }, { negotiationId }) {
     return axios.get(`${NEGOTIATION_PATH}/${negotiationId}/resources`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        return response.data._embedded.resources
+        return response.data
       })
       .catch(() => {
         commit("setNotification", "Error getting request data from server")
@@ -419,6 +419,25 @@ export default {
       })
       .catch(() => {
         commit("setNotification", "Error getting Info Requirements data from server")
+      })
+  },
+  async retrieveAllResources ({ state, commit }) {
+    return axios.get(`${BASE_API_PATH}/resources`, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        return response.data._embedded.resources
+      })
+      .catch(() => {
+        commit("setNotification", "Error getting all resource events data from server")
+      })
+  },
+  async addResources ({ state, commit }, { data, negotiationId }) {
+    return axios.patch(`${BASE_API_PATH}/negotiations/${negotiationId}/resources`, data, { headers: getBearerHeaders(state.oidc.access_token) })
+      .then((response) => {
+        commit("setNotification", "Thank you. Your response was successfully submitted. ")
+        return response.data
+      })
+      .catch(() => {
+        commit("setNotification", "There was an error adding more Resources")
       })
   },
   async retrieveInformationSubmission ({ state }, { href }) {
