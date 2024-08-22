@@ -19,6 +19,7 @@ import AddResourcesModal from "@/components/modals/AddResourcesModal.vue"
 import { Modal } from "bootstrap"
 import { ref } from "vue"
 const shown = ref(false)
+const resourceModal = ref(undefined)
 const props = defineProps({
   negotiationId: {
     type: String,
@@ -27,13 +28,13 @@ const props = defineProps({
 })
 const emit = defineEmits(["new-resources"])
 function openModal () {
-  const resourcesModal = new Modal(document.querySelector("#resourcesModal"))
+  resourceModal.value = new Modal(document.querySelector("#resourcesModal"))
   shown.value = true
-  resourcesModal.show()
+  resourceModal.value.show()
 }
 function closeModal () {
   emit("new-resources")
-  this.resourcesModal.hide()
+  resourceModal.value.hide()
 }
 </script>
 
