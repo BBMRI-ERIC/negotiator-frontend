@@ -27,9 +27,9 @@ const props = defineProps({
 })
 const emit = defineEmits(["new-resources"])
 function openModal () {
-  this.resourcesModal = new Modal(document.querySelector("#resourcesModal"))
+  const resourcesModal = new Modal(document.querySelector("#resourcesModal"))
   shown.value = true
-  this.resourcesModal.show()
+  resourcesModal.show()
 }
 function closeModal () {
   emit("new-resources")
