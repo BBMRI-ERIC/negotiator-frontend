@@ -16,8 +16,8 @@ function getBearerHeaders (token) {
 }
 
 export default {
-  retrieveRequestById (store, { requestId }) {
-    return axios.get(`${REQUESTS_PATH}/${requestId}`)
+  retrieveRequestById ({ state, commit }, { requestId }) {
+    return axios.get(`${REQUESTS_PATH}/${requestId}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         // it handles the error when backend is unreachable but vite proxy strangely return 200
         if (response.data === "") {
