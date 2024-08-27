@@ -36,6 +36,9 @@
               @input="onSearch"
             >
           </div>
+          <div class="d-flex justify-content-end mb-2">
+            Number of selected Resources: {{ getNumberOfSelectedResources() }}
+          </div>
           <div class="d-flex flex-row justify-content-end mb-2">
             Status:
             <div class="col-3 ms-2">
@@ -262,7 +265,9 @@ const onSearch = debounce(async () => {
     await loadResources({ name: searchQuery.value })
   }
 }, 1000) // Debounce delay in milliseconds
-
+function getNumberOfSelectedResources () {
+  return selectedResources.value.length
+}
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@
     class="btn"
     @click="openModal()"
   >
-    <i class="bi bi-pencil" />
+    <i class="bi bi-pencil-square" />
     Edit
   </button>
   <add-resources-modal
