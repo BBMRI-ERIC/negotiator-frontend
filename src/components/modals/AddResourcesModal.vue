@@ -36,8 +36,13 @@
               @input="onSearch"
             >
           </div>
-          <div class="d-flex justify-content-end mb-2">
-            Number of selected Resources: {{ getNumberOfSelectedResources() }}
+          <div class="d-flex justify-content-between">
+            <div class="ms-3 text-muted">
+              Found Resources: {{ getNumberOfFoundResources() }}
+            </div>
+            <div class="d-flex justify-content-end mb-2">
+              Selected Resources: {{ getNumberOfSelectedResources() }}
+            </div>
           </div>
           <div class="d-flex flex-row justify-content-end mb-2">
             Status:
@@ -173,6 +178,7 @@ const selectAll = ref(false)
 const loading = ref(true)
 const pageNumber = ref(0)
 const totalPages = ref(0)
+const totalElements = ref(0)
 const pageLinks = ref({})
 const searchQuery = ref("")
 const states = ref([])
@@ -207,6 +213,7 @@ async function loadResources (name = "") {
   pageLinks.value = response._links
   pageNumber.value = response.page.number
   totalPages.value = response.page.totalPages
+  totalElements.value = response.page.totalElements
   loading.value = false
 }
 async function loadStates () {
@@ -267,6 +274,9 @@ const onSearch = debounce(async () => {
 }, 1000) // Debounce delay in milliseconds
 function getNumberOfSelectedResources () {
   return selectedResources.value.length
+}
+function getNumberOfFoundResources () {
+  return totalElements.value
 }
 </script>
 

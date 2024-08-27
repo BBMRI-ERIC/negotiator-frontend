@@ -39,5 +39,7 @@ function closeModal () {
 </script>
 
 <style scoped>
-
+.btn:hover {
+  color: #e95713;
+}
 </style>
