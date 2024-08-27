@@ -25,9 +25,6 @@
           />
         </div>
         <div class="modal-body text-left">
-          <div class="fs-3 mb-4 fw-bold text-secondary text-center">
-            Access Form Submission
-          </div>
           <form-wizard
             v-if="accessForm"
             :start-index="0"

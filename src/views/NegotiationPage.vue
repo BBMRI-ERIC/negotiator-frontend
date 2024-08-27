@@ -63,7 +63,7 @@
                     class="ms-1 cursor-pointer"
                     icon="fa fa-download"
                     fixed-width
-                    @click.prevent="downloadAttachment(subelement.id, subelement.name)"
+                    @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
                   />
                 </span>
                 <span v-else>
@@ -141,19 +141,28 @@
           <li class="list-group-item p-3">
             <div
               class="d-flex flex-row mb-3 justify-content-between"
-              style="min-height: 38px;"
             >
               <div
-                data-bs-toggle="collapse"
-                data-bs-target="#resourcesList"
-                aria-controls="resourcesList"
-                aria-expanded="true"
-                type="button"
+                class="d-flex flex-row"
               >
-                <span class="fs-5 fw-bold text-primary-text mt-3">
-                  <i class="bi bi-card-list" />
-                  COLLECTIONS ({{ numberOfResources }})
-                </span>
+                <div
+                  data-bs-toggle="collapse"
+                  data-bs-target="#resourcesList"
+                  aria-controls="resourcesList"
+                  aria-expanded="true"
+                  type="button"
+                >
+                  <span class="fs-5 fw-bold text-primary-text mt-3">
+                    <i class="bi bi-card-list" />
+                    COLLECTIONS ({{ numberOfResources }})
+                  </span>
+                </div>
+                <add-resources-button
+                  v-if="isAddResourcesButtonVisible"
+                  class="mb-1"
+                  :negotiation-id="negotiationId"
+                  @new-resources="reloadResources()"
+                />
               </div>
               <div
                 data-bs-toggle="collapse"
@@ -275,6 +284,7 @@
           :resources="resources"
           :organizations="organizationsById"
           :recipients="postsRecipients"
+          @new_attachment="retrieveAttachments()"
         />
       </div>
       <div
@@ -420,10 +430,12 @@ import { computed, ref } from "vue"
 import { useNegotiationPageStore } from '../store/negotiationPage.js'
 import { useUserStore } from '../store/user.js'
 import { useAdminStore } from '../store/admin.js'
+import AddResourcesButton from "@/components/AddResourcesButton.vue"
 
 export default {
   name: "NegotiationPage",
   components: {
+    AddResourcesButton,
     FormSubmissionModal,
     FormViewModal,
     ConfirmationModal,
@@ -480,7 +492,9 @@ export default {
       requiredAccessForm: {},
       formSubmissionModal: null,
       submittedForm: undefined,
-      formViewModal: null
+      formViewModal: null,
+      isAddResourcesButtonVisible: false,
+      toParse: "Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below"
     }
   },
   computed: {
@@ -560,6 +574,18 @@ export default {
     }
   },
   async beforeMount () {
+    this.negotiation = await this.retrieveNegotiationById({
+      negotiationId: this.negotiationId
+    })
+    const resourceResponse = await this.retrieveResourcesByNegotiationId({
+      negotiationId: this.negotiationId
+    })
+    if (resourceResponse._embedded.resources !== undefined) { this.resources = resourceResponse._embedded.resources }
+    this.isAddResourcesButtonVisible = this.hasRightsToAddResources(resourceResponse._links)
+    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
+    this.negotiationStatusOptions = await this.retrievePossibleEvents({
+      negotiationId: this.negotiation.id
+    })
     this.negotiation = await this.negotiationPageStore.retrieveNegotiationById(
       this.negotiationId
     )
@@ -586,6 +612,16 @@ export default {
         ).then((response) => {
           this.attachments = response
         })
+    },
+    hasRightsToAddResources (links) {
+      console.log(links)
+      for (const key in links) {
+        console.log(key)
+        if (key === "add_resources") {
+          return true
+        }
+      }
+      return false
     },
     isRepresentativeForResource (resourceId) {
       return this.representedResourcesIds.includes(resourceId)
@@ -681,6 +717,14 @@ export default {
       }
       return value
     },
+    async reloadResources () {
+      const resourceResponse = await this.retrieveResourcesByNegotiationId({
+        negotiationId: this.negotiationId
+      })
+      if (resourceResponse._embedded.resources !== undefined) {
+        this.resources = resourceResponse._embedded.resources
+      }
+    },
     async hideFormSubmissionModal () {
       this.formSubmissionModal.hide()
       this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
@@ -693,6 +737,7 @@ export default {
     },
     retrieveInfoRequirement (link) {
       this.adminStore.retrieveInfoRequirement(link)
+      await this.reloadResources()
     }
   }
 }
