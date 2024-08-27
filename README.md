@@ -159,7 +159,7 @@ src/
 ```
 You can set which URLs external links lead to
 
-## Config for vuex-oidc
+## Config for pinia-oidc
 
 Location of matomo config file:
 ```sh 
@@ -171,4 +171,4 @@ src/
 ### About 
 Library to provide OpenID Connect (OIDC) and OAuth2 protocol support for client-side, browser-based JavaScript client applications. Also included is support for user session and access token management.
 
-See [Configuration Reference](https://github.com/perarnborg/vuex-oidc/wiki).
+See [Configuration Reference](https://github.com/perarnborg/vuex-oidc/wiki, https://github.com/zhazhazhu/pinia-oidc).

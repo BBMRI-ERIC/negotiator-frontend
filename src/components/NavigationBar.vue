@@ -126,9 +126,13 @@ import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import Notifications from "../components/Notifications.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
-import { useStore } from "vuex"
+import { useActuatorInfoStore } from "../store/actuatorInfo"
+import { useUserStore } from "../store/user"
+import { useOidcStore } from "../store/oidc"
 
-const store = useStore()
+const actuatorInfoStore = useActuatorInfoStore()
+const userStore = useUserStore()
+const oidcStore = useOidcStore()
 
 const roles = ref([])
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
@@ -137,10 +141,10 @@ const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" ||
 const backendEnvironment = ref("")
 
 const oidcIsAuthenticated = computed(() => {
-  return store.getters.oidcIsAuthenticated
+  return oidcStore.oidcIsAuthenticated
 })
 const oidcUser = computed(() => {
-  return store.getters.oidcUser
+  return oidcStore.oidcUser
 })
 const isAdmin = computed(() => {
   return roles.value.includes(ROLES.ADMINISTRATOR)
@@ -168,7 +172,7 @@ const returnCurrentModeTextColor = computed(() => {
   return ""
 })
 const userInfo = computed(() => {
-  return store.getters.getUserInfo
+  return userStore.userInfo
 })
 
 watch(userInfo, () => {
@@ -179,10 +183,8 @@ onBeforeMount(() => {
   retrieveBackendEnvironment()
 })
 
-async function retrieveBackendEnvironment () {
-  await store.dispatch("retrieveBackendEnvironment").then((res) => {
-    backendEnvironment.value = res
-  })
+function retrieveBackendEnvironment () {
+  backendEnvironment.value = actuatorInfoStore.actuatorInfoApplicationEnvironment
 }
 function retrieveUserRoles () {
   roles.value = userInfo.value.roles

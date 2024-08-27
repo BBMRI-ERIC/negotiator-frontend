@@ -60,8 +60,6 @@
 import { onMounted } from "vue"
 import { Tooltip } from "bootstrap"
 import "vue3-form-wizard/dist/style.css"
-import { useStore } from "vuex"
-import { useRouter } from "vue-router"
 
 const props = defineProps({
   payload: {
@@ -86,9 +84,6 @@ function translateTrueFalse (value) {
   }
   return value
 }
-
-const store = useStore()
-const router = useRouter()
 
 onMounted(() => {
   new Tooltip(document.body, {

@@ -123,9 +123,11 @@ import { Tooltip } from "bootstrap"
 import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
-import { useStore } from "vuex"
+import { useOidcStore } from "../store/oidc"
+import { useNegotiationPageStore } from '../store/negotiationPage.js'
 
-const store = useStore()
+const oidcStore = useOidcStore()
+const negotiationPageStore = useNegotiationPageStore()
 
 const props = defineProps({
   negotiation: {
@@ -156,7 +158,7 @@ const recipientId = ref("")
 const attachment = ref(undefined)
 
 const oidcUser = computed(() => {
-  return store.getters.oidcUser
+  return oidcStore.oidcUser
 })
 
 const readyToSend = computed(() => {
@@ -194,7 +196,7 @@ onBeforeMount(() => {
 })
 
 async function retrievePostsByNegotiationId () {
-  await store.dispatch("retrievePostsByNegotiationId", { negotiationId: props.negotiation.id }).then((res) => {
+  await negotiationPageStore.retrievePostsByNegotiationId(props.negotiation.id).then((res) => {
     posts.value = res
   })
 }
@@ -206,7 +208,7 @@ async function addMessageToNegotiation () {
     negotiationId: props.negotiation.id,
     type: recipientId.value === "Everyone" ? POST_TYPE.PUBLIC : POST_TYPE.PRIVATE
   }
-  await store.dispatch("addMessageToNegotiation", { data }).then((post) => {
+  await negotiationPageStore.addMessageToNegotiation(data).then((post) => {
     if (post) {
       posts.value.push(post)
     }
@@ -219,7 +221,7 @@ async function addAttachmentToNegotiation () {
     negotiationId: props.negotiation.id,
     attachment: attachment.value
   }
-  await store.dispatch("addAttachmentToNegotiation", { data }).then((post) => {
+  await negotiationPageStore.addAttachmentToNegotiation(data).then((post) => {
     if (attachment.value) {
       console.log(`Successfully uploaded file: ${attachment.value.name}`)
     }
