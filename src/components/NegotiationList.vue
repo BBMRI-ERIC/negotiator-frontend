@@ -16,7 +16,7 @@
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
-            @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+            @click="setSavedNegotiationsView('Card-one-column')"
           >
             <i class="bi bi-card-heading" />
           </button>
@@ -26,7 +26,7 @@
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
-            @click="setSavedNegotiationsView({negotiationsView:'Card-one-column'})"
+            @click="setSavedNegotiationsView('Card-one-column')"
           >
             <i class="bi bi-list" />
           </button>
@@ -36,7 +36,7 @@
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
-            @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView({negotiationsView:'Card-two-column'})"
+            @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView('Card-two-column')"
           >
             <i class="bi bi-grid" />
           </button>
@@ -46,7 +46,7 @@
             type="button"
             class="btn btn-sm"
             :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
-            @click="savedNegotiationsView = 'Table', setSavedNegotiationsView({negotiationsView:'Table'})"
+            @click="savedNegotiationsView = 'Table', setSavedNegotiationsView('Table')"
           >
             <i class="bi bi-table" />
           </button>
@@ -137,6 +137,7 @@
                     />
                   </button>
                 </th>
+                <th scope="col" />
               </tr>
             </thead>
             <tbody>
@@ -176,6 +177,9 @@
                     />
                     {{ transformStatus(fn.status) }}
                   </span>
+                </td>
+                <td>
+                  <i class="bi bi-chevron-right float-end" />
                 </td>
               </tr>
             </tbody>
@@ -240,16 +244,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount, onMounted } from "vue"
+import { ref, computed, onBeforeMount } from "vue"
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
-import { useStore } from "vuex"
-import { Tooltip } from "bootstrap"
+import { useNegotiationsViewStore } from "../store/negotiationsView.js"
 
-const store = useStore()
+const negotiationsViewStore = useNegotiationsViewStore()
 
 const props = defineProps({
   negotiations: {
@@ -282,23 +285,17 @@ const loading = computed(() => {
 })
 
 const savedNegotiationsView = computed(() => {
-  return store.getters.getSavedNegotiationsView
+  return negotiationsViewStore.savedNegotiationsView
 })
 
 onBeforeMount(() => {
-  if (savedNegotiationsView.value === "") {
-    setSavedNegotiationsView({ negotiationsView: "Table" })
+  if (negotiationsViewStore.savedNegotiationsView === "") {
+    setSavedNegotiationsView("Table")
   }
 })
 
-onMounted(() => {
-  new Tooltip(document.body, {
-    selector: "[data-bs-toggle='tooltip']"
-  })
-})
-
 function setSavedNegotiationsView (view) {
-  store.dispatch("setSavedNegotiationsView", view)
+  negotiationsViewStore.savedNegotiationsView = view
 }
 
 function formatDate (date) {

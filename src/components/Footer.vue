@@ -1,7 +1,5 @@
 <template>
-  <footer
-    class="bottom-0 p-0 w-100 text-primary-text"
-  >
+  <footer class="bottom-0 p-0 w-100 text-primary-text">
     <hr class="mt-10 mb-10">
     <div class="row d-flex flex-column flex-md-row">
       <div class="col text-center mb-4 mb-md-0">
@@ -45,13 +43,15 @@
           <a
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
             class="text-primary-text"
-          >  <i class="bi bi-github" />
+          > <i
+            class="bi bi-github"
+          />
             GitHub UI
           </a>
           <a
             href="https://github.com/BBMRI-ERIC/negotiator"
             class="text-primary-text ps-2"
-          >  <i class="bi bi-github" />
+          > <i class="bi bi-github" />
             GitHub Application
           </a>
         </div>
@@ -70,7 +70,7 @@
             v-if="activeTheme.isFooterStatusPageVisible"
             :href="activeTheme.footerStatusPageLink"
             class="text-primary-text ps-2"
-          >  <i class="bi bi-check-circle" />
+          > <i class="bi bi-check-circle" />
             {{ activeTheme.footerStatusPageText }}
           </a>
         </div>
@@ -144,10 +144,9 @@ import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
-import { useStore } from "vuex"
+import { useActuatorInfoStore } from "../store/actuatorInfo.js"
 
-const store = useStore()
-
+const actuatorInfoStore = useActuatorInfoStore()
 const viteGitTag = import.meta.env.VITE_GIT_TAG
 
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
@@ -156,14 +155,8 @@ const gitTag = viteGitTag
 const backendVersion = ref("")
 
 onBeforeMount(() => {
-  retrieveBackendVersion()
+  backendVersion.value = actuatorInfoStore.actuatorInfoBuildVersion
 })
-
-async function retrieveBackendVersion () {
-  await store.dispatch("retrieveBackendVersion").then((res) => {
-    backendVersion.value = res
-  })
-}
 
 function getWorkProgrammeIcon () {
   return new URL(`${activeTheme.footerWorkProgrammeIcon}`)

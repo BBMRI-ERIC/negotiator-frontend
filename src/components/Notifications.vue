@@ -40,16 +40,16 @@
 
 <script setup>
 import { computed } from "vue"
-import { useStore } from "vuex"
+import { useNotificationsStore } from "../store/notifications"
 
-const store = useStore()
+const notificationsStore = useNotificationsStore()
 
 const getAllNotifications = computed(() => {
-  return store.getters.getAllNotifications
+  return notificationsStore.allNotifications
 })
 
 async function resetNotification () {
-  await store.commit("setNotification", undefined)
+  notificationsStore.resetNotification()
 }
 </script>
 
