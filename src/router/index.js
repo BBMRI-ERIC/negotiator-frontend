@@ -5,10 +5,9 @@ import NegotiationCreatePage from "../views/NegotiationCreatePage.vue"
 import NegotiationPage from "../views/NegotiationPage.vue"
 import FaqPage from "../views/FaqPage.vue"
 import AdminSettingsPage from "../views/AdminSettingsPage.vue"
-import store from "@/store"
-import { vuexOidcCreateRouterMiddleware } from "vuex-oidc"
 import UserPage from "@/views/UserPage.vue"
 import { ROLES } from "@/config/consts"
+import { useUserStore } from "../store/user.js"
 import hasUser from "@/middlewares/hasUser.js"
 import middlewarePipeline from "@/middlewares/middleware-pipeline.js"
 
@@ -54,7 +53,6 @@ const router = createRouter({
     component: FaqPage,
     meta: { isPublic: true, middleware: [hasUser] }
   },
-  ,
   {
     path: "/settings",
     name: "settings",
@@ -70,10 +68,10 @@ const router = createRouter({
   }]
 })
 
-router.beforeEach(vuexOidcCreateRouterMiddleware(store))
 
 router.beforeEach((to, from, next) => {
-  /** Navigate to next if middleware is not applied */
+  const userStore = useUserStore()
+
   if (!to.meta.middleware) {
     return next()
   }
@@ -83,7 +81,7 @@ router.beforeEach((to, from, next) => {
     to,
     from,
     next,
-    store
+    userStore
   }
 
   return middleware[0]({

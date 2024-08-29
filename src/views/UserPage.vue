@@ -26,11 +26,14 @@ import moment from "moment"
 import NegotiationList from "@/components/NegotiationList.vue"
 import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import FilterSort from "@/components/FilterSort.vue"
-import { mapActions, useStore } from "vuex"
 import { ROLES } from "@/config/consts.js"
 import { useRouter, useRoute } from "vue-router"
+import { useUserStore } from "../store/user"
+import { useNegotiationsStore } from "../store/negotiations"
 
-const store = useStore()
+const userStore = useUserStore()
+const negotiationsStore = useNegotiationsStore()
+
 const router = useRouter()
 const route = useRoute()
 
@@ -60,14 +63,16 @@ const loading = computed(() => {
 })
 
 onMounted(async () => {
-  user.value = store.getters.getUserInfo
-
+  if (Object.keys(userStore.userInfo).length === 0) {
+    await userStore.retrieveUser()
+  }
+  user.value = userStore.userInfo
   userId.value = user.value?.id
 
   if (props.userRole === "ROLE_REPRESENTATIVE") {
     filtersStatus.value = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
   } else {
-    filtersStatus.value = await store.dispatch("retrieveNegotiationLifecycleStates")
+    filtersStatus.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
   }
 
   if (Object.keys(route?.query).length) {
@@ -82,28 +87,15 @@ onMounted(async () => {
 
 async function retrieveNegotiationsByUserRole (pageNumber) {
   if (props.userRole === "ROLE_ADMIN") {
-    negotiations.value = await store.dispatch("retrieveNegotiations", {
-      filtersSortData: filtersSortData.value,
-      pageNumber
-    })
+    negotiations.value = await negotiationsStore.retrieveNegotiations(filtersSortData.value, pageNumber)
   }
 
   if (props.userRole === "ROLE_RESEARCHER") {
-    negotiations.value = await store.dispatch("retrieveNegotiationsByUserId", {
-      role: "author",
-      filtersSortData: filtersSortData.value,
-      userId: userId.value,
-      pageNumber
-    })
+    negotiations.value = await negotiationsStore.retrieveNegotiationsByUserId("author", filtersSortData.value, userId.value, pageNumber)
   }
 
   if (props.userRole === "ROLE_REPRESENTATIVE") {
-    negotiations.value = await store.dispatch("retrieveNegotiationsByUserId", {
-      role: "representative",
-      filtersSortData: filtersSortData.value,
-      userId: userId.value,
-      pageNumber
-    })
+    negotiations.value = await negotiationsStore.retrieveNegotiationsByUserId("representative", filtersSortData.value, userId.value, pageNumber)
   }
 
   pagination.value = negotiations.value.page
