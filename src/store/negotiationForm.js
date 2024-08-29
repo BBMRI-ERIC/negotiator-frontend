@@ -7,7 +7,7 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
   const notifications = useNotificationsStore()
 
   async function retrieveRequestById (requestId) {
-    return await axios.get(`${apiPaths.REQUESTS_PATH}/${requestId}`)
+    return await axios.get(`${apiPaths.REQUESTS_PATH}/${requestId}`, { headers: getBearerHeaders(requestId) })
       .then((response) => {
         // it handles the error when backend is unreachable but vite proxy strangely return 200
         if (response.data === "") {

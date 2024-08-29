@@ -8,7 +8,7 @@ export const useActuatorInfoStore = defineStore("actuatorInfo", () => {
   const notifications = useNotificationsStore()
 
   const actuatorInfo = ref({})
-  const actuatorInfoBuildVersion = ref(".NULL")
+  const actuatorInfoBuildVersion = ref("unknown")
   const actuatorInfoApplicationEnvironment = ref("")
 
   function retrieveBackendActuatorInfo () {
