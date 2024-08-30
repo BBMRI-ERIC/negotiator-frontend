@@ -428,18 +428,13 @@ async function getValueSet (link, id) {
 }
 
 async function startRequiredAccessForm () {
-  console.log(props.resourceId)
   const data = {
     resourceId: props.resourceId,
     payload: negotiationCriteria.value
   }
   const negotiationId = props.negotiationId
   const requirementId = props.requirementId
-  await formsStore.submitRequiredInformation(data, negotiationId, requirementId).then((submissionId) => {
-    if (submissionId) {
-      console.log(submissionId)
-    }
-  })
+  await formsStore.submitRequiredInformation(data, negotiationId, requirementId)
 }
 
 function startModal () {
@@ -491,7 +486,7 @@ function isSectionValid (section) {
         valid = true
       }
     })
-    if (!valid) { 
+    if (!valid) {
       notificationsStore.setNotification("Please fill out all required fields correctly")
     }
     return valid

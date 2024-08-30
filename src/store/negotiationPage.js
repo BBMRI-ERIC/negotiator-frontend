@@ -139,13 +139,13 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
       })
   }
 
-  function retrieveResourcesByNegotiationId (negotiationId) {
+  async function retrieveResourcesByNegotiationId (negotiationId) {
     return axios.get(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}/resources`, { headers: getBearerHeaders() })
       .then((response) => {
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error getting request data from server")
+        notifications.setNotification("Error fetching Resources")
       })
   }
 
@@ -175,7 +175,15 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
         window.URL.revokeObjectURL(href)
       })
   }
-
+  function retrieveInfoRequirement (link) {
+    return axios.get(`${link}`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("Error getting Info Requirements data from server")
+      })
+  }
   function retrieveInformationSubmission (href) {
     return axios.get(`${href}`, { headers: getBearerHeaders() })
       .then((response) => {
@@ -238,6 +246,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
     updateNegotiationStatus,
     retrievePossibleEvents,
     retrievePossibleEventsForResource,
+    retrieveInfoRequirement,
     updateResourceStatus,
     retrieveNegotiationById,
     retrievePostsByNegotiationId,

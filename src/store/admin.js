@@ -25,7 +25,6 @@ export const useAdminStore = defineStore("admin", () => {
         notifications.setNotification("Error sending message")
       })
   }
-      
   function retrieveInfoRequirement (link) {
     return axios.get(`${link}`, { headers: getBearerHeaders() })
       .then((response) => {
@@ -45,8 +44,8 @@ export const useAdminStore = defineStore("admin", () => {
         notifications.setNotification("Error getting Info Requirements data from server")
       })
   }
-  
-  return { 
+
+  return {
     retrieveResourceAllEvents,
     setInfoRequirements,
     retrieveInfoRequirement,

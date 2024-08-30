@@ -421,12 +421,11 @@ import CopyTextButton from "@/components/CopyTextButton.vue"
 import { Modal } from "bootstrap"
 
 import PDFButton from "@/components/PDFButton.vue"
-import { ROLES, dateFormat } from "@/config/consts"
+import { dateFormat, ROLES } from "@/config/consts"
 import moment from "moment"
-import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { getBadgeColor, getBadgeIcon, transformStatus } from "../composables/utils.js"
 import FormViewModal from "@/components/modals/FormViewModal.vue"
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
-import { computed, ref } from "vue"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
 import { useAdminStore } from "../store/admin.js"
@@ -499,12 +498,10 @@ export default {
   },
   computed: {
     userStore () {
-      const userStore = useUserStore()
-      return userStore
+      return useUserStore()
     },
     negotiationPageStore () {
-      const negotiationPageStore = useNegotiationPageStore()
-      return negotiationPageStore
+      return useNegotiationPageStore()
     },
     adminStore () {
       const adminStore = useAdminStore()
@@ -665,8 +662,7 @@ export default {
       return summaryLinks
     },
     async openModal (href, resourceId) {
-      const requirement = undefined
-      requirement = await this.retrieveInfoRequirement(href)
+      const requirement = await this.negotiationPageStore.retrieveInfoRequirement(href)
       this.resourceId = resourceId
       this.requiredAccessForm = requirement.requiredAccessForm
       this.requirementId = requirement.id
@@ -674,9 +670,7 @@ export default {
       this.formSubmissionModal.show()
     },
     async openFormModal (href) {
-      let payload
-      payload = await this.negotiationPageStore.retrieveInformationSubmission(href)
-
+      const payload = await this.negotiationPageStore.retrieveInformationSubmission(href)
       this.submittedForm = payload.payload
       this.formViewModal = new Modal(document.querySelector("#formViewModal"))
       this.formViewModal.show()
@@ -685,7 +679,7 @@ export default {
       await this.negotiationPageStore.updateResourceStatus(
         link
       )
-      this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
+      this.reloadResources()
     },
     transformStatus (badgeText) {
       return transformStatus(badgeText)
@@ -712,7 +706,7 @@ export default {
     },
     async hideFormSubmissionModal () {
       this.formSubmissionModal.hide()
-      this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
+      await this.reloadResources()
     },
     downloadAttachment (id, name) {
       this.negotiationPageStore.downloadAttachment(id, name)
