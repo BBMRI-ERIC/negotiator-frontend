@@ -307,7 +307,7 @@
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-primary-text">
-              Negotiation ID:
+              Proposal ID:
             </div>
             <span class="text-secondary-text"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
@@ -316,14 +316,6 @@
               Submitted at:
             </div>
             <span class="text-secondary-text"> {{ negotiation ? printDate(negotiation.creationDate) : "" }}</span>
-          </li>
-          <li class="list-group-item p-2 d-flex justify-content-between">
-            <div>
-              <div class="fw-bold text-primary-text">
-                Status:
-              </div>
-              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
-            </div>
           </li>
 
           <li
@@ -373,22 +365,6 @@
               class="cursor-pointer"
               @click="downloadAttachmentFromLink(link.href)"
             ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
-          </li>
-          <li class="list-group-item p-2 border-bottom-0">
-            <div class="pt-2 abandon-text">
-              <div
-                v-if="negotiation.status !== 'ABANDONED' && isUserRoleResearcher"
-                type="button"
-                role="button"
-                data-bs-toggle="modal"
-                data-bs-target="#abandonModal"
-              >
-                <span>
-                  <i class="bi bi-trash pe-1" />
-                  <span>Abandon</span>
-                </span>
-              </div>
-            </div>
           </li>
         </ul>
       </div>

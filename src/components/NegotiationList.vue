@@ -3,7 +3,6 @@
     v-if="!loading"
     class="container"
   >
-    <NewRequestButton />
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
@@ -97,7 +96,7 @@
                   </button>
                 </th>
                 <th scope="col">
-                  Negotiation ID
+                  Proposal ID
                 </th>
                 <th scope="col">
                   Created on
