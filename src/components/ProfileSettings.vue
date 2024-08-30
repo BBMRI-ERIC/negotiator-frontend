@@ -47,7 +47,10 @@
         </a>
       </li>
       <li v-if="isAdmin">
-        <router-link to="/settings" class="dropdown-item text-primary-text">
+        <router-link
+          to="/settings"
+          class="dropdown-item text-primary-text"
+        >
           <i class="bi bi-sliders" />
           Admin Settings
         </router-link>
@@ -56,14 +59,20 @@
         <hr class="dropdown-divider">
       </li>
       <li>
-        <a href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdfl"
-          class="dropdown-item text-primary-text"> <i class="bi bi-shield-lock" />
+        <a
+          :href="activeTheme.footerPrivacyPolicy"
+          class="dropdown-item text-primary-text"
+        > <i class="bi bi-shield-lock" />
           Privacy Policy
         </a>
       </li>
       <li>
-        <a href="https://www.bbmri-eric.eu/services/access-policies/" class="dropdown-item text-primary-text"> <i 
-          class="bi bi-clipboard-check" />
+        <a
+          href="https://www.bbmri-eric.eu/services/access-policies/"
+          class="dropdown-item text-primary-text"
+        > <i
+          class="bi bi-clipboard-check"
+        />
           Access Policy
         </a>
       </li>
@@ -86,7 +95,8 @@
 <script setup>
 import { computed } from "vue"
 import externalLinks from "@/config/externalLinks"
-import { useOidcStore } from "@/store/oidc";
+import { useOidcStore } from "@/store/oidc"
+import activeTheme from "@/config/theme"
 
 const oidcStore = useOidcStore()
 
