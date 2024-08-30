@@ -76,45 +76,7 @@
         </div>
       </div>
 
-      <div class="col text-center">
-        <a
-          v-if="activeTheme.isFooterWorkProgrammeVisible"
-          class="link-dark text-primary-text"
-          :href="activeTheme.footerWorkProgrammeLink"
-        >
-          <img
-            width="22"
-            height="22"
-            class="col"
-            src="@/assets/images/work-programme.png"
-            alt="Work programme image"
-          >
-          Work Programme
-        </a>
-        <div
-          v-if="activeTheme.isFooterNewsletterVisible"
-          class="ms-md-3 mt-2"
-        >
-          <button
-            type="button"
-            class="btn btn-light ms-md-5 text-primary-text"
-            :href="activeTheme.footerNewsletter"
-          >
-            Subscribe To Our Newsletter
-          </button>
-        </div>
-        <div
-          v-if="activeTheme.isFooterPrivacyPolicyVisible"
-          class="ms-md-2 mt-2"
-        >
-          <a
-            class="link-dark text-primary-text me-5"
-            :href="activeTheme.footerPrivacyPolicy"
-          >
-            Privacy Policy
-          </a>
-        </div>
-      </div>
+      <div class="col text-center" />
       <div>
         <div class="row mt-4">
           <div
