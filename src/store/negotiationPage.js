@@ -37,7 +37,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
         notifications.setNotification("Error getting Possible Events For Resource data from server")
       })
   }
-  
+
   function updateResourceStatus (link) {
     return axios.put(`${link}`, {}, { headers: getBearerHeaders() })
       .then((response) => {
@@ -142,7 +142,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
   function retrieveResourcesByNegotiationId (negotiationId) {
     return axios.get(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}/resources`, { headers: getBearerHeaders() })
       .then((response) => {
-        return response.data._embedded.resources
+        return response.data
       })
       .catch(() => {
         notifications.setNotification("Error getting request data from server")
@@ -185,8 +185,56 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
         notifications.setNotification("Error getting Information Submission data from server")
       })
   }
+  async function retrieveAllResources (name) {
+    let url = `${apiPaths.BASE_API_PATH}/resources`
+    if (name) {
+      url = `${apiPaths.BASE_API_PATH}/resources?name=${name}`
+    }
+    return axios.get(`${url}`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("There was an error saving the attachment")
+        return null
+      })
+  }
+  async function fetchURL (url) {
+    return axios.get(`${url}`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("There was an error saving the attachment")
+        return null
+      })
+  }
+  async function addResources (data, negotiationId) {
+    try {
+      const response = await axios.patch(
+        `${apiPaths.BASE_API_PATH}/negotiations/${negotiationId}/resources`,
+        data,
+        { headers: getBearerHeaders() }
+      )
+      notifications.setNotification("Resources were successfully updated")
+      return response.data
+    } catch (error) {
+      notifications.setNotification("There was an error saving the attachment")
+      return undefined
+    }
+  }
+  async function retrieveResourceAllStates () {
+    return axios.get(`${apiPaths.BASE_API_PATH}/resource-lifecycle/states`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("There was an error saving the attachment")
+        return null
+      })
+  }
 
-  return { 
+  return {
     updateNegotiationStatus,
     retrievePossibleEvents,
     retrievePossibleEventsForResource,
@@ -194,11 +242,16 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
     retrieveNegotiationById,
     retrievePostsByNegotiationId,
     retrieveAttachmentsByNegotiationId,
-    addMessageToNegotiation, addAttachmentToNegotiation,
+    addMessageToNegotiation,
+    addAttachmentToNegotiation,
     retrieveUserRepresentedResources,
     downloadAttachment,
     retrieveResourcesByNegotiationId,
     downloadAttachmentFromLink,
-    retrieveInformationSubmission
-    }
+    retrieveInformationSubmission,
+    fetchURL,
+    addResources,
+    retrieveAllResources,
+    retrieveResourceAllStates
+  }
 })

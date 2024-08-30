@@ -166,12 +166,10 @@
   </div>
 </template>
 <script setup>
-import { onBeforeMount, onMounted, ref, watch } from "vue"
+import { onMounted, ref, watch } from "vue"
 import { Tooltip } from "bootstrap"
-import { useStore } from "vuex"
-import { useRouter } from "vue-router"
 import debounce from "@popperjs/core/lib/utils/debounce"
-const store = useStore()
+import { useNegotiationPageStore } from "@/store/negotiationPage"
 const resources = ref([])
 const selectedResources = ref([])
 const selectAll = ref(false)
@@ -193,6 +191,7 @@ const props = defineProps({
     required: true
   }
 })
+const store = useNegotiationPageStore()
 watch(() => props.shown, (first, second) => {
   if (props.shown !== false) {
     loadResources()
@@ -208,7 +207,7 @@ onMounted(() => {
   })
 })
 async function loadResources (name = "") {
-  const response = await store.dispatch("retrieveAllResources", name)
+  const response = await store.retrieveAllResources(name)
   resources.value = response?._embedded?.resources ?? []
   pageLinks.value = response._links
   pageNumber.value = response.page.number
@@ -217,7 +216,8 @@ async function loadResources (name = "") {
   loading.value = false
 }
 async function loadStates () {
-  states.value = await store.dispatch("retrieveResourceAllStates")
+  const response = await store.retrieveResourceAllStates()
+  states.value = response._embedded.states
 }
 const emit = defineEmits(["confirm"])
 
@@ -230,11 +230,7 @@ async function addResources () {
     }
   }
   const negotiationId = props.negotiationId
-  await store.dispatch("addResources", { data, negotiationId }).then((response) => {
-    if (response) {
-      console.log(response)
-    }
-  })
+  await store.addResources(data, negotiationId)
   selectedResources.value = []
   emit("confirm")
 }
@@ -263,13 +259,11 @@ async function fetchPage (url) {
 const onSearch = debounce(async () => {
   if (searchQuery.value.length >= 3) {
     loading.value = true
-    console.log(searchQuery.value)
-    await loadResources({ name: searchQuery.value })
+    await loadResources(searchQuery.value)
   }
   if (searchQuery.value.length === 0) {
     loading.value = true
-    console.log(searchQuery.value)
-    await loadResources({ name: searchQuery.value })
+    await loadResources(searchQuery.value)
   }
 }, 1000) // Debounce delay in milliseconds
 function getNumberOfSelectedResources () {

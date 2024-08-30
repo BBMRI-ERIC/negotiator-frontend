@@ -427,9 +427,9 @@ import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/uti
 import FormViewModal from "@/components/modals/FormViewModal.vue"
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
 import { computed, ref } from "vue"
-import { useNegotiationPageStore } from '../store/negotiationPage.js'
-import { useUserStore } from '../store/user.js'
-import { useAdminStore } from '../store/admin.js'
+import { useNegotiationPageStore } from "../store/negotiationPage.js"
+import { useUserStore } from "../store/user.js"
+import { useAdminStore } from "../store/admin.js"
 import AddResourcesButton from "@/components/AddResourcesButton.vue"
 
 export default {
@@ -498,17 +498,17 @@ export default {
     }
   },
   computed: {
-    userStore() {
-        const userStore = useUserStore()
-        return userStore
+    userStore () {
+      const userStore = useUserStore()
+      return userStore
     },
-      negotiationPageStore() {
-        const negotiationPageStore = useNegotiationPageStore()
-        return negotiationPageStore
+    negotiationPageStore () {
+      const negotiationPageStore = useNegotiationPageStore()
+      return negotiationPageStore
     },
-    adminStore() {
-        const adminStore = useAdminStore()
-        return adminStore
+    adminStore () {
+      const adminStore = useAdminStore()
+      return adminStore
     },
     getResources () {
       return this.resources
@@ -545,7 +545,6 @@ export default {
       return this.getResources.filter(resource => this.isRepresentativeForResource(resource.sourceId))
     },
     representedOrganizations () {
-      console.log(this.representedResources)
       return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.externalId === value.externalId
@@ -574,49 +573,37 @@ export default {
     }
   },
   async beforeMount () {
-    this.negotiation = await this.retrieveNegotiationById({
-      negotiationId: this.negotiationId
-    })
-    const resourceResponse = await this.retrieveResourcesByNegotiationId({
-      negotiationId: this.negotiationId
-    })
-    if (resourceResponse._embedded.resources !== undefined) { this.resources = resourceResponse._embedded.resources }
-    this.isAddResourcesButtonVisible = this.hasRightsToAddResources(resourceResponse._links)
-    this.representedResourcesIds = await this.retrieveUserRepresentedResources()
-    this.negotiationStatusOptions = await this.retrievePossibleEvents({
-      negotiationId: this.negotiation.id
-    })
     this.negotiation = await this.negotiationPageStore.retrieveNegotiationById(
       this.negotiationId
     )
-    this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
-
+    const resourceResponse = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
+    if (resourceResponse?._embedded?.resources !== undefined) {
+      this.resources = resourceResponse._embedded.resources
+      this.isAddResourcesButtonVisible = this.hasRightsToAddResources(resourceResponse._links)
+    }
     this.representedResourcesIds = await this.negotiationPageStore.retrieveUserRepresentedResources()
-
     this.negotiationStatusOptions = await this.negotiationPageStore.retrievePossibleEvents(
-       this.negotiation.id
+      this.negotiation.id
     )
   },
   created () {
     this.retrieveAttachments()
   },
   async mounted () {
-      if (Object.keys(this.userStore.userInfo).length === 0) {
+    if (Object.keys(this.userStore.userInfo).length === 0) {
       await this.userStore.retrieveUser()
     }
   },
   methods: {
     async retrieveAttachments () {
       await this.negotiationPageStore.retrieveAttachmentsByNegotiationId(
-          this.negotiationId
-        ).then((response) => {
-          this.attachments = response
-        })
+        this.negotiationId
+      ).then((response) => {
+        this.attachments = response
+      })
     },
     hasRightsToAddResources (links) {
-      console.log(links)
       for (const key in links) {
-        console.log(key)
         if (key === "add_resources") {
           return true
         }
@@ -641,11 +628,11 @@ export default {
     },
     async updateNegotiation (action) {
       await this.negotiationPageStore.updateNegotiationStatus(
-          this.negotiation.id,
-          action
-        ).then(() => {
-          this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
-        })
+        this.negotiation.id,
+        action
+      ).then(() => {
+        this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
+      })
     },
     getElementIdFromResourceId (resourceId) {
       return resourceId.replaceAll(":", "_")
@@ -669,18 +656,16 @@ export default {
       return lifecycleLinks
     },
     getSummaryLinks (links) {
-      console.log(links)
       const summaryLinks = []
       for (const key in links) {
         if (key.startsWith("Requirement summary")) {
           summaryLinks.push(links[key])
         }
       }
-      console.log(summaryLinks)
       return summaryLinks
     },
     async openModal (href, resourceId) {
-      let requirement
+      const requirement = undefined
       requirement = await this.retrieveInfoRequirement(href)
       this.resourceId = resourceId
       this.requiredAccessForm = requirement.requiredAccessForm
@@ -718,9 +703,9 @@ export default {
       return value
     },
     async reloadResources () {
-      const resourceResponse = await this.retrieveResourcesByNegotiationId({
-        negotiationId: this.negotiationId
-      })
+      const resourceResponse = await this.negotiationPageStore.retrieveResourcesByNegotiationId(
+        this.negotiationId
+      )
       if (resourceResponse._embedded.resources !== undefined) {
         this.resources = resourceResponse._embedded.resources
       }
@@ -729,15 +714,14 @@ export default {
       this.formSubmissionModal.hide()
       this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
     },
-    downloadAttachment(id,name) {
-        this.negotiationPageStore.downloadAttachment(id,name)
+    downloadAttachment (id, name) {
+      this.negotiationPageStore.downloadAttachment(id, name)
     },
-    downloadAttachmentFromLink(href) {
+    downloadAttachmentFromLink (href) {
       this.negotiationPageStore.downloadAttachmentFromLink(href)
     },
-    retrieveInfoRequirement (link) {
+    async retrieveInfoRequirement (link) {
       this.adminStore.retrieveInfoRequirement(link)
-      await this.reloadResources()
     }
   }
 }
