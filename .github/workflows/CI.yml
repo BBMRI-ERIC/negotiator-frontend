@@ -26,6 +26,9 @@ jobs:
       - name: Wait for OIDC provider
         run: .github/scripts/wait_for_url.sh  http://localhost:4011/.well-known/openid-configuration
 
+      - name: Install dependencies
+        run: yarn install
+
       - name: Run tests
         run: yarn cypress run --browser chrome
 
