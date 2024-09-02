@@ -7,7 +7,7 @@ on:
 
 
 jobs:
-  test:
+  install:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,20 +20,43 @@ jobs:
           node-version: '20.12.2'
           cache: 'yarn'
 
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          if-no-files-found: error
+          path: build
+
+  test:
+    runs-on: ubuntu-latest
+    needs: install
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+        fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download the build folder
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+
       - name: Setup OIDC provider
         run: cd oidc_mock && docker compose up -d
 
       - name: Wait for OIDC provider
         run: .github/scripts/wait_for_url.sh  http://localhost:4011/.well-known/openid-configuration
 
-      - name: Install dependencies
-        run: yarn install
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           start: yarn dev
-          browser: chrome
+          browser: ${{ matrix.browser }}
 
 
   build:
