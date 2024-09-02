@@ -21,7 +21,7 @@
     "@popperjs/core": "^2.11.6",
     "@vue/eslint-config-standard": "^8.0.1",
     "@vue/test-utils": "^2.2.7",
-    "axios": "^1.6.0",
+    "axios": "^1.7.4",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.11.1",
     "bootstrap-vue-next": "^0.8.10",
