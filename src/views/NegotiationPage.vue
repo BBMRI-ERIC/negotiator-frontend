@@ -63,7 +63,7 @@
                     class="ms-1 cursor-pointer"
                     icon="fa fa-download"
                     fixed-width
-                    @click.prevent="downloadAttachment(subelement.id, subelement.name)"
+                    @click.prevent="downloadAttachment({id: subelement.id, name: subelement.name})"
                   />
                 </span>
                 <span v-else>
@@ -141,19 +141,28 @@
           <li class="list-group-item p-3">
             <div
               class="d-flex flex-row mb-3 justify-content-between"
-              style="min-height: 38px;"
             >
               <div
-                data-bs-toggle="collapse"
-                data-bs-target="#resourcesList"
-                aria-controls="resourcesList"
-                aria-expanded="true"
-                type="button"
+                class="d-flex flex-row"
               >
-                <span class="fs-5 fw-bold text-primary-text mt-3">
-                  <i class="bi bi-card-list" />
-                  COLLECTIONS ({{ numberOfResources }})
-                </span>
+                <div
+                  data-bs-toggle="collapse"
+                  data-bs-target="#resourcesList"
+                  aria-controls="resourcesList"
+                  aria-expanded="true"
+                  type="button"
+                >
+                  <span class="fs-5 fw-bold text-primary-text mt-3">
+                    <i class="bi bi-card-list" />
+                    COLLECTIONS ({{ numberOfResources }})
+                  </span>
+                </div>
+                <add-resources-button
+                  v-if="isAddResourcesButtonVisible"
+                  class="mb-1"
+                  :negotiation-id="negotiationId"
+                  @new-resources="reloadResources()"
+                />
               </div>
               <div
                 data-bs-toggle="collapse"
@@ -275,6 +284,7 @@
           :resources="resources"
           :organizations="organizationsById"
           :recipients="postsRecipients"
+          @new_attachment="retrieveAttachments()"
         />
       </div>
       <div
@@ -411,19 +421,20 @@ import CopyTextButton from "@/components/CopyTextButton.vue"
 import { Modal } from "bootstrap"
 
 import PDFButton from "@/components/PDFButton.vue"
-import { ROLES, dateFormat } from "@/config/consts"
+import { dateFormat, ROLES } from "@/config/consts"
 import moment from "moment"
-import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { getBadgeColor, getBadgeIcon, transformStatus } from "../composables/utils.js"
 import FormViewModal from "@/components/modals/FormViewModal.vue"
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
-import { computed, ref } from "vue"
-import { useNegotiationPageStore } from '../store/negotiationPage.js'
-import { useUserStore } from '../store/user.js'
-import { useAdminStore } from '../store/admin.js'
+import { useNegotiationPageStore } from "../store/negotiationPage.js"
+import { useUserStore } from "../store/user.js"
+import { useAdminStore } from "../store/admin.js"
+import AddResourcesButton from "@/components/AddResourcesButton.vue"
 
 export default {
   name: "NegotiationPage",
   components: {
+    AddResourcesButton,
     FormSubmissionModal,
     FormViewModal,
     ConfirmationModal,
@@ -480,21 +491,21 @@ export default {
       requiredAccessForm: {},
       formSubmissionModal: null,
       submittedForm: undefined,
-      formViewModal: null
+      formViewModal: null,
+      isAddResourcesButtonVisible: false,
+      toParse: "Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below"
     }
   },
   computed: {
-    userStore() {
-        const userStore = useUserStore()
-        return userStore
+    userStore () {
+      return useUserStore()
     },
-      negotiationPageStore() {
-        const negotiationPageStore = useNegotiationPageStore()
-        return negotiationPageStore
+    negotiationPageStore () {
+      return useNegotiationPageStore()
     },
-    adminStore() {
-        const adminStore = useAdminStore()
-        return adminStore
+    adminStore () {
+      const adminStore = useAdminStore()
+      return adminStore
     },
     getResources () {
       return this.resources
@@ -531,7 +542,6 @@ export default {
       return this.getResources.filter(resource => this.isRepresentativeForResource(resource.sourceId))
     },
     representedOrganizations () {
-      console.log(this.representedResources)
       return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.externalId === value.externalId
@@ -563,29 +573,39 @@ export default {
     this.negotiation = await this.negotiationPageStore.retrieveNegotiationById(
       this.negotiationId
     )
-    this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
-
+    const resourceResponse = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
+    if (resourceResponse?._embedded?.resources !== undefined) {
+      this.resources = resourceResponse._embedded.resources
+      this.isAddResourcesButtonVisible = this.hasRightsToAddResources(resourceResponse._links)
+    }
     this.representedResourcesIds = await this.negotiationPageStore.retrieveUserRepresentedResources()
-
     this.negotiationStatusOptions = await this.negotiationPageStore.retrievePossibleEvents(
-       this.negotiation.id
+      this.negotiation.id
     )
   },
   created () {
     this.retrieveAttachments()
   },
   async mounted () {
-      if (Object.keys(this.userStore.userInfo).length === 0) {
+    if (Object.keys(this.userStore.userInfo).length === 0) {
       await this.userStore.retrieveUser()
     }
   },
   methods: {
     async retrieveAttachments () {
       await this.negotiationPageStore.retrieveAttachmentsByNegotiationId(
-          this.negotiationId
-        ).then((response) => {
-          this.attachments = response
-        })
+        this.negotiationId
+      ).then((response) => {
+        this.attachments = response
+      })
+    },
+    hasRightsToAddResources (links) {
+      for (const key in links) {
+        if (key === "add_resources") {
+          return true
+        }
+      }
+      return false
     },
     isRepresentativeForResource (resourceId) {
       return this.representedResourcesIds.includes(resourceId)
@@ -605,11 +625,11 @@ export default {
     },
     async updateNegotiation (action) {
       await this.negotiationPageStore.updateNegotiationStatus(
-          this.negotiation.id,
-          action
-        ).then(() => {
-          this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
-        })
+        this.negotiation.id,
+        action
+      ).then(() => {
+        this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
+      })
     },
     getElementIdFromResourceId (resourceId) {
       return resourceId.replaceAll(":", "_")
@@ -633,19 +653,16 @@ export default {
       return lifecycleLinks
     },
     getSummaryLinks (links) {
-      console.log(links)
       const summaryLinks = []
       for (const key in links) {
         if (key.startsWith("Requirement summary")) {
           summaryLinks.push(links[key])
         }
       }
-      console.log(summaryLinks)
       return summaryLinks
     },
     async openModal (href, resourceId) {
-      let requirement
-      requirement = await this.retrieveInfoRequirement(href)
+      const requirement = await this.negotiationPageStore.retrieveInfoRequirement(href)
       this.resourceId = resourceId
       this.requiredAccessForm = requirement.requiredAccessForm
       this.requirementId = requirement.id
@@ -653,9 +670,7 @@ export default {
       this.formSubmissionModal.show()
     },
     async openFormModal (href) {
-      let payload
-      payload = await this.negotiationPageStore.retrieveInformationSubmission(href)
-
+      const payload = await this.negotiationPageStore.retrieveInformationSubmission(href)
       this.submittedForm = payload.payload
       this.formViewModal = new Modal(document.querySelector("#formViewModal"))
       this.formViewModal.show()
@@ -664,7 +679,7 @@ export default {
       await this.negotiationPageStore.updateResourceStatus(
         link
       )
-      this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
+      this.reloadResources()
     },
     transformStatus (badgeText) {
       return transformStatus(badgeText)
@@ -681,17 +696,25 @@ export default {
       }
       return value
     },
+    async reloadResources () {
+      const resourceResponse = await this.negotiationPageStore.retrieveResourcesByNegotiationId(
+        this.negotiationId
+      )
+      if (resourceResponse._embedded.resources !== undefined) {
+        this.resources = resourceResponse._embedded.resources
+      }
+    },
     async hideFormSubmissionModal () {
       this.formSubmissionModal.hide()
-      this.resources = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
+      await this.reloadResources()
     },
-    downloadAttachment(id,name) {
-        this.negotiationPageStore.downloadAttachment(id,name)
+    downloadAttachment (id, name) {
+      this.negotiationPageStore.downloadAttachment(id, name)
     },
-    downloadAttachmentFromLink(href) {
+    downloadAttachmentFromLink (href) {
       this.negotiationPageStore.downloadAttachmentFromLink(href)
     },
-    retrieveInfoRequirement (link) {
+    async retrieveInfoRequirement (link) {
       this.adminStore.retrieveInfoRequirement(link)
     }
   }
