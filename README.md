@@ -1,174 +1,191 @@
 # NegotiatorV3 Frontend
 
-## Development mode
+## Development Mode
 
-To run the application in fully accessible development mode you need to run an instance of a [mock OIDC server](https://github.com/Soluto/oidc-server-mock).
-You can spin up a preconfigured instance with the following command.
-```
+To run the application in fully accessible development mode, you need to run an instance of a [mock OIDC server](https://github.com/Soluto/oidc-server-mock). You can spin up a preconfigured instance with the following command:
+
+```sh
 cd oidc_mock && docker-compose up -d
 ```
-Then to run the application with correct settings run:
 
-## Recommended package manager is Yarn
+Then, to run the application with the correct settings, proceed as follows:
 
-# Because of some Legacy package (or the packages that has not updated for a few years) that specify a peer dependency which is in conflict with a package you want to install
+## Recommended Package Manager: Yarn
+
+It is recommended to use Yarn as the package manager because some legacy packages (or packages that have not been updated for a few years) specify a peer dependency that conflicts with packages you may want to install.
 
 ## Project Setup
 
+To set up the project, you can use either Yarn or npm:
+
 ```sh
-# yarn
+# Using Yarn
 yarn install
 
-# npm
+# Using npm
 npm install
 ```
 
 ### Compile and Hot-Reload for Development
 
+To compile and hot-reload the application for development:
+
 ```sh
-# yarn
+# Using Yarn
 yarn dev
 
-# npm
+# Using npm
 npm run dev
 ```
 
 ### Compile and Minify for Production
 
+To compile and minify the application for production:
+
 ```sh
-# yarn
+# Using Yarn
 yarn build
 
-# npm
+# Using npm
 npm run build
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
 
+To lint the codebase with ESLint:
+
 ```sh
-# yarn
+# Using Yarn
 yarn lint
 
-# npm
+# Using npm
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-# FOR DEVELOPERS - config files
-
-## Setting Theme of project
-
-Location of theme config file:
-```sh 
-src/
-└── config/
-    └── theme.js
-```
-
-### There are 3 variable
-
-### 1. activeThemeFile - define the active theme scss file
-
-default 
-```sh 
-activeThemeFile: "bbmri"
-```
-Location of theme scss files:
-```sh 
-src/
-└── assets/
-    └── scss/
-        ├── theme-bbmri.js
-        ├── theme-eucaim.js
-        └── theme-canServ.js
-```
-You can change the values of the color variables as you see fit
-
-### 2. activeLogosFiles - define the active logos files
-
-default 
+### Run e2e tests with [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
 ```sh
-activeLogosFiles: "bbmri"
+yarn cypress run --browser chrome
 ```
-Location of logos files:
-```sh 
-src/
-└── assets/
-    └── images/
-            ├── bbmri/
-            │   ├── footer-bbmri.svg
-            │   ├── home-bbmri.png
-            │   └── nav-bar-bbmri.svg
-            ├── canserv/
-            │   ├── footer-canserv.png
-            │   ├── home-canserv.png
-            │   └── nav-bar-canserv.png
-            └── eucaim/
-                ├── footer-eucaim.png
-                ├── home-eucaim.png
-                └── nav-bar-eucaim.png
-```
-If you want to change the image, you can replace the existing one with a new one, but with the same name, file type and size
+For more test scripts see [package.json](package.json)
 
-### 3. isFooterFollowUsVisible - define if item in footer are visible (Follow Us, Subscribe To Our Newsletter...)
-default
+### Customize Configuration
+
+See the [Configuration Reference](https://cli.vuejs.org/config/) for more details on how to customize the configuration.
+
+# Developer Guide - Configuration Files
+
+## Setting the Project Theme
+
+The theme configuration file is located at:
 
 ```sh
-isFooterFollowUsVisible: "true"
+src/config/theme.js
 ```
 
-Additional configuration for the footer to be found in [Footer Configuration](docs/FOOTER_CONFIGURATION.md)
+### The theme configuration involves three variables:
 
-## Config for matomo analytics
+1. **activeThemeFile** - Defines the active SCSS theme file.
 
-Location of matomo config file:
-```sh 
-src/
-└── config/
-    └── matomo.js
-```
+   Default value:
+   ```sh
+   activeThemeFile: "bbmri"
+   ```
 
-### There are 2 variable
+   The theme SCSS files are located at:
+
+   ```sh
+   src/assets/scss/
+   ├── theme-bbmri.scss
+   ├── theme-eucaim.scss
+   └── theme-canServ.scss
+   ```
+
+   You can modify the values of the color variables in these files as needed.
+
+2. **activeLogosFiles** - Defines the active logo files.
+
+   Default value:
+   ```sh
+   activeLogosFiles: "bbmri"
+   ```
+
+   The logo files are located at:
+
+   ```sh
+   src/assets/images/
+   ├── bbmri/
+   │   ├── footer-bbmri.svg
+   │   ├── home-bbmri.png
+   │   └── nav-bar-bbmri.svg
+   ├── canserv/
+   │   ├── footer-canserv.png
+   │   ├── home-canserv.png
+   │   └── nav-bar-canserv.png
+   └── eucaim/
+       ├── footer-eucaim.png
+       ├── home-eucaim.png
+       └── nav-bar-eucaim.png
+   ```
+
+   If you want to change an image, replace the existing one with a new one of the same name, file type, and size.
+
+3. **isFooterFollowUsVisible** - Controls the visibility of items in the footer (e.g., Follow Us, Subscribe To Our Newsletter).
+
+   Default value:
+   ```sh
+   isFooterFollowUsVisible: true
+   ```
+
+   Additional footer configuration details can be found in the [Footer Configuration](docs/FOOTER_CONFIGURATION.md) document.
+
+## Configuration for Matomo Analytics
+
+The Matomo configuration file is located at:
 
 ```sh
-  matomoHost: "MATOMO_HOST_PLACEHOLDER",
-  matomoId: "MATOMO_SITE_ID_PLACEHOLDER"
+src/config/matomo.js
 ```
-See [Configuration Reference](https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-tracking-code-on-websites-that-use-vue-js/).
 
+### The Matomo configuration involves two variables:
 
-## Config for Feature Flags
-
-Location of featureFlags config file:
-```sh 
-src/
-└── config/
-    └── featureFlags.js
+```sh
+matomoHost: "MATOMO_HOST_PLACEHOLDER",
+matomoId: "MATOMO_SITE_ID_PLACEHOLDER"
 ```
-You can adjust the visibility of features, components or code that is ready for testing but not intended for realese is hidden behind feature flags.
 
-## Config for external links
+For more details, see the [Matomo Configuration Reference](https://matomo.org/faq/new-to-piwik/how-do-i-install-the-matomo-tracking-code-on-websites-that-use-vue-js/).
 
-Location of external links config file:
-```sh 
-src/
-└── config/
-    └── externalLinks.js
+## Configuration for Feature Flags
+
+The feature flags configuration file is located at:
+
+```sh
+src/config/featureFlags.js
 ```
-You can set which URLs external links lead to
+
+You can adjust the visibility of features, components, or code that is ready for testing but not intended for release by using feature flags.
+
+## Configuration for External Links
+
+The external links configuration file is located at:
+
+```sh
+src/config/externalLinks.js
+```
+
+You can set the URLs that external links lead to in this file.
+
+## Configuration for vuex-oidc
 
 ## Config for pinia-oidc
+The OIDC configuration file is located at:
 
-Location of matomo config file:
-```sh 
-src/
-└── config/
-    └── oidc.js
+```sh
+src/config/oidc.js
 ```
 
-### About 
-Library to provide OpenID Connect (OIDC) and OAuth2 protocol support for client-side, browser-based JavaScript client applications. Also included is support for user session and access token management.
+### About
+
+This library provides OpenID Connect (OIDC) and OAuth2 protocol support for client-side, browser-based JavaScript client applications. It also includes support for user session and access token management.
 
 See [Configuration Reference](https://github.com/perarnborg/vuex-oidc/wiki, https://github.com/zhazhazhu/pinia-oidc).
