@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.12.2'
+          cache: 'yarn'
+
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: 120
-          install-chromedriver: true
 
       - name: Setup OIDC provider
         run: cd oidc_mock && docker compose up -d
@@ -29,8 +29,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Run tests
-        run: yarn cypress run --browser chrome
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: yarn dev
+          browser: chrome
 
 
   build:
