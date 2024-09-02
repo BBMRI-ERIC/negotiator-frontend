@@ -28,11 +28,12 @@ jobs:
         with:
           name: build
           if-no-files-found: error
-          path: build
+          path: node_modules
 
   test:
     runs-on: ubuntu-latest
     needs: install
+    name: E2E Tests
     strategy:
       matrix:
         browser: ["chrome", "firefox"]
