@@ -22,22 +22,16 @@
 </template>
 
 <script setup>
-import { computed, watch } from "vue"
-import { useStore } from "vuex"
+import { computed } from "vue"
+import { useNotificationsStore } from "../store/notifications"
 
-const store = useStore()
+const notificationsStore = useNotificationsStore()
 
 const notification = computed(() => {
-  return store.getters.getNotification
+  return notificationsStore.notification
 })
 
 function resetNotification () {
-  store.commit("setNotification", undefined)
+  notificationsStore.resetNotification
 }
-
-watch(notification, () => {
-  if (notification.value) {
-    setTimeout(() => resetNotification(), 5000)
-  }
-})
 </script>

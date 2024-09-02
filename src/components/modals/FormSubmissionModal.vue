@@ -329,8 +329,9 @@ import { ref, computed, onBeforeMount, onMounted, watch } from "vue"
 import { Tooltip } from "bootstrap"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import "vue3-form-wizard/dist/style.css"
-import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import { useFormsStore } from "../../store/forms"
+import { useNotificationsStore } from "../../store/notifications"
 
 const props = defineProps({
   id: {
@@ -380,7 +381,9 @@ const props = defineProps({
   }
 })
 
-const store = useStore()
+const formsStore = useFormsStore()
+const notificationsStore = useNotificationsStore()
+
 const router = useRouter()
 
 const notificationTitle = ref("")
@@ -416,13 +419,13 @@ onMounted(() => {
   })
 })
 async function loadAccessForm (id) {
-  return store.dispatch("retrieveAccessFormById", { id })
+  return formsStore.retrieveAccessFormById(id)
 }
 function backToNegotiation (id) {
   router.push("/negotiations/" + id + "/ROLE_RESEARCHER")
 }
 async function getValueSet (link, id) {
-  await store.dispatch("retrieveDynamicAccessFormsValueSetByLink", { link }).then((res) => {
+  await formsStore.retrieveDynamicAccessFormsValueSetByLink(link).then((res) => {
     negotiationValueSets.value[id] = res
   })
 }
@@ -435,7 +438,7 @@ async function startRequiredAccessForm () {
   }
   const negotiationId = props.negotiationId
   const requirementId = props.requirementId
-  await store.dispatch("submitRequiredInformation", { data, negotiationId, requirementId }).then((submissionId) => {
+  await formsStore.submitRequiredInformation(data, negotiationId, requirementId).then((submissionId) => {
     if (submissionId) {
       console.log(submissionId)
     }
@@ -491,7 +494,9 @@ function isSectionValid (section) {
         valid = true
       }
     })
-    if (!valid) { store.commit("setNotification", "Please fill out all required fields correctly") }
+    if (!valid) { 
+      notificationsStore.setNotification("Please fill out all required fields correctly")
+    }
     return valid
   }
 }

@@ -168,9 +168,13 @@
 
 <script setup>
 import { onMounted, ref } from "vue"
-import { useStore } from "vuex"
+import { useUserStore } from '../store/user.js'
+import { useAdminStore } from '../store/admin.js'
+import { useFormsStore } from '../store/forms.js'
 
-const store = useStore()
+const userStore = useUserStore()
+const adminStore = useAdminStore()
+const formsStore = useFormsStore()
 
 const resourceAllEvents = ref({})
 const infoRequirements = ref([])
@@ -179,10 +183,15 @@ const selectedAccessForm = ref({})
 const selectedEvent = ref({})
 const summaryOnlyForAdmin = ref(true)
 const isLoading = ref(true)
+
 onMounted(async () => {
-  resourceAllEvents.value = await store.dispatch("retrieveResourceAllEvents")
-  infoRequirements.value = await store.dispatch("retrieveInfoRequirements")
-  accessForms.value = await store.dispatch("retrieveAllAccessForms")
+  if (Object.keys(userStore.userInfo).length === 0) {
+    await userStore.retrieveUser()
+  }
+
+  resourceAllEvents.value = await adminStore.retrieveResourceAllEvents()
+  infoRequirements.value = await adminStore.retrieveInfoRequirements()
+  accessForms.value = await formsStore.retrieveAllAccessForms()
   selectedEvent.value = resourceAllEvents.value[0]
   selectedAccessForm.value = accessForms.value[0]
   isLoading.value = false
@@ -194,8 +203,8 @@ async function setInfoRequirements () {
   data.forResourceEvent = selectedEvent.value.value
   data.viewableOnlyByAdmin = summaryOnlyForAdmin.value
   console.log(data)
-  await store.dispatch("setInfoRequirements", { data })
-  infoRequirements.value = await store.dispatch("retrieveInfoRequirements")
+  await adminStore.setInfoRequirements(data)
+  infoRequirements.value = await adminStore.retrieveInfoRequirements()
 }
 </script>
 

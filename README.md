@@ -177,6 +177,7 @@ You can set the URLs that external links lead to in this file.
 
 ## Configuration for vuex-oidc
 
+## Config for pinia-oidc
 The OIDC configuration file is located at:
 
 ```sh
@@ -187,4 +188,4 @@ src/config/oidc.js
 
 This library provides OpenID Connect (OIDC) and OAuth2 protocol support for client-side, browser-based JavaScript client applications. It also includes support for user session and access token management.
 
-For more details, see the [Vuex OIDC Configuration Reference](https://github.com/perarnborg/vuex-oidc/wiki).
+See [Configuration Reference](https://github.com/perarnborg/vuex-oidc/wiki, https://github.com/zhazhazhu/pinia-oidc).

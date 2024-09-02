@@ -204,10 +204,7 @@
             />
           </div>
 
-          <div
-            v-else-if="criteria.type === 'NUMBER'"
-            class="col-5"
-          >
+          <div v-else-if="criteria.type === 'NUMBER'" class="col-5">
             <input
               v-model="negotiationCriteria[section.name][criteria.name]"
               :type="criteria.type"
@@ -273,7 +270,7 @@
             v-if="validationColorHighlight.includes(criteria.name)"
             class="invalidText"
           >
-            {{ transformMessage(criteria.type) }}
+          {{ transformMessage(criteria.type) }}
           </div>
           <div
             v-if="negotiationValueSets[criteria.id]?.externalDocumentation && negotiationValueSets[criteria.id]?.externalDocumentation !== 'none'"
@@ -347,14 +344,16 @@
 <script setup>
 import { ref, computed, onBeforeMount, onMounted } from "vue"
 import { Tooltip } from "bootstrap"
+import { useRouter } from "vue-router"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
+import { useNegotiationFormStore } from "../store/negotiationForm"
+import { useNotificationsStore } from "../store/notifications"
 import "vue3-form-wizard/dist/style.css"
-import { useStore } from "vuex"
-import { useRouter } from "vue-router"
 
-const store = useStore()
+const negotiationFormStore = useNegotiationFormStore()
+const notificationsStore = useNotificationsStore()
 const router = useRouter()
 
 const props = defineProps({
@@ -374,6 +373,7 @@ const accessForm = ref(undefined)
 const resources = ref([])
 const humanReadableSearchParameters = ref([])
 const openModal = ref(null)
+const requestAlreadySubmittedNegotiationId = ref(null)
 
 const loading = computed(() => {
   return accessForm.value === undefined
@@ -384,7 +384,7 @@ const queryParameters = computed(() => {
 })
 
 onBeforeMount(async () => {
-  const result = await store.dispatch("retrieveRequestById", { requestId: props.requestId })
+  const result = await negotiationFormStore.retrieveRequestById(props.requestId)
 
   if (result.code) {
     if (result.code === 404) {
@@ -393,11 +393,12 @@ onBeforeMount(async () => {
       showNotification("Error", "Cannot contact the server to get request information")
     }
   } else if (result.negotiationId) {
+    requestAlreadySubmittedNegotiationId.value = result.negotiationId
     showNotification("Error", "Request already submitted")
   } else {
     resources.value = result.resources
     humanReadableSearchParameters.value = result.humanReadable
-    accessForm.value = await store.dispatch("retrieveCombinedAccessForm", { requestId: props.requestId })
+    accessForm.value = await negotiationFormStore.retrieveCombinedAccessForm(props.requestId)
     if (accessForm.value !== undefined) {
       initNegotiationCriteria()
     }
@@ -415,17 +416,21 @@ function backToNegotiation (id) {
 }
 
 async function getValueSet (id) {
-  await store.dispatch("retrieveDynamicAccessFormsValueSetByID", { id }).then((res) => {
+  await negotiationFormStore.retrieveDynamicAccessFormsValueSetByID(id).then((res) => {
     negotiationValueSets.value[id] = res
   })
 }
 
 async function startNegotiation () {
+  if (requestAlreadySubmittedNegotiationId.value) {
+    backToNegotiation(requestAlreadySubmittedNegotiationId.value)
+    return
+  }
   const data = {
     requests: [props.requestId],
     payload: negotiationCriteria.value
   }
-  await store.dispatch("createNegotiation", { data }).then((negotiationId) => {
+  await negotiationFormStore.createNegotiation(data).then((negotiationId) => {
     if (negotiationId) {
       backToNegotiation(negotiationId)
     }
@@ -487,7 +492,9 @@ function isSectionValid (section) {
         valid = true
       }
     })
-    if (!valid) { store.commit("setNotification", "Please fill out all required fields correctly") }
+    if (!valid) {
+      notificationsStore.notification = "Please fill out all required fields correctly"
+    }
     return valid
   }
 }
