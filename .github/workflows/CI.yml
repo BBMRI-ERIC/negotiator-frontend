@@ -7,6 +7,27 @@ on:
 
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 120
+          install-chromedriver: true
+
+      - name: Setup OIDC provider
+        run: cd oidc_mock && docker compose up -d
+
+      - name: Wait for OIDC provider
+        run: .github/scripts/wait_for_url.sh  http://localhost:4011/.well-known/openid-configuration
+
+      - name: yarn cypress run --browser chrome
+
 
   build:
     runs-on: ubuntu-latest
