@@ -46,6 +46,19 @@
             </router-link>
           </li>
           <li
+            v-if="showNetworksTab && featureFlagsNetworks"
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active nav-option"
+              :class="$route.path === '/networks' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              to="/networks"
+            >
+              <i class="bi bi-globe" />
+              Your networks
+            </router-link>
+          </li>
+          <li
             v-if="isRepresentative"
             class="nav-item"
           >
@@ -129,16 +142,20 @@ import allFeatureFlags from "@/config/featureFlags.js"
 import { useActuatorInfoStore } from "../store/actuatorInfo"
 import { useUserStore } from "../store/user"
 import { useOidcStore } from "../store/oidc"
+import { useNetworksPageStore } from "../store/networksPage"
 
 const actuatorInfoStore = useActuatorInfoStore()
 const userStore = useUserStore()
 const oidcStore = useOidcStore()
+const networksPageStore = useNetworksPageStore()
 
 const roles = ref([])
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
 const featureFlagsFAQ = !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
+const featureFlagsNetworks = !!(allFeatureFlags.networks === "true" || allFeatureFlags.networks === true)
 const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true)
 const backendEnvironment = ref("")
+const userNetworks = ref([])
 
 const oidcIsAuthenticated = computed(() => {
   return oidcStore.oidcIsAuthenticated
@@ -173,6 +190,16 @@ const returnCurrentModeTextColor = computed(() => {
 })
 const userInfo = computed(() => {
   return userStore.userInfo
+})
+
+const showNetworksTab = computed(() => {
+  networksPageStore.retrieveUserNetworks(userInfo.value.id).then((res) => {
+    userNetworks.value = res
+  })
+  if(userNetworks.value.length > 0) {
+    return true
+  }
+  return false
 })
 
 watch(userInfo, () => {
