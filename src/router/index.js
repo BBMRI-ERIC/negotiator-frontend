@@ -72,9 +72,15 @@ const router = createRouter({
     component: NegotiationPage,
     props: true,
     meta: { middleware: [hasUser] }
+  },
+  {
+    path: "/networks/:networkId",
+    name: "networks-page",
+    component: NetworksPage,
+    props: true,
+    meta: { isPublic: false }
   }]
 })
-
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()

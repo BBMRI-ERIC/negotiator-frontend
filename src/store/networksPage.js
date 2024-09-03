@@ -12,7 +12,7 @@ export const useNetworksPageStore = defineStore("networksPage", () => {
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error getting request data from server")
+        notifications.setNotification("Error fetching negotiations for the network")
         return []
       })
   }
@@ -22,9 +22,20 @@ export const useNetworksPageStore = defineStore("networksPage", () => {
         return response.data._embedded.networks
       })
   }
+  async function retrieveNetwork (networkId) {
+    return await axios.get(`${apiPaths.BASE_API_PATH}/networks/${networkId}`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("Error retrieving network")
+        return {}
+      })
+  }
 
   return {
     retrieveNetworkNegotiations,
-    retrieveUserNetworks
+    retrieveUserNetworks,
+    retrieveNetwork
   }
 })
