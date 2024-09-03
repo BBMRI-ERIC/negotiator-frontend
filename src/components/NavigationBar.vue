@@ -46,6 +46,19 @@
             </router-link>
           </li>
           <li
+            v-if="isRepresentative"
+            class="nav-item"
+          >
+            <router-link
+              class="nav-link active nav-option"
+              :class="$route.path === '/biobanker' || $route.params.userRole === 'ROLE_REPRESENTATIVE' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              to="/biobanker"
+            >
+              <i class="bi bi-bank" />
+              Your biobank
+            </router-link>
+          </li>
+          <li
             v-if="showNetworksTab"
             class="nav-item dropdown"
             :class="{ 'show': dropdownVisible }"
@@ -62,8 +75,7 @@
               Your networks
             </a>
             <ul
-              class="dropdown-menu"
-              aria-labelledby="networksDropdown"
+              class="dropdown-menu dropdown-menu-right"
               :class="{ 'show': dropdownVisible }"
             >
               <li
@@ -79,19 +91,6 @@
                 </a>
               </li>
             </ul>
-          </li>
-          <li
-            v-if="isRepresentative"
-            class="nav-item"
-          >
-            <router-link
-              class="nav-link active nav-option"
-              :class="$route.path === '/biobanker' || $route.params.userRole === 'ROLE_REPRESENTATIVE' ? 'text-navbar-active-text' : 'text-navbar-text'"
-              to="/biobanker"
-            >
-              <i class="bi bi-bank" />
-              Your biobank
-            </router-link>
           </li>
           <li
             v-if="featureFlagsFAQ"
@@ -251,7 +250,26 @@ nav {
     font-size: 1rem;
     text-align: left;
 }
-.nav-item:hover .nav-option:hover {
-    color: var(--bs-primary) ;
+.nav-item.dropdown .dropdown-menu {
+  min-width: 140px;               /* Set the minimum width of the dropdown */
+  max-width: 200px;            /* Ensure it doesn't exceed the width of the navbar item */
+  background-color: #e7e7e7;    /* Light gray background to match the Bootstrap light navbar */
+  border: 1px solid #dee2e6;    /* Light border for the dropdown */
+  border-radius: 0;             /* No border-radius for a flush fit with the navbar */
+  box-shadow: none;             /* Remove shadow for a flat appearance */
+}
+
+.nav-item.dropdown .dropdown-item {
+  white-space: nowrap;          /* Prevent text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis;      /* Ellipsis for overflowing text */
+  color: #495057;               /* Darker gray text color to match Bootstrap's default text */
+  background-color: #e7e7e7;
+}
+.nav-item:hover .nav-link,
+.nav-item.dropdown .dropdown-item:hover,
+.nav-item.dropdown .dropdown-item:focus {
+  background-color: lightgray;    /* Light gray background on hover */
+  color: #212529;               /* Darker text color on hover */
 }
 </style>
