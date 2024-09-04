@@ -46,28 +46,39 @@
             Statistics Overview
           </h4>
 
-          <!-- Progress Bar -->
+          <!-- Progress Bar showing status distribution -->
           <div class="progress mb-4">
             <div
-              v-for="(stat, key) in stats"
-              :key="key"
-              :class="['progress-bar', stat.color]"
-              :style="{ width: (stat.value / total * 100) + '%' }"
+              v-for="(count, status) in stats.statusDistribution"
+              :key="status"
+              :class="['progress-bar', getBadgeColor(status)]"
+              :style="{ width: (count / stats.totalNumberOfNegotiations * 100) + '%' }"
             >
-              {{ stat.value }}
+              {{ count }} {{ status }} <!-- Display absolute count and status in progress bar -->
             </div>
           </div>
+
+          <!-- Statistic Boxes for each status (display absolute values) -->
           <div class="row text-center">
+            <!-- First box contains total number of negotiations -->
+            <div class="col-md-4">
+              <div class="stat-box">
+                <h5>{{ stats.totalNumberOfNegotiations }}</h5> <!-- Total negotiations -->
+                <p class="text-muted">
+                  Total
+                </p>
+              </div>
+            </div>
             <div
-              v-for="(stat, key) in stats"
-              :key="key"
+              v-for="(count, status) in stats.statusDistribution"
+              :key="status"
               class="col-md-4"
             >
               <div class="stat-box">
-                <h5>{{ (stat.value / total * 100).toFixed(0) }}</h5>
+                <h5>{{ count }}</h5> <!-- Display absolute count -->
                 <p class="text-muted">
-                  {{ stat.label }}
-                </p>
+                  {{ status }}
+                </p> <!-- Display status label -->
               </div>
             </div>
           </div>
@@ -131,11 +142,7 @@ const negotiations = ref(undefined)
 const loading = computed(() => {
   return network.value === undefined && negotiations.value === undefined
 })
-const stats = ref({
-  in_progress: { value: 50, label: "In Progress", color: "bg-success" },
-  concluded: { value: 30, label: "Concluded", color: "bg-info" },
-  abandoned: { value: 20, label: "Abandoned", color: "bg-danger" }
-})
+const stats = ref(undefined)
 const total = computed(() => {
   return Object.values(stats.value).reduce((sum, stat) => sum + stat.value, 0)
 })
@@ -145,15 +152,20 @@ onMounted(async () => {
   }
   loadNetworkInfo(props.networkId)
   retrieveLatestNegotiations(props.networkId)
+  loadStats(props.networkId)
 })
 
 async function loadNetworkInfo (networkId) {
   network.value = await networksPageStore.retrieveNetwork(networkId)
 }
+async function loadStats (networkId) {
+  stats.value = await networksPageStore.retrieveNetworkStats(networkId)
+}
 async function retrieveLatestNegotiations (networkId) {
   const response = await networksPageStore.retrieveNetworkNegotiations(networkId)
   negotiations.value = response._embedded.negotiations
 }
+
 </script>
 <style>
 .avatar {

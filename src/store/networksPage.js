@@ -32,10 +32,21 @@ export const useNetworksPageStore = defineStore("networksPage", () => {
         return {}
       })
   }
+  async function retrieveNetworkStats (networkId) {
+    return await axios.get(`${apiPaths.BASE_API_PATH}/networks/${networkId}/statistics`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("Error retrieving network")
+        return {}
+      })
+  }
 
   return {
     retrieveNetworkNegotiations,
     retrieveUserNetworks,
-    retrieveNetwork
+    retrieveNetwork,
+    retrieveNetworkStats
   }
 })
