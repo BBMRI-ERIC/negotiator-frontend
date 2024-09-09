@@ -108,9 +108,9 @@ describe('Test create negotiation', () => {
             // Cancel request
             cy.wait(200)
             cy.get('.btn-danger').should('be.visible')
-            cy.get('.btn-dark').click()
             cy.wait(500)
-            cy.get('.modal-content').should('not.be.visible')
+            cy.get('.btn-dark').click()
+            cy.get('.btn-danger').should('not.be.visible')
 
             // Submit request
             cy.wait(200)
