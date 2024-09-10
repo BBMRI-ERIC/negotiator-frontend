@@ -52,6 +52,9 @@ jobs:
       - name: Wait for OIDC provider
         run: .github/scripts/wait_for_url.sh  http://localhost:4011/.well-known/openid-configuration
 
+      - name: Sleep for 30 seconds
+        run: sleep 30
+  
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
