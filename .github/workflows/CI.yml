@@ -36,7 +36,7 @@ jobs:
     name: E2E Tests
     strategy:
       matrix:
-        browser: ["firefox"]
+        browser: ["chrome", "firefox"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
