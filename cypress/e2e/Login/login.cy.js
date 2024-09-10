@@ -13,9 +13,7 @@
 
 describe('Test login', () => {
   beforeEach(() => {
-    cy.wait(200)
     cy.visit('http://localhost:8080')
-    cy.wait(200)
   })
 
 
