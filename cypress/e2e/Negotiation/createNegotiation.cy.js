@@ -12,15 +12,14 @@ describe('Test create negotiation', () => {
         it('test create negotiation', () => {
             cy.get(':nth-child(2) > :nth-child(1) > .btn-sm').should('be.visible')
             cy.get(':nth-child(2) > :nth-child(1) > .btn-sm').should('have.text', 'New Request')
-
+            cy.wait(500)
             cy.get(':nth-child(2) > :nth-child(1) > .btn-sm').click()
-
+            cy.wait(500)
             cy.get('.modal-content').should('be.visible')
             cy.get('.modal-title').should('have.text', 'New Request')
             cy.get('.modal-body > p').should('be.visible')
 
             cy.get('.modal-footer > .btn').should('be.visible')
-
 
             cy.window().then(win => {
                 cy.stub(win, 'open').callsFake((url) => {
