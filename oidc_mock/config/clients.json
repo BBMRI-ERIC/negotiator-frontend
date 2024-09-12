@@ -1,8 +1,8 @@
 [
   {
-    "ClientId": "negotiator",
+    "ClientId": "client-credentials-mock-client",
     "Description": "Client for authorization code flow",
-    "ClientSecrets": ["negotiator"],
+    "ClientSecrets": ["authorization-code-with-pkce-client-secret"],
     "AllowedGrantTypes": ["authorization_code"],
     "AllowAccessTokensViaBrowser": true,
     "RedirectUris": ["http://localhost:8080/logged-in", "http://localhost:8081/api/swagger-ui/oauth2-redirect.html", "http://localhost:8080"],
