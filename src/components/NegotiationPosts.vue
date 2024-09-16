@@ -8,23 +8,31 @@
       :key="post.id"
       class="card mb-3"
     >
-      <div class="card-header d-flex">
-        <div class="me-auto">
-          <span
-            class="badge rounded-pill bg-secondary"
-          >
-            {{ getAuthorName(post) }}
-          </span> to
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <!-- Left Side: Author Information -->
+        <div class="d-flex align-items-center">
+          <i class="bi bi-person-circle" />
+          <span class="ms-2">
+            <strong>{{ getAuthorName(post) }}</strong>
+          </span>
+          <span class="text-muted ms-1">
+            posted on {{ printDate(post.creationDate) }}
+          </span>
+        </div>
+
+        <!-- Right Side: Recipient Badge -->
+        <span>
+          <span class="text-muted">
+            to
+          </span>
           <span
             class="badge rounded-pill"
             :class="getRecipientPostColor(post)"
-          >{{ getRecipientName(post) }}</span>
-        </div>
-        <div class="d-flex">
-          <div class="ms-2">
-            {{ printDate(post.creationDate) }}
-          </div>
-        </div>
+          >
+            <i :class="getRecipientIcon(post)" />
+            {{ getRecipientName(post) }}
+          </span>
+        </span>
       </div>
       <div class="card-body">
         {{ post.text }}
@@ -124,7 +132,7 @@ import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
 import { useOidcStore } from "../store/oidc"
-import { useNegotiationPageStore } from '../store/negotiationPage.js'
+import { useNegotiationPageStore } from "../store/negotiationPage.js"
 
 const oidcStore = useOidcStore()
 const negotiationPageStore = useNegotiationPageStore()
@@ -172,7 +180,7 @@ const recipientsById = computed(() => {
 
 const privatePostsGroupLabel = computed(() => {
   if (props.negotiation.privatePostsEnabled) {
-    return "Private messages"
+    return "Private message"
   }
   return "Private messages will be enabled after an administrator will approve the negotiation"
 })
@@ -197,7 +205,7 @@ onBeforeMount(() => {
 
 async function retrievePostsByNegotiationId () {
   await negotiationPageStore.retrievePostsByNegotiationId(props.negotiation.id).then((res) => {
-    posts.value = res
+    posts.value = res._embedded.posts
   })
 }
 
@@ -261,10 +269,6 @@ async function sendMessage () {
   resetForm()
 }
 
-function transformId (id) {
-  return id.replaceAll(":", "_")
-}
-
 function getAuthorName (post) {
   if (post.createdBy.authSubject === oidcUser.value.sub) {
     return "You"
@@ -274,7 +278,10 @@ function getAuthorName (post) {
 }
 
 function getRecipientPostColor (post) {
-  return post.type === POST_TYPE.PUBLIC ? { "bg-dark": true } : { "bg-primary": true }
+  return post.type === POST_TYPE.PUBLIC ? { "bg-warning": true } : { "bg-primary": true }
+}
+function getRecipientIcon (post) {
+  return post.type === POST_TYPE.PUBLIC ? { "bi bi-people-fill": true } : { "bi bi-lock-fill": true }
 }
 
 function getRecipientName (post) {
@@ -284,41 +291,6 @@ function getRecipientName (post) {
     return post.personRecipient.authSubject === oidcUser.value.sub ? "You" : post.personRecipient.name
   } else {
     return "Everyone"
-  }
-}
-
-function getHumanFileSize (bytes, dp = 1) {
-  const thresh = 1024
-  if (Math.abs(bytes) < thresh) {
-    return bytes + " B"
-  }
-  const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-  let u = -1
-  const r = 10 ** dp
-  do {
-    bytes /= thresh
-    ++u
-  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
-  return bytes.toFixed(dp) + " " + units[u]
-}
-
-function getFileTypeIconClass (fileType) {
-  if (fileType === "application/pdf") {
-    return { "bi-file-pdf": true }
-  } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
-    return { "bi-file-word": true }
-  } else {
-    return { "bi-file-earmark": true }
-  }
-}
-
-function getFileTypeName (fileType) {
-  if (fileType === "application/pdf") {
-    return "PDF"
-  } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-    return "DOCX"
-  } else if (fileType === "application/msword") {
-    return "DOC"
   }
 }
 const emit = defineEmits(["new_attachment"])
