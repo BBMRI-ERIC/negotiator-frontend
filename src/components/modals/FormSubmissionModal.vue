@@ -310,7 +310,7 @@
                   class="btn btn-secondary"
                   @click="props.nextTab()"
                 >
-                  {{ props.isLastStep ? "Submit request" : "Next" }}
+                  {{ props.isLastStep ? "Submit" : "Next" }}
                 </button>
               </div>
             </template>

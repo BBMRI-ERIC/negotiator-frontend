@@ -60,16 +60,6 @@
         id="v-step-3"
         class="filter-by-status"
       >
-        <button
-          class="btn btn-sm btn-outline-sort-filter-button-outline dropdown-toggle"
-          :class="filtersSortData.status.length > 0 ? 'btn-primary show':''"
-          type="button"
-          data-bs-toggle="dropdown"
-          data-bs-auto-close="outside"
-          aria-expanded="false"
-        >
-          Filter by status
-        </button>
         <ul
           class="dropdown-menu"
           aria-labelledby="dropdownSortingButton"

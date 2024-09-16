@@ -34,7 +34,7 @@ function createPDF (view) {
   const negotiationUser = {
     Author: props.negotiationPdfData.author.name,
     Email: props.negotiationPdfData.author.email,
-    "Negotiation ID": props.negotiationPdfData.id,
+    "Proposal ID": props.negotiationPdfData.id,
     "Submitted at": moment(props.negotiationPdfData.creationDate).format(dateFormat),
     Status: transformStatus(props.negotiationPdfData.status),
     "Report generated at": moment().format(dateFormat)

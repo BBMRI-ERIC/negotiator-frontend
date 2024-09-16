@@ -27,13 +27,6 @@
         <h1 class="text-primary fw-bold">
           {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
         </h1>
-        <span
-          :class="getBadgeColor(negotiation.status)"
-          class="badge py-2 rounded-pill"
-        ><i
-          :class="getBadgeIcon(negotiation.status)"
-          class="px-1"
-        /> {{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
       </div>
       <div class="col-12 col-md-8 order-2 order-md-1">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
@@ -43,15 +36,17 @@
             class="list-group-item p-3"
           >
             <span class="fs-5 fw-bold text-primary-text mt-3">
-              {{ key.toUpperCase() }}</span>
+              {{ key.toUpperCase() }}
+            </span>
             <div
               v-for="(subelement, subelementkey) in element"
               :key="subelement"
               class="mt-3"
             >
-              <label
+              <div
                 class="me-2 fw-bold text-secondary-text"
-              >{{ subelementkey.toUpperCase() }}:</label>
+                v-html="decodeHTML(subelementkey)"
+              />
               <span
                 v-if="isAttachment(subelement)"
                 class="text-secondary-text"
@@ -231,21 +226,6 @@
                             <CopyTextButton :text="resource.sourceId" />
                           </div>
                         </div>
-                        <div
-                          v-if="getLifecycleLinks(resource._links).length > 0"
-                          class="ms-4"
-                        >
-                          Update status:
-                          <div
-                            v-for="link in getLifecycleLinks(resource._links)"
-                            class="lifecycle-links flex-column ms-4"
-                          >
-                            <a
-                              class="lifecycle-text cursor-pointer"
-                              @click="updateResourceState(link.href)"
-                            ><i class="bi bi-patch-check" /> {{ link.name }}</a>
-                          </div>
-                        </div>
                       </div>
 
                       <div
@@ -307,7 +287,7 @@
           </li>
           <li class="list-group-item p-2">
             <div class="fw-bold text-primary-text">
-              Negotiation ID:
+              Proposal ID:
             </div>
             <span class="text-secondary-text"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
@@ -316,14 +296,6 @@
               Submitted at:
             </div>
             <span class="text-secondary-text"> {{ negotiation ? printDate(negotiation.creationDate) : "" }}</span>
-          </li>
-          <li class="list-group-item p-2 d-flex justify-content-between">
-            <div>
-              <div class="fw-bold text-primary-text">
-                Status:
-              </div>
-              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
-            </div>
           </li>
 
           <li
@@ -373,22 +345,6 @@
               class="cursor-pointer"
               @click="downloadAttachmentFromLink(link.href)"
             ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
-          </li>
-          <li class="list-group-item p-2 border-bottom-0">
-            <div class="pt-2 abandon-text">
-              <div
-                v-if="negotiation.status !== 'ABANDONED' && isUserRoleResearcher"
-                type="button"
-                role="button"
-                data-bs-toggle="modal"
-                data-bs-target="#abandonModal"
-              >
-                <span>
-                  <i class="bi bi-trash pe-1" />
-                  <span>Abandon</span>
-                </span>
-              </div>
-            </div>
           </li>
         </ul>
       </div>
@@ -651,6 +607,13 @@ export default {
         }
       }
       return lifecycleLinks
+    },
+    decodeHTML (htmlString) {
+      const parser = new DOMParser()
+      const decodedString = parser.parseFromString(htmlString, "text/html").body.textContent
+      const txt = document.createElement("div")
+      txt.innerHTML = decodedString
+      return txt.innerHTML
     },
     getSummaryLinks (links) {
       const summaryLinks = []
