@@ -43,7 +43,7 @@
             class="list-group-item p-3"
           >
             <span class="fs-5 fw-bold text-primary-text mt-3">
-              {{ key.toUpperCase() }}</span>
+              {{ transformDashToSpace(key).toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
               :key="subelement"
@@ -51,7 +51,7 @@
             >
               <label
                 class="me-2 fw-bold text-secondary-text"
-              >{{ subelementkey.toUpperCase() }}:</label>
+              >{{ transformDashToSpace(subelementkey).toUpperCase() }}:</label>
               <span
                 v-if="isAttachment(subelement)"
                 class="text-secondary-text"
@@ -716,6 +716,12 @@ export default {
     },
     async retrieveInfoRequirement (link) {
       this.adminStore.retrieveInfoRequirement(link)
+    },
+    transformDashToSpace(text) {
+      if(text)
+      return text.split('-').join(' ')
+
+      return ''
     }
   }
 }
