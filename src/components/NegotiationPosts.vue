@@ -9,7 +9,7 @@
       class="card mb-3"
     >
       <div class="card-header">
-        <div class="mb-1 ms-2">
+        <div class="mb-2 ms-2">
           <span>
             <span
               v-for="badge in getUserBadges(post)"
