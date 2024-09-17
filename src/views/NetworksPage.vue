@@ -9,9 +9,6 @@
           <h1 class="h2 lh-condensed">
             {{ network.name.toUpperCase() }}
           </h1>
-          <div class="description">
-            Network Description Here
-          </div>
           <ul class="list-style-none">
             <li>
               <i class="bi bi-globe" />
