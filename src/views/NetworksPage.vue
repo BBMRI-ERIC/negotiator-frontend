@@ -3,7 +3,7 @@
     <div class="container">
       <div class="organization-details">
         <div class="avatar">
-          <i class="bi bi-person-circle mt-2" />
+          <i class="bi bi-people-fill mt-2" />
         </div>
         <div class="organization-info ms-3">
           <h1 class="h2 lh-condensed">
