@@ -16,14 +16,14 @@
             <li>
               <i class="bi bi-globe" />
               <a
-                href="{{ network.uri }}"
+                :href="network.uri"
                 class="ms-2"
               >{{ network.uri }}</a>
             </li>
             <li>
               <i class="bi bi-envelope" />
               <a
-                href="mailto:{{ network.contactEmail }}"
+                :href="'mailto:' + network.contactEmail"
                 class="ms-2"
               >{{ network.contactEmail }}</a>
             </li>
