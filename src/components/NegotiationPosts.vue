@@ -313,13 +313,17 @@ function getUserBadges (post) {
   if (post.createdBy.admin === true) {
     badges.push("Admin")
   }
+  if (post.createdBy.networkManager === true) {
+    badges.push("NetworkManager")
+  }
   return badges
 }
 function getBadgeTooltip (badge) {
   const badgeTooltips = {
     Admin: "Negotiator Administrator",
     Author: "Author of this Request",
-    Representative: "Representative of a resource"
+    Representative: "Representative of a resource",
+    NetworkManager: "Manager of a Network responsible for moderating requests"
   }
   return badgeTooltips[badge] || "Badge details"
 }
