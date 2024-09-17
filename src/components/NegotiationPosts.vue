@@ -214,7 +214,7 @@ onBeforeMount(() => {
 
 async function retrievePostsByNegotiationId () {
   await negotiationPageStore.retrievePostsByNegotiationId(props.negotiation.id).then((res) => {
-    posts.value = res._embedded.posts
+    posts.value = res
   })
 }
 
