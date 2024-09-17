@@ -188,11 +188,9 @@ const readyToSend = computed(() => {
   return (message.value !== "" || attachment.value !== undefined) && recipientId.value !== "" &&
   (props.negotiation.publicPostsEnabled || props.negotiation.privatePostsEnabled)
 })
-
-const recipientsById = computed(() => {
+computed(() => {
   return props.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
 })
-
 const privatePostsGroupLabel = computed(() => {
   if (props.negotiation.privatePostsEnabled) {
     return "Private message"
@@ -201,11 +199,7 @@ const privatePostsGroupLabel = computed(() => {
 })
 const showMessageRecipientInfo = ref(false)
 watch(recipientId, (newValue, oldValue) => {
-  if (newValue === "Everyone") {
-    showMessageRecipientInfo.value = true
-  } else {
-    showMessageRecipientInfo.value = false
-  }
+  showMessageRecipientInfo.value = newValue === "Everyone"
   console.log("recipientId changed from", oldValue, "to", newValue)
 })
 onMounted(() => {
