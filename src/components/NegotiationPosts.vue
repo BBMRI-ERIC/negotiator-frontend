@@ -86,7 +86,7 @@
       <div class="d-flex flex-row-reverse mt-3 mb-2">
         <span
           data-bs-toggle="tooltip"
-          :title="negotiation.privatePostsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
+          :title="negotiation.publicPostsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
         >
           <button
             type="submit"
@@ -214,7 +214,7 @@ onBeforeMount(() => {
 
 async function retrievePostsByNegotiationId () {
   await negotiationPageStore.retrievePostsByNegotiationId(props.negotiation.id).then((res) => {
-    posts.value = res
+    posts.value = res._embedded.posts
   })
 }
 
