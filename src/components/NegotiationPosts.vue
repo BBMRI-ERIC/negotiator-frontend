@@ -8,31 +8,46 @@
       :key="post.id"
       class="card mb-3"
     >
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <!-- Left Side: Author Information -->
-        <div class="d-flex align-items-center">
-          <i class="bi bi-person-circle" />
-          <span class="ms-2">
-            <strong>{{ getAuthorName(post) }}</strong>
-          </span>
-          <span class="text-muted ms-1">
-            posted on {{ printDate(post.creationDate) }}
+      <div class="card-header">
+        <div class="mb-1 ms-2">
+          <span>
+            <span
+              v-for="badge in getUserBadges(post)"
+              :key="badge"
+              data-bs-toggle="tooltip"
+              class="badge rounded-pill text-bg-secondary ms-1"
+              :title="getBadgeTooltip(badge)"
+            >
+              {{ badge }}
+            </span>
           </span>
         </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Left Side: Author Information -->
+          <div class="d-flex align-items-center">
+            <i class="bi bi-person-circle" />
+            <span class="ms-2">
+              <strong>{{ getAuthorName(post) }}</strong>
+            </span>
+            <span class="text-muted ms-1">
+              posted on {{ printDate(post.creationDate) }}
+            </span>
+          </div>
 
-        <!-- Right Side: Recipient Badge -->
-        <span>
-          <span class="text-muted">
-            to
+          <!-- Right Side: Recipient Badge -->
+          <span>
+            <span class="text-muted">
+              to
+            </span>
+            <span
+              class="badge rounded-pill"
+              :class="getRecipientPostColor(post)"
+            >
+              <i :class="getRecipientIcon(post)" />
+              {{ getRecipientName(post) }}
+            </span>
           </span>
-          <span
-            class="badge rounded-pill"
-            :class="getRecipientPostColor(post)"
-          >
-            <i :class="getRecipientIcon(post)" />
-            {{ getRecipientName(post) }}
-          </span>
-        </span>
+        </div>
       </div>
       <div class="card-body">
         {{ post.text }}
@@ -292,6 +307,27 @@ function getRecipientName (post) {
   } else {
     return "Everyone"
   }
+}
+function getUserBadges (post) {
+  const badges = []
+  if (post.createdBy.representativeOfAnyResource === true) {
+    badges.push("Representative")
+  }
+  if (post.createdBy.id === props.negotiation.author.id) {
+    badges.push("Author")
+  }
+  if (post.createdBy.admin === true) {
+    badges.push("Admin")
+  }
+  return badges
+}
+function getBadgeTooltip (badge) {
+  const badgeTooltips = {
+    Admin: "Negotiator Administrator",
+    Author: "Author of this Request",
+    Representative: "Representative of a resource"
+  }
+  return badgeTooltips[badge] || "Badge details"
 }
 const emit = defineEmits(["new_attachment"])
 </script>
