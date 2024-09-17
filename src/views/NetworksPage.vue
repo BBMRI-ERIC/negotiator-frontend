@@ -3,7 +3,7 @@
     <div class="container">
       <div class="organization-details">
         <div class="avatar">
-          <i class="bi bi-person-circle mt-2" /> <!-- You can replace this with an actual image if you have one -->
+          <i class="bi bi-person-circle mt-2" />
         </div>
         <div class="organization-info ms-3">
           <h1 class="h2 lh-condensed">
@@ -11,7 +11,7 @@
           </h1>
           <div class="description">
             Network Description Here
-          </div> <!-- Replace with actual description if available -->
+          </div>
           <ul class="list-style-none">
             <li>
               <i class="bi bi-globe" />
@@ -45,8 +45,6 @@
           <h4 class="card-title">
             Statistics Overview
           </h4>
-
-          <!-- Progress Bar showing status distribution -->
           <div class="progress mb-4">
             <div
               v-for="(count, status) in stats.statusDistribution"
@@ -54,16 +52,13 @@
               :class="['progress-bar', getBadgeColor(status)]"
               :style="{ width: (count / stats.totalNumberOfNegotiations * 100) + '%' }"
             >
-              {{ count }} {{ status }} <!-- Display absolute count and status in progress bar -->
+              {{ count }} {{ status }}
             </div>
           </div>
-
-          <!-- Statistic Boxes for each status (display absolute values) -->
           <div class="row text-center">
-            <!-- First box contains total number of negotiations -->
             <div class="col-md-4">
               <div class="stat-box">
-                <h5>{{ stats.totalNumberOfNegotiations }}</h5> <!-- Total negotiations -->
+                <h5>{{ stats.totalNumberOfNegotiations }}</h5>
                 <p class="text-muted">
                   Total
                 </p>
@@ -75,10 +70,10 @@
               class="col-md-4"
             >
               <div class="stat-box">
-                <h5>{{ count }}</h5> <!-- Display absolute count -->
+                <h5>{{ count }}</h5>
                 <p class="text-muted">
                   {{ status }}
-                </p> <!-- Display status label -->
+                </p>
               </div>
             </div>
           </div>
