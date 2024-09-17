@@ -59,6 +59,40 @@
             </router-link>
           </li>
           <li
+            v-if="showNetworksTab"
+            class="nav-item dropdown"
+            :class="{ 'show': dropdownVisible }"
+          >
+            <a
+              id="networksDropdown"
+              class="nav-link active nav-option dropdown-toggle"
+              :class="$route.path.startsWith('/networks') ? 'text-navbar-active-text' : 'text-navbar-text'"
+              href="#"
+              role="button"
+              @click="toggleDropdown"
+            >
+              <i class="bi bi-globe" />
+              Your networks
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-right"
+              :class="{ 'show': dropdownVisible }"
+            >
+              <li
+                v-for="network in networks"
+                :key="network.id"
+              >
+                <a
+                  class="dropdown-item"
+                  href="#"
+                  @click="selectNetwork(network.id)"
+                >
+                  {{ network.name }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li
             v-if="featureFlagsFAQ"
             class="nav-item"
           >
@@ -117,7 +151,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount } from "vue"
+import { computed, onBeforeMount, ref, watch } from "vue"
 import { ROLES } from "@/config/consts"
 import ProfileSettings from "../components/ProfileSettings.vue"
 import activeTheme from "../config/theme.js"
@@ -129,17 +163,27 @@ import allFeatureFlags from "@/config/featureFlags.js"
 import { useActuatorInfoStore } from "../store/actuatorInfo"
 import { useUserStore } from "../store/user"
 import { useOidcStore } from "../store/oidc"
+import { useNetworksPageStore } from "../store/networksPage"
+import { useRouter } from "vue-router"
 
 const actuatorInfoStore = useActuatorInfoStore()
 const userStore = useUserStore()
 const oidcStore = useOidcStore()
-
+const networksPageStore = useNetworksPageStore()
+const dropdownVisible = ref(false)
+const router = useRouter()
 const roles = ref([])
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
 const featureFlagsFAQ = !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
+const featureFlagsNetworks = !!(allFeatureFlags.networks === "true" || allFeatureFlags.networks === true)
 const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true)
 const backendEnvironment = ref("")
-
+const showNetworksTab = ref(false)
+const networks = ref([])
+const selectNetwork = (networkId) => {
+  toggleDropdown()
+  router.push(`/networks/${networkId}`)
+}
 const oidcIsAuthenticated = computed(() => {
   return oidcStore.oidcIsAuthenticated
 })
@@ -174,11 +218,20 @@ const returnCurrentModeTextColor = computed(() => {
 const userInfo = computed(() => {
   return userStore.userInfo
 })
+const toggleDropdown = () => {
+  dropdownVisible.value = !dropdownVisible.value
+}
+async function retrieveUserNetworks () {
+  networks.value = await networksPageStore.retrieveUserNetworks(userInfo.value.id)
+}
 
 watch(userInfo, () => {
   retrieveUserRoles()
+  if (userInfo.value._links.networks !== undefined) {
+    showNetworksTab.value = true
+    retrieveUserNetworks()
+  }
 })
-
 onBeforeMount(() => {
   retrieveBackendEnvironment()
 })
@@ -197,7 +250,26 @@ nav {
     font-size: 1rem;
     text-align: left;
 }
-.nav-item:hover .nav-option:hover {
-    color: var(--bs-primary) ;
+.nav-item.dropdown .dropdown-menu {
+  min-width: 140px;               /* Set the minimum width of the dropdown */
+  max-width: 200px;            /* Ensure it doesn't exceed the width of the navbar item */
+  background-color: #e7e7e7;    /* Light gray background to match the Bootstrap light navbar */
+  border: 1px solid #dee2e6;    /* Light border for the dropdown */
+  border-radius: 0;             /* No border-radius for a flush fit with the navbar */
+  box-shadow: none;             /* Remove shadow for a flat appearance */
+}
+
+.nav-item.dropdown .dropdown-item {
+  white-space: nowrap;          /* Prevent text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis;      /* Ellipsis for overflowing text */
+  color: #495057;               /* Darker gray text color to match Bootstrap's default text */
+  background-color: #e7e7e7;
+}
+.nav-item:hover .nav-link,
+.nav-item.dropdown .dropdown-item:hover,
+.nav-item.dropdown .dropdown-item:focus {
+  background-color: lightgray;    /* Light gray background on hover */
+  color: #212529;               /* Darker text color on hover */
 }
 </style>

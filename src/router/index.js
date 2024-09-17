@@ -4,6 +4,7 @@ import HomePage from "../views/HomePage.vue"
 import NegotiationCreatePage from "../views/NegotiationCreatePage.vue"
 import NegotiationPage from "../views/NegotiationPage.vue"
 import FaqPage from "../views/FaqPage.vue"
+import NetworksPage from "../views/NetworksPage.vue"
 import AdminSettingsPage from "../views/AdminSettingsPage.vue"
 import UserPage from "@/views/UserPage.vue"
 import { ROLES } from "@/config/consts"
@@ -54,6 +55,12 @@ const router = createRouter({
     meta: { isPublic: true, middleware: [hasUser] }
   },
   {
+    path: "/networks",
+    name: "networks",
+    component: NetworksPage,
+    meta: { isPublic: false, middleware: [hasUser] }
+  },
+  {
     path: "/settings",
     name: "settings",
     component: AdminSettingsPage,
@@ -65,9 +72,15 @@ const router = createRouter({
     component: NegotiationPage,
     props: true,
     meta: { middleware: [hasUser] }
+  },
+  {
+    path: "/networks/:networkId",
+    name: "networks-page",
+    component: NetworksPage,
+    props: true,
+    meta: { isPublic: false }
   }]
 })
-
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
