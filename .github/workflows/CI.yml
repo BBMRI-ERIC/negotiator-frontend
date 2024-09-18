@@ -51,8 +51,9 @@ jobs:
         with:
           repository: bbmri-eric/negotiator
           ref: fix/property_files
+          path: negotiator
 
-      - name: Checkout another repository
+      - name: Setup environment
         run: cd negotiator/.github/oauth-test && docker compose up -d
 
       - name: Wait
