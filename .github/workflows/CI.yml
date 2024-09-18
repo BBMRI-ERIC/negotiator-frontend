@@ -46,12 +46,21 @@ jobs:
         with:
           name: build
 
-      - name: Setup OIDC provider
-        run: cd oidc_mock && docker compose up -d
+      - name: Checkout another repository
+        uses: actions/checkout@v4
+        with:
+          repository: bbmri-eric/negotiator
+          ref: fix/property_files
 
-      - name: Wait for OIDC provider
-        run: .github/scripts/wait_for_url.sh  http://localhost:4011/.well-known/openid-configuration
-  
+      - name: Checkout another repository
+        run: cd negotiator/.github/oauth-test && docker compose up -d
+
+      - name: Wait
+        run: sleep 30
+
+      - name: Get docker logs
+        run: docker logs negotiator
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
