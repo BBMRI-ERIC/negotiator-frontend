@@ -1,11 +1,8 @@
 name: CI pipeline
-
 on:
   schedule:
     - cron: '0 10 * * *' # every day at 10am
   push:
-
-
 jobs:
   install:
     runs-on: ubuntu-latest
@@ -46,11 +43,27 @@ jobs:
         with:
           name: build
 
-      - name: Setup OIDC provider
+      - name: Checkout another repository
+        uses: actions/checkout@v4
+        with:
+          repository: bbmri-eric/negotiator
+          ref: fix/property_files
+          path: negotiator
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup OIDC Server
         run: cd oidc_mock && docker compose up -d
 
-      - name: Wait for OIDC provider
-        run: .github/scripts/wait_for_url.sh  http://localhost:4011/.well-known/openid-configuration
+      - name: Setup API server
+        run: cd negotiator && mvn -B clean spring-boot:test-run -Dspring-boot.run.profiles=dev &
+
+      - name: Wait
+        run: sleep 30
 
       - name: Cypress run
         uses: cypress-io/github-action@v6

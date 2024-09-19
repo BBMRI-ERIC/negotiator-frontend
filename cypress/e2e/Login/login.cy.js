@@ -13,10 +13,10 @@
 
 describe('Test login', () => {
   beforeEach(() => {
-      cy.visit('http://localhost:8080/')
+    cy.visit('http://localhost:8080')
   })
 
- 
+
 
   context('Check visibility of elements', () => {
     it('check visibility of logo', () => {
