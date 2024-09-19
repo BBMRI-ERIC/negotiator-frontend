@@ -60,7 +60,7 @@ jobs:
         run: cd oidc_mock && docker compose up -d
 
       - name: Setup API server
-        run: cd negotiator && mvn clean spring-boot:test-run -Dspring-boot.run.profiles=dev
+        run: cd negotiator && mvn -B clean spring-boot:test-run -Dspring-boot.run.profiles=dev &
 
       - name: Wait
         run: sleep 30
