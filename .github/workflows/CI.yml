@@ -1,11 +1,8 @@
 name: CI pipeline
-
 on:
   schedule:
     - cron: '0 10 * * *' # every day at 10am
   push:
-
-
 jobs:
   install:
     runs-on: ubuntu-latest
@@ -53,14 +50,14 @@ jobs:
           ref: fix/property_files
           path: negotiator
 
-      - name: Setup environment
-        run: cd negotiator/.github/oauth-test && docker compose up -d
+      - name: Setup OIDC Server
+        run: cd oidc-mock && docker compose up -d
+
+      - name: Setup API server
+        run: cd negotiator && mvn clean spring-boot:test-run -Dspring-boot.run.profiles=dev
 
       - name: Wait
         run: sleep 30
-
-      - name: Get docker logs
-        run: docker logs negotiator
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
