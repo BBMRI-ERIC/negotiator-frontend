@@ -35,16 +35,8 @@ jobs:
       matrix:
         browser: ["chrome", "firefox"]
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
 
       - name: Download the build folder
         uses: actions/download-artifact@v4
@@ -57,6 +49,12 @@ jobs:
           repository: bbmri-eric/negotiator
           ref: fix/property_files
           path: negotiator
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Setup OIDC Server
         run: cd oidc_mock && docker compose up -d
