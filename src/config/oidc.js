@@ -12,17 +12,13 @@ const devSettings = {
 
 const prodSettings = {
   authority: "AUTH_URL_PLACEHOLDER",
-  clientId: "CLIENT_ID_PLACEHOLDER",
-  redirectUri: "REDIRECT_URI_PLACEHOLDER",
-  postLogoutRedirectUri: "LOGOUT_URI_PLACEHOLDER",
-  resource: "RESOURCES_PLACEHOLDER",
-  responseType: "code",
-  scope: "openid profile email offline_access eduperson_entitlement",
-  automaticSilentRenew: true,
   client_id: "CLIENT_ID_PLACEHOLDER",
+  resource: "RESOURCES_PLACEHOLDER",
   redirect_uri: "REDIRECT_URI_PLACEHOLDER",
+  scope: "openid profile email offline_access eduperson_entitlement",
   post_logout_redirect_uri: "LOGOUT_URI_PLACEHOLDER",
-  response_type: "code"
+  response_type: "code",
+  automaticSilentRenew: true
 }
 
 let oidcSettings
