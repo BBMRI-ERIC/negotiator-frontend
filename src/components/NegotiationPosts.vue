@@ -8,22 +8,45 @@
       :key="post.id"
       class="card mb-3"
     >
-      <div class="card-header d-flex">
-        <div class="me-auto">
-          <span
-            class="badge rounded-pill bg-secondary"
-          >
-            {{ getAuthorName(post) }}
-          </span> to
-          <span
-            class="badge rounded-pill"
-            :class="getRecipientPostColor(post)"
-          >{{ getRecipientName(post) }}</span>
+      <div class="card-header">
+        <div class="mb-2 ms-2">
+          <span>
+            <span
+              v-for="badge in getUserBadges(post)"
+              :key="badge"
+              data-bs-toggle="tooltip"
+              class="badge rounded-pill text-bg-secondary ms-1"
+              :title="getBadgeTooltip(badge)"
+            >
+              {{ badge }}
+            </span>
+          </span>
         </div>
-        <div class="d-flex">
-          <div class="ms-2">
-            {{ printDate(post.creationDate) }}
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Left Side: Author Information -->
+          <div class="d-flex align-items-center">
+            <i class="bi bi-person-circle" />
+            <span class="ms-2">
+              <strong>{{ getAuthorName(post) }}</strong>
+            </span>
+            <span class="text-muted ms-1">
+              posted on {{ printDate(post.creationDate) }}
+            </span>
           </div>
+
+          <!-- Right Side: Recipient Badge -->
+          <span>
+            <span class="text-muted">
+              to
+            </span>
+            <span
+              class="badge rounded-pill"
+              :class="getRecipientPostColor(post)"
+            >
+              <i :class="getRecipientIcon(post)" />
+              {{ getRecipientName(post) }}
+            </span>
+          </span>
         </div>
       </div>
       <div class="card-body">
@@ -63,7 +86,7 @@
       <div class="d-flex flex-row-reverse mt-3 mb-2">
         <span
           data-bs-toggle="tooltip"
-          :title="negotiation.privatePostsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
+          :title="negotiation.publicPostsEnabled ? '' : 'Messaging is unavailable until the request has been reviewed.' "
         >
           <button
             type="submit"
@@ -124,7 +147,7 @@ import { dateFormat, POST_TYPE } from "@/config/consts"
 import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
 import { useOidcStore } from "../store/oidc"
-import { useNegotiationPageStore } from '../store/negotiationPage.js'
+import { useNegotiationPageStore } from "../store/negotiationPage.js"
 
 const oidcStore = useOidcStore()
 const negotiationPageStore = useNegotiationPageStore()
@@ -165,24 +188,18 @@ const readyToSend = computed(() => {
   return (message.value !== "" || attachment.value !== undefined) && recipientId.value !== "" &&
   (props.negotiation.publicPostsEnabled || props.negotiation.privatePostsEnabled)
 })
-
-const recipientsById = computed(() => {
+computed(() => {
   return props.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
 })
-
 const privatePostsGroupLabel = computed(() => {
   if (props.negotiation.privatePostsEnabled) {
-    return "Private messages"
+    return "Private message"
   }
   return "Private messages will be enabled after an administrator will approve the negotiation"
 })
 const showMessageRecipientInfo = ref(false)
 watch(recipientId, (newValue, oldValue) => {
-  if (newValue === "Everyone") {
-    showMessageRecipientInfo.value = true
-  } else {
-    showMessageRecipientInfo.value = false
-  }
+  showMessageRecipientInfo.value = newValue === "Everyone"
   console.log("recipientId changed from", oldValue, "to", newValue)
 })
 onMounted(() => {
@@ -197,7 +214,7 @@ onBeforeMount(() => {
 
 async function retrievePostsByNegotiationId () {
   await negotiationPageStore.retrievePostsByNegotiationId(props.negotiation.id).then((res) => {
-    posts.value = res
+    posts.value = res._embedded.posts
   })
 }
 
@@ -261,10 +278,6 @@ async function sendMessage () {
   resetForm()
 }
 
-function transformId (id) {
-  return id.replaceAll(":", "_")
-}
-
 function getAuthorName (post) {
   if (post.createdBy.authSubject === oidcUser.value.sub) {
     return "You"
@@ -274,7 +287,10 @@ function getAuthorName (post) {
 }
 
 function getRecipientPostColor (post) {
-  return post.type === POST_TYPE.PUBLIC ? { "bg-dark": true } : { "bg-primary": true }
+  return post.type === POST_TYPE.PUBLIC ? { "bg-warning": true } : { "bg-primary": true }
+}
+function getRecipientIcon (post) {
+  return post.type === POST_TYPE.PUBLIC ? { "bi bi-people-fill": true } : { "bi bi-lock-fill": true }
 }
 
 function getRecipientName (post) {
@@ -286,40 +302,30 @@ function getRecipientName (post) {
     return "Everyone"
   }
 }
-
-function getHumanFileSize (bytes, dp = 1) {
-  const thresh = 1024
-  if (Math.abs(bytes) < thresh) {
-    return bytes + " B"
+function getUserBadges (post) {
+  const badges = []
+  if (post.createdBy.representativeOfAnyResource === true) {
+    badges.push("Representative")
   }
-  const units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-  let u = -1
-  const r = 10 ** dp
-  do {
-    bytes /= thresh
-    ++u
-  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1)
-  return bytes.toFixed(dp) + " " + units[u]
+  if (post.createdBy.id === props.negotiation.author.id) {
+    badges.push("Author")
+  }
+  if (post.createdBy.admin === true) {
+    badges.push("Admin")
+  }
+  if (post.createdBy.networkManager === true) {
+    badges.push("NetworkManager")
+  }
+  return badges
 }
-
-function getFileTypeIconClass (fileType) {
-  if (fileType === "application/pdf") {
-    return { "bi-file-pdf": true }
-  } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"].includes(fileType)) {
-    return { "bi-file-word": true }
-  } else {
-    return { "bi-file-earmark": true }
+function getBadgeTooltip (badge) {
+  const badgeTooltips = {
+    Admin: "Negotiator Administrator",
+    Author: "Author of this Request",
+    Representative: "Representative of a resource",
+    NetworkManager: "Manager of a Network responsible for moderating requests"
   }
-}
-
-function getFileTypeName (fileType) {
-  if (fileType === "application/pdf") {
-    return "PDF"
-  } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-    return "DOCX"
-  } else if (fileType === "application/msword") {
-    return "DOC"
-  }
+  return badgeTooltips[badge] || "Badge details"
 }
 const emit = defineEmits(["new_attachment"])
 </script>

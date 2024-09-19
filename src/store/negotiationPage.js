@@ -60,10 +60,9 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
       })
   }
 
-  async function retrievePostsByNegotiationId (negotiationId, resourceId) {
+  async function retrievePostsByNegotiationId (negotiationId) {
     const url = `${apiPaths.NEGOTIATION_PATH}/${negotiationId}/posts`
-    const params = resourceId ? { resource: resourceId } : {}
-    return await axios.get(url, { headers: getBearerHeaders(), params })
+    return await axios.get(url, { headers: getBearerHeaders() })
       .then((response) => {
         return response.data
       })
