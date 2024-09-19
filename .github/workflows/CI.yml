@@ -35,6 +35,13 @@ jobs:
       matrix:
         browser: ["chrome", "firefox"]
     steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -51,7 +58,7 @@ jobs:
           path: negotiator
 
       - name: Setup OIDC Server
-        run: cd oidc-mock && docker compose up -d
+        run: cd oidc_mock && docker compose up -d
 
       - name: Setup API server
         run: cd negotiator && mvn clean spring-boot:test-run -Dspring-boot.run.profiles=dev
