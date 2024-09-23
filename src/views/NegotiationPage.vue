@@ -21,7 +21,6 @@
         <ul class="list-group list-group-flush rounded border px-3 my-3">
           <li v-for="(element, key) in negotiation.payload" :key="element" class="list-group-item p-3">
             <span class="fs-5 fw-bold text-primary-text mt-3">
-<<<<<<< HEAD
               {{ transformDashToSpace(key).toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -35,13 +34,6 @@
                 v-if="isAttachment(subelement)"
                 class="text-secondary-text"
               >
-=======
-              {{ key.toUpperCase() }}</span>
-            <div v-for="(subelement, subelementkey) in element" :key="subelement" class="mt-3">
-              <label class="me-2 fw-bold text-secondary-text">{{ subelementkey.toUpperCase()
-                }}:</label>
-              <span v-if="isAttachment(subelement)" class="text-secondary-text">
->>>>>>> 5f764c9 (feat: refactor option to composition api)
                 <span v-if="subelement.name">
                   {{ subelement.name }}
                   <font-awesome-icon v-if="isAttachment(subelement)" class="ms-1 cursor-pointer" icon="fa fa-download"
@@ -288,276 +280,6 @@ const props = defineProps({
     type: String,
     default: undefined
   },
-<<<<<<< HEAD
-  setup () {
-    const getSubmissionLinks = (links) => {
-      const submissionLinks = []
-      for (const key in links) {
-        // Check if the key starts with "submission-"
-        if (key.startsWith("submission-")) {
-          // Push the href value of the link to the submissionLinks array
-          submissionLinks.push(links[key])
-        }
-      }
-      return submissionLinks
-    }
-    return {
-      getSubmissionLinks
-    }
-  },
-  data () {
-    return {
-      infoRequirements: undefined,
-      negotiation: undefined,
-      requirementId: undefined,
-      resources: [],
-      resourceId: undefined,
-      representedResourcesIds: [],
-      negotiationStatusOptions: [],
-      availableRoles: ROLES,
-      currentResourceEvents: [],
-      savedResourceId: undefined,
-      selection: {},
-      currentMultipleResourceStatus: undefined,
-      selectedStatus: undefined,
-      RESOURCE_TYPE: "RESOURCE",
-      ORGANIZATION_TYPE: "ORGANIZATION",
-      attachments: [],
-      requiredAccessForm: {},
-      formSubmissionModal: null,
-      submittedForm: undefined,
-      formViewModal: null,
-      isAddResourcesButtonVisible: false,
-      toParse: "Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below"
-    }
-  },
-  computed: {
-    userStore () {
-      return useUserStore()
-    },
-    negotiationPageStore () {
-      return useNegotiationPageStore()
-    },
-    adminStore () {
-      const adminStore = useAdminStore()
-      return adminStore
-    },
-    getResources () {
-      return this.resources
-    },
-    organizations () {
-      return Object.entries(this.organizationsById).map(([k, v]) => {
-        return { externalId: k, name: v.name }
-      })
-    },
-    organizationsById () {
-      return this.getResources.reduce((organizations, resource) => {
-        if (resource.organization.externalId in organizations) {
-          organizations[resource.organization.externalId].resources.push(
-            resource)
-        } else {
-          organizations[resource.organization.externalId] = {
-            name: resource.organization.name,
-            resources: [resource]
-          }
-        }
-        return organizations
-      }, {})
-    },
-    resourcesById () {
-      return this.getResources.reduce((resourcesObjects, resource) => {
-        resourcesObjects[resource.id] = resource
-        return resourcesObjects
-      }, {})
-    },
-    numberOfResources () {
-      return this.getResources.length
-    },
-    representedResources () {
-      return this.getResources.filter(resource => this.isRepresentativeForResource(resource.sourceId))
-    },
-    representedOrganizations () {
-      return this.representedResources.map(resource => resource.organization).filter((value, index, self) =>
-        index === self.findIndex((t) => (
-          t.externalId === value.externalId
-        ))
-      )
-    },
-    postsRecipients () {
-      if (this.userRole === ROLES.RESEARCHER) {
-        return this.organizations.map(org => {
-          return { id: org.externalId, name: org.name }
-        })
-      } else {
-        return this.representedOrganizations.map(org => {
-          return { id: org.externalId, name: org.name }
-        })
-      }
-    },
-    author () {
-      return this.negotiation.author
-    },
-    loading () {
-      return (this.negotiation === undefined || this.resources.length === 0)
-    },
-    isUserRoleResearcher () {
-      return this.userRole === ROLES.RESEARCHER
-    }
-  },
-  async beforeMount () {
-    this.negotiation = await this.negotiationPageStore.retrieveNegotiationById(
-      this.negotiationId
-    )
-    const resourceResponse = await this.negotiationPageStore.retrieveResourcesByNegotiationId(this.negotiationId)
-    if (resourceResponse?._embedded?.resources !== undefined) {
-      this.resources = resourceResponse._embedded.resources
-      this.isAddResourcesButtonVisible = this.hasRightsToAddResources(resourceResponse._links)
-    }
-    this.representedResourcesIds = await this.negotiationPageStore.retrieveUserRepresentedResources()
-    this.negotiationStatusOptions = await this.negotiationPageStore.retrievePossibleEvents(
-      this.negotiation.id
-    )
-  },
-  created () {
-    this.retrieveAttachments()
-  },
-  async mounted () {
-    if (Object.keys(this.userStore.userInfo).length === 0) {
-      await this.userStore.retrieveUser()
-    }
-  },
-  methods: {
-    async retrieveAttachments () {
-      await this.negotiationPageStore.retrieveAttachmentsByNegotiationId(
-        this.negotiationId
-      ).then((response) => {
-        this.attachments = response
-      })
-    },
-    hasRightsToAddResources (links) {
-      for (const key in links) {
-        if (key === "add_resources") {
-          return true
-        }
-      }
-      return false
-    },
-    isRepresentativeForResource (resourceId) {
-      return this.representedResourcesIds.includes(resourceId)
-    },
-    isRepresentativeForOrganization (organizationId) {
-      return this.representedOrganizations.map((org) => org.externalId).includes(organizationId)
-    },
-    getStatusForResource (resourceId) {
-      const resource = this.resourcesById[resourceId].currentState
-      return this.transformStatus(resource)
-    },
-    isAttachment (value) {
-      return value instanceof Object
-    },
-    printDate: function (date) {
-      return moment(date).format(dateFormat)
-    },
-    async updateNegotiation (action) {
-      await this.negotiationPageStore.updateNegotiationStatus(
-        this.negotiation.id,
-        action
-      ).then(() => {
-        this.$router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
-      })
-    },
-    getElementIdFromResourceId (resourceId) {
-      return resourceId.replaceAll(":", "_")
-    },
-    getRequirementLinks (links) {
-      const requirementLinks = []
-      for (const key in links) {
-        if (key.startsWith("requirement-")) {
-          requirementLinks.push(links[key])
-        }
-      }
-      return requirementLinks
-    },
-    getLifecycleLinks (links) {
-      const lifecycleLinks = []
-      for (const key in links) {
-        if (links[key].title === "Next Lifecycle event") {
-          lifecycleLinks.push(links[key])
-        }
-      }
-      return lifecycleLinks
-    },
-    getSummaryLinks (links) {
-      const summaryLinks = []
-      for (const key in links) {
-        if (key.startsWith("Requirement summary")) {
-          summaryLinks.push(links[key])
-        }
-      }
-      return summaryLinks
-    },
-    async openModal (href, resourceId) {
-      const requirement = await this.negotiationPageStore.retrieveInfoRequirement(href)
-      this.resourceId = resourceId
-      this.requiredAccessForm = requirement.requiredAccessForm
-      this.requirementId = requirement.id
-      this.formSubmissionModal = new Modal(document.querySelector("#formSubmissionModal"))
-      this.formSubmissionModal.show()
-    },
-    async openFormModal (href) {
-      const payload = await this.negotiationPageStore.retrieveInformationSubmission(href)
-      this.submittedForm = payload.payload
-      this.formViewModal = new Modal(document.querySelector("#formViewModal"))
-      this.formViewModal.show()
-    },
-    async updateResourceState (link) {
-      await this.negotiationPageStore.updateResourceStatus(
-        link
-      )
-      this.reloadResources()
-    },
-    transformStatus (badgeText) {
-      return transformStatus(badgeText)
-    },
-    getBadgeColor (badgeText) {
-      return getBadgeColor(badgeText)
-    },
-    getBadgeIcon (badgeText) {
-      return getBadgeIcon(badgeText)
-    },
-    translateTrueFalse (value) {
-      if (typeof value === "boolean") {
-        return value ? "Yes" : "No"
-      }
-      return value
-    },
-    async reloadResources () {
-      const resourceResponse = await this.negotiationPageStore.retrieveResourcesByNegotiationId(
-        this.negotiationId
-      )
-      if (resourceResponse._embedded.resources !== undefined) {
-        this.resources = resourceResponse._embedded.resources
-      }
-    },
-    async hideFormSubmissionModal () {
-      this.formSubmissionModal.hide()
-      await this.reloadResources()
-    },
-    downloadAttachment (id, name) {
-      this.negotiationPageStore.downloadAttachment(id, name)
-    },
-    downloadAttachmentFromLink (href) {
-      this.negotiationPageStore.downloadAttachmentFromLink(href)
-    },
-    async retrieveInfoRequirement (link) {
-      this.adminStore.retrieveInfoRequirement(link)
-    },
-    transformDashToSpace(text) {
-      if(text)
-      return text.split('-').join(' ')
-
-      return ''
-=======
 })
 
 
@@ -568,7 +290,6 @@ function getSubmissionLinks(links) {
     if (key.startsWith("submission-")) {
       // Push the href value of the link to the submissionLinks array
       submissionLinks.push(links[key])
->>>>>>> 5f764c9 (feat: refactor option to composition api)
     }
   }
   return submissionLinks
@@ -799,6 +520,12 @@ function downloadAttachmentFromLink(href) {
 }
 async function retrieveInfoRequirement(link) {
   adminStore.retrieveInfoRequirement(link)
+}
+function transformDashToSpace(text) {
+  if(text)
+  return text.split('-').join(' ')
+
+  return ''
 }
 </script>
 
