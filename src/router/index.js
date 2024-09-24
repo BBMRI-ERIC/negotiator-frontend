@@ -7,6 +7,7 @@ import FaqPage from "../views/FaqPage.vue"
 import NetworksPage from "../views/NetworksPage.vue"
 import AdminSettingsPage from "../views/AdminSettingsPage.vue"
 import UserPage from "@/views/UserPage.vue"
+import ErrorPage from "@/views/ErrorPage.vue"
 import { ROLES } from "@/config/consts"
 import { useUserStore } from "../store/user.js"
 import hasUser from "@/middlewares/hasUser.js"
@@ -79,7 +80,15 @@ const router = createRouter({
     component: NetworksPage,
     props: true,
     meta: { isPublic: false }
-  }]
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "error-page",
+    component: ErrorPage,
+    props: true,
+    meta: { isPublic: false }
+  }
+]
 })
 
 router.beforeEach((to, from, next) => {
