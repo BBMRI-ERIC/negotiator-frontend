@@ -5,7 +5,8 @@
   >
     <div class="col-12">
       <div
-        class="alert alert-warning alert-dismissible fade show"
+        class="alert alert-dismissible fade show"
+        :class="returnColor"
         role="alert"
       >
         {{ notification }}
@@ -28,7 +29,14 @@ import { useNotificationsStore } from "../store/notifications"
 const notificationsStore = useNotificationsStore()
 
 const notification = computed(() => {
-  return notificationsStore.notification
+  return notificationsStore.notification.message
+})
+
+const returnColor = computed(() => {
+  if(notificationsStore.notification.type)
+  return 'alert-' + notificationsStore.notification.type
+
+  return 'alert-warning'
 })
 
 function resetNotification () {
