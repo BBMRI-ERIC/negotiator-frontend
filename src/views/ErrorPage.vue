@@ -1,20 +1,15 @@
 <template>
-  <div class="error">
-    <img
-      class="image"
-      :src="errorImage"
-      alt="error image"
-    >
-    <div class="text">
-      <h1>
-        Sorry something went wrong
-      </h1>
-      <h5
-        v-for="error in useNotifications.allNotifications"
-        class="text-danger"
-      >
-        {{ error }}
-      </h5>
+  <div class="error-page">
+    <h1 class="text-title">
+      Sorry something went wrong
+    </h1>
+    <div class="image-text-box">
+      <div class="errors-text">
+        <h5 v-for="error in useNotifications.allNotifications" class="text-warning">
+          {{ error.message }}
+        </h5>
+      </div>
+      <img class="image" :src="errorImage" alt="error image">
     </div>
   </div>
 </template>
@@ -36,19 +31,29 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.error {
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-}
-.text {
+.text-title {
   position: absolute;
   top: 20vh;
+  width: auto;
+  text-wrap: nowrap;
 }
-.image{
+.image-text-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.errors-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15vh;
+}
+.image {
   width: 50vw;
 }
-
+@media screen and (max-width: 480px) {
+  .image {
+    display: none;
+  }
+}
 </style>
