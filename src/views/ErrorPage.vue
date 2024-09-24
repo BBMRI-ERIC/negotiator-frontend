@@ -3,7 +3,7 @@
     <img
       class="image"
       :src="errorImage"
-      alt=""
+      alt="error image"
     >
     <div class="text">
       <h1>
