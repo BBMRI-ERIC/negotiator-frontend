@@ -29,25 +29,33 @@ const router = createRouter({
     path: "/requests/:requestId",
     name: "request",
     component: NegotiationCreatePage,
-    meta: { middleware: [hasUser] }
   }, {
     path: "/researcher",
     name: "researcher",
     component: UserPage,
     props: { userRole: ROLES.RESEARCHER },
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false}
   }, {
     path: "/biobanker",
     name: "biobanker",
     component: UserPage,
     props: { userRole: ROLES.REPRESENTATIVE },
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false }
   }, {
     path: "/admin",
     name: "admin",
     component: UserPage,
     props: { userRole: ROLES.ADMINISTRATOR },
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false },
+    beforeEnter: async (to, from) => {
+      const userStore = useUserStore()
+      if (Object.keys(userStore.userInfo).length === 0) {
+         await userStore.retrieveUser()
+      }
+      if(!userStore.userInfo.roles.includes(ROLES.ADMINISTRATOR)){
+        return '/error'
+      }
+    },  
   },
   {
     path: "/FAQ",

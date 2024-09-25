@@ -70,10 +70,6 @@ onMounted(async () => {
   user.value = userStore.userInfo
   userId.value = user.value?.id
   if (props.userRole === "ROLE_REPRESENTATIVE") {
-    if (!userStore.userInfo.roles.includes(ROLES.REPRESENTATIVE)) {
-      notifications.criticalError = true
-      notifications.setNotification("Error getting Negotiation: it doesn't exist or you don't have permission to access it.", "warning")
-    }
     filtersStatus.value = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
   } else {
     filtersStatus.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
