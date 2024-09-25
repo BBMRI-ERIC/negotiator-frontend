@@ -88,7 +88,7 @@ const router = createRouter({
     props: true,
     meta: { isPublic: false }
   }
-]
+  ]
 })
 
 router.beforeEach((to, from, next) => {

@@ -3,7 +3,7 @@
     <h1 class="text-title">
       Sorry something went wrong
     </h1>
-    <div class="image-text-box">
+    <div class="image-text-box mt-5">
       <div class="errors-text">
         <h5
           v-for="error in useNotifications.allNotifications"

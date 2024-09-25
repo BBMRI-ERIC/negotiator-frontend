@@ -16,8 +16,9 @@ export const useNegotiationsStore = defineStore("negotiations", () => {
       .then((response) => {
         return response.data
       })
-      .catch(() => {
-        notifications.setNotification("Error getting Negotiations data from server")
+      .catch((error) => {
+        notifications.criticalError = true
+        notifications.setNotification(error.response.status + " " + error.response.statusText)
         return []
       })
   }
@@ -32,8 +33,9 @@ export const useNegotiationsStore = defineStore("negotiations", () => {
       .then((response) => {
         return response.data
       })
-      .catch(() => {
-        notifications.setNotification("Error getting Negotiations data from server")
+      .catch((error) => {
+        notifications.criticalError = true
+        notifications.setNotification(error.response.status + " " + error.response.statusText)
         return []
       })
   }
