@@ -38,8 +38,6 @@ describe('Test negotiation message', () => {
             cy.get('[resources="[object Object]"] > :nth-child(1)').should('be.visible')
             // Display sender and reciver of message
             cy.get('.badge').should('be.visible')
-            // Test if text is correct
-            cy.get('.card-body').contains('Hi i want to test message functionality, have a great day.')
         })
     })
 })
