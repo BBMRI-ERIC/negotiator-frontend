@@ -75,7 +75,7 @@
               </div>
             </div>
             <div id="requestsHumanReadable" class="collapse">
-              <pre v-if="negotiation?.requests[0]?.humanReadable">{{ negotiation?.requests[0]?.humanReadable }}</pre>
+              <pre v-if="negotiation?.humanReadable">{{ negotiation?.humanReadable }}</pre>
               <pre v-else class="text-muted"> There are no data available </pre>
             </div>
           </li>

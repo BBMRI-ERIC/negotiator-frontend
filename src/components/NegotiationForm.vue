@@ -427,7 +427,7 @@ async function startNegotiation () {
     return
   }
   const data = {
-    requests: [props.requestId],
+    request: props.requestId,
     payload: negotiationCriteria.value
   }
   await negotiationFormStore.createNegotiation(data).then((negotiationId) => {
