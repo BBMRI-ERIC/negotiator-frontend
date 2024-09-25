@@ -12,6 +12,20 @@ import { ROLES } from "@/config/consts"
 import { useUserStore } from "../store/user.js"
 import hasUser from "@/middlewares/hasUser.js"
 import middlewarePipeline from "@/middlewares/middleware-pipeline.js"
+import { useNotificationsStore } from "@/store/notifications"
+
+async function isAllowedToAccess (role) {
+  const userStore = useUserStore()
+  const notifications = useNotificationsStore()
+  if (Object.keys(userStore.userInfo).length === 0) {
+    await userStore.retrieveUser()
+  }
+  if (!userStore.userInfo.roles.includes(role)) {
+    notifications.criticalError = true
+    notifications.setNotification("You are not allowed to access this page.")
+    return false
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,19 +42,22 @@ const router = createRouter({
   }, {
     path: "/requests/:requestId",
     name: "request",
-    component: NegotiationCreatePage,
+    component: NegotiationCreatePage
   }, {
     path: "/researcher",
     name: "researcher",
     component: UserPage,
     props: { userRole: ROLES.RESEARCHER },
-    meta: { isPublic: false}
+    meta: { isPublic: false }
   }, {
     path: "/biobanker",
     name: "biobanker",
     component: UserPage,
     props: { userRole: ROLES.REPRESENTATIVE },
-    meta: { isPublic: false }
+    meta: { isPublic: false },
+    beforeEnter: async (to, from) => {
+      return await isAllowedToAccess(ROLES.REPRESENTATIVE)
+    }
   }, {
     path: "/admin",
     name: "admin",
@@ -48,14 +65,8 @@ const router = createRouter({
     props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false },
     beforeEnter: async (to, from) => {
-      const userStore = useUserStore()
-      if (Object.keys(userStore.userInfo).length === 0) {
-         await userStore.retrieveUser()
-      }
-      if(!userStore.userInfo.roles.includes(ROLES.ADMINISTRATOR)){
-        return '/error'
-      }
-    },  
+      return await isAllowedToAccess(ROLES.ADMINISTRATOR)
+    }
   },
   {
     path: "/FAQ",

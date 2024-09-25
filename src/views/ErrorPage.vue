@@ -3,7 +3,7 @@
     <h1 class="text-title">
       Sorry something went wrong
     </h1>
-    <div class="image-text-box mt-5">
+    <div class="image-text-box">
       <div class="errors-text">
         <h5
           v-for="error in useNotifications.allNotifications"
@@ -13,7 +13,7 @@
         </h5>
       </div>
       <img
-        class="image"
+        class="image mt-2"
         :src="errorImage"
         alt="error image"
       >
