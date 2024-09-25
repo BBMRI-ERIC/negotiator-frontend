@@ -23,11 +23,15 @@ library.add(faTrash)
 library.add(faDownload)
 
 const pinia = createPinia()
+const app = createApp(App)
 
-const app = createApp(App).use(VueMatomo, {
-  host: matomo.matomoHost,
-  siteId: matomo.matomoId
-})
+if(matomo.matomoHost !== 'MATOMO_HOST_PLACEHOLDER') {
+  app.use(VueMatomo, {
+    host: matomo.matomoHost,
+    siteId: matomo.matomoId
+  })
+}
+
 app.use(router)
 app.use(pinia)
 app.use(Vue3Tour)
@@ -38,6 +42,8 @@ app.component("FontAwesomeIcon", FontAwesomeIcon)
 
 app.mount("#app")
 
-window._paq.push(["trackPageView"]) // To track a page view
+if(matomo.matomoHost !== 'MATOMO_HOST_PLACEHOLDER') {
+  window._paq.push(["trackPageView"]) // To track a page view
+}
 
 import(`./assets/scss/theme-${activeTheme.activeThemeFile}.scss`)
