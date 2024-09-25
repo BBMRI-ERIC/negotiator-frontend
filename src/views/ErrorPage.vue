@@ -1,15 +1,22 @@
 <template>
-  <div class="error-page">
+  <div class="error-page d-flex flex-column justify-content-center align-items-center">
     <h1 class="text-title">
       Sorry something went wrong
     </h1>
     <div class="image-text-box">
       <div class="errors-text">
-        <h5 v-for="error in useNotifications.allNotifications" class="text-warning">
+        <h5
+          v-for="error in useNotifications.allNotifications"
+          class="text-warning"
+        >
           {{ error.message }}
         </h5>
       </div>
-      <img class="image" :src="errorImage" alt="error image">
+      <img
+        class="image"
+        :src="errorImage"
+        alt="error image"
+      >
     </div>
   </div>
 </template>
