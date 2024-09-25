@@ -38,8 +38,8 @@ describe('Test negotiation message', () => {
             cy.get('[resources="[object Object]"] > :nth-child(1)').should('be.visible')
             // Display sender and reciver of message
             cy.get('.badge').should('be.visible')
-            cy.get('.card-header').contains('Author')
-            cy.get('.card-header').contains('Everyone')
+            cy.get('.card-header').contains('Author', { timeout: 500 })
+            cy.get('.card-header').contains('Everyone', { timeout: 500 })
             // Date and time when message is sent
             cy.get(':nth-child(2) > .card-header > .justify-content-between > .d-flex > .text-muted').should('be.visible')
             // Test if text is correct
