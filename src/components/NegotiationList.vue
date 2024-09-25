@@ -3,7 +3,7 @@
     v-if="!loading"
     class="container"
   >
-    <NewRequestButton v-if="!networkActivated"/>
+    <NewRequestButton />
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
@@ -65,7 +65,7 @@
           :status="fn.status"
           :submitter="fn.author.name"
           :creation-date="formatDate(fn.creationDate)"
-          :class="networkActivated === true ? '' : 'cursor-pointer'"
+          class="cursor-pointer"
           @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
         />
       </div>
@@ -139,7 +139,7 @@
               <tr
                 v-for="(fn,index) in negotiations"
                 :key="index"
-                :style="[networkActivated === true ? {cursor: pointer} : {cursor: none}]"
+                style="cursor: pointer"
                 @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
               >
                 <th
@@ -265,10 +265,6 @@ const props = defineProps({
   filtersSortData: {
     type: Object,
     default: undefined
-  },
-  networkActivated: {
-    type: Boolean,
-    default: false
   }
 })
 
@@ -317,11 +313,9 @@ function emitFilterSortData () {
 }
 
 function goToNegotiation(id,userRole,filtersData,sortby) {
-  if(!props.networkActivated){
       router.push({
         name: 'negotiation-page',
         params: { negotiationId: id, userRole: userRole, filters: filtersData, sortBy: sortby }
       })
     }
-  }
 </script>
