@@ -75,16 +75,13 @@ const router = createRouter({
     meta: { isPublic: true, middleware: [hasUser] }
   },
   {
-    path: "/networks",
-    name: "networks",
-    component: NetworksPage,
-    meta: { isPublic: false, middleware: [hasUser] }
-  },
-  {
     path: "/settings",
     name: "settings",
     component: AdminSettingsPage,
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false, middleware: [hasUser] },
+    beforeEnter: async (to, from) => {
+      return await isAllowedToAccess(ROLES.ADMINISTRATOR)
+    }
   },
   {
     path: "/negotiations/:negotiationId/:userRole",
