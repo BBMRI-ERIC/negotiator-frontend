@@ -1,22 +1,15 @@
 <template>
   <div class="error-page d-flex flex-column justify-content-center align-items-center">
-    <h1 class="text-title">
-      Sorry something went wrong
+    <h1 class="text-title text-uppercase">
+      Oops! Sorry something went wrong.
     </h1>
-    <div class="image-text-box">
+    <div class="image-text-box mt-5">
       <div class="errors-text">
-        <h5
-          v-for="error in useNotifications.allNotifications"
-          class="text-warning"
-        >
+        <p v-for="error in useNotifications.allNotifications">
           {{ error.message }}
-        </h5>
+        </p>
       </div>
-      <img
-        class="image mt-2"
-        :src="errorImage"
-        alt="error image"
-      >
+      <img class="image" :src="errorImage" alt="error image">
     </div>
   </div>
 </template>
@@ -40,7 +33,7 @@ onMounted(async () => {
 <style scoped>
 .text-title {
   position: absolute;
-  top: 20vh;
+  top: 150px;
   width: auto;
   text-wrap: nowrap;
 }
@@ -53,7 +46,8 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 15vh;
+  margin: 15vh 0 0 75px;
+  color: #f35353;
 }
 .image {
   width: 50vw;
@@ -61,6 +55,12 @@ onMounted(async () => {
 @media screen and (max-width: 480px) {
   .image {
     display: none;
+  }
+  .text-title {
+    text-wrap: wrap;
+  }
+  .errors-text {
+    margin-left: 0;
   }
 }
 </style>
