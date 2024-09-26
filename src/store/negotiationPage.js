@@ -56,7 +56,9 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error getting request data from server")
+        notifications.criticalError = true
+        notifications.setNotification(`Error getting Negotiation: ${negotiationId}, it doesn't exist or you don't have permission to access it.`, "warning")
+        return null
       })
   }
 
@@ -144,7 +146,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error fetching Resources")
+        notifications.setNotification("Error fetching Resources", 'danger')
       })
   }
 

@@ -5,13 +5,16 @@
     class="navbar fixed-top navbar-expand-lg navbar-light bg-navbar-background"
   >
     <div class="container-fluid">
+      <router-link
+        to="/"
+      >
       <img
         :src="logoSrc"
         height="34"
         class="me-2"
         alt="nav-bar-logo"
       >
-
+    </router-link>
       <div
         id="menu-navbar"
         class="collapse navbar-collapse"

@@ -28,10 +28,11 @@
         class="dropdown-item"
       >
         <div
-          class="alert alert-warning mb-1"
+          class="alert mb-1"
+          :class="returnColor(notification)"
           role="alert"
         >
-          {{ notification }}
+          {{ notification.message }}
         </div>
       </li>
     </ul>
@@ -47,6 +48,13 @@ const notificationsStore = useNotificationsStore()
 const getAllNotifications = computed(() => {
   return notificationsStore.allNotifications
 })
+
+function returnColor (notification) {
+  if(notification.type)
+  return 'alert-' + notification.type
+
+  return 'alert-warning'
+}
 
 async function resetNotification () {
   notificationsStore.resetNotification()

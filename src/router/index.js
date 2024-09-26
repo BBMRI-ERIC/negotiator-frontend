@@ -7,10 +7,25 @@ import FaqPage from "../views/FaqPage.vue"
 import NetworksPage from "../views/NetworksPage.vue"
 import AdminSettingsPage from "../views/AdminSettingsPage.vue"
 import UserPage from "@/views/UserPage.vue"
+import ErrorPage from "@/views/ErrorPage.vue"
 import { ROLES } from "@/config/consts"
 import { useUserStore } from "../store/user.js"
 import hasUser from "@/middlewares/hasUser.js"
 import middlewarePipeline from "@/middlewares/middleware-pipeline.js"
+import { useNotificationsStore } from "@/store/notifications"
+
+async function isAllowedToAccess (role) {
+  const userStore = useUserStore()
+  const notifications = useNotificationsStore()
+  if (Object.keys(userStore.userInfo).length === 0) {
+    await userStore.retrieveUser()
+  }
+  if (!userStore.userInfo.roles.includes(role)) {
+    notifications.criticalError = true
+    notifications.setNotification("You are not allowed to access this page.")
+    return false
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,26 +42,31 @@ const router = createRouter({
   }, {
     path: "/requests/:requestId",
     name: "request",
-    component: NegotiationCreatePage,
-    meta: { middleware: [hasUser] }
+    component: NegotiationCreatePage
   }, {
     path: "/researcher",
     name: "researcher",
     component: UserPage,
     props: { userRole: ROLES.RESEARCHER },
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false }
   }, {
     path: "/biobanker",
     name: "biobanker",
     component: UserPage,
     props: { userRole: ROLES.REPRESENTATIVE },
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false },
+    beforeEnter: async (to, from) => {
+      return await isAllowedToAccess(ROLES.REPRESENTATIVE)
+    }
   }, {
     path: "/admin",
     name: "admin",
     component: UserPage,
     props: { userRole: ROLES.ADMINISTRATOR },
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false },
+    beforeEnter: async (to, from) => {
+      return await isAllowedToAccess(ROLES.ADMINISTRATOR)
+    }
   },
   {
     path: "/FAQ",
@@ -55,16 +75,13 @@ const router = createRouter({
     meta: { isPublic: true, middleware: [hasUser] }
   },
   {
-    path: "/networks",
-    name: "networks",
-    component: NetworksPage,
-    meta: { isPublic: false, middleware: [hasUser] }
-  },
-  {
     path: "/settings",
     name: "settings",
     component: AdminSettingsPage,
-    meta: { isPublic: false, middleware: [hasUser] }
+    meta: { isPublic: false, middleware: [hasUser] },
+    beforeEnter: async (to, from) => {
+      return await isAllowedToAccess(ROLES.ADMINISTRATOR)
+    }
   },
   {
     path: "/negotiations/:negotiationId/:userRole",
@@ -79,7 +96,15 @@ const router = createRouter({
     component: NetworksPage,
     props: true,
     meta: { isPublic: false }
-  }]
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "error-page",
+    component: ErrorPage,
+    props: true,
+    meta: { isPublic: false }
+  }
+  ]
 })
 
 router.beforeEach((to, from, next) => {

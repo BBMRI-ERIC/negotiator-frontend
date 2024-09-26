@@ -2,18 +2,23 @@ import { ref, watch } from "vue"
 import { defineStore } from "pinia"
 
 export const useNotificationsStore = defineStore("notifications", () => {
-  const notification = ref(undefined)
+  const notification = ref({})
   const allNotifications = ref([])
+  const criticalError = ref(false)
 
-  function setNotification (notificationMessage) {
-    notification.value = notificationMessage
-    if (notificationMessage) {
-      allNotifications.value.push(notificationMessage)
+  function setNotification (notificationMessage, notificationType) {
+    const notificationObject = {
+      message: notificationMessage,
+      type: notificationType
+    }
+    notification.value = notificationObject
+    if (Object.keys(notificationObject).length > 0) {
+      allNotifications.value.push(notificationObject)
     }
   }
 
   function resetNotification () {
-    notification.value = undefined
+    notification.value = {}
   }
 
   watch(notification, () => {
@@ -22,5 +27,5 @@ export const useNotificationsStore = defineStore("notifications", () => {
     }
   })
 
-  return { notification, allNotifications, setNotification, resetNotification }
+  return { notification, allNotifications, criticalError, setNotification, resetNotification }
 })

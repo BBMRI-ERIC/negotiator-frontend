@@ -16,7 +16,11 @@
       <div
         class="col-12"
       >
-        <router-view :key="$route.path" />
+        <errorPage v-if="useNotifications.criticalError" />
+        <router-view
+          v-else
+          :key="$route.path"
+        />
       </div>
     </div>
   </div>
@@ -31,16 +35,27 @@
 </template>
 
 <script setup>
-import { computed } from "vue"
-import { RouterView, useRoute } from "vue-router"
+import { computed, watch } from "vue"
+import { RouterView, useRoute, useRouter } from "vue-router"
+import { useNotificationsStore } from "@/store/notifications.js"
 import allFeatureFlags from "@/config/featureFlags.js"
 import VueTour from "./components/VueTour.vue"
 import NavigationBar from "./components/NavigationBar.vue"
 import Alert from "./components/Alert.vue"
 import Footer from "./components/Footer.vue"
+import errorPage from "@/views/ErrorPage.vue"
 
+const useNotifications = useNotificationsStore()
 const route = useRoute()
+const router = useRouter()
+
 const vueTourFeatureFlag = !!(allFeatureFlags.vueTour === "true" || allFeatureFlags.vueTour === true)
+
+watch(() => (router.currentRoute.value.fullPath), (newVal, oldVal) => {
+  if (oldVal !== "/") {
+    useNotifications.criticalError = false
+  }
+})
 
 const isVueTourVisible = computed(() => {
   return (route.fullPath === "/researcher" || route.fullPath === "/admin" || route.fullPath === "/biobanker") && vueTourFeatureFlag
