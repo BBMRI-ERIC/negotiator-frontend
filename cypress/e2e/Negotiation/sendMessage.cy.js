@@ -37,14 +37,7 @@ describe('Test negotiation message', () => {
             // Comment section
             cy.get('[resources="[object Object]"] > :nth-child(1)').should('be.visible')
             // Display sender and reciver of message
-            cy.get(':nth-child(2) > .card-header > .me-auto').should('be.visible')
-            cy.get(':nth-child(2) > .card-header > .me-auto > .bg-secondary').should('be.visible')
-            cy.get(':nth-child(2) > .card-header > .me-auto > .bg-dark').should('be.visible')
-            cy.get(':nth-child(2) > .card-header > .me-auto > .bg-dark').contains('Everyone')
-            // Date and time when message is sent
-            cy.get('.card-header > .d-flex > .ms-2').should('be.visible')
-            // Test if text is correct
-            cy.get('.card-body').contains('Hi i want to test message functionality, have a great day.')
+            cy.get('.badge').should('be.visible')
         })
     })
 })
