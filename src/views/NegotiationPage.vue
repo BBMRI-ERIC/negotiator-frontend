@@ -586,7 +586,7 @@ function isRepresentativeForOrganization (organizationId) {
   return representedOrganizations.value.map((org) => org.externalId).includes(organizationId)
 }
 function getStatusForResource (resourceId) {
-  const resource = resourcesById[resourceId].currentState
+  const resource = resourcesById.value[resourceId].currentState
   return transformStatus(resource)
 }
 function isAttachment (value) {
