@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: bbmri-eric/negotiator
-          ref: fix/property_files
+          ref: master
           path: negotiator
 
       - name: Set up JDK 17
