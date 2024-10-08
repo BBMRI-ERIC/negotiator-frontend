@@ -36,9 +36,57 @@
       </div>
       <div class="col-12 col-md-8 order-2 order-md-1">
         <ul class="list-group list-group-flush rounded border px-3 my-3">
-          <li
-            v-for="(element, key) in negotiation.payload"
+            <li
+            v-if="isNegotiationPayloadContainsTemplate(negotiation.payload)"
+            v-for="(element, key) in negotiation.payload.templatePayload.sections"
             :key="element"
+            class="list-group-item p-3"
+          >
+            <span class="fs-5 fw-bold text-primary-text mt-3">
+              {{ transformDashToSpace(element.name).toUpperCase() }}</span>
+            <div
+              v-for="(subelement, subelementkey) of element.elements"
+              :key="subelement.id"
+              class="mt-3"
+            >
+              <label
+                class="me-2 fw-bold text-secondary-text"
+              >{{ transformDashToSpace(subelement.name).toUpperCase() }}:</label>
+              <span
+                v-if="isAttachment(subelement.value)"
+                class="text-secondary-text"
+              >
+                <span v-if="subelement.value">
+                  {{ subelement.value }}
+                  <font-awesome-icon
+                    v-if="isAttachment(subelement.value)"
+                    class="ms-1 cursor-pointer"
+                    icon="fa fa-download"
+                    fixed-width
+                    @click.prevent="downloadAttachment({ id: subelement.id, name: subelement.name })"
+                  />
+                </span>
+                <span v-else>
+                  <div
+                    v-for="(choice, index) in subelement"
+                    :key="index"
+                  >
+                    {{ choice }}
+                  </div>
+                </span>
+              </span>
+              <span
+                v-else
+                class="text-secondary-text text-break"
+              >
+                {{ translateTrueFalse(subelement.value) }}
+              </span>
+            </div>
+          </li>
+          <li
+            v-else
+            v-for="(element, key) in negotiation.payload"
+            :key="key"
             class="list-group-item p-3"
           >
             <span class="fs-5 fw-bold text-primary-text mt-3">
@@ -590,7 +638,7 @@ function getStatusForResource (resourceId) {
   return transformStatus(resource)
 }
 function isAttachment (value) {
-  return value instanceof Object
+  return value && !Array.isArray(value) && typeof value === 'object';
 }
 function printDate (date) {
   return moment(date).format(dateFormat)
@@ -680,6 +728,9 @@ function transformDashToSpace (text) {
   if (text) { return text.split("-").join(" ") }
 
   return ""
+}
+function isNegotiationPayloadContainsTemplate (negotiationPayload) {
+  return negotiationPayload.hasOwnProperty('templatePayload')
 }
 </script>
 
