@@ -385,7 +385,7 @@ const queryParameters = computed(() => {
 
 onBeforeMount(async () => {
   const result = await negotiationFormStore.retrieveRequestById(props.requestId)
-
+  
   if (result.code) {
     if (result.code === 404) {
       showNotification("Error", "Request not found")
@@ -426,6 +426,15 @@ async function startNegotiation () {
     backToNegotiation(requestAlreadySubmittedNegotiationId.value)
     return
   }
+  // Add tample to payload
+  negotiationCriteria.value['templatePayload'] = accessForm.value
+
+for (const [key, value] of Object.entries(accessForm.value.sections)) {
+  for (const [criteriaKey, criteriaValue] of Object.entries(negotiationCriteria.value.templatePayload.sections[key].elements)) {
+    negotiationCriteria.value.templatePayload.sections[key].elements[criteriaKey]['value'] = negotiationCriteria.value[value.name][criteriaValue.name]
+  }
+}
+
   const data = {
     request: props.requestId,
     payload: negotiationCriteria.value
@@ -464,6 +473,7 @@ function initNegotiationCriteria () {
         negotiationCriteria.value[section.name][criteria.name] = []
         getValueSet(criteria.id)
       } else if (criteria.type === "SINGLE_CHOICE") {
+        negotiationCriteria.value[section.name][criteria.name] = null
         getValueSet(criteria.id)
       } else {
         negotiationCriteria.value[section.name][criteria.name] = null
