@@ -11,8 +11,9 @@
           <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
         </p>
 
-        <div class="text-end my-2"     v-if="negotiations.length > 1">
+        <div class="text-end my-2">
           <button
+            v-if="negotiations.length > 0"
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color':'bg-body'"
@@ -22,6 +23,7 @@
           </button>
 
           <button
+            v-if="negotiations.length > 1"
             type="button"
             class="btn btn-sm me-2"
             :class="savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color':'bg-body'"
@@ -31,6 +33,7 @@
           </button>
 
           <button
+            v-if="negotiations.length > 0"
             id="v-step-1"
             type="button"
             class="btn btn-sm"
