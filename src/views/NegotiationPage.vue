@@ -596,10 +596,12 @@ function printDate (date) {
   return moment(date).format(dateFormat)
 }
 async function updateNegotiation (action) {
+  loading.value = true
   await negotiationPageStore.updateNegotiationStatus(
     negotiation.value.id,
     action
   ).then(() => {
+    loading.value = false
     router.replace({ params: { userRole: "ROLE_RESEARCHER" } })
   })
 }
@@ -648,8 +650,11 @@ async function openFormModal (href) {
   formViewModal.value.show()
 }
 async function updateResourceState (link) {
-  await negotiationPageStore.updateResourceStatus(link)
-  reloadResources()
+  loading.value = true
+  await negotiationPageStore.updateResourceStatus(link).then(() => {
+    reloadResources()
+    loading.value = false
+  })
 }
 function translateTrueFalse (value) {
   if (typeof value === "boolean") {
