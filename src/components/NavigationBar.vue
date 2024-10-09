@@ -236,7 +236,9 @@ watch(userInfo, () => {
   }
 })
 onBeforeMount(() => {
-  retrieveBackendEnvironment()
+  actuatorInfoStore.retrieveBackendActuatorInfo().then(() => {
+    retrieveBackendEnvironment()
+  });
 })
 
 function retrieveBackendEnvironment () {
