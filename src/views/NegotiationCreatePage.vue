@@ -5,7 +5,17 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue"
 import NegotiationForm from "@/components/NegotiationForm.vue"
+import { useUserStore } from "../store/user.js"
+
+const userStore = useUserStore()
+
+onMounted(async () => {
+  if (Object.keys(userStore.userInfo).length === 0) {
+    await userStore.retrieveUser()
+  }
+})
 </script>
 
 <style scoped>
