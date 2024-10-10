@@ -13,19 +13,10 @@
 
         <div class="text-end my-2">
           <button
+            v-if="negotiations.length > 0"
             type="button"
             class="btn btn-sm me-2"
-            :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color' : savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color' : 'bg-body'"
-            @click="setSavedNegotiationsView('Card-one-column')"
-          >
-            <i class="bi bi-card-heading" />
-          </button>
-
-          <button
-            v-if="negotiations.length > 1"
-            type="button"
-            class="btn btn-sm me-2"
-            :class="savedNegotiationsView === 'Card-one-column' ? 'btn-light':'bg-body'"
+            :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color':'bg-body'"
             @click="setSavedNegotiationsView('Card-one-column')"
           >
             <i class="bi bi-list" />
@@ -35,13 +26,14 @@
             v-if="negotiations.length > 1"
             type="button"
             class="btn btn-sm me-2"
-            :class="savedNegotiationsView === 'Card-two-column' ? 'btn-light':'bg-body'"
+            :class="savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color':'bg-body'"
             @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView('Card-two-column')"
           >
             <i class="bi bi-grid" />
           </button>
 
           <button
+            v-if="negotiations.length > 0"
             id="v-step-1"
             type="button"
             class="btn btn-sm"
