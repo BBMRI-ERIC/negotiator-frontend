@@ -155,7 +155,9 @@ const gitTag = viteGitTag
 const backendVersion = ref("")
 
 onBeforeMount(() => {
-  backendVersion.value = actuatorInfoStore.actuatorInfoBuildVersion
+  actuatorInfoStore.retrieveBackendActuatorInfo().then(() => {
+    backendVersion.value = actuatorInfoStore.actuatorInfoBuildVersion
+  });
 })
 
 function getWorkProgrammeIcon () {
