@@ -26,11 +26,13 @@
             <h4 class="card-subtitle text-center text-primary fw-bold pb-2">
               Choose how to log in
             </h4>
+            <h6 v-if="featureFlagLSLoginDownWarning" class="text-center text-warning">{{ allFeatureFlags.LSLoginDownWarningText }}</h6>
             <div
               class="d-grid mx-3 mb-5"
             >
               <button
-                class="btn btn-outline-light"
+                class="btn"
+                :class="featureFlagLSLoginDownWarning ? 'btn-outline-warning' : 'btn-outline-light'"
                 @click.stop.prevent="authenticateOidc"
               >
                 <img
@@ -57,10 +59,10 @@
         </div>
         <div class="text-center text-primary-text col mb-2">
           <i class="bi bi-github me-1" />
-          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend">GitHub UI</a>
+          <a href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"  class="text-primary">GitHub UI</a>
           <span class="ms-2">
             <i class="bi bi-github me-1" />
-            <a href="https://github.com/BBMRI-ERIC/negotiator">GitHub Application</a>
+            <a href="https://github.com/BBMRI-ERIC/negotiator"  class="text-primary">GitHub Application</a>
           </span>
         </div>
         <div
@@ -68,12 +70,13 @@
         >
           <a
             href="/api/swagger-ui/index.html"
+            class="text-primary"
           > <i class="bi bi-braces-asterisk text-primary-text" />
             API
           </a>
           <a
             href="https://status.bbmri-eric.eu/"
-            class="ps-2"
+            class="ps-2 text-primary"
           >  <i class="bi bi-check-circle text-primary-text" />
             BBMRI-ERIC Status page
           </a>
@@ -105,6 +108,7 @@
 <script setup>
 import { ref, onBeforeMount, computed } from "vue"
 import activeTheme from "../config/theme.js"
+import allFeatureFlags from "@/config/featureFlags.js"
 import bbmriLogo from "../assets/images/bbmri/home-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/home-canserv.png"
@@ -118,6 +122,7 @@ const actuatorInfoStore = useActuatorInfoStore()
 
 const router = useRouter()
 
+const featureFlagLSLoginDownWarning = !!(allFeatureFlags.LSLoginDownWarning === "true" || allFeatureFlags.LSLoginDownWarning === true)
 const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
 const gitTag = ref(viteGitTag)
 const backendVersion = ref("")
