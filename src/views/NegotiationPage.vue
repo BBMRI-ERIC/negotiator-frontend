@@ -207,16 +207,18 @@
                     :key="resource.id"
                     class="card-body"
                   >
-                    <div class="form-check">
-                      <div class="d-flex flex-row align-items-center flex-row">
+                    <div class="form-check placeholder-glow">
+                      <div class="d-flex flex-row">
                         <div>
                           <label
-                            class="form-check-label text-primary-text"
+                            class="form-check-label text-primary-text me-2"
                             :for="getElementIdFromResourceId(resource.sourceId)"
                           >
                             {{ resource.name }}
                           </label>
-                          <span class="badge rounded-pill bg-status-badge ms-4">
+                          <span class="badge rounded-pill bg-status-badge"
+                          :class="isUpdateResourceStateLoading ? 'placeholder':''"
+                          >
                             {{ getStatusForResource(resource.id) }}
                           </span>
                           <div class="text-muted">
@@ -226,15 +228,17 @@
                         </div>
                         <div
                           v-if="getLifecycleLinks(resource._links).length > 0"
-                          class="ms-4"
+                          class="ms-4 mb-1"
                         >
-                          Update status:
+                          <span :class="isUpdateResourceStateLoading ? 'placeholder':''">
+                            Update status:</span>
                           <div
                             v-for="link in getLifecycleLinks(resource._links)"
-                            class="lifecycle-links flex-column ms-4"
+                            class="lifecycle-links flex-column mb-1 mt-1"
                           >
                             <a
                               class="lifecycle-text cursor-pointer"
+                              :class="isUpdateResourceStateLoading ? 'placeholder':''"
                               @click="updateResourceState(link.href)"
                             ><i
                               class="bi bi-patch-check"
@@ -245,10 +249,11 @@
 
                       <div
                         v-for="link in getSubmissionLinks(resource._links)"
-                        class="text-muted"
+                        class="text-muted mb-1"
                       >
                         <a
                           class="submission-text cursor-pointer"
+                          :class="isUpdateResourceStateLoading ? 'placeholder':''"
                           @click.prevent="openFormModal(link.href)"
                         ><i
                            class="bi bi-check-circle"
@@ -257,10 +262,11 @@
                       </div>
                       <div
                         v-for="link in getRequirementLinks(resource._links)"
-                        class="text-muted"
+                        class="text-muted mb-1"
                       >
                         <a
                           class="requirement-text cursor-pointer"
+                          :class="isUpdateResourceStateLoading ? 'placeholder':''"
                           @click="openModal(link.href, resource.id)"
                         ><i
                           class="bi bi-exclamation-circle-fill"
@@ -473,6 +479,7 @@ const submittedForm = ref(undefined)
 const formViewModal = ref(null)
 const isAddResourcesButtonVisible = ref(false)
 const toParse = ref("Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below")
+const isUpdateResourceStateLoading = ref(false)
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -648,8 +655,12 @@ async function openFormModal (href) {
   formViewModal.value.show()
 }
 async function updateResourceState (link) {
-  await negotiationPageStore.updateResourceStatus(link)
-  reloadResources()
+  isUpdateResourceStateLoading.value = true
+  await negotiationPageStore.updateResourceStatus(link).then(() => {
+    reloadResources()
+    isUpdateResourceStateLoading.value = false
+  })
+  isUpdateResourceStateLoading.value = false
 }
 function translateTrueFalse (value) {
   if (typeof value === "boolean") {
