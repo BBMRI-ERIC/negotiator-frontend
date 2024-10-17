@@ -6,6 +6,7 @@ import NegotiationPage from "../views/NegotiationPage.vue"
 import FaqPage from "../views/FaqPage.vue"
 import NetworksPage from "../views/NetworksPage.vue"
 import AdminSettingsPage from "../views/AdminSettingsPage.vue"
+import AdminUiConfigurationPage from "../views/AdminUiConfigurationPage.vue"
 import UserPage from "@/views/UserPage.vue"
 import ErrorPage from "@/views/ErrorPage.vue"
 import { ROLES } from "@/config/consts"
@@ -78,6 +79,15 @@ const router = createRouter({
     path: "/settings",
     name: "settings",
     component: AdminSettingsPage,
+    meta: { isPublic: false, middleware: [hasUser] },
+    beforeEnter: async (to, from) => {
+      return await isAllowedToAccess(ROLES.ADMINISTRATOR)
+    }
+  },
+  {
+    path: "/ui-configuration",
+    name: "ui-configuration",
+    component: AdminUiConfigurationPage,
     meta: { isPublic: false, middleware: [hasUser] },
     beforeEnter: async (to, from) => {
       return await isAllowedToAccess(ROLES.ADMINISTRATOR)
