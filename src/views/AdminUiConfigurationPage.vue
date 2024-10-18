@@ -1,12 +1,8 @@
 <template>
-    <div class="footer">
+    <div class="footer mb-2">
         <span class="mb-5 text-left fw-bold h3">
             Footer Settings
         </span>
-        <button class="btn btn-sm bg-none sm my-2 ">
-            <span class="text-white">Expand</span> <i class="bi bi-chevron-down"></i>
-
-        </button>
         <div class="footerConfig row">
             <UiConfigurationSetting v-model="uiConfiguration.footer" />
         </div>
@@ -22,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import UiConfigurationSetting from "../components/UiConfigurationSetting.vue"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
 
@@ -32,13 +28,14 @@ const uiConfiguration = ref({})
 
 retriveUiConfiguration()
 
-function retriveUiConfiguration() {
-    uiConfigurationStore.retrieveUiConfiguration().then(() => {
-        uiConfiguration.value = uiConfigurationStore.uiConfiguration
-        uiConfiguration.value.footer.isFooterHelpLinkVisible = "#ae0a0a"
-    })
+async function retriveUiConfiguration() {
+    uiConfiguration.value = await uiConfigurationStore.getUiConfiguration()
+    uiConfiguration.value.footer.isFooterHelpLinkVisible = "#ae0a0a"
 }
 
-
-
+watch(uiConfiguration, () => {
+    uiConfigurationStore.uiConfiguration =  uiConfiguration.value
+},
+{ deep: true },
+)
 </script>

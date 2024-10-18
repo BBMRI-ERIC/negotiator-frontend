@@ -8,10 +8,9 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
   const notifications = useNotificationsStore()
   const uiConfiguration = ref({})
 
-  function retrieveUiConfiguration () {
+  function retrieveUiConfiguration() {
     return axios.get(`${apiPaths.BASE_API_PATH}/ui-config`, { headers: getBearerHeaders() })
       .then((response) => {
-        uiConfiguration.value = response.data
         return response.data
       })
       .catch(() => {
@@ -20,8 +19,16 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
       })
   }
 
+  async function getUiConfiguration() {
+    if (Object.keys(uiConfiguration.value).length === 0) {
+      uiConfiguration.value = await retrieveUiConfiguration()
+    }
+    return uiConfiguration.value
+  }
+
   return {
     uiConfiguration,
-    retrieveUiConfiguration
+    retrieveUiConfiguration,
+    getUiConfiguration
   }
 })
