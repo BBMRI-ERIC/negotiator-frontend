@@ -18,24 +18,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { computed } from "vue";
 import UiConfigurationSetting from "../components/UiConfigurationSetting.vue"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
 
-
 const uiConfigurationStore = useUiConfiguration()
-const uiConfiguration = ref({})
 
-retriveUiConfiguration()
-
-async function retriveUiConfiguration() {
-    uiConfiguration.value = await uiConfigurationStore.getUiConfiguration()
-    uiConfiguration.value.footer.isFooterHelpLinkVisible = "#ae0a0a"
-}
-
-watch(uiConfiguration, () => {
-    uiConfigurationStore.uiConfiguration =  uiConfiguration.value
-},
-{ deep: true },
-)
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration
+})
 </script>
