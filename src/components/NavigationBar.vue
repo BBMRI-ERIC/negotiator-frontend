@@ -8,13 +8,13 @@
       <router-link
         to="/"
       >
-      <img
-        :src="logoSrc"
-        height="34"
-        class="me-2"
-        alt="nav-bar-logo"
-      >
-    </router-link>
+        <img
+          :src="logoSrc"
+          height="34"
+          class="me-2"
+          alt="nav-bar-logo"
+        >
+      </router-link>
       <div
         id="menu-navbar"
         class="collapse navbar-collapse"
@@ -238,7 +238,7 @@ watch(userInfo, () => {
 onBeforeMount(() => {
   actuatorInfoStore.retrieveBackendActuatorInfo().then(() => {
     retrieveBackendEnvironment()
-  });
+  })
 })
 
 function retrieveBackendEnvironment () {
