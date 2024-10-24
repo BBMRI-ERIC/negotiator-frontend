@@ -193,18 +193,18 @@
                 >
                   <div class="form-check d-flex">
                     <div
-                      class="justify-content-end pt-1 cursor-pointer unpack"
+                      class="d-flex justify-content-end pt-1 cursor-pointer unpack align-items-center"
                       data-bs-toggle="collapse"
                       :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
                       :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
                     >
-                      <div class="d-flex flex-row">
+                      <div>
                         <i class="bi bi-chevron-down" />
                         <i class="bi bi-chevron-up" />
                       </div>
-                      <div class="d-flex flex-row">
+                      <div class="cursor-pointer">
                         <i class="bi bi-buildings mx-2" />
-                        <label class="text-primary fw-bold ml-2">
+                        <label class="text-primary fw-bold ml-2 cursor-pointer">
                           {{ org.name }}
                         </label>
                       </div>
@@ -213,7 +213,7 @@
                       <div
                         class="ms-2 mx-2 ms-auto d-inline-flex align-items-center status-box p-1 cursor-pointer"
                         role="button"
-                        @click="toggleDropdown"
+                        @click="toggleDropdown(orgId)"
                       >
                         <span
                           class="badge"
@@ -223,30 +223,31 @@
                             :class="getStatusIcon(org.status)"
                             class="px-1"
                           />
-                          {{ transformStatus(org.status) }}
+                          {{ org.status }}
                         </span>
                         <i
+                          v-if="org.updatable"
                           class="bi bi-caret-down-fill icon-smaller mx-1"
                         />
                       </div>
                       <div>
                         <ul
                           class="dropdown-menu"
-                          :class="{ 'show': dropdownVisible }"
+                          :class="{ 'show': dropdownVisible[orgId] }"
                         >
                           <li
-                            v-for="event in resourceEvents"
-                            :key="event.value"
+                            v-for="state in sortedStates"
+                            :key="state.value"
                             class="dropdown-item cursor-pointer"
                             data-bs-toggle="modal"
                             data-bs-target="#statusUpdateModal"
-                            @click="updateOrgStatus(event, org)"
+                            @click="updateOrgStatus(state, org, orgId)"
                           >
                             <i
-                              :class="getStatusIcon(event.value)"
+                              :class="getStatusIcon(state.value)"
                               class="px-1"
                             />
-                            {{ event.label }}
+                            {{ state.label }}
                           </li>
                         </ul>
                       </div>
@@ -372,7 +373,16 @@
               <div class="fw-bold text-primary-text">
                 Status:
               </div>
-              <span>{{ negotiation ? transformStatus(negotiation.status) : "" }}</span>
+              <span
+                :class="getBadgeColor(negotiation.status)"
+                class="badge py-2 rounded-pill bg"
+              ><i
+                :class="getBadgeIcon(negotiation.status)"
+                class="px-1"
+              /> {{
+                negotiation ?
+                  transformStatus(negotiation.status) : ""
+              }}</span>
               <ul class="list-unstyled mt-2 d-flex flex-row flex-wrap">
                 <li
                   v-for="link in getLifecycleLinks(negotiation._links)"
@@ -441,7 +451,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from "vue"
+import { computed, onBeforeMount, onMounted, reactive, ref } from "vue"
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
@@ -456,7 +466,8 @@ import {
   getBadgeColor,
   getBadgeIcon,
   getButtonColor,
-  getButtonIcon, getStatusColor,
+  getButtonIcon,
+  getStatusColor,
   getStatusIcon,
   transformStatus
 } from "../composables/utils.js"
@@ -505,9 +516,9 @@ const formSubmissionModal = ref(null)
 const submittedForm = ref(undefined)
 const formViewModal = ref(null)
 const isAddResourcesButtonVisible = ref(false)
-const resourceEvents = ref([])
+const resourceStates = ref([])
 const toParse = ref("Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below")
-const dropdownVisible = ref(false)
+const dropdownVisible = reactive({})
 const selectedOrganization = ref(undefined)
 const orgStatus = ref(undefined)
 const userStore = useUserStore()
@@ -523,28 +534,65 @@ const organizations = computed(() => {
   })
 })
 const organizationsById = computed(() => {
+  // Create a map of state ordinals for quick lookup
+  const stateOrdinalMap = resourceStates.value.reduce((map, state) => {
+    map[state.value] = state.ordinal
+    return map
+  }, {})
+
   return getResources.value.reduce((organizations, resource) => {
-    if (resource.organization.externalId in organizations) {
-      organizations[resource.organization.externalId].resources.push(
-        resource)
+    const currentState = resource.currentState
+    const currentOrdinal = stateOrdinalMap[currentState] || 0 // Default to 0 if no match found
+
+    const orgId = resource.organization.externalId
+
+    if (orgId in organizations) {
+      // Push the resource to the organization's resources array
+      organizations[orgId].resources.push(resource)
+
+      // Check if the current resource state has a higher ordinal
+      const orgStatusOrdinal = stateOrdinalMap[organizations[orgId].status] || 0
+      if (currentOrdinal > orgStatusOrdinal) {
+        organizations[orgId].status = currentState // Update org status to the one with the highest ordinal
+      }
+
+      // Check if the organization has at least one represented resource
+      if (organizations[orgId].updatable === false && isResourceRepresented(resource)) {
+        organizations[orgId].updatable = true
+      }
     } else {
-      organizations[resource.organization.externalId] = {
+      // Add a new organization entry
+      organizations[orgId] = {
         name: resource.organization.name,
         resources: [resource],
-        status: "SUBMITTED"
+        status: currentState, // Set initial status
+        updatable: isResourceRepresented(resource) // Set updateable to true if any resource is represented
       }
     }
+
     return organizations
   }, {})
 })
+
+// Helper function to check if a resource is represented
+function isResourceRepresented (resource) {
+  console.log(resource)
+  for (const key in resource._links) {
+    if (resource._links[key].title === "Next Lifecycle event") {
+      return true
+    }
+  }
+  return false
+}
+
 const resourcesById = computed(() => {
   return getResources.value.reduce((resourcesObjects, resource) => {
     resourcesObjects[resource.id] = resource
     return resourcesObjects
   }, {})
 })
-const toggleDropdown = () => {
-  dropdownVisible.value = !dropdownVisible.value
+const toggleDropdown = (orgId) => {
+  dropdownVisible[orgId] = !dropdownVisible[orgId]
 }
 const numberOfResources = computed(() => {
   return getResources.value.length
@@ -570,6 +618,9 @@ const postsRecipients = computed(() => {
     })
   }
 })
+const sortedStates = computed(() => {
+  return resourceStates.value.slice().sort((a, b) => Number(a.ordinal) - Number(b.ordinal))
+})
 function assignStatus (status) {
   selectedStatus.value = status.toUpperCase()
 }
@@ -591,7 +642,7 @@ onBeforeMount(async () => {
   }
   representedResourcesIds.value = await negotiationPageStore.retrieveUserRepresentedResources()
   negotiationStatusOptions.value = getLifecycleLinks(negotiation.value._links)
-  resourceEvents.value = await negotiationPageStore.retrieveResourceAllStates()
+  resourceStates.value = await negotiationPageStore.retrieveResourceAllStates()
 })
 
 retrieveAttachments()
@@ -649,14 +700,23 @@ async function updateNegotiation () {
       props.negotiationId
     )
   })
+  await reloadResources()
 }
 
 async function updateOrganization () {
-  toggleDropdown()
+  const
+    data = {
+      resourceIds: getRepresentedResources(selectedOrganization.value.resources),
+      state: orgStatus.value.value
+    }
+  const negotiationId = props.negotiationId
+  await negotiationPageStore.addResources(data, negotiationId)
+  await reloadResources()
 }
-function updateOrgStatus (event, organization) {
+async function updateOrgStatus (state, organization, orgId) {
+  toggleDropdown(orgId)
   selectedOrganization.value = organization
-  orgStatus.value = event
+  orgStatus.value = state
 }
 
 function getElementIdFromResourceId (resourceId) {
@@ -671,6 +731,22 @@ function getRequirementLinks (links) {
     }
   }
   return requirementLinks
+}
+function getRepresentedResources (resources) {
+  const resourceIds = []
+
+  // Use for...of to iterate over the array of resources
+  for (const resource of resources) {
+    // Iterate over the _links of the resource
+    for (const key in resource._links) {
+      if (resource._links[key].title === "Next Lifecycle event") {
+        resources.push(resource.id)
+        break // Exit inner loop when condition is met
+      }
+    }
+  }
+
+  return resourceIds
 }
 
 function getLifecycleLinks (links) {

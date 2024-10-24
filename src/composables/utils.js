@@ -32,7 +32,7 @@ export function getButtonColor (event) {
   case "START":
     return "bg-primary"
   case "PAUSE":
-    return "bg-warning"
+    return "bg-info"
   case "UNPAUSE":
     return "bg-primary" // Assuming the same color as "START"
   case "ABANDON":
@@ -95,7 +95,7 @@ export function getStatusColor (stateValue) {
   case "RESOURCE_NOT_MADE_AVAILABLE":
     return "bg-danger"
   case "REPRESENTATIVE_CONTACTED":
-    return "bg-info"
+    return "bg-warning"
   case "RETURNED_FOR_RESUBMISSION":
     return "bg-warning"
   case "RESOURCE_UNAVAILABLE_WILLING_TO_COLLECT":
@@ -117,7 +117,7 @@ export function getStatusColor (stateValue) {
 export function getStatusIcon (stateValue) {
   switch (stateValue) {
   case "SUBMITTED":
-    return "bi bi-upload" // Icon for submission
+    return "bi bi-hourglass" // Icon for submission
   case "RESOURCE_UNAVAILABLE":
     return "bi bi-x-circle" // Icon for unavailable resource
   case "ACCESS_CONDITIONS_INDICATED":
