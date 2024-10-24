@@ -146,7 +146,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error fetching Resources", 'danger')
+        notifications.setNotification("Error fetching Resources", "danger")
       })
   }
 
@@ -235,7 +235,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
   async function retrieveResourceAllStates () {
     return axios.get(`${apiPaths.BASE_API_PATH}/resource-lifecycle/states`, { headers: getBearerHeaders() })
       .then((response) => {
-        return response.data
+        return response.data._embedded.states
       })
       .catch(() => {
         notifications.setNotification("There was an error saving the attachment")
