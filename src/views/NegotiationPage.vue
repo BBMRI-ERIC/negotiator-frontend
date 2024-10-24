@@ -154,10 +154,13 @@
                   aria-controls="resourcesList"
                   aria-expanded="true"
                   type="button"
+                  title="The term Resource is abstract and can for example refer to biological samples, datasets or a service such as sequencing."
                 >
                   <span class="fs-5 fw-bold text-primary-text mt-3">
-                    <i class="bi bi-card-list" />
-                    COLLECTIONS ({{ numberOfResources }})
+                    <i class="bi bi-buildings mx-2" />
+                    ORGANIZATIONS ({{ Object.keys(organizationsById).length }}) |
+                    <i class="bi bi-box-seam" />
+                    RESOURCES ({{ numberOfResources }})
                   </span>
                 </div>
                 <add-resources-button
@@ -193,7 +196,7 @@
                 >
                   <div class="form-check d-flex">
                     <div
-                      class="d-flex justify-content-end pt-1 cursor-pointer unpack align-items-center"
+                      class="d-flex justify-content-end pt-1 p-1 cursor-pointer unpack align-items-center"
                       data-bs-toggle="collapse"
                       :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
                       :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
@@ -213,6 +216,7 @@
                       <div
                         class="ms-2 mx-2 ms-auto d-inline-flex align-items-center status-box p-1 cursor-pointer"
                         role="button"
+                        title="Select current status.The term Resource is abstract and can for example refer to biological samples, datasets or a service such as sequencing."
                         @click="toggleDropdown(orgId)"
                       >
                         <span
@@ -223,7 +227,7 @@
                             :class="getStatusIcon(org.status)"
                             class="px-1"
                           />
-                          {{ org.status }}
+                          {{ org.status.replace(/_/g, ' ') }}
                         </span>
                         <i
                           v-if="org.updatable"
@@ -232,6 +236,7 @@
                       </div>
                       <div>
                         <ul
+                          v-if="org.updatable"
                           class="dropdown-menu"
                           :class="{ 'show': dropdownVisible[orgId] }"
                         >
@@ -270,6 +275,7 @@
                             class="form-check-label text-primary-text"
                             :for="getElementIdFromResourceId(resource.sourceId)"
                           >
+                            <i class="bi bi-box-seam" />
                             {{ resource.name }}
                           </label>
                           <span class="badge rounded-pill bg-status-badge ms-4">
@@ -557,7 +563,7 @@ const organizationsById = computed(() => {
       }
 
       // Check if the organization has at least one represented resource
-      if (organizations[orgId].updatable === false && isResourceRepresented(resource)) {
+      if (isResourceRepresented(resource)) {
         organizations[orgId].updatable = true
       }
     } else {
@@ -704,6 +710,7 @@ async function updateNegotiation () {
 }
 
 async function updateOrganization () {
+  console.log(selectedOrganization.value)
   const
     data = {
       resourceIds: getRepresentedResources(selectedOrganization.value.resources),
@@ -740,12 +747,12 @@ function getRepresentedResources (resources) {
     // Iterate over the _links of the resource
     for (const key in resource._links) {
       if (resource._links[key].title === "Next Lifecycle event") {
-        resources.push(resource.id)
+        resourceIds.push(resource.id)
         break // Exit inner loop when condition is met
       }
     }
   }
-
+  console.log(resourceIds)
   return resourceIds
 }
 

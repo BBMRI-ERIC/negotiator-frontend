@@ -16,6 +16,7 @@ export function getBadgeColor (status) {
   case "PAUSED":
     return "bg-info"
   case "IN_PROGRESS":
+    return "bg-primary"
   case "CONCLUDED":
     return "bg-success"
   default:
