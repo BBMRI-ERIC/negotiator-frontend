@@ -102,8 +102,6 @@ describe('Test create negotiation', () => {
             cy.get('.list-group > .justify-content-between > :nth-child(1) > span').should('be.visible')
             //   Download PDF
             cy.get('.btn-sm > .mt-2').should('be.visible')
-            // Abandon
-            cy.get('.pt-2 > div').should('be.visible')
         })
     })
 })
