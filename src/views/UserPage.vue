@@ -69,20 +69,12 @@ onMounted(async () => {
   }
   user.value = userStore.userInfo
   userId.value = user.value?.id
-  if (props.userRole === "ROLE_REPRESENTATIVE") {
-    filtersStatus.value = [{ value: "IN_PROGRESS", label: "In Progress", description: "The negotiation is currently in progress." }, { value: "ABANDONED", label: "Abandoned", description: "The negotiation has been abandoned." }]
-  } else {
-    filtersStatus.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
-  }
+  filtersStatus.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
 
   if (Object.keys(route?.query).length) {
     loadActivefiltersSortDataFromURL()
-  } else {
-    if (props.userRole === "ROLE_REPRESENTATIVE") {
-      filtersSortData.value.status = ["IN_PROGRESS", "ABANDONED"]
-    }
-    retrieveNegotiationsByUserRole(0)
   }
+  retrieveNegotiationsByUserRole(0)
 })
 
 async function retrieveNegotiationsByUserRole (pageNumber) {
