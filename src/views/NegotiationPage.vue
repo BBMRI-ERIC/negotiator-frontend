@@ -227,7 +227,7 @@
                             :class="getStatusIcon(org.status)"
                             class="px-1"
                           />
-                          {{ org.status.replace(/_/g, ' ') }}
+                          {{ org.status?.replace(/_/g, ' ') || '' }}
                         </span>
                         <i
                           v-if="org.updatable"
