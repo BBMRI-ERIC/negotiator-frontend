@@ -2,8 +2,9 @@
   <div class="dropdown">
     <button
       type="button"
-      class="btn btn-sm btn-outline-primary rounded-circle position-relative py-0 px-1"
+      class="btn btn-sm rounded-circle position-relative py-0 px-1"
       :class="getAllNotifications.length > 0 ? '' : 'disabled'"
+      :style="{'color':uiConfiguration?.navbarButtonOutlineColor}"
       data-bs-toggle="dropdown"
       aria-expanded="false"
       @click="resetNotification"
@@ -41,10 +42,15 @@
 
 <script setup>
 import { computed } from "vue"
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 import { useNotificationsStore } from "../store/notifications"
 
+const uiConfigurationStore = useUiConfiguration()
 const notificationsStore = useNotificationsStore()
 
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.navbar
+})
 const getAllNotifications = computed(() => {
   return notificationsStore.allNotifications
 })

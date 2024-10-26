@@ -1,8 +1,16 @@
 <template>
+     <div class="navbar mb-2 flex row">
+        <div class="mb-3 text-left fw-bold h3">
+            Navbar Settings
+        </div>
+        <div class="navbarConfig row">
+            <UiConfigurationSetting v-model="uiConfiguration.navbar" />
+        </div>
+    </div>
     <div class="footer mb-2">
-        <span class="mb-5 text-left fw-bold h3">
+        <div class="mb-3 text-left fw-bold h3">
             Footer Settings
-        </span>
+        </div>
         <div class="footerConfig row">
             <UiConfigurationSetting v-model="uiConfiguration.footer" />
         </div>
@@ -19,7 +27,7 @@
 
 <script setup>
 import { computed } from "vue";
-import UiConfigurationSetting from "../components/UiConfigurationSetting.vue"
+import UiConfigurationSetting from '../components/UiConfigurationSetting.vue'
 import { useUiConfiguration } from '../store/uiConfiguration.js'
 
 const uiConfigurationStore = useUiConfiguration()
