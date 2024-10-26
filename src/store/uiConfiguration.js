@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import { defineStore } from "pinia"
 import axios from "axios"
 import { apiPaths, getBearerHeaders } from "../config/apiPaths"
@@ -9,7 +9,7 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
   const uiConfiguration = ref({})
 
   function retrieveUiConfiguration() {
-    return axios.get(`${apiPaths.BASE_API_PATH}/ui-config`, { headers: getBearerHeaders() })
+    return axios.get(`${apiPaths.BASE_API_PATH}/ui-config`)
       .then((response) => {
         uiConfiguration.value = response.data
         return response.data
@@ -20,9 +20,11 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
       })
   }
 
-  if (Object.keys(uiConfiguration.value).length === 0) {
-    uiConfiguration.value = retrieveUiConfiguration()
-  }
+  onMounted(async() => {
+    if (Object.keys(uiConfiguration.value).length === 0) {
+      await retrieveUiConfiguration()
+    }
+})
 
   return {
     uiConfiguration,
