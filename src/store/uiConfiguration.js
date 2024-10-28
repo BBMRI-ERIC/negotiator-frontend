@@ -15,7 +15,18 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error getting UI Configuration data from server")
+        notifications.setNotification("Error getting UI Configuration data from server", 'danger')
+        return null
+      })
+  }
+
+  function updateUiConfiguration (UiConfiguration) {
+    return axios.put(`${apiPaths.BASE_API_PATH}/ui-config`, UiConfiguration , { headers: getBearerHeaders() })
+      .then(() => {
+        notifications.setNotification(`Than you. Your Ui-Configuration was submitted successfully`, 'success')
+      })
+      .catch(() => {
+        notifications.setNotification("Error updating Ui-Configuration status", 'danger')
         return null
       })
   }
@@ -24,10 +35,11 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
     if (Object.keys(uiConfiguration.value).length === 0) {
       await retrieveUiConfiguration()
     }
-})
+  })
 
   return {
     uiConfiguration,
-    retrieveUiConfiguration
+    retrieveUiConfiguration,
+    updateUiConfiguration
   }
 })
