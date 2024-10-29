@@ -1,9 +1,8 @@
 <template>
   <div>
     <div class="card mb-2">
-      <h5 class="card-header bg-body text-card-title-text">
+      <h5 class="card-header bg-body" :style="{'color': uiConfiguration?.cardTextColor}">
         {{ title }}
-
         <h6 class="float-end">
           <span
             :class="getBadgeColor(status)"
@@ -18,14 +17,14 @@
           </span>
         </h6>
       </h5>
-      <div class="card-body">
-        <h6 class="card-subtitle mb-2 text-muted">
+      <div class="card-body" :style="{'color': uiConfiguration?.cardTextColor, 'opacity': 0.7}">
+        <h6 class="card-subtitle mb-2">
           Negotiation ID: {{ id }}
         </h6>
-        <h6 class="card-subtitle mb-2 text-muted">
+        <h6 class="card-subtitle mb-2">
           Created on: {{ creationDate }}
         </h6>
-        <h6 class="card-subtitle mb-2 text-muted">
+        <h6 class="card-subtitle mb-2">
           Author: {{ submitter }}
         </h6>
       </div>
@@ -34,7 +33,9 @@
 </template>
 
 <script setup>
+import { computed } from "vue"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 
 const props = defineProps({
   id: {
@@ -57,5 +58,11 @@ const props = defineProps({
     type: Date,
     default: undefined
   }
+})
+
+const uiConfigurationStore = useUiConfiguration()
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.negotiationList
 })
 </script>
