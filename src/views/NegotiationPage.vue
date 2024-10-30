@@ -389,8 +389,14 @@
                 negotiation ?
                   transformStatus(negotiation.status) : ""
               }}</span>
-              <ul class="list-unstyled mt-2 d-flex flex-row flex-wrap">
-                <li
+            </div>
+          </li>
+          <li 
+            v-if="getLifecycleLinks(negotiation._links).length > 0"
+            class="list-group-item p-2 d-flex justify-content-between"
+          >
+            <ul class="list-unstyled mt-1 d-flex flex-row flex-wrap">
+              <li
                   v-for="link in getLifecycleLinks(negotiation._links)"
                   :key="link.name"
                   class="me-2"
@@ -408,10 +414,8 @@
                     {{ link.name }}
                   </button>
                 </li>
-              </ul>
-            </div>
+            </ul>
           </li>
-
           <li
             v-if="userRole === availableRoles.ADMINISTRATOR && negotiation.status === 'SUBMITTED'"
             class="list-group-item p-2"
