@@ -1,5 +1,5 @@
 <template>
-  <footer class="bottom-0 p-0 w-100 text-primary-text">
+  <footer class="bottom-0 p-0 w-100">
     <hr class="mt-10 mb-10">
     <div class="row d-flex flex-column flex-md-row">
       <div class="col text-center mb-4 mb-md-0">
@@ -14,7 +14,7 @@
           >
         </a>
       </div>
-      <div class="col text-center">
+      <div class="col text-center" :style="{'color': uiConfiguration?.footerTextColor}">
         <div v-if="uiConfiguration?.isFooterFollowUsVisible">
         <span>
           Follow Us:
@@ -45,18 +45,18 @@
           <a
             v-if="uiConfiguration?.footerGithubFrontendLink"
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
-            class="text-primary-text"
           > <i
-            class="bi bi-github"
+            class="bi bi-github text-primary pe-1"
           />
-            GitHub UI
+            <span :style="{'color': uiConfiguration?.footerTextColor}">GitHub UI</span>
           </a>
           <a
             v-if="uiConfiguration?.footerGithubBackendLink"
             href="https://github.com/BBMRI-ERIC/negotiator"
-            class="text-primary-text ps-2"
-          > <i class="bi bi-github" />
-            GitHub Application
+            class="ps-2"
+            :style="{'color': uiConfiguration?.footerTextColor}"
+          > <i class="bi bi-github text-primary pe-1" />
+          <span :style="{'color': uiConfiguration?.footerTextColor}">GitHub Application</span>
           </a>
         </div>
 
@@ -66,16 +66,15 @@
           <a
             v-if="uiConfiguration?.footerSwaggerLink && uiConfiguration?.isFooterSwaggerVisible"
             :href="uiConfiguration?.footerSwaggerLink"
-            class="text-primary-text"
-          > <i class="bi bi-braces-asterisk" />
-            {{ uiConfiguration?.footerSwaggerText}}
+          > <i class="bi bi-braces-asterisk text-primary pe-1" />
+          <span :style="{'color': uiConfiguration?.footerTextColor}">{{ uiConfiguration?.footerSwaggerText}}</span>
           </a>
           <a
             v-if="uiConfiguration?.footerStatusPageLink && uiConfiguration?.isFooterStatusPageVisible"
             :href="uiConfiguration?.footerStatusPageLink"
-            class="text-primary-text ps-2"
-          > <i class="bi bi-check-circle" />
-            {{ uiConfiguration?.footerStatusPageText }}
+            class="ps-2"
+          > <i class="bi bi-check-circle text-primary pe-1" />
+          <span :style="{'color': uiConfiguration?.footerTextColor}">{{ uiConfiguration?.footerStatusPageText }}</span>
           </a>
         </div>
       </div>
@@ -83,7 +82,7 @@
       <div class="col text-center">
         <a
           v-if="uiConfiguration?.footerWorkProgrammeLink || uiConfiguration?.isFooterWorkProgrammeVisible || uiConfiguration?.footerWorkProgrammeText"
-          class="link-dark text-primary-text"
+          :style="{'color': uiConfiguration?.footerTextColor}"
           :href="uiConfiguration?.footerWorkProgrammeLink"
         >
           <img
@@ -101,18 +100,20 @@
         >
           <button
             type="button"
-            class="btn btn-light ms-md-5 text-primary-text"
+            class="btn ms-md-5 custom-button-hover"
             :href="uiConfiguration?.footerNewsletterLink"
+            :style="{'border-color': uiConfiguration?.footerNewsletterButtonColor,'--hovercolor': uiConfiguration?.footerNewsletterButtonColor,'background-color': uiConfiguration?.footerNewsletterButtonColor,'color': uiConfiguration?.footerTextColor}"
           >
           {{ uiConfiguration?.footerNewsletterText }}
           </button>
         </div>
         <div
           v-if="uiConfiguration?.isFooterPrivacyPolicyVisible"
-          class="ms-md-2 mt-2"
+          class="ms-md-2 ms-5 mt-2"
         >
           <a
-            class="link-dark text-primary-text me-5"
+            class="me-5"
+            :style="{'color': uiConfiguration?.footerTextColor}"
             :href="uiConfiguration?.footerPrivacyPolicyLink"
           >
           {{ uiConfiguration?.footerPrivacyPolicyText }}
@@ -124,18 +125,20 @@
           <div
             v-if="uiConfiguration?.isFooterCopyRightVisible"
             class="col text-center"
+            :style="{'color': uiConfiguration?.footerTextColor}"
           >
             <p>{{ uiConfiguration?.footerCopyRightText }}</p>
           </div>
           <div v-else class="col text-center"></div>
-          <div class="col text-center text-light ms-4">
+          <div class="col text-center ms-4" :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}">
             UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>{{ backendVersion }}</span>
           </div>
           <div
             v-if="uiConfiguration?.isFooterHelpLinkVisible"
             class="col text-center ms-5"
+            :style="{'color': uiConfiguration?.footerTextColor}"
           >
-            Need help? <a :href="uiConfiguration?.footerHelpLink">Contact us</a>.
+            Need help? <a :href="uiConfiguration?.footerHelpLink" :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.7}">Contact us</a>.
           </div>
           <div v-else class="col text-center ms-5"></div>
         </div>
@@ -193,5 +196,11 @@ const returnWorkProgrammeSrc = computed(() => {
 <style scoped>
 a {
   text-decoration: none;
+}
+
+.custom-button-hover:hover {
+  background-color: var(--hovercolor)!important;
+  opacity: 0.7;
+  border-color: var(--hovercolor)!important;
 }
 </style>

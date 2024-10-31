@@ -9,7 +9,10 @@
       <div
         class="col-sm-10"
       >
-        <div class="card py-5 p-3">
+        <div 
+          class="card py-5 p-3" 
+          :style="{'background-color': uiConfiguration?.logincardColor}"
+        >
           <div class="col-10 col-md-4 align-self-center">
             <img
               :src="returnLogoSrc"
