@@ -135,12 +135,12 @@ const filtersStatus = ref([ { "value": "SUBMITTED", "label": "Under review", "de
 const pagination = ref({ "size": 50, "totalElements": 501, "totalPages": 10, "number": 0 })
 const negotiations = ref([
   {
-    "id": "afa2d124-6870-4516-bc4a-d734c4be2647",
+    "id": "afa2d124-6870-1516-bc1a-d734c4be2617",
     "author": {
       "id": "10301",
-      "subjectId": "a284825e7316bf3ef36d2ba32d3a7c5319c1573b@lifescience-ri.eu",
-      "name": "Nike Walter",
-      "email": "Nike.Walter@klinik.uni-regensburg.de",
+      "subjectId": "a281825e7316bf3ef31d2ba32d3a7c5319c1573b@lifescience-ri.eu",
+      "name": "Milos Terzic",
+      "email": "milos.terzic@bbmri-eric.eu",
       "representativeOfAnyResource": false,
       "admin": false,
       "networkManager": false
@@ -186,12 +186,12 @@ const negotiations = ref([
     }
   },
   {
-    "id": "7ef6bd2b-3edf-4f8a-bd4d-3c8acc085385",
+    "id": "7ef6bd2b-3edf-1f8a-bd4d-3c8acc085385",
     "author": {
       "id": "671",
-      "subjectId": "3d5ed34d339a538122c9b72bb1f7d2dc95d39f10@lifescience-ri.eu",
-      "name": "Mgr. Lukáš Moráň",
-      "email": "lukas.moran@mou.cz",
+      "subjectId": "3d5ed31d339a538122c9b72bb1f7d2dc95d39f10@lifescience-ri.eu",
+      "name": "Milos Terzic",
+      "email": "milos.terzic@bbmri-eric.eu",
       "representativeOfAnyResource": false,
       "admin": false,
       "networkManager": false
@@ -231,12 +231,12 @@ const negotiations = ref([
     }
   },
   {
-    "id": "9872ead0-9a4a-4a21-9c53-05f166877c4a",
+    "id": "9872ead0-9a4a-1a21-9c53-05f166877c1a",
     "author": {
       "id": "671",
-      "subjectId": "3d5ed34d339a538122c9b72bb1f7d2dc95d39f10@lifescience-ri.eu",
-      "name": "Mgr. Lukáš Moráň",
-      "email": "lukas.moran@mou.cz",
+      "subjectId": "3d5ed31d339a538122c9b72bb1f7d2dc95d39f10@lifescience-ri.eu",
+      "name": "Milos Terzic",
+      "email": "milos.terzic@bbmri-eric.eu",
       "representativeOfAnyResource": false,
       "admin": false,
       "networkManager": false
