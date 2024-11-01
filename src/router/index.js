@@ -100,7 +100,7 @@ const router = createRouter({
     }
   },
   {
-    path: "/negotiations/:negotiationId/:userRole",
+    path: "/negotiations/:negotiationId/:userRole?",
     name: "negotiation-page",
     component: NegotiationPage,
     props: true,
