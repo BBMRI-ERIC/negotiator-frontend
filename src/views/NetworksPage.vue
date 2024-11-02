@@ -57,13 +57,53 @@
       <div v-if="currentTab === 'overview'">
         <h4 class="mb-4 mt-5">
           <i class="bi bi-graph-up" />
-          Insights:
+          Insights
         </h4>
+        <p class="text-muted">
+          The overview visible bellow is generated for the selected period
+        </p>
+        <div class="mb-4">
+          <div class="mb-4">
+            <div class="form-group d-inline-block mr-3">
+              <label
+                for="startDate"
+                class="form-label"
+              >Start Date:</label>
+              <input
+                id="startDate"
+                v-model="startDate"
+                type="date"
+                class="form-control"
+              >
+            </div>
+
+            <div class="form-group d-inline-block mx-4">
+              <label
+                for="endDate"
+                class="form-label"
+              >End Date:</label>
+              <input
+                id="endDate"
+                v-model="endDate"
+                type="date"
+                class="form-control"
+              >
+            </div>
+          </div>
+        </div>
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">
-              Statistics Overview
-            </h4>
+            <span />
+            <div class="d-flex flex-row mb-4">
+              <h4 class="card-title">
+                State of Negotiations
+              </h4>
+              <i
+                class="bi bi-info-circle ml-2 mx-1 small-icon"
+                title="States of different Negotiations involving Resources in this Network"
+              />
+            </div>
+
             <div class="progress mb-4">
               <div
                 v-for="(count, status) in stats.statusDistribution"
@@ -71,15 +111,19 @@
                 :class="['progress-bar', getBadgeColor(status)]"
                 :style="{ width: (count / stats.totalNumberOfNegotiations * 100) + '%' }"
               >
-                {{ count }} {{ status }}
+                {{ count }} {{ getLabelByValue(status) }}
               </div>
             </div>
             <div class="row text-center">
               <div class="col-md-4">
-                <div class="stat-box">
+                <div class="stat-box mt-2">
                   <h5>{{ stats.totalNumberOfNegotiations }}</h5>
                   <p class="text-muted">
                     Total
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Number of Negotiations that involve resources in this network."
+                    />
                   </p>
                 </div>
               </div>
@@ -88,49 +132,125 @@
                 :key="status"
                 class="col-md-4"
               >
-                <div class="stat-box">
-                  <h5>{{ count }}</h5>
+                <div class="stat-box mt-2">
+                  <h5>
+                    <i
+                      :class="getBadgeIcon(status)"
+                      class="small-icon px-1"
+                    />{{ count }}
+                  </h5>
                   <p class="text-muted">
-                    {{ status }}
+                    {{ getLabelByValue(status) }}
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center my-4">
-          <hr class="flex-grow-1">
-          <span class="mx-3 text-muted"> <i class="bi bi-circle" /> Latest Negotiations</span>
-          <hr class="flex-grow-1">
-        </div>
-        <ul class="list-unstyled">
-          <li
-            v-for="negotiation in negotiations"
-            :key="negotiation.id"
-            class="cursor-pointer negotiation-item"
-            @click="goToNegotiation(negotiation.id)"
-          >
-            <div class="d-flex align-items-center">
-              <span
-                class="badge"
-                :class="getBadgeColor(negotiation.status)"
-                style="width: 120px;"
-              >
-                <i
-                  :class="getBadgeIcon(negotiation.status)"
-                  class="px-1"
-                />
-                {{ transformStatus(negotiation.status) }}
-              </span>
-              <h5 class="mb-0 ms-1">
-                {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
-              </h5>
+        <div class="card mt-4">
+          <div class="card-body">
+            <span />
+            <div class="d-flex flex-row mb-4">
+              <h4 class="card-title">
+                Users
+              </h4>
+              <i
+                class="bi bi-info-circle ml-2 mx-1 small-icon"
+                title="Stats for users involved with this Network"
+              />
             </div>
-            <p class="text-muted small">
-              #{{ negotiation.id }} &bullet; Created on: {{ new Date(negotiation.creationDate).toLocaleDateString() }}
-            </p>
-          </li>
-        </ul>
+            <div class="row text-center">
+              <div class="col-md-4">
+                <div class="stat-box">
+                  <h5>{{ userStats.total }}</h5>
+                  <p class="text-muted">
+                    Total
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Total number of users that have requested access to Resources in this Network"
+                    />
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-box">
+                  <h5>{{ userStats.new }}</h5>
+                  <p class="text-muted">
+                    New
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Number of new requesters"
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-body">
+            <span />
+            <div class="d-flex flex-row mb-4">
+              <h4 class="card-title">
+                Organizations
+              </h4>
+              <i
+                class="bi bi-info-circle ml-2 mx-1 small-icon"
+                title="Stats for Network Organizations involved in Negotiations"
+              />
+            </div>
+            <div class="row text-center">
+              <div class="col-md-4">
+                <div class="stat-box">
+                  <h5>{{ orgStats.total }}</h5>
+                  <p class="text-muted">
+                    Total
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Total number of users that have requested access to Resources in this Network"
+                    />
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-box">
+                  <h5>{{ orgStats.responsive }}</h5>
+                  <p class="text-muted">
+                    Responsive
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Organizations that have updated a state or left a comment"
+                    />
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-box">
+                  <h5>{{ orgStats.unresponsive }}</h5>
+                  <p class="text-muted">
+                    Unresponsive
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Organizations that haven't updated a state or left a comment"
+                    />
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-4 mt-2">
+                <div class="stat-box">
+                  <h5>{{ orgStats.responsive }}</h5>
+                  <p class="text-muted">
+                    Successful
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Organizations that gave the requester access to Resources in this Network"
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-else-if="currentTab === 'negotiations'">
         <NegotiationList
@@ -157,9 +277,10 @@ import { useNetworksPageStore } from "@/store/networksPage"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/user"
-import { getBadgeColor, getBadgeIcon, transformStatus } from "@/composables/utils"
+import { getBadgeColor, getBadgeIcon } from "@/composables/utils"
 import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import NegotiationList from "@/components/NegotiationList.vue"
+import { useNegotiationsStore } from "@/store/negotiations"
 
 const props = defineProps({
   networkId: {
@@ -169,18 +290,26 @@ const props = defineProps({
 })
 const router = useRouter()
 const userStore = useUserStore()
+const negotiationsStore = useNegotiationsStore()
 const networksPageStore = useNetworksPageStore()
 const network = ref(undefined)
 const negotiations = ref(undefined)
 const currentTab = ref("overview") // Default tab
 const loading = computed(() => {
-  return network.value === undefined && negotiations.value === undefined
+  return network.value === undefined && negotiations.value === undefined && stats.value === undefined
 })
 const stats = ref(undefined)
+const userStats = ref({
+  total: 5,
+  new: 0
+})
+const orgStats = ref({
+  total: 5,
+  responsive: 3,
+  unresponsive: 2
+})
 const pagination = ref(undefined)
-const user = ref(undefined)
-const userId = ref(undefined)
-const filtersStatus = ref([])
+const states = ref(undefined)
 const filtersSortData = ref({
   status: [],
   dateStart: "",
@@ -188,6 +317,10 @@ const filtersSortData = ref({
   sortBy: "creationDate",
   sortDirection: "DESC"
 })
+const today = new Date()
+const startOfYear = new Date(today.getFullYear(), 0, 1)
+const startDate = ref(startOfYear.toISOString().slice(0, 10))
+const endDate = ref(today.toISOString().slice(0, 10))
 const total = computed(() => {
   return Object.values(stats.value).reduce((sum, stat) => sum + stat.value, 0)
 })
@@ -195,11 +328,19 @@ onMounted(async () => {
   if (Object.keys(userStore.userInfo).length === 0) {
     await userStore.retrieveUser()
   }
+  loadNegotiationStates()
   loadNetworkInfo(props.networkId)
   retrieveLatestNegotiations(props.networkId)
   loadStats(props.networkId)
 })
-
+async function loadNegotiationStates () {
+  states.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
+  console.log(states.value)
+}
+function getLabelByValue (value) {
+  const item = states.value.find(entry => entry.value === value)
+  return item ? item.label : null // Returns null if the value is not found
+}
 async function loadNetworkInfo (networkId) {
   network.value = await networksPageStore.retrieveNetwork(networkId)
 }
@@ -207,7 +348,7 @@ async function loadStats (networkId) {
   stats.value = await networksPageStore.retrieveNetworkStats(networkId)
 }
 async function retrieveLatestNegotiations (networkId) {
-  const response = await networksPageStore.retrieveNetworkNegotiations(networkId)
+  const response = await networksPageStore.retrieveNetworkNegotiations(networkId, 10, 0)
   pagination.value = response.page
   if (response.page.totalElements === 0) {
     negotiations.value = {}
@@ -292,14 +433,22 @@ function goToNegotiation (id) {
 .organization-info ul li svg {
   margin-right: 0.5rem;
 }
-
+.stat-box {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  padding: 20px;
+  text-align: center;
+}
 .stat-box h5 {
   margin-bottom: 0;
 }
 .negotiation-item:hover {
   background-color: rgba(0, 0, 0, 0.075); /* Default Bootstrap hover color */
 }
-
+.small-icon{
+  font-size: 0.75rem;
+}
 .tab.active {
   font-weight: bold;
   color: #0d6efd !important; /* Bootstrap primary color */

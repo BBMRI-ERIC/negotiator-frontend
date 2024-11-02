@@ -323,7 +323,7 @@ function emitFilterSortData () {
 function goToNegotiation (id, userRole, filtersData, sortby) {
   router.push({
     name: "negotiation-page",
-    params: { negotiationId: id, userRole, filters: filtersData, sortBy: sortby }
+    params: { negotiationId: id, filters: filtersData, sortBy: sortby }
   })
 }
 </script>
