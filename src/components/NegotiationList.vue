@@ -7,8 +7,8 @@
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
-          <span :style="{'color':uiConfiguration?.searchResultsTextColor}"> <strong>Search results: </strong> </span> <br>
-          <span :style="{'color':uiConfiguration?.searchResultsTextColor, 'opacity': 0.5}">{{ pagination.totalElements }} Negotiations found</span>
+          <span class="negotiations-search-results" :style="{'color':uiConfiguration?.searchResultsTextColor}"> <strong>Search results: </strong> </span> <br>
+          <span class="negotiations-number" :style="{'color':uiConfiguration?.searchResultsTextColor, 'opacity': 0.5}">{{ pagination.totalElements }} Negotiations found</span>
         </p>
 
         <div class="text-end my-2">

@@ -10,16 +10,16 @@ describe('Test create negotiation', () => {
     context('check if negotiation is visible', () => {
         it('test if table contains negotiation', () => {
             // Number of negotiation is more than 0
-            cy.get('p > .text-muted').should('be.visible')
-            cy.get('p > .text-muted').contains('0').should('not.exist')
+            cy.get('.negotiations-number').should('be.visible')
+            cy.get('.negotiations-number').contains('0').should('not.exist')
 
             // Negotiation is visible in table view
-            cy.get(':nth-child(1) > .text-table-title-text').should('be.visible')
-            cy.get('tbody > :nth-child(1) > :nth-child(2)').should('be.visible')
-            cy.get('tbody > :nth-child(1) > :nth-child(3)').should('be.visible')
-            cy.get('tbody > :nth-child(1) > :nth-child(4)').should('be.visible')
-            cy.get('tbody > :nth-child(1) > :nth-child(5)').should('be.visible')
-            cy.get('tbody > :nth-child(1) > :nth-child(6)').should('be.visible')
+            cy.get('tbody > tr > th').should('be.visible')
+            cy.get('tbody > tr > :nth-child(2)').should('be.visible')
+            cy.get('tbody > tr >  :nth-child(3)').should('be.visible')
+            cy.get('tbody > tr >  :nth-child(4)').should('be.visible')
+            cy.get('tbody > tr >  :nth-child(5)').should('be.visible')
+            cy.get('tbody > tr >  :nth-child(6)').should('be.visible')
         })
 
         it('test if card contains negotiation', () => {
