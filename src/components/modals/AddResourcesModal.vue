@@ -170,6 +170,7 @@ import { onMounted, ref, watch } from "vue"
 import { Tooltip } from "bootstrap"
 import debounce from "@popperjs/core/lib/utils/debounce"
 import { useNegotiationPageStore } from "@/store/negotiationPage"
+
 const resources = ref([])
 const selectedResources = ref([])
 const selectAll = ref(false)
@@ -217,7 +218,7 @@ async function loadResources (name = "") {
 }
 async function loadStates () {
   const response = await store.retrieveResourceAllStates()
-  states.value = response._embedded.states
+  states.value = response
 }
 const emit = defineEmits(["confirm"])
 
