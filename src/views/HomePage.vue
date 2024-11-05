@@ -103,7 +103,7 @@
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
           > GitHub</a>
         </div>
-        <div class="text-center"
+        <div class="text-center version-class"
         :style="{'color':uiConfiguration?.loginLinksTextColor, 'opacity': 0.5}">
           UI version: <span class="pe-2">{{ gitTag }}</span>Server version: <span>{{ backendVersion }}</span>
         </div>

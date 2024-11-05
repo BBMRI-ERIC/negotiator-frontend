@@ -49,7 +49,7 @@ describe('Test login', () => {
     })
 
     it('check visibility of version text', () => {
-      cy.get('.text-light').should('be.visible')
+      cy.get('.version-class').should('be.visible')
     })
 
     it('check visibility of trademark text', () => {
