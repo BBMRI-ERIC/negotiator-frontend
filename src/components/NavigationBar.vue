@@ -55,7 +55,7 @@
               to="/biobanker"
             >
               <i class="bi bi-bank" />
-              Your biobank
+              Your Services
             </router-link>
           </li>
           <li
