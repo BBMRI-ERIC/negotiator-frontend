@@ -78,14 +78,26 @@
             />
         </div>
     </div>
-    <div class="footer mb-2">
+    <div class="new-request mb-2">
         <div class="mb-3 text-left fw-bold h3">
-            Footer Settings
+            New Request Button
             <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
                 <i class="bi bi-arrows-angle-expand"/> expand/collapse
             </button>
         </div>
-        <div class="footer-config row collapse" id="collapse6">
+        <div class="new-request-config row collapse" id="collapse6">
+            <UiConfigurationSetting v-model="uiConfiguration.newRequestButton" />
+            <NewRequestButton v-if="!networkActivated"/>
+        </div>
+    </div>
+    <div class="footer mb-2">
+        <div class="mb-3 text-left fw-bold h3">
+            Footer Settings
+            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+                <i class="bi bi-arrows-angle-expand"/> expand/collapse
+            </button>
+        </div>
+        <div class="footer-config row collapse" id="collapse7">
             <h5 class="mb-3 bold text-muted">You can see the changes live in the footer below! 
                 <i class="bi bi-arrow-down"></i>
             </h5>

@@ -1,18 +1,19 @@
 <template>
-  <div>
+  <div v-if="uiConfiguration?.isButtonVisible && uiConfiguration?.buttonText">
     <button
       ref="openModal"
-      class="btn btn-sm bg-new-request-button-color sm my-2 float-end"
+      class="btn btn-sm  sm my-2 float-end"
       data-bs-toggle="modal"
       data-bs-target="#newRequestModal"
+      :style="{ 'background-color': uiConfiguration?.buttonColor}"
     >
-      <span class="text-white">New Request</span>
+      <span :style="{ 'color': uiConfiguration?.buttonTextColor}"> {{ uiConfiguration?.buttonText }}</span>
     </button>
     <NewRequestModal
       id="newRequestModal"
       :is-modal-small="true"
-      :title="'New Request'"
-      :text="'You will be redirected to our Metadata catalogue where you can select which collections you want to contact.'"
+      :title="uiConfiguration?.modalTittle"
+      :text="uiConfiguration?.modalText"
       dismiss-button-text="Back to HomePage"
       @confirm="startNewRequest"
     />
@@ -20,12 +21,17 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import NewRequestModal from "@/components/modals/NewRequestModal.vue"
-import allExternalLinks from "../config/externalLinks.js"
 import { useApiCallsStore } from '../store/apiCalls.js'
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 
 const apiCallsStore = useApiCallsStore()
-const directoryPath = allExternalLinks.directory
+const uiConfigurationStore = useUiConfiguration()
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.newRequestButton
+})
 
 async function startNewRequest () {
   if(import.meta.env.DEV){
@@ -41,8 +47,8 @@ async function startNewRequest () {
       window.open(redirect.redirectUrl, '_blank');
     })
   }else{
-    if (directoryPath) { 
-      window.open(directoryPath, "_blank") 
+    if (uiConfiguration.value?.buttonUrl) {
+      window.open(uiConfiguration.value?.buttonUrl, "_blank") 
     }
   }
 }
