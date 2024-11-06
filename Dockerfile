@@ -1,7 +1,7 @@
 FROM node:lts-bookworm as  build-stage
 WORKDIR /app
 COPY . .
-RUN yarn install
+RUN yarn install --ignore-engines
 RUN yarn build
 
 FROM bitnami/nginx:1.24 as production-stage
