@@ -1,6 +1,6 @@
 const devSettings = {
   authority: "http://localhost:4011",
-  client_id: "client-credentials-mock-client",
+  client_id: "auth-code-client",
   resource: "https://negotiator.bbmri-eric.eu",
   redirect_uri: "http://localhost:8080/logged-in",
   scope: "openid profile email permissions some-app-scope-1",
