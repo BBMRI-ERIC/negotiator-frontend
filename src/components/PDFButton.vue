@@ -8,12 +8,13 @@
 </template>
 
 <script setup>
+import { computed } from "vue"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
-import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 import moment from "moment"
 import { dateFormat } from "@/config/consts"
 import { transformStatus } from "../composables/utils.js"
@@ -25,7 +26,22 @@ const props = defineProps({
   }
 })
 
-const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
+const uiConfigurationStore = useUiConfiguration()
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.navbar
+})
+
+const returnLogoSrc = computed(() => {
+  if(uiConfiguration.value?.navbarLogoUrl === 'bbmri'){
+    return bbmriLogo
+  } else if(uiConfiguration.value?.navbarLogoUrl === 'canserv'){
+    return canservLogo
+  } else if(uiConfiguration.value?.navbarLogoUrl === 'eucaim'){
+    return eucaimLogo
+  }
+  return uiConfiguration.value?.navbarLogoUrl
+})
 
 function createPDF (view) {
   const pdfName = "negotiation"
@@ -40,7 +56,7 @@ function createPDF (view) {
     "Report generated at": moment().format(dateFormat)
   }
 
-  doc.addImage(logoSrc, "JPEG", 15, 7, 50, 13, "FAST")
+  doc.addImage(returnLogoSrc.value, "JPEG", 15, 7, 50, 13, "FAST")
 
   doc.autoTable({
     body: [
