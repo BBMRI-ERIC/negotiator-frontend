@@ -1,6 +1,6 @@
 <template>
       <div v-for="(item, index) in uiConfigurationCategoriesModel" class="col-4 pb-3">
-            <div>{{ index }}:</div>
+            <div>{{ transformNameOfVariable(index) }}:</div>
             <input v-if="returnValueType(item) === 'text'" type="text" v-model="uiConfigurationCategoriesModel[index]" class="form-control" />
             <input v-if="returnValueType(item) === 'color'" v-model="uiConfigurationCategoriesModel[index]" type="color" class="form-control form-control-color mt-1" id="myColor"
                 title="Choose a color">
@@ -24,5 +24,14 @@ function returnValueType(value) {
         return "color"
     }
     return 'text'
+}
+
+function transformNameOfVariable(name) {
+    if(name) {
+        const nameWithSpacing = name.replace(/([A-Z])/g, ' $1').trim()
+        const firstLateToUppercase = String(nameWithSpacing).charAt(0).toUpperCase() + String(nameWithSpacing).slice(1)
+        return firstLateToUppercase
+    }
+    return ''
 }
 </script>
