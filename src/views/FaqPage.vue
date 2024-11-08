@@ -16,7 +16,7 @@
             <a
               href="mailto:negotiator@helpdesk.bbmri-eric.eu"
               class="link-underline link-underline-opacity-0"
-              :style="{'color': uiConfiguration?.LinksColor}" 
+              :style="{'color': uiConfiguration?.linksColor}" 
             ><i class="bi bi-envelope-at"/> Email</a>
           </div>
         </div>
@@ -35,7 +35,7 @@
           <div class="mt-4">
             <a 
               href="https://forms.office.com/e/Z3EvCnp6cw"
-              :style="{'color': uiConfiguration?.LinksColor}" 
+              :style="{'color': uiConfiguration?.linksColor}" 
             >
               <i class="bi bi-box-arrow-up-right" />
               Feedback form
@@ -176,7 +176,7 @@
             Learn more about the Negotiator and its use to communicate with BioBanks to obtain information on the availability of relevant samples/data.
           </h5>
           <div class="mt-4">
-            <a href="https://www.bbmri-eric.eu/services/sample-negotiator/" :style="{'color': uiConfiguration?.LinksColor}" > <i class="bi bi-box-arrow-up-right" /> Go to learn page</a>
+            <a href="https://www.bbmri-eric.eu/services/sample-negotiator/" :style="{'color': uiConfiguration?.linksColor}" > <i class="bi bi-box-arrow-up-right" /> Go to learn page</a>
           </div>
         </div>
       </div>
@@ -192,7 +192,7 @@
             Information about the Federated Platform and its advanced services such as the federated search or data analysis platform.
           </h5>
           <div class="mt-5" />
-          <a href="https://www.bbmri-eric.eu/federated-platform/" :style="{'color': uiConfiguration?.LinksColor}" > <i class="bi bi-box-arrow-up-right" /> Go to Federated Platform page</a>
+          <a href="https://www.bbmri-eric.eu/federated-platform/" :style="{'color': uiConfiguration?.linksColor}" > <i class="bi bi-box-arrow-up-right" /> Go to Federated Platform page</a>
         </div>
       </div>
     </div>
@@ -207,7 +207,7 @@
             Information about the BBMRI-ERIC access pipeline helping expedite access to samples and data.
           </h5>
           <div class="mt-4" />
-          <a href="https://www.bbmri-eric.eu/bbmri-sample-and-data-portal/" :style="{'color': uiConfiguration?.LinksColor}" ><i class="bi bi-box-arrow-up-right" /> Go to BBMRI-ERIC Sample and Data portal page</a>
+          <a href="https://www.bbmri-eric.eu/bbmri-sample-and-data-portal/" :style="{'color': uiConfiguration?.linksColor}" ><i class="bi bi-box-arrow-up-right" /> Go to BBMRI-ERIC Sample and Data portal page</a>
         </div>
       </div>
     </div>
