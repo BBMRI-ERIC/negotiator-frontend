@@ -69,6 +69,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=min
+          outputs: type=docker,dest=/tmp/negotiator-frontend.tar
 
       - name: Upload image
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
