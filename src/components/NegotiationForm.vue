@@ -26,13 +26,13 @@
     />
   </div>
   <div v-else>
-    <div class="fs-3 mb-4 fw-bold text-secondary text-center">
+    <div class="fs-3 mb-4 fw-bold text-center" :style="{'color': uiConfiguration?.primaryTextColor}">
       Access Form Submission
     </div>
     <form-wizard
       v-if="accessForm"
       :start-index="0"
-      color="var(--bs-secondary)"
+      :color="uiConfiguration?.primaryTextColor"
       step-size="md"
       @on-complete="startModal"
     >
@@ -41,13 +41,14 @@
         class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
       >
         <div class="mx-3">
-          <div class="fs-5 fw-bold text-primary-text">
+          <div class="fs-5 fw-bold" :style="{'color': uiConfiguration?.primaryTextColor}">
             SEARCH PARAMETERS
           </div>
           <div
             v-for="(qp, index) in queryParameters"
             :key="index"
-            class="fs-6 text-dar text-secondary-text"
+            class="fs-6 text-dar"
+            :style="{'color': uiConfiguration?.secondaryTextColor}"
           >
             {{ qp }}
           </div>
@@ -62,7 +63,8 @@
         v-for="section in accessForm.sections"
         :key="section.name"
         :title="section.label"
-        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto text-primary-text"
+        class="form-step border rounded-2 px-2 py-3 mb-2 overflow-auto"
+        :style="{'color': uiConfiguration?.primaryTextColor}"
         :before-change="isSectionValid(section)"
       >
         <div
@@ -73,6 +75,7 @@
             class="py-1 bi bi-info-circle"
             data-bs-toggle="tooltip"
             :data-bs-title="section.description"
+            :style="{'color': uiConfiguration?.primaryTextColor}"
           />
         </div>
 
@@ -82,7 +85,8 @@
           class="mb-4 mx-3"
         >
           <label
-            class="form-label text-primary-text"
+            class="form-label "
+            :style="{'color': uiConfiguration?.primaryTextColor}"
             :class="{ required: criteria.required }"
           >
             {{ criteria.label }}
@@ -96,6 +100,7 @@
               class="py-1 bi bi-info-circle"
               data-bs-toggle="tooltip"
               :data-bs-title="criteria.description"
+              :style="{'color': uiConfiguration?.primaryTextColor}"
             />
           </span>
 
@@ -166,7 +171,10 @@
             </div>
             <div v-if="negotiationValueSets[criteria.id]?.externalDocumentation && negotiationValueSets[criteria.id]?.externalDocumentation !== 'none'">
               <span class="text-muted"> External Documentation - </span>
-              <a :href="negotiationValueSets[criteria.id]?.externalDocumentation"> {{ negotiationValueSets[criteria.id]?.externalDocumentation }} </a>
+              <a 
+                :href="negotiationValueSets[criteria.id]?.externalDocumentation"
+                :style="{ 'color':uiConfiguration?.linksTextColor }" 
+              > {{ negotiationValueSets[criteria.id]?.externalDocumentation }} </a>
             </div>
           </div>
 
@@ -277,7 +285,11 @@
             class="mt-2"
           >
             <span class="text-muted"> External Documentation - </span>
-            <a :href="negotiationValueSets[criteria.id]?.externalDocumentation"> {{ negotiationValueSets[criteria.id]?.externalDocumentation }} </a>
+            <a 
+              :href="negotiationValueSets[criteria.id]?.externalDocumentation"
+              :style="{ 'color':uiConfiguration?.linksTextColor }" 
+            > 
+              {{ negotiationValueSets[criteria.id]?.externalDocumentation }} </a>
           </div>
         </div>
       </tab-content>
@@ -288,22 +300,30 @@
         <div
           class="border rounded-2 input-group p-3 mb-2 mb-3"
         >
-          <span class="mb-3 fs-4 fw-bold text-secondary">Overview*</span>
-          <span class="text-primary">Upon confirmation, your request will undergo content review. Our reviewers may contact you via email for further details. Upon approval, the respective biobanks you wish to contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to proceed.</span>
+          <span 
+            class="mb-3 fs-4 fw-bold"
+            :style="{'color': uiConfiguration?.primaryTextColor}"
+          >
+            Overview*
+          </span>
+          <span :style="{'color': uiConfiguration?.secondaryTextColor}">Upon confirmation, your request will undergo content review. Our reviewers may contact you via email for further details. Upon approval, the respective biobanks you wish to contact will be notified of your request. Please click 'Submit request' and then 'Confirm' to proceed.</span>
         </div>
         <div
           v-for="section in accessForm.sections"
           :key="section.name"
-          class="border rounded-2 input-group p-3 mb-2 mb-3 text-secondary-text"
+          class="border rounded-2 input-group p-3 mb-2 mb-3"
         >
-          <span class="mb-3 fs-4 fw-bold text-secondary">{{ section.label.toUpperCase() }}</span>
+          <span 
+            class="mb-3 fs-4 fw-bold"
+            :style="{'color': uiConfiguration?.primaryTextColor}"
+          >{{ section.label.toUpperCase() }}</span>
           <div
             v-for="accessFormElement in section.elements"
             :key="accessFormElement.name"
             class="input-group mb-2"
           >
-            <label class="me-2 fw-bold">{{ accessFormElement.label }}:</label>
-            <span v-if="isAttachment(negotiationCriteria[section.name][accessFormElement.name])">
+            <label class="me-2 fw-bold" :style="{'color': uiConfiguration?.primaryTextColor}">{{ accessFormElement.label }}:</label>
+            <span v-if="isAttachment(negotiationCriteria[section.name][accessFormElement.name])" :style="{'color': uiConfiguration?.secondaryTextColor}">
               <span v-if="negotiationCriteria[section.name][accessFormElement.name].name">{{ negotiationCriteria[section.name][accessFormElement.name].name }}</span>
               <div
                 v-for="(choice,index) in negotiationCriteria[section.name][accessFormElement.name]"
@@ -311,7 +331,7 @@
                 :key="index"
               >{{ choice }}</div>
             </span>
-            <span v-else>
+            <span v-else :style="{'color': uiConfiguration?.secondaryTextColor}">
               {{ translateTrueFalse(negotiationCriteria[section.name][accessFormElement.name]) }}
             </span>
           </div>
@@ -322,7 +342,8 @@
           <button
             v-if="props.activeTabIndex > 0"
             type="button"
-            class="btn btn-secondary"
+            class="btn"
+            :style="{ 'background-color': uiConfiguration.buttonColor, 'border-color': uiConfiguration.buttonColor, 'color': '#FFFFFF'}"
             @click="props.prevTab()"
           >
             Previous
@@ -330,8 +351,9 @@
         </div>
         <div class="wizard-footer-right">
           <button
-            class="btn btn-secondary"
+            class="btn"
             @click="props.nextTab()"
+            :style="{ 'background-color': uiConfiguration.buttonColor, 'border-color': uiConfiguration.buttonColor, 'color': '#FFFFFF'}"
           >
             {{ props.isLastStep ? "Submit request" : "Next" }}
           </button>
@@ -350,8 +372,10 @@ import ResourcesList from "@/components/ResourcesList.vue"
 import { FormWizard, TabContent } from "vue3-form-wizard"
 import { useNegotiationFormStore } from "../store/negotiationForm"
 import { useNotificationsStore } from "../store/notifications"
+import { useUiConfiguration } from '@/store/uiConfiguration.js'
 import "vue3-form-wizard/dist/style.css"
 
+const uiConfigurationStore = useUiConfiguration()
 const negotiationFormStore = useNegotiationFormStore()
 const notificationsStore = useNotificationsStore()
 const router = useRouter()
@@ -374,6 +398,10 @@ const resources = ref([])
 const humanReadableSearchParameters = ref([])
 const openModal = ref(null)
 const requestAlreadySubmittedNegotiationId = ref(null)
+
+const uiConfiguration = computed(() => {
+    return uiConfigurationStore.uiConfiguration?.theme
+})
 
 const loading = computed(() => {
   return accessForm.value === undefined

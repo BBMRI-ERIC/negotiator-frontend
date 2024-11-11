@@ -3,6 +3,7 @@
     type="button"
     class="btn"
     @click="openModal()"
+    :style="{ 'color': uiConfiguration.primaryTextColor}"
   >
     <i class="bi bi-pencil-square" />
     Edit
@@ -15,9 +16,13 @@
   />
 </template>
 <script setup>
+import { computed } from "vue"
 import AddResourcesModal from "@/components/modals/AddResourcesModal.vue"
 import { Modal } from "bootstrap"
 import { ref } from "vue"
+import { useUiConfiguration } from '@/store/uiConfiguration.js'
+
+const uiConfigurationStore = useUiConfiguration()
 const shown = ref(false)
 const resourceModal = ref(undefined)
 const props = defineProps({
@@ -27,6 +32,11 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(["new-resources"])
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.theme
+})
+
 function openModal () {
   resourceModal.value = new Modal(document.querySelector("#resourcesModal"))
   shown.value = true
