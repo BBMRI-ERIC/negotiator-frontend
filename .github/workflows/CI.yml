@@ -116,8 +116,7 @@ jobs:
           tags: bbmrieric/negotiator-frontend:latest
 
       - name: Setup Testing Environment
-        working-directory: negotiator
-        run: docker compose up -d
+        run: cd negotiator && docker compose up -d
 
       - name: Wait
         run: sleep 30
