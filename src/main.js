@@ -11,7 +11,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css"
 import "bootstrap"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import matomo from "./config/matomo.js"
-import activeTheme from "./config/theme.js"
 import Vue3Tour from "vue3-tour"
 import "vue3-tour/dist/vue3-tour.css"
 import { useOidcStore } from "./store/oidc"
@@ -46,4 +45,4 @@ if(matomo.matomoHost !== 'MATOMO_HOST_PLACEHOLDER') {
   window._paq.push(["trackPageView"]) // To track a page view
 }
 
-import(`./assets/scss/theme-${activeTheme.activeThemeFile}.scss`)
+import(`./assets/scss/theme.scss`)

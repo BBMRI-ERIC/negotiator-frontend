@@ -1,35 +1,37 @@
 <template>
-  <VueTour v-if="isVueTourVisible" />
+  <div :style="{'background-color': uiConfiguration?.appBackgroundColor}">
+    <VueTour v-if="isVueTourVisible" />
 
-  <header>
-    <navigation-bar />
-  </header>
-  <div
-    v-if="$route.path !== '/'"
-    class="mt-5 pt-4"
-  >
-    <Alert />
-&nbsp;
-  </div>
-  <div class="container body d-flex flex-column">
-    <div class="row">
-      <div
-        class="col-12"
-      >
-        <errorPage v-if="useNotifications.criticalError" />
-        <router-view
-          v-else
-          :key="$route.path"
-        />
+    <header>
+      <navigation-bar />
+    </header>
+    <div
+      v-if="$route.path !== '/'"
+      class="mt-5 pt-4"
+    >
+      <Alert />
+      &nbsp;
+    </div>
+    <div class="container body d-flex flex-column">
+      <div class="row">
+        <div
+          class="col-12"
+        >
+          <errorPage v-if="useNotifications.criticalError" />
+          <router-view
+            v-else
+            :key="$route.path"
+          />
+        </div>
       </div>
     </div>
-  </div>
-  <div
-    v-if="$route.path !== '/'"
-    class="container"
-  >
-    <div class="col-12">
-      <Footer />
+    <div
+      v-if="$route.path !== '/'"
+      class="container"
+    >
+      <div class="col-12">
+        <Footer />
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +46,9 @@ import NavigationBar from "./components/NavigationBar.vue"
 import Alert from "./components/Alert.vue"
 import Footer from "./components/Footer.vue"
 import errorPage from "@/views/ErrorPage.vue"
+import { useUiConfiguration } from '@/store/uiConfiguration.js'
 
+const uiConfigurationStore = useUiConfiguration()
 const useNotifications = useNotificationsStore()
 const route = useRoute()
 const router = useRouter()
@@ -59,6 +63,10 @@ watch(() => (router.currentRoute.value.fullPath), (newVal, oldVal) => {
 
 const isVueTourVisible = computed(() => {
   return (route.fullPath === "/researcher" || route.fullPath === "/admin" || route.fullPath === "/biobanker") && vueTourFeatureFlag
+})
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.theme
 })
 </script>
 

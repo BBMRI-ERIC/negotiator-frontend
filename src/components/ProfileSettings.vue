@@ -2,7 +2,7 @@
   <div class="btn-group">
     <b-avatar
       type="button"
-      variant="primary"
+      :style="{'background-color': uiConfiguration?.navbarButtonOutlineColor + '!important'}"
       :text="returnAcronymOfName"
       class="mr-3"
       data-bs-toggle="dropdown"
@@ -14,15 +14,17 @@
         <div class="d-flex flex-row">
           <b-avatar
             type="button"
-            variant="primary"
+            :style="{'background-color': uiConfiguration?.navbarButtonOutlineColor + '!important'}"
             :text="returnAcronymOfName"
             class="me-3 mt-1"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           />
           <div>
-            <div>{{ user.email }}</div>
-            <div class="text-muted">
+            <div :style="{'color': uiConfiguration?.navbarTextColor}">
+              {{ user.email }}
+            </div>
+            <div :style="{'color': uiConfiguration?.navbarTextColor, 'opacity': 0.7}">
               {{ user.name }}
             </div>
           </div>
@@ -33,7 +35,8 @@
       <li>
         <a
           href="https://profile.aai.lifescience-ri.eu/profile"
-          class="dropdown-item text-primary-text"
+          class="dropdown-item"
+          :style="{'color': uiConfiguration?.navbarTextColor}"
         >  <i class="bi bi-gear" />
           Profile Settings
         </a>
@@ -41,15 +44,24 @@
       <li v-if="isRepresentative">
         <a
           :href="externalLinks.auth_management_link"
-          class="dropdown-item text-primary-text"
+          class="dropdown-item"
+          :style="{'color': uiConfiguration?.navbarTextColor}"
         >  <i class="bi bi-person-gear" />
           Authorization Settings
         </a>
       </li>
       <li v-if="isAdmin">
-        <router-link to="/settings" class="dropdown-item text-primary-text">
+        <router-link to="/settings" class="dropdown-item"
+        :style="{'color': uiConfiguration?.navbarTextColor}">
           <i class="bi bi-sliders" />
           Admin Settings
+        </router-link>
+      </li>
+      <li v-if="isAdmin">
+        <router-link to="/ui-configuration" class="dropdown-item"
+        :style="{'color': uiConfiguration?.navbarTextColor}">
+          <i class="bi bi-house-gear" />
+          Admin UI Configuration
         </router-link>
       </li>
       <li>
@@ -57,13 +69,16 @@
       </li>
       <li>
         <a href="https://www.bbmri-eric.eu/wp-content/uploads/AoM_10_8_Access-Policy_FINAL_EU.pdfl"
-          class="dropdown-item text-primary-text"> <i class="bi bi-shield-lock" />
+          class="dropdown-item"
+          :style="{'color': uiConfiguration?.navbarTextColor}">
+          <i class="bi bi-shield-lock" />
           Privacy Policy
         </a>
       </li>
       <li>
-        <a href="https://www.bbmri-eric.eu/services/access-policies/" class="dropdown-item text-primary-text"> <i 
-          class="bi bi-clipboard-check" />
+        <a href="https://www.bbmri-eric.eu/services/access-policies/" class="dropdown-item"
+        :style="{'color': uiConfiguration?.navbarTextColor}"> 
+        <i class="bi bi-clipboard-check" />
           Access Policy
         </a>
       </li>
@@ -75,6 +90,7 @@
           class="btn me-2 "
           aria-current="page"
           @click.stop.prevent="signOutOidc"
+          :style="{'color': uiConfiguration?.navbarTextColor}"
         >
           <i class="bi bi-box-arrow-right" /> Sign Out
         </button>
@@ -87,6 +103,7 @@
 import { computed } from "vue"
 import externalLinks from "@/config/externalLinks"
 import { useOidcStore } from "@/store/oidc";
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 
 const oidcStore = useOidcStore()
 
@@ -105,6 +122,11 @@ const props = defineProps({
   }
 })
 
+const uiConfigurationStore = useUiConfiguration()
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.navbar
+})
 const returnAcronymOfName = computed(() => {
   const words = props.user?.name.split(" ")
 

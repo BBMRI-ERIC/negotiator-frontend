@@ -72,42 +72,18 @@ For more test scripts see [package.json](package.json)
 
 See the [Configuration Reference](https://cli.vuejs.org/config/) for more details on how to customize the configuration.
 
-# Developer Guide - Configuration Files
+###  Setting the Project Theme
+Log in as Admin
+Once logged in as an Admin, you can access the Admin UI Configuration via the drop-down menu or by navigating to the page /ui-configuration. From there, you have full control over all UI-related settings.
 
-## Setting the Project Theme
+Image Input Fields
+For the image input fields, you have the option to chose a local file. 
+For example, you can use local image files, like:
 
-The theme configuration file is located at:
-
-```sh
-src/config/theme.js
-```
-
-### The theme configuration involves three variables:
-
-1. **activeThemeFile** - Defines the active SCSS theme file.
-
-   Default value:
-   ```sh
-   activeThemeFile: "bbmri"
-   ```
-
-   The theme SCSS files are located at:
-
-   ```sh
-   src/assets/scss/
-   ├── theme-bbmri.scss
-   ├── theme-eucaim.scss
-   └── theme-canServ.scss
-   ```
-
-   You can modify the values of the color variables in these files as needed.
-
-2. **activeLogosFiles** - Defines the active logo files.
-
-   Default value:
-   ```sh
-   activeLogosFiles: "bbmri"
-   ```
+* bbmri
+* canserv
+* eucaim
+Alternatively, you can link to external URLs for images if preferred.
 
    The logo files are located at:
 
@@ -127,16 +103,9 @@ src/config/theme.js
        └── nav-bar-eucaim.png
    ```
 
-   If you want to change an image, replace the existing one with a new one of the same name, file type, and size.
+If you want to change an image, replace the existing one with a new one of the same name, file type, and size.
 
-3. **isFooterFollowUsVisible** - Controls the visibility of items in the footer (e.g., Follow Us, Subscribe To Our Newsletter).
-
-   Default value:
-   ```sh
-   isFooterFollowUsVisible: true
-   ```
-
-   Additional footer configuration details can be found in the [Footer Configuration](docs/FOOTER_CONFIGURATION.md) document.
+# Developer Guide - Configuration Files
 
 ## Configuration for Matomo Analytics
 

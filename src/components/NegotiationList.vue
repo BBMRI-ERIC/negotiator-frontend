@@ -7,8 +7,8 @@
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
-          <span class="text-search-results-text"> <strong>Search results: </strong> </span> <br>
-          <span class="text-muted">{{ pagination.totalElements }} Negotiations found</span>
+          <span class="negotiations-search-results" :style="{'color':uiConfiguration?.searchResultsTextColor}"> <strong>Search results: </strong> </span> <br>
+          <span class="negotiations-number" :style="{'color':uiConfiguration?.searchResultsTextColor, 'opacity': 0.5}">{{ pagination.totalElements }} Negotiations found</span>
         </p>
 
         <div class="text-end my-2">
@@ -16,7 +16,8 @@
             v-if="negotiations.length > 0"
             type="button"
             class="btn btn-sm me-2"
-            :class="savedNegotiationsView === 'Card-one-column' ? 'btn-display-view-button-color':'bg-body'"
+            :class="savedNegotiationsView === 'Card-one-column' ? '':'bg-body'"
+            :style="savedNegotiationsView === 'Card-one-column' ? {'background-color':uiConfiguration?.displayViewButtonColor} : ''"
             @click="setSavedNegotiationsView('Card-one-column')"
           >
             <i class="bi bi-list" />
@@ -26,7 +27,8 @@
             v-if="negotiations.length > 1"
             type="button"
             class="btn btn-sm me-2"
-            :class="savedNegotiationsView === 'Card-two-column' ? 'btn-display-view-button-color':'bg-body'"
+            :class="savedNegotiationsView === 'Card-two-column' ? '':'bg-body'"
+            :style="savedNegotiationsView === 'Card-two-column' ? {'background-color':uiConfiguration?.displayViewButtonColor} : ''"
             @click="savedNegotiationsView = 'Card-two-column', setSavedNegotiationsView('Card-two-column')"
           >
             <i class="bi bi-grid" />
@@ -37,7 +39,8 @@
             id="v-step-1"
             type="button"
             class="btn btn-sm"
-            :class="savedNegotiationsView === 'Table' ? 'btn-display-view-button-color' : 'bg-body'"
+            :class="savedNegotiationsView === 'Table' ? '' : 'bg-body'"
+            :style="savedNegotiationsView === 'Table' ? {'background-color':uiConfiguration?.displayViewButtonColor} : ''"
             @click="savedNegotiationsView = 'Table', setSavedNegotiationsView('Table')"
           >
             <i class="bi bi-table" />
@@ -67,10 +70,11 @@
           <table class="table table-hover">
             <thead class="text-nowrap">
               <tr class="text-table-header-text">
-                <th scope="col">
+                <th scope="col" :style="{'color': uiConfiguration?.tableTextColor}">
                   Title
                   <button
                     class="btn btn-sm py-0"
+                    :style="{'color': uiConfiguration?.tableTextColor}"
                     type="button"
                     @click="changeSortDirection('title'); emitFilterSortData();"
                   >
@@ -83,13 +87,14 @@
                     />
                   </button>
                 </th>
-                <th scope="col">
+                <th scope="col" :style="{'color': uiConfiguration?.tableTextColor}">
                   Negotiation ID
                 </th>
-                <th scope="col">
+                <th scope="col" :style="{'color': uiConfiguration?.tableTextColor}">
                   Created on
                   <button
                     class="btn btn-sm py-0"
+                    :style="{'color': uiConfiguration?.tableTextColor}"
                     type="button"
                     @click="changeSortDirection('creationDate'); emitFilterSortData();"
                   >
@@ -102,16 +107,18 @@
                     />
                   </button>
                 </th>
-                <th scope="col">
+                <th scope="col" :style="{'color': uiConfiguration?.tableTextColor}">
                   Author
                 </th>
                 <th
                   scope="col"
+                  :style="{'color': uiConfiguration?.tableTextColor}"
                 >
                   Status
                   <button
                     id="v-step-2"
                     class="btn btn-sm py-0"
+                    :style="{'color': uiConfiguration?.tableTextColor}"
                     type="button"
                     @click="changeSortDirection('currentState'); emitFilterSortData();"
                   >
@@ -136,17 +143,17 @@
               >
                 <th
                   scope="row"
-                  class="text-table-title-text"
+                  :style="{'color': uiConfiguration?.tableTextColor}"
                 >
                   {{ fn.payload.project.title }}
                 </th>
-                <td class="text-muted">
+                <td :style="{'color': uiConfiguration?.tableTextColor, 'opacity': 0.7}">
                   {{ fn.id }}
                 </td>
-                <td class="text-muted">
+                <td :style="{'color': uiConfiguration?.tableTextColor, 'opacity': 0.7}">
                   {{ formatDate(fn.creationDate) }}
                 </td>
-                <td class="text-muted">
+                <td :style="{'color': uiConfiguration?.tableTextColor, 'opacity': 0.7}">
                   {{ fn.author.name }}
                 </td>
                 <td>
@@ -163,7 +170,7 @@
                   </span>
                 </td>
                 <td>
-                  <i class="bi bi-chevron-right float-end" />
+                  <i class="bi bi-chevron-right float-end" :style="{'color': uiConfiguration?.tableTextColor}" />
                 </td>
               </tr>
             </tbody>
@@ -236,7 +243,9 @@ import { useRouter } from "vue-router"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
 import { useNegotiationsViewStore } from "../store/negotiationsView.js"
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 
+const uiConfigurationStore = useUiConfiguration()
 const router = useRouter()
 const negotiationsViewStore = useNegotiationsViewStore()
 
@@ -276,6 +285,10 @@ const loading = computed(() => {
 
 const savedNegotiationsView = computed(() => {
   return negotiationsViewStore.savedNegotiationsView
+})
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.negotiationList
 })
 
 onBeforeMount(() => {

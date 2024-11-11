@@ -2,19 +2,20 @@
   <nav
     v-if="oidcIsAuthenticated"
     id="v-step-0"
-    class="navbar fixed-top navbar-expand-lg navbar-light bg-navbar-background"
+    class="navbar fixed-top navbar-expand-lg"
+    :style="{'background-color': uiConfiguration?.navbarBackgroundColor}"
   >
     <div class="container-fluid">
       <router-link
         to="/"
       >
-        <img
-          :src="logoSrc"
-          height="34"
-          class="me-2"
-          alt="nav-bar-logo"
-        >
-      </router-link>
+      <img
+        :src="returnLogoSrc"
+        height="34"
+        class="me-2"
+        alt="nav-bar-logo"
+      >
+    </router-link>
       <div
         id="menu-navbar"
         class="collapse navbar-collapse"
@@ -28,7 +29,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path === '/admin' || $route.params.userRole === 'ROLE_ADMIN' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :style="{'color': $route.path === '/admin' || $route.params.userRole === 'ROLE_ADMIN' ? uiConfiguration?.navbarActiveTextColor : uiConfiguration?.navbarTextColor}"
               to="/admin"
             >
               <i class="bi bi-clipboard-check" />
@@ -41,7 +42,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path === '/researcher' || $route.params.userRole === 'ROLE_RESEARCHER' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :style="{'color': $route.path === '/researcher' || $route.params.userRole === 'ROLE_RESEARCHER' ? uiConfiguration?.navbarActiveTextColor : uiConfiguration?.navbarTextColor}"
               to="/researcher"
             >
               <i class="bi bi-chat-left-dots" />
@@ -54,7 +55,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path === '/biobanker' || $route.params.userRole === 'ROLE_REPRESENTATIVE' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :style="{'color': $route.path === '/biobanker' || $route.params.userRole === 'ROLE_REPRESENTATIVE' ? uiConfiguration?.navbarActiveTextColor : uiConfiguration?.navbarTextColor}"
               to="/biobanker"
             >
               <i class="bi bi-bank" />
@@ -69,7 +70,7 @@
             <a
               id="networksDropdown"
               class="nav-link active nav-option dropdown-toggle"
-              :class="$route.path.startsWith('/networks') ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :style="{'color': $route.path.startsWith('/networks') ? uiConfiguration?.navbarActiveTextColor : uiConfiguration?.navbarTextColor}"
               href="#"
               role="button"
               @click="toggleDropdown"
@@ -101,7 +102,7 @@
           >
             <router-link
               class="nav-link active nav-option"
-              :class="$route.path === '/FAQ' ? 'text-navbar-active-text' : 'text-navbar-text'"
+              :style="{'color': $route.path === '/FAQ' ? uiConfiguration?.navbarActiveTextColor : uiConfiguration?.navbarTextColor}"
               to="/FAQ"
             >
               <i class="bi bi-people" />
@@ -111,7 +112,7 @@
         </ul>
         <div
           v-if="oidcIsAuthenticated && returnCurrentMode"
-          class="navbar-text me-2 text-navbar-welcome-text me-3"
+          class="me-2 me-3"
           :class="returnCurrentModeTextColor"
         >
           <div
@@ -126,7 +127,8 @@
         />
         <span
           v-if="oidcIsAuthenticated"
-          class="navbar-text me-2 text-navbar-welcome-text"
+          class="me-2"
+          :style="{'color': uiConfiguration?.navbarWelcomeTextColor}"
         >
           {{ oidcUser.preferred_username }}
         </span>
@@ -157,18 +159,19 @@
 import { computed, onBeforeMount, ref, watch } from "vue"
 import { ROLES } from "@/config/consts"
 import ProfileSettings from "../components/ProfileSettings.vue"
-import activeTheme from "../config/theme.js"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
-import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
+import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
 import Notifications from "../components/Notifications.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 import { useActuatorInfoStore } from "../store/actuatorInfo"
 import { useUserStore } from "../store/user"
 import { useOidcStore } from "../store/oidc"
 import { useNetworksPageStore } from "../store/networksPage"
 import { useRouter } from "vue-router"
 
+const uiConfigurationStore = useUiConfiguration()
 const actuatorInfoStore = useActuatorInfoStore()
 const userStore = useUserStore()
 const oidcStore = useOidcStore()
@@ -176,9 +179,7 @@ const networksPageStore = useNetworksPageStore()
 const dropdownVisible = ref(false)
 const router = useRouter()
 const roles = ref([])
-const logoSrc = activeTheme.activeLogosFiles === "eucaim" ? eucaimLogo : (activeTheme.activeLogosFiles === "canserv" ? canservLogo : bbmriLogo)
 const featureFlagsFAQ = !!(allFeatureFlags.faqPage === "true" || allFeatureFlags.faqPage === true)
-const featureFlagsNetworks = !!(allFeatureFlags.networks === "true" || allFeatureFlags.networks === true)
 const featureFlagsNotifications = !!(allFeatureFlags.notifications === "true" || allFeatureFlags.notifications === true)
 const backendEnvironment = ref("")
 const showNetworksTab = ref(false)
@@ -187,6 +188,10 @@ const selectNetwork = (networkId) => {
   toggleDropdown()
   router.push(`/networks/${networkId}`)
 }
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.navbar
+})
 const oidcIsAuthenticated = computed(() => {
   return oidcStore.oidcIsAuthenticated
 })
@@ -220,6 +225,16 @@ const returnCurrentModeTextColor = computed(() => {
 })
 const userInfo = computed(() => {
   return userStore.userInfo
+})
+const returnLogoSrc = computed(() => {
+  if(uiConfiguration.value?.navbarLogoUrl === 'bbmri'){
+    return bbmriLogo
+  } else if(uiConfiguration.value?.navbarLogoUrl === 'canserv'){
+    return canservLogo
+  } else if(uiConfiguration.value?.navbarLogoUrl === 'eucaim'){
+    return eucaimLogo
+  }
+  return uiConfiguration.value?.navbarLogoUrl
 })
 const toggleDropdown = () => {
   dropdownVisible.value = !dropdownVisible.value
