@@ -289,7 +289,6 @@ nav {
 .nav-item:hover .nav-link,
 .nav-item.dropdown .dropdown-item:hover,
 .nav-item.dropdown .dropdown-item:focus {
-  background-color: lightgray;    /* Light gray background on hover */
-  color: #212529;               /* Darker text color on hover */
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3); /* Light gray background on hover */
 }
 </style>
