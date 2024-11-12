@@ -22,21 +22,24 @@
         <a
           v-if="uiConfiguration?.footerFollowUsLinkedin"
           :href="uiConfiguration?.footerFollowUsLinkedin"
-          class="link-dark ms-2"
+          class="ms-2"
+          :style="{'color': uiConfiguration?.footerTextColor}"
         >
           <i class="bi bi-linkedin mr-3" />
         </a>
         <a
           v-if="uiConfiguration?.footerFollowUsX"
           :href="uiConfiguration?.footerFollowUsX"
-          class="link-dark ms-2"
+          class="ms-2"
+          :style="{'color': uiConfiguration?.footerTextColor}"
         >
           <i class="bi bi-twitter-x" />
         </a>
         <a
           v-if="uiConfiguration?.footerFollowUsPodcast"
           :href="uiConfiguration?.footerFollowUsPodcast"
-          class="link-dark ms-2"
+          class="ms-2"
+          :style="{'color': uiConfiguration?.footerTextColor}"
         >
           <i class="bi bi-mic-fill" />
         </a>
@@ -45,18 +48,18 @@
           <a
             v-if="uiConfiguration?.footerGithubFrontendLink"
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
-          > <i
-            class="bi bi-github text-primary pe-1"
-          />
-            <span :style="{'color': uiConfiguration?.footerTextColor}">GitHub UI</span>
+            :style="{'color': uiConfiguration?.footerTextColor}"
+          > <i class="bi bi-github pe-1" />
+            <span>GitHub UI</span>
           </a>
           <a
             v-if="uiConfiguration?.footerGithubBackendLink"
             href="https://github.com/BBMRI-ERIC/negotiator"
             class="ps-2"
             :style="{'color': uiConfiguration?.footerTextColor}"
-          > <i class="bi bi-github text-primary pe-1" />
-          <span :style="{'color': uiConfiguration?.footerTextColor}">GitHub Application</span>
+          > 
+          <i class="bi bi-github pe-1" />
+          <span>GitHub Application</span>
           </a>
         </div>
 
@@ -66,15 +69,17 @@
           <a
             v-if="uiConfiguration?.footerSwaggerLink && uiConfiguration?.isFooterSwaggerVisible"
             :href="uiConfiguration?.footerSwaggerLink"
-          > <i class="bi bi-braces-asterisk text-primary pe-1" />
-          <span :style="{'color': uiConfiguration?.footerTextColor}">{{ uiConfiguration?.footerSwaggerText}}</span>
+            :style="{'color': uiConfiguration?.footerTextColor}"
+          > <i class="bi bi-braces-asterisk pe-1"/>
+          <span>{{ uiConfiguration?.footerSwaggerText}}</span>
           </a>
           <a
             v-if="uiConfiguration?.footerStatusPageLink && uiConfiguration?.isFooterStatusPageVisible"
             :href="uiConfiguration?.footerStatusPageLink"
+            :style="{'color': uiConfiguration?.footerTextColor}"
             class="ps-2"
-          > <i class="bi bi-check-circle text-primary pe-1" />
-          <span :style="{'color': uiConfiguration?.footerTextColor}">{{ uiConfiguration?.footerStatusPageText }}</span>
+          > <i class="bi bi-check-circle pe-1"/>
+          <span>{{ uiConfiguration?.footerStatusPageText }}</span>
           </a>
         </div>
       </div>
