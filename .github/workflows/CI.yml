@@ -56,11 +56,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup OIDC Server
-        run: cd oidc_mock && docker compose up -d
-
       - name: Setup API server
-        run: cd negotiator && mvn -B clean spring-boot:test-run -Dspring-boot.run.profiles=dev &
+        run: cd negotiator && docker compose up -d negotiator oidc-server-mock
 
       - name: Wait
         run: sleep 30
@@ -112,12 +109,12 @@ jobs:
           type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
     - name: Build and push
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: .
-        platforms: linux/amd64
+        platforms: linux/amd64, linux/arm64
         push: true
         labels: ${{ steps.meta.outputs.labels }}
         tags: ${{ steps.meta.outputs.tags }}
         cache-from: type=gha
-        cache-to: type=gha,mode=min
+        cache-to: type=gha,mode=max

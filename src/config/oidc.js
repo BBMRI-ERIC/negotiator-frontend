@@ -1,13 +1,12 @@
 const devSettings = {
   authority: "http://localhost:4011",
-  client_id: "client-credentials-mock-client",
-  client_secret: "authorization-code-with-pkce-client-secret",
+  client_id: "auth-code-client",
   resource: "https://negotiator.bbmri-eric.eu",
   redirect_uri: "http://localhost:8080/logged-in",
   scope: "openid profile email permissions some-app-scope-1",
-  automaticSilentRenew: true,
   post_logout_redirect_uri: "http://localhost:8080",
-  response_type: "code"
+  response_type: "code",
+  automaticSilentRenew: true
 }
 
 const prodSettings = {
@@ -15,7 +14,7 @@ const prodSettings = {
   client_id: "CLIENT_ID_PLACEHOLDER",
   resource: "RESOURCES_PLACEHOLDER",
   redirect_uri: "REDIRECT_URI_PLACEHOLDER",
-  scope: "openid profile email offline_access eduperson_entitlement",
+  scope: "SCOPES_PLACEHOLDER",
   post_logout_redirect_uri: "LOGOUT_URI_PLACEHOLDER",
   response_type: "code",
   automaticSilentRenew: true
