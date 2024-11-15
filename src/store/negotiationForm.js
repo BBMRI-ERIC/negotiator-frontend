@@ -35,6 +35,17 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
       })
   }
 
+  async function retrieveNegotiationCombinedAccessForm (requestId) {
+    return await axios.get(`${apiPaths.BASE_API_PATH}/negotiations/${requestId}/access-form`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("Error getting Negotiation Combined Access Form request data from server")
+        return null
+      })
+  }
+
   async function retrieveDynamicAccessFormsValueSetByID (id) {
     return await axios.get(`${apiPaths.VALUE_SETS}/${id}`, { headers: getBearerHeaders() })
       .then((response) => {
@@ -79,5 +90,17 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
       })
   }
 
-  return { retrieveRequestById, retrieveCombinedAccessForm, retrieveDynamicAccessFormsValueSetByID, createNegotiation }
+  async function updateNegotiationById (negotiationId, data) {
+    return axios.put(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}`,data, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.criticalError = true
+        notifications.setNotification(`Error updating Negotiation: ${negotiationId}`, "warning")
+        return null
+      })
+  }
+
+  return { retrieveRequestById, retrieveCombinedAccessForm, retrieveNegotiationCombinedAccessForm, retrieveDynamicAccessFormsValueSetByID, createNegotiation, updateNegotiationById }
 })
