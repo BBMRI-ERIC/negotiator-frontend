@@ -101,7 +101,7 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
 
           uploadFileHeaders["Content-type"] = "multipart/form-data"
 
-          const attachmentsIds = await axios.post("/api/v3/attachments", formData, uploadFileHeaders)
+          const attachmentsIds = await axios.post(`${apiPaths.BASE_API_PATH}/negotiations/${negotiationId}/attachments`, formData, uploadFileHeaders)
             .then((response) => {
               return response.data
             })
