@@ -26,6 +26,12 @@
       :text="`Are you sure you want to change the status of all ${selectedOrganization ? selectedOrganization.name : 'Unknown'} resources you represent in this Negotiation to ${orgStatus ? orgStatus.label : 'Unknown'} ?`"
       @confirm="updateOrganization()"
     />
+    <confirmation-modal
+      id="negotiationUpdateModal"
+      title="Negotiation update"
+      text="Are you sure you want to update Negotiation"
+      @confirm="updateNegotiationPayload()"
+    />
     <div class="row mt-4">
       <div class="row-col-2">
         <h1 class="text-primary fw-bold">
@@ -49,6 +55,9 @@
             :key="element"
             class="list-group-item p-3"
           >
+          <div v-if="negotiation?._links?.Update && Object.keys(negotiation.payload)[0] === key" class="position-absolute top-0 end-0 mt-2">
+            <button type="button" class="btn text-black status-box cursor-pointer" data-bs-toggle="modal" data-bs-target="#negotiationUpdateModal"><i class="bi bi-pencil-square cursor-pointer" /></button>
+          </div>
             <span class="fs-5 fw-bold text-primary-text mt-3">
               {{ transformDashToSpace(key).toUpperCase() }}</span>
             <div
@@ -487,6 +496,7 @@ import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
 import { useAdminStore } from "../store/admin.js"
 import AddResourcesButton from "@/components/AddResourcesButton.vue"
+import { useRouter } from "vue-router"
 
 const props = defineProps({
   negotiationId: {
@@ -534,6 +544,7 @@ const orgStatus = ref(undefined)
 const userStore = useUserStore()
 const negotiationPageStore = useNegotiationPageStore()
 const adminStore = useAdminStore()
+const router = useRouter()
 
 const getResources = computed(() => {
   return resources.value
@@ -838,6 +849,10 @@ function transformDashToSpace (text) {
   }
 
   return ""
+}
+
+function updateNegotiationPayload () {
+  router.push(`/edit/requests/${props.negotiationId}`)
 }
 </script>
 

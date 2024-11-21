@@ -35,6 +35,17 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
       })
   }
 
+  async function retrieveNegotiationCombinedAccessForm (requestId) {
+    return await axios.get(`${apiPaths.BASE_API_PATH}/negotiations/${requestId}/access-form`, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.setNotification("Error getting Negotiation Combined Access Form request data from server")
+        return null
+      })
+  }
+
   async function retrieveDynamicAccessFormsValueSetByID (id) {
     return await axios.get(`${apiPaths.VALUE_SETS}/${id}`, { headers: getBearerHeaders() })
       .then((response) => {
@@ -79,5 +90,41 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
       })
   }
 
-  return { retrieveRequestById, retrieveCombinedAccessForm, retrieveDynamicAccessFormsValueSetByID, createNegotiation }
+  async function updateNegotiationById (negotiationId, data) {
+    data.attachments = []
+    for (const [sectionName, criteriaList] of Object.entries(data.payload)) {
+      for (const [criteriaName, criteriaValue] of Object.entries(criteriaList)) {
+        if (criteriaValue instanceof File) {
+          const formData = new FormData()
+          formData.append("file", criteriaValue)
+          const uploadFileHeaders = { headers: getBearerHeaders() }
+
+          uploadFileHeaders["Content-type"] = "multipart/form-data"
+
+          const attachmentsIds = await axios.post(`${apiPaths.BASE_API_PATH}/negotiations/${negotiationId}/attachments`, formData, uploadFileHeaders)
+            .then((response) => {
+              return response.data
+            })
+            .catch(() => {
+              notifications.setNotification("There was an error updating the attachment", "danger")
+              return null
+            })
+          data.payload[sectionName][criteriaName] = attachmentsIds
+          data.attachments.push(attachmentsIds)
+        }
+      }
+    }
+
+    return axios.put(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}`,data, { headers: getBearerHeaders() })
+      .then((response) => {
+        return response.data
+      })
+      .catch(() => {
+        notifications.criticalError = true
+        notifications.setNotification(`Error updating Negotiation: ${negotiationId}`, "warning")
+        return null
+      })
+  }
+
+  return { retrieveRequestById, retrieveCombinedAccessForm, retrieveNegotiationCombinedAccessForm, retrieveDynamicAccessFormsValueSetByID, createNegotiation, updateNegotiationById }
 })
