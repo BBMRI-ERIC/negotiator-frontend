@@ -40,7 +40,7 @@ describe('Test create negotiation', () => {
             cy.url().should('contain', '/negotiations')
             cy.url().should('contain', '/ROLE_RESEARCHER')
             //  Title
-            cy.get('.row-col-2 > .text-primary')
+            cy.get('.row-col-2 > .fw-bold')
             //  Badge
             cy.get('.row-col-2 > .bg-status-badge')
             // PROJECT
@@ -87,16 +87,16 @@ describe('Test create negotiation', () => {
             // Right side informations
             //  Author:
             cy.get('.order-1 > .list-group > :nth-child(1) > .fw-bold').should('be.visible')
-            cy.get(':nth-child(1) > .text-secondary-text').should('be.visible')
+            cy.get('.order-1 > .list-group > :nth-child(1) > :nth-child(2)').should('be.visible')
             //  Email:
             cy.get('.order-1 > .list-group > :nth-child(2) > .fw-bold').should('be.visible')
-            cy.get(':nth-child(2) > .text-secondary-text').should('be.visible')
+            cy.get('.order-1 > .list-group > :nth-child(2) > span').should('be.visible')
             //  Negotiation ID:
             cy.get('.order-1 > .list-group > :nth-child(3) > .fw-bold').should('be.visible')
-            cy.get(':nth-child(3) > .text-secondary-text').should('be.visible')
+            cy.get('.order-1 > .list-group > :nth-child(3) > span').should('be.visible')
             //  Submitted at:
             cy.get('.order-1 > .list-group > :nth-child(4) > .fw-bold').should('be.visible')
-            cy.get(':nth-child(4) > .text-secondary-text').should('be.visible')
+            cy.get('.order-1 > .list-group > :nth-child(4) > span').should('be.visible')
             //  Status:
             cy.get('.list-group > .justify-content-between > :nth-child(1) > .fw-bold').should('be.visible')
             cy.get('.list-group > .justify-content-between > :nth-child(1) > span').should('be.visible')
