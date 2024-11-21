@@ -528,7 +528,6 @@ import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
 import { useAdminStore } from "../store/admin.js"
 import { useUiConfiguration } from '@/store/uiConfiguration.js'
-import AddResourcesButton from "@/components/AddResourcesButton.vue"
 import { useRouter } from "vue-router"
 
 const props = defineProps({
