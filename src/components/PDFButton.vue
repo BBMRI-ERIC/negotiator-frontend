@@ -1,8 +1,9 @@
 <template>
   <div>
     <a
-      class="pdf-text cursor-pointer"
+      class="pdf-text-hover cursor-pointer"
       @click="createPDF"
+      :style="{ 'color': uiConfigurationTheme.primaryTextColor, '--hoverColor': uiConfigurationTheme?.secondaryTextColor}"
     ><i class="bi bi-filetype-pdf" /> Download PDF</a>
   </div>
 </template>
@@ -28,19 +29,23 @@ const props = defineProps({
 
 const uiConfigurationStore = useUiConfiguration()
 
-const uiConfiguration = computed(() => {
+const uiConfigurationNavbar = computed(() => {
   return uiConfigurationStore.uiConfiguration?.navbar
 })
 
+const uiConfigurationTheme = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.theme
+})
+
 const returnLogoSrc = computed(() => {
-  if(uiConfiguration.value?.navbarLogoUrl === 'bbmri'){
+  if(uiConfigurationNavbar.value?.navbarLogoUrl === 'bbmri'){
     return bbmriLogo
-  } else if(uiConfiguration.value?.navbarLogoUrl === 'canserv'){
+  } else if(uiConfigurationNavbar.value?.navbarLogoUrl === 'canserv'){
     return canservLogo
-  } else if(uiConfiguration.value?.navbarLogoUrl === 'eucaim'){
+  } else if(uiConfigurationNavbar.value?.navbarLogoUrl === 'eucaim'){
     return eucaimLogo
   }
-  return uiConfiguration.value?.navbarLogoUrl
+  return uiConfigurationNavbar.value?.navbarLogoUrl
 })
 
 function createPDF (view) {
@@ -127,11 +132,8 @@ function createPDF (view) {
 a {
     text-decoration: none;
 }
-.pdf-text {
-  color: #3c3c3d;
-}
 
-.pdf-text:hover {
-  color: #e95713;
+.pdf-text-hover:hover {
+  color: var(--hoverColor)!important;
 }
 </style>

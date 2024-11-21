@@ -1,6 +1,6 @@
 <template>
   <div v-if="negotiation">
-    <h5 class="text-primary">
+    <h5 :style="{ 'color': uiConfiguration.primaryTextColor}">
       Comments
     </h5>
     <div
@@ -9,13 +9,14 @@
       class="card mb-3"
     >
       <div class="card-header">
-        <div class="mb-2 ms-2">
+        <div class="mb-2">
           <span>
             <span
               v-for="badge in getUserBadges(post)"
               :key="badge"
               data-bs-toggle="tooltip"
-              class="badge rounded-pill text-bg-secondary ms-1"
+              class="badge rounded-pill"
+              :style="{ 'background-color': uiConfiguration.primaryTextColor}"
               :title="getBadgeTooltip(badge)"
             >
               {{ badge }}
@@ -24,19 +25,26 @@
         </div>
         <div class="d-flex justify-content-between align-items-center">
           <!-- Left Side: Author Information -->
-          <div class="d-flex align-items-center">
-            <i class="bi bi-person-circle" />
+          <div class="d-flex align-items-center"
+            :style="{ 'color': uiConfiguration.primaryTextColor}"
+          >
+            <i 
+              class="bi bi-person-circle" 
+            />
             <span class="ms-2">
               <strong>{{ getAuthorName(post) }}</strong>
             </span>
-            <span class="text-muted ms-1">
+            <span 
+              class="ms-1"
+              :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7}"
+            >
               posted on {{ printDate(post.creationDate) }}
             </span>
           </div>
 
           <!-- Right Side: Recipient Badge -->
           <span>
-            <span class="text-muted">
+            <span class="me-1" :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7}">
               to
             </span>
             <span
@@ -49,7 +57,7 @@
           </span>
         </div>
       </div>
-      <div class="card-body">
+      <div class="card-body" :style="{ 'color': uiConfiguration.secondaryTextColor }"      >
         {{ post.text }}
       </div>
     </div>
@@ -57,7 +65,7 @@
       v-if="posts.length === 0"
       class="my-3"
     >
-    <h5 class="text-primary">
+    <h5 :style="{ 'color': uiConfiguration.primaryTextColor}">
       Send a message
     </h5>
     <div
@@ -73,7 +81,8 @@
     >
       <textarea
         v-model="message"
-        class="form-control mb-3 text-primary"
+        class="form-control mb-3"
+        :style="{ 'color': uiConfiguration.secondaryTextColor}"
       />
       <NegotiationAttachment
         v-if="attachment"
@@ -91,7 +100,8 @@
           <button
             type="submit"
             :disabled="!readyToSend"
-            class="btn btn-secondary ms-2"
+            class="btn ms-2"
+            :style="{ 'background-color': uiConfiguration.buttonColor, 'border-color': uiConfiguration.buttonColor, 'color': '#FFFFFF'}"
           >
             Send message
           </button>
@@ -112,7 +122,8 @@
         <select
           id="recipient"
           v-model="recipientId"
-          class="form-select w-25 text-primary"
+          class="form-select w-25"
+          :style="{ 'color': uiConfiguration.primaryTextColor}"
         >
           <option
             disabled
@@ -148,6 +159,9 @@ import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
 import { useOidcStore } from "../store/oidc"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
+import { useUiConfiguration } from '@/store/uiConfiguration.js'
+
+const uiConfigurationStore = useUiConfiguration()
 
 const oidcStore = useOidcStore()
 const negotiationPageStore = useNegotiationPageStore()
@@ -179,6 +193,10 @@ const posts = ref([])
 const message = ref("")
 const recipientId = ref("")
 const attachment = ref(undefined)
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.theme
+})
 
 const oidcUser = computed(() => {
   return oidcStore.oidcUser

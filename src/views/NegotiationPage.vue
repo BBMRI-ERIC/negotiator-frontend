@@ -34,7 +34,7 @@
     />
     <div class="row mt-4">
       <div class="row-col-2">
-        <h1 class="text-primary fw-bold">
+        <h1 class="fw-bold" :style="{ 'color': uiConfiguration.primaryTextColor }">
           {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
         </h1>
         <span
@@ -58,7 +58,7 @@
           <div v-if="negotiation?._links?.Update && Object.keys(negotiation.payload)[0] === key" class="position-absolute top-0 end-0 mt-2">
             <button type="button" class="btn text-black status-box cursor-pointer" data-bs-toggle="modal" data-bs-target="#negotiationUpdateModal"><i class="bi bi-pencil-square cursor-pointer" /></button>
           </div>
-            <span class="fs-5 fw-bold text-primary-text mt-3">
+            <span class="fs-5 fw-bold mt-3" :style="{ 'color': uiConfiguration.primaryTextColor }">
               {{ transformDashToSpace(key).toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -66,11 +66,12 @@
               class="mt-3"
             >
               <label
-                class="me-2 fw-bold text-secondary-text"
+                class="me-2 fw-bold"
+                :style="{ 'color': uiConfiguration.secondaryTextColor }"
               >{{ transformDashToSpace(subelementkey).toUpperCase() }}:</label>
               <span
                 v-if="isAttachment(subelement)"
-                class="text-secondary-text"
+                :style="{ 'color': uiConfiguration.secondaryTextColor }"
               >
                 <span v-if="subelement.name">
                   {{ subelement.name }}
@@ -93,14 +94,18 @@
               </span>
               <span
                 v-else
-                class="text-secondary-text text-break"
+                class="text-break"
+                :style="{ 'color': uiConfiguration.secondaryTextColor }"
               >
                 {{ translateTrueFalse(subelement) }}
               </span>
             </div>
           </li>
           <li class="list-group-item p-3">
-            <span class="fs-5 fw-bold text-primary-text mt-3 mb-3">
+            <span 
+              class="fs-5 fw-bold mt-3 mb-3"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
+            >
               ATTACHMENTS
             </span>
             <NegotiationAttachment
@@ -126,7 +131,10 @@
                 aria-expanded="true"
                 type="button"
               >
-                <span class="fs-5 fw-bold text-primary-text mt-3">
+                <span 
+                  class="fs-5 fw-bold mt-3"
+                  :style="{ 'color': uiConfiguration.primaryTextColor }"
+                >
                   <i class="bi bi-diagram-3" />
                   SEARCH PARAMETERS
                 </span>
@@ -165,7 +173,10 @@
                   type="button"
                   title="The term Resource is abstract and can for example refer to biological samples, datasets or a service such as sequencing."
                 >
-                  <span class="fs-5 fw-bold text-primary-text mt-3">
+                  <span 
+                    class="fs-5 fw-bold mt-3"
+                    :style="{ 'color': uiConfiguration.primaryTextColor }"
+                  >
                     <i class="bi bi-buildings mx-2" />
                     ORGANIZATIONS ({{ Object.keys(organizationsById).length }}) |
                     <i class="bi bi-box-seam" />
@@ -215,8 +226,11 @@
                         <i class="bi bi-chevron-up" />
                       </div>
                       <div class="cursor-pointer">
-                        <i class="bi bi-buildings mx-2" />
-                        <label class="text-primary fw-bold ml-2 cursor-pointer">
+                        <i class="bi bi-buildings mx-2" :style="{ 'color': uiConfiguration.primaryTextColor }"/>
+                        <label 
+                          class="fw-bold ml-2 cursor-pointer"
+                          :style="{ 'color': uiConfiguration.secondaryTextColor }"
+                        >
                           {{ org.name }}
                         </label>
                       </div>
@@ -281,7 +295,8 @@
                       <div class="d-flex flex-row align-items-center flex-row">
                         <div>
                           <label
-                            class="form-check-label text-primary-text"
+                            class="form-check-label"
+                            :style="{ 'color': uiConfiguration.primaryTextColor }"
                             :for="getElementIdFromResourceId(resource.sourceId)"
                           >
                             <i class="bi bi-box-seam" />
@@ -290,7 +305,7 @@
                           <span class="badge rounded-pill bg-status-badge ms-4">
                             {{ getStatusForResource(resource.id) }}
                           </span>
-                          <div class="text-muted">
+                          <div :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7 }">
                             {{ resource.sourceId }}
                             <CopyTextButton :text="resource.sourceId" />
                           </div>
@@ -316,7 +331,6 @@
 
                       <div
                         v-for="link in getSubmissionLinks(resource._links)"
-                        class="text-muted"
                       >
                         <a
                           class="submission-text cursor-pointer"
@@ -328,7 +342,6 @@
                       </div>
                       <div
                         v-for="link in getRequirementLinks(resource._links)"
-                        class="text-muted"
                       >
                         <a
                           class="requirement-text cursor-pointer"
@@ -358,34 +371,51 @@
       <div class="col-12 col-md-4 order-1 order-md-2">
         <ul class="list-group list-group-flush my-3">
           <li class="list-group-item p-2">
-            <div class="fw-bold text-primary-text">
+            <div 
+              class="fw-bold"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
+            >
               Author:
             </div>
-            <div class="text-secondary-text">
+            <div 
+              :style="{ 'color': uiConfiguration.secondaryTextColor }"
+            >
               {{ author.name }}
             </div>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-primary-text">
+            <div 
+              class="fw-bold"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
+            >
               Email:
             </div>
-            <span class="text-secondary-text">{{ author.email }}</span>
+            <span :style="{ 'color': uiConfiguration.secondaryTextColor }">{{ author.email }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-primary-text">
+            <div 
+              class="fw-bold"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
+            >
               Negotiation ID:
             </div>
-            <span class="text-secondary-text"> {{ negotiation ? negotiation.id : "" }}</span>
+            <span :style="{ 'color': uiConfiguration.secondaryTextColor }"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div class="fw-bold text-primary-text">
+            <div 
+              class="fw-bold"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
+            >
               Submitted at:
             </div>
-            <span class="text-secondary-text"> {{ negotiation ? printDate(negotiation.creationDate) : "" }}</span>
+            <span :style="{ 'color': uiConfiguration.secondaryTextColor }"> {{ negotiation ? printDate(negotiation.creationDate) : "" }}</span>
           </li>
           <li class="list-group-item p-2 d-flex justify-content-between">
             <div>
-              <div class="fw-bold text-primary-text">
+              <div 
+                class="fw-bold"
+                :style="{ 'color': uiConfiguration.primaryTextColor }"
+              >
                 Status:
               </div>
               <span
@@ -444,6 +474,7 @@
               v-for="link in getSummaryLinks(negotiation._links)"
               :key="link"
               class="cursor-pointer"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
               @click="downloadAttachmentFromLink(link.href)"
             ><i class="bi bi-filetype-pdf" /> {{ link.title }}</a>
           </li>
@@ -492,10 +523,11 @@ import {
 } from "../composables/utils.js"
 import FormViewModal from "@/components/modals/FormViewModal.vue"
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
+import AddResourcesButton from "@/components/AddResourcesButton.vue"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
 import { useAdminStore } from "../store/admin.js"
-import AddResourcesButton from "@/components/AddResourcesButton.vue"
+import { useUiConfiguration } from '@/store/uiConfiguration.js'
 import { useRouter } from "vue-router"
 
 const props = defineProps({
@@ -520,7 +552,7 @@ function getSubmissionLinks (links) {
   }
   return submissionLinks
 }
-
+const uiConfigurationStore = useUiConfiguration()
 const infoRequirements = ref(undefined)
 const negotiation = ref(undefined)
 const requirementId = ref(undefined)
@@ -546,6 +578,9 @@ const negotiationPageStore = useNegotiationPageStore()
 const adminStore = useAdminStore()
 const router = useRouter()
 
+const uiConfiguration = computed(() => {
+    return uiConfigurationStore.uiConfiguration?.theme
+})
 const getResources = computed(() => {
   return resources.value
 })
@@ -890,6 +925,7 @@ function updateNegotiationPayload () {
 
 .submission-text {
   color: green;
+  opacity: 0.7
 }
 .unpack:hover {
   background-color: lightgray;    /* Light gray background on hover */
@@ -902,6 +938,7 @@ function updateNegotiationPayload () {
 
 .requirement-text {
   color: red;
+  opacity: 0.7
 }
 
 .lifecycle-text:hover {

@@ -63,7 +63,7 @@ describe('Test create negotiation', () => {
             // page 5
             //  Overview*
             cy.get(':nth-child(1) > .mb-3').should('be.visible')
-            cy.get('#Overview4 > :nth-child(1) > .text-primary').should('be.visible')
+            cy.get('#Overview4 > :nth-child(1)  > :nth-child(2)').should('be.visible')
 
             //    PROJECT
             cy.get('#Overview4 > :nth-child(2) > .mb-3').should('be.visible')

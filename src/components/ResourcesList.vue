@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="fs-5 fw-bold text-primary-text mt-3">
+    <span class="fs-5 fw-bold mt-3" :style="{'color': uiConfiguration?.primaryTextColor }">
       <i class="bi bi-card-list" />
       RESOURCES ({{ numberOfResources }})
     </span>
@@ -11,7 +11,8 @@
         class="card my-2"
       >
         <div
-          class="card-header cursor-pointer text-primary fw-bold"
+          class="card-header cursor-pointer fw-bold"
+          :style="{'color': uiConfiguration?.primaryTextColor }"
           data-bs-toggle="collapse"
           :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
           aria-expanded="true"
@@ -29,7 +30,7 @@
             class="card-body"
           >
             <span
-              class="text-secondary-text"
+              :style="{'color': uiConfiguration?.secondaryTextColor }"
               :for="getElementIdFromResourceId(resource.id)"
             >
               {{ resource.name }}
@@ -43,12 +44,19 @@
 
 <script setup>
 import { computed } from "vue"
+import { useUiConfiguration } from '../store/uiConfiguration.js'
 
 const props = defineProps({
   resources: {
     type: Array[Object],
     default: []
   }
+})
+
+const uiConfigurationStore = useUiConfiguration()
+
+const uiConfiguration = computed(() => {
+  return uiConfigurationStore.uiConfiguration?.theme
 })
 
 const organizations = computed(() => {
