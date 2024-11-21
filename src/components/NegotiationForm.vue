@@ -26,7 +26,10 @@
     />
   </div>
   <div v-else>
-    <div class="fs-3 mb-4 fw-bold text-center" :style="{'color': uiConfiguration?.primaryTextColor}">
+    <div v-if="isEditForm" class="fs-3 mb-4 fw-bold text-center" :style="{'color': uiConfiguration?.primaryTextColor}">
+      Edit Negotiation Form
+    </div>
+    <div v-else class="fs-3 mb-4 fw-bold text-center" :style="{'color': uiConfiguration?.primaryTextColor}">
       Access Form Submission
     </div>
     <form-wizard
@@ -225,6 +228,9 @@
           </div>
 
           <div v-else-if="criteria.type === 'FILE'">
+            <label v-if="isEditForm" class="form-label text-primary-text">
+              Uploaded file:  {{ negotiationCriteria[section.name][criteria.name].name }}
+            </label>
             <input
               accept=".pdf"
               class="form-control text-secondary-text"
@@ -373,17 +379,23 @@ import { FormWizard, TabContent } from "vue3-form-wizard"
 import { useNegotiationFormStore } from "../store/negotiationForm"
 import { useNotificationsStore } from "../store/notifications"
 import { useUiConfiguration } from '@/store/uiConfiguration.js'
+import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import "vue3-form-wizard/dist/style.css"
 
 const uiConfigurationStore = useUiConfiguration()
 const negotiationFormStore = useNegotiationFormStore()
 const notificationsStore = useNotificationsStore()
+const negotiationPageStore = useNegotiationPageStore()
 const router = useRouter()
 
 const props = defineProps({
   requestId: {
     type: String,
     default: undefined
+  },
+  isEditForm: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -412,8 +424,14 @@ const queryParameters = computed(() => {
 })
 
 onBeforeMount(async () => {
-  const result = await negotiationFormStore.retrieveRequestById(props.requestId)
-
+  let result = {}
+  let negotiation = {}
+  if(props.isEditForm) {
+    negotiation = await negotiationPageStore.retrieveNegotiationById(props.requestId)
+  } else {
+    result = await negotiationFormStore.retrieveRequestById(props.requestId)
+  }  
+  
   if (result.code) {
     if (result.code === 404) {
       showNotification("Error", "Request not found")
@@ -424,11 +442,17 @@ onBeforeMount(async () => {
     requestAlreadySubmittedNegotiationId.value = result.negotiationId
     showNotification("Error", "Request already submitted")
   } else {
-    resources.value = result.resources
-    humanReadableSearchParameters.value = result.humanReadable
-    accessForm.value = await negotiationFormStore.retrieveCombinedAccessForm(props.requestId)
+
+    if(props.isEditForm) {
+      accessForm.value = await negotiationFormStore.retrieveNegotiationCombinedAccessForm(props.requestId)
+      humanReadableSearchParameters.value = ''
+    } else {
+      accessForm.value = await negotiationFormStore.retrieveCombinedAccessForm(props.requestId)
+      resources.value = result.resources
+      humanReadableSearchParameters.value = result.humanReadable
+    }
     if (accessForm.value !== undefined) {
-      initNegotiationCriteria()
+      initNegotiationCriteria(negotiation?.payload)
     }
   }
 })
@@ -450,19 +474,28 @@ async function getValueSet (id) {
 }
 
 async function startNegotiation () {
-  if (requestAlreadySubmittedNegotiationId.value) {
-    backToNegotiation(requestAlreadySubmittedNegotiationId.value)
-    return
-  }
-  const data = {
-    request: props.requestId,
-    payload: negotiationCriteria.value
-  }
-  await negotiationFormStore.createNegotiation(data).then((negotiationId) => {
-    if (negotiationId) {
-      backToNegotiation(negotiationId)
+  if (props.isEditForm) {
+    const data = {
+      payload: negotiationCriteria.value
     }
-  })
+    await negotiationFormStore.updateNegotiationById(props.requestId, data).then(() => {
+        backToNegotiation(props.requestId)
+    })
+  } else {
+    if (requestAlreadySubmittedNegotiationId.value) {
+      backToNegotiation(requestAlreadySubmittedNegotiationId.value)
+      return
+    }
+    const data = {
+      request: props.requestId,
+      payload: negotiationCriteria.value
+    }
+    await negotiationFormStore.createNegotiation(data).then((negotiationId) => {
+      if (negotiationId) {
+        backToNegotiation(negotiationId)
+      }
+    })
+  }
 }
 
 function startModal () {
@@ -484,17 +517,44 @@ function showNotification (header, body) {
   notificationText.value = body
 }
 
-function initNegotiationCriteria () {
-  for (const section of accessForm.value.sections) {
-    negotiationCriteria.value[section.name] = {}
-    for (const criteria of section.elements) {
-      if (criteria.type === "MULTIPLE_CHOICE") {
-        negotiationCriteria.value[section.name][criteria.name] = []
-        getValueSet(criteria.id)
-      } else if (criteria.type === "SINGLE_CHOICE") {
-        getValueSet(criteria.id)
-      } else {
-        negotiationCriteria.value[section.name][criteria.name] = null
+function initNegotiationCriteria (negotiationPayload) {
+  if(negotiationPayload) {
+    for (const section of accessForm.value.sections) {
+      negotiationCriteria.value[section.name] = {}
+      for (const criteria of section.elements) {
+        if (criteria.type === "MULTIPLE_CHOICE") {
+          if(negotiationPayload[section.name][criteria.name]){
+            negotiationCriteria.value[section.name][criteria.name] = negotiationPayload[section.name][criteria.name]
+          }else {
+            negotiationCriteria.value[section.name][criteria.name] = []
+          }
+          getValueSet(criteria.id)
+        } else if (criteria.type === "SINGLE_CHOICE") {
+          negotiationCriteria.value[section.name][criteria.name] = negotiationPayload[section.name][criteria.name]
+          getValueSet(criteria.id)
+        } else if (criteria.type === "FILE") {
+          if(negotiationPayload[section.name][criteria.name]){
+            negotiationCriteria.value[section.name][criteria.name] = negotiationPayload[section.name][criteria.name]
+          }else {
+            negotiationCriteria.value[section.name][criteria.name] = {}
+          }
+        }else {
+          negotiationCriteria.value[section.name][criteria.name] = negotiationPayload[section.name][criteria.name]
+        }
+      }
+    }
+  } else {
+    for (const section of accessForm.value.sections) {
+      negotiationCriteria.value[section.name] = {}
+      for (const criteria of section.elements) {
+        if (criteria.type === "MULTIPLE_CHOICE") {
+          negotiationCriteria.value[section.name][criteria.name] = []
+          getValueSet(criteria.id)
+        } else if (criteria.type === "SINGLE_CHOICE") {
+          getValueSet(criteria.id)
+        } else {
+          negotiationCriteria.value[section.name][criteria.name] = null
+        }
       }
     }
   }
