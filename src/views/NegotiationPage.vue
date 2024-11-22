@@ -696,7 +696,9 @@ onBeforeMount(async () => {
     resources.value = resourceResponse._embedded.resources
     isAddResourcesButtonVisible.value = hasRightsToAddResources(resourceResponse._links)
   }
-  representedResourcesIds.value = await negotiationPageStore.retrieveUserRepresentedResources()
+  await negotiationPageStore.retrieveUserIdRepresentedResources(userStore.userInfo?.id).then((resp) => {
+    representedResourcesIds.value = resp.map(a => a.sourceId)
+  })
   negotiationStatusOptions.value = getLifecycleLinks(negotiation.value._links)
   resourceStates.value = await negotiationPageStore.retrieveResourceAllStates()
 })
