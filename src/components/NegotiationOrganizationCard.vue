@@ -25,8 +25,9 @@
     <div class="card-header">
       <div class="form-check d-flex">
         <div
-          class="d-flex justify-content-end pt-1 p-1 cursor-pointer unpack align-items-center"
+          class="collapse-organization d-flex justify-content-end pt-1 p-1 cursor-pointer unpack align-items-center"
           data-bs-toggle="collapse"
+          aria-expanded="false"
           :data-bs-target="`#card-body-block-${getElementIdFromResourceId(
             orgId
           )}`"
@@ -339,15 +340,15 @@ async function updateOrganization() {
 </script>
 
 <style scoped>
-.card-header[aria-expanded="true"] .bi-chevron-down {
+.collapse-organization[aria-expanded="true"] .bi-chevron-down {
   display: none;
 }
 
-.card-header:not([aria-expanded]) .bi-chevron-up {
+.collapse-organization:not([aria-expanded]) .bi-chevron-up {
   display: none;
 }
 
-.card-header[aria-expanded="false"] .bi-chevron-up {
+.collapse-organization[aria-expanded="false"] .bi-chevron-up {
   display: none;
 }
 </style>
