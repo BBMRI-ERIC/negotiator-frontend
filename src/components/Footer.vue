@@ -86,11 +86,12 @@
 
       <div class="col text-center">
         <a
-          v-if="uiConfiguration?.footerWorkProgrammeLink || uiConfiguration?.isFooterWorkProgrammeVisible || uiConfiguration?.footerWorkProgrammeText"
+          v-if="uiConfiguration?.isFooterWorkProgrammeVisible && (uiConfiguration?.footerWorkProgrammeLink || uiConfiguration?.footerWorkProgrammeText)"
           :style="{'color': uiConfiguration?.footerTextColor}"
           :href="uiConfiguration?.footerWorkProgrammeLink"
         >
           <img
+            v-if="uiConfiguration?.footerWorkProgrammeImageUrl"
             width="22"
             height="22"
             class="col"
@@ -100,7 +101,7 @@
           {{ uiConfiguration?.footerWorkProgrammeText }}
         </a>
         <div
-          v-if="uiConfiguration?.footerNewsletterLink || uiConfiguration?.isFooterNewsletterVisible || uiConfiguration?.footerNewsletterText"
+          v-if="uiConfiguration?.isFooterNewsletterVisible && (uiConfiguration?.footerNewsletterLink || uiConfiguration?.footerNewsletterText)"
           class="ms-md-3 mt-2"
         >
           <button
@@ -128,15 +129,12 @@
       <div>
         <div class="row mt-4">
           <div
-            v-if="uiConfiguration?.isFooterCopyRightVisible"
             class="col text-center"
             :style="{'color': uiConfiguration?.footerTextColor}"
           >
-            <p>{{ uiConfiguration?.footerCopyRightText }}</p>
+            <p>© 2024 BBMRI-ERIC</p>
           </div>
-          <div v-else class="col text-center"></div>
-          <div class="col text-center ms-4" :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}">
-            UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>{{ backendVersion }}</span>
+          <div class="col text-center ms-4">
           </div>
           <div
             v-if="uiConfiguration?.isFooterHelpLinkVisible"
@@ -146,6 +144,15 @@
             Need help? <a :href="uiConfiguration?.footerHelpLink" :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.7}">Contact us</a>.
           </div>
           <div v-else class="col text-center ms-5"></div>
+        </div>
+        <div class="text-center mb-3">
+          <span :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}">This application was created using the </span> 
+          <a href="https://github.com/BBMRI-ERIC/negotiator" :style="{'color': uiConfiguration?.footerTextColor}">BBMRI-ERIC Negotiator</a>  
+          <span :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}"> open source software </span>
+          <a href="https://github.com/BBMRI-ERIC/negotiator/blob/master/LICENSE" :style="{'color': uiConfiguration?.footerTextColor}">(license: LGPLv3)</a>
+          <div class="col text-center" :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}">
+            UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>{{ backendVersion }}</span>
+          </div>
         </div>
       </div>
     </div>
