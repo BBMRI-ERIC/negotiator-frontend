@@ -113,10 +113,10 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
       })
   }
 
-  function retrieveUserRepresentedResources () {
-    return axios.get(apiPaths.USER_RESOURCES_PATH, { headers: getBearerHeaders() })
+  async function retrieveUserIdRepresentedResources (userId) {
+    return await axios.get(`${apiPaths.BASE_API_PATH}/users/${userId}/resources`, { headers: getBearerHeaders() })
       .then((response) => {
-        return response.data
+        return response.data._embedded?.resources
       })
       .catch(() => {
         notifications.setNotification("Error getting User Represented Resources data from server")
@@ -254,7 +254,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
     retrieveAttachmentsByNegotiationId,
     addMessageToNegotiation,
     addAttachmentToNegotiation,
-    retrieveUserRepresentedResources,
+    retrieveUserIdRepresentedResources,
     downloadAttachment,
     retrieveResourcesByNegotiationId,
     downloadAttachmentFromLink,

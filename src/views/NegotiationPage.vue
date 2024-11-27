@@ -1,30 +1,11 @@
 <template>
   <div v-if="!loading">
     <GoBackButton />
-    <form-submission-modal
-      id="formSubmissionModal"
-      :title="requiredAccessForm.name"
-      :negotiation-id="negotiationId"
-      :requirement-id="requirementId"
-      :resource-id="resourceId"
-      :required-access-form-id="requiredAccessForm.id"
-      @confirm="hideFormSubmissionModal()"
-    />
-    <form-view-modal
-      id="formViewModal"
-      :payload="submittedForm"
-    />
     <confirmation-modal
       id="abandonModal"
       :title="`Are you sure you want to ${selectedStatus ? selectedStatus.toLowerCase() : 'Unknown'} this Negotiation?`"
       text="Please confirm your action."
       @confirm="updateNegotiation()"
-    />
-    <confirmation-modal
-      id="statusUpdateModal"
-      :title="`Status update for ${selectedOrganization ? selectedOrganization.name : 'Unknown'}`"
-      :text="`Are you sure you want to change the status of all ${selectedOrganization ? selectedOrganization.name : 'Unknown'} resources you represent in this Negotiation to ${orgStatus ? orgStatus.label : 'Unknown'} ?`"
-      @confirm="updateOrganization()"
     />
     <confirmation-modal
       id="negotiationUpdateModal"
@@ -206,153 +187,25 @@
               id="resourcesList"
               class="collapse show"
             >
-              <div
-                v-for="[orgId, org] in Object.entries(organizationsById)"
-                :key="orgId"
-                class="card mb-2"
-              >
-                <div
-                  class="card-header"
+              <div class="involved-organizations-resources">
+                <label v-if="Object.entries(representedOrganizationsById).length > 0" class="me-2 fw-bold" :style="{ 'color': uiConfiguration.secondaryTextColor }">
+                  Involved Organizations/Resources
+                </label>
+            
+                <div 
+                  v-for="[orgId, org] in Object.entries(representedOrganizationsById)"
+                  :key="orgId"
                 >
-                  <div class="form-check d-flex">
-                    <div
-                      class="d-flex justify-content-end pt-1 p-1 cursor-pointer unpack align-items-center"
-                      data-bs-toggle="collapse"
-                      :data-bs-target="`#card-body-block-${getElementIdFromResourceId(orgId)}`"
-                      :aria-controls="`card-body-block-${getElementIdFromResourceId(orgId)}`"
-                    >
-                      <div>
-                        <i class="bi bi-chevron-down" />
-                        <i class="bi bi-chevron-up" />
-                      </div>
-                      <div class="cursor-pointer">
-                        <i class="bi bi-buildings mx-2" :style="{ 'color': uiConfiguration.primaryTextColor }"/>
-                        <label 
-                          class="fw-bold ml-2 cursor-pointer"
-                          :style="{ 'color': uiConfiguration.secondaryTextColor }"
-                        >
-                          {{ org.name }}
-                        </label>
-                      </div>
-                    </div>
-                    <div class="ms-2 mx-2 ms-auto d-flex flex-column">
-                      <div
-                        class="ms-2 mx-2 ms-auto d-inline-flex align-items-center status-box p-1 cursor-pointer"
-                        role="button"
-                        title="Select current status.The term Resource is abstract and can for example refer to biological samples, datasets or a service such as sequencing."
-                        @click="toggleDropdown(orgId)"
-                      >
-                        <span
-                          class="badge"
-                          :class="getStatusColor(org.status)"
-                        >
-                          <i
-                            :class="getStatusIcon(org.status)"
-                            class="px-1"
-                          />
-                          {{ org.status?.replace(/_/g, ' ') || '' }}
-                        </span>
-                        <i
-                          v-if="org.updatable"
-                          class="bi bi-caret-down-fill icon-smaller mx-1"
-                        />
-                      </div>
-                      <div>
-                        <ul
-                          v-if="org.updatable"
-                          class="dropdown-menu"
-                          :class="{ 'show': dropdownVisible[orgId] }"
-                        >
-                          <li
-                            v-for="state in sortedStates"
-                            :key="state.value"
-                            class="dropdown-item cursor-pointer"
-                            data-bs-toggle="modal"
-                            data-bs-target="#statusUpdateModal"
-                            @click="updateOrgStatus(state, org, orgId)"
-                          >
-                            <i
-                              :class="getStatusIcon(state.value)"
-                              class="px-1"
-                            />
-                            {{ state.label }}
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                    <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
                 </div>
-                <div
-                  :id="`card-body-block-${getElementIdFromResourceId(orgId)}`"
-                  class="collapse multi-collapse"
+              </div>
+              <div class="not-involved-organizations-resources">
+                <hr v-if="Object.entries(representedOrganizationsById).length > 0 && Object.entries(notRepresentedOrganizationsById).length > 0"/>
+                <div 
+                  v-for="[orgId, org] in Object.entries(notRepresentedOrganizationsById)"
+                  :key="orgId"
                 >
-                  <div
-                    v-for="resource in org.resources"
-                    :key="resource.id"
-                    class="card-body"
-                  >
-                    <div class="form-check">
-                      <div class="d-flex flex-row align-items-center flex-row">
-                        <div>
-                          <label
-                            class="form-check-label"
-                            :style="{ 'color': uiConfiguration.primaryTextColor }"
-                            :for="getElementIdFromResourceId(resource.sourceId)"
-                          >
-                            <i class="bi bi-box-seam" />
-                            {{ resource.name }}
-                          </label>
-                          <span class="badge rounded-pill bg-status-badge ms-4">
-                            {{ getStatusForResource(resource.id) }}
-                          </span>
-                          <div :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7 }">
-                            {{ resource.sourceId }}
-                            <CopyTextButton :text="resource.sourceId" />
-                          </div>
-                        </div>
-                        <div
-                          v-if="getLifecycleLinks(resource._links).length > 0"
-                          class="ms-4"
-                        >
-                          Update status:
-                          <div
-                            v-for="link in getLifecycleLinks(resource._links)"
-                            class="lifecycle-links flex-column ms-4"
-                          >
-                            <a
-                              class="lifecycle-text cursor-pointer"
-                              @click="updateResourceState(link.href)"
-                            ><i
-                              class="bi bi-patch-check"
-                            /> {{ link.name }}</a>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div
-                        v-for="link in getSubmissionLinks(resource._links)"
-                      >
-                        <a
-                          class="submission-text cursor-pointer"
-                          @click.prevent="openFormModal(link.href)"
-                        ><i
-                           class="bi bi-check-circle"
-                         />
-                          {{ link.name }} </a>
-                      </div>
-                      <div
-                        v-for="link in getRequirementLinks(resource._links)"
-                      >
-                        <a
-                          class="requirement-text cursor-pointer"
-                          @click="openModal(link.href, resource.id)"
-                        ><i
-                          class="bi bi-exclamation-circle-fill"
-                        /> {{ link.title }} required</a>
-                      </div>
-                      <div class="col-12 col-md-4 order-2 order-md-2" />
-                    </div>
-                  </div>
+                    <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
                 </div>
               </div>
             </div>
@@ -506,9 +359,7 @@ import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
-import CopyTextButton from "@/components/CopyTextButton.vue"
-import { Modal } from "bootstrap"
-
+import NegotiationOrganizationCard from "@/components/NegotiationOrganizationCard.vue"
 import PDFButton from "@/components/PDFButton.vue"
 import { dateFormat, ROLES } from "@/config/consts"
 import moment from "moment"
@@ -517,12 +368,8 @@ import {
   getBadgeIcon,
   getButtonColor,
   getButtonIcon,
-  getStatusColor,
-  getStatusIcon,
   transformStatus
 } from "../composables/utils.js"
-import FormViewModal from "@/components/modals/FormViewModal.vue"
-import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue"
 import AddResourcesButton from "@/components/AddResourcesButton.vue"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
@@ -541,38 +388,16 @@ const props = defineProps({
   }
 })
 
-function getSubmissionLinks (links) {
-  const submissionLinks = []
-  for (const key in links) {
-    // Check if the key starts with "submission-"
-    if (key.startsWith("submission-")) {
-      // Push the href value of the link to the submissionLinks array
-      submissionLinks.push(links[key])
-    }
-  }
-  return submissionLinks
-}
 const uiConfigurationStore = useUiConfiguration()
-const infoRequirements = ref(undefined)
 const negotiation = ref(undefined)
-const requirementId = ref(undefined)
 const resources = ref([])
-const resourceId = ref(undefined)
 const representedResourcesIds = ref([])
 const negotiationStatusOptions = ref([])
 const availableRoles = ref(ROLES)
 const selectedStatus = ref(undefined)
 const attachments = ref([])
-const requiredAccessForm = ref({})
-const formSubmissionModal = ref(null)
-const submittedForm = ref(undefined)
-const formViewModal = ref(null)
 const isAddResourcesButtonVisible = ref(false)
 const resourceStates = ref([])
-const toParse = ref("Please read the <a href=\"https://www.canserv.eu/service-field-guidelines-open-call/\" target=\"_blank\">Service Field Guideline</a> as reference for the fields below")
-const dropdownVisible = reactive({})
-const selectedOrganization = ref(undefined)
-const orgStatus = ref(undefined)
 const userStore = useUserStore()
 const negotiationPageStore = useNegotiationPageStore()
 const adminStore = useAdminStore()
@@ -625,14 +450,25 @@ const organizationsById = computed(() => {
         updatable: isResourceRepresented(resource) // Set updateable to true if any resource is represented
       }
     }
-
+ 
     return organizations
   }, {})
 })
 
+const representedOrganizationsById = computed(() => {
+  return Object.entries(organizationsById.value)
+    .filter(([key, value]) => value.updatable === true)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+})
+
+const notRepresentedOrganizationsById = computed(() => {
+  return Object.entries(organizationsById.value)
+    .filter(([key, value]) => value.updatable === false)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+})
+
 // Helper function to check if a resource is represented
 function isResourceRepresented (resource) {
-  console.log(resource)
   for (const key in resource._links) {
     if (resource._links[key].title === "Next Lifecycle event") {
       return true
@@ -641,15 +477,6 @@ function isResourceRepresented (resource) {
   return false
 }
 
-const resourcesById = computed(() => {
-  return getResources.value.reduce((resourcesObjects, resource) => {
-    resourcesObjects[resource.id] = resource
-    return resourcesObjects
-  }, {})
-})
-const toggleDropdown = (orgId) => {
-  dropdownVisible[orgId] = !dropdownVisible[orgId]
-}
 const numberOfResources = computed(() => {
   return getResources.value.length
 })
@@ -674,9 +501,6 @@ const postsRecipients = computed(() => {
     })
   }
 })
-const sortedStates = computed(() => {
-  return resourceStates.value.slice().sort((a, b) => Number(a.ordinal) - Number(b.ordinal))
-})
 function assignStatus (status) {
   selectedStatus.value = status.toUpperCase()
 }
@@ -696,7 +520,11 @@ onBeforeMount(async () => {
     resources.value = resourceResponse._embedded.resources
     isAddResourcesButtonVisible.value = hasRightsToAddResources(resourceResponse._links)
   }
-  representedResourcesIds.value = await negotiationPageStore.retrieveUserRepresentedResources()
+  await negotiationPageStore.retrieveUserIdRepresentedResources(userStore.userInfo?.id).then((resp) => {
+    if(resp) {
+      representedResourcesIds.value = resp.map(a => a.sourceId)
+    }
+  })
   negotiationStatusOptions.value = getLifecycleLinks(negotiation.value._links)
   resourceStates.value = await negotiationPageStore.retrieveResourceAllStates()
 })
@@ -734,10 +562,6 @@ function isRepresentativeForOrganization (organizationId) {
   return representedOrganizations.value.map((org) => org.externalId).includes(organizationId)
 }
 
-function getStatusForResource (resourceId) {
-  const resource = resourcesById.value[resourceId].currentState
-  return transformStatus(resource)
-}
 
 function isAttachment (value) {
   return value instanceof Object
@@ -757,53 +581,6 @@ async function updateNegotiation () {
     )
   })
   await reloadResources()
-}
-
-async function updateOrganization () {
-  console.log(selectedOrganization.value)
-  const
-    data = {
-      resourceIds: getRepresentedResources(selectedOrganization.value.resources),
-      state: orgStatus.value.value
-    }
-  const negotiationId = props.negotiationId
-  await negotiationPageStore.addResources(data, negotiationId)
-  await reloadResources()
-}
-async function updateOrgStatus (state, organization, orgId) {
-  toggleDropdown(orgId)
-  selectedOrganization.value = organization
-  orgStatus.value = state
-}
-
-function getElementIdFromResourceId (resourceId) {
-  return resourceId.replaceAll(":", "_")
-}
-
-function getRequirementLinks (links) {
-  const requirementLinks = []
-  for (const key in links) {
-    if (key.startsWith("requirement-")) {
-      requirementLinks.push(links[key])
-    }
-  }
-  return requirementLinks
-}
-function getRepresentedResources (resources) {
-  const resourceIds = []
-
-  // Use for...of to iterate over the array of resources
-  for (const resource of resources) {
-    // Iterate over the _links of the resource
-    for (const key in resource._links) {
-      if (resource._links[key].title === "Next Lifecycle event") {
-        resourceIds.push(resource.id)
-        break // Exit inner loop when condition is met
-      }
-    }
-  }
-  console.log(resourceIds)
-  return resourceIds
 }
 
 function getLifecycleLinks (links) {
@@ -826,27 +603,6 @@ function getSummaryLinks (links) {
   return summaryLinks
 }
 
-async function openModal (href, resourcesId) {
-  const requirement = await negotiationPageStore.retrieveInfoRequirement(href)
-  resourceId.value = resourcesId
-  requiredAccessForm.value = requirement.requiredAccessForm
-  requirementId.value = requirement.id
-  formSubmissionModal.value = new Modal(document.querySelector("#formSubmissionModal"))
-  formSubmissionModal.value.show()
-}
-
-async function openFormModal (href) {
-  const payload = await negotiationPageStore.retrieveInformationSubmission(href)
-  submittedForm.value = payload.payload
-  formViewModal.value = new Modal(document.querySelector("#formViewModal"))
-  formViewModal.value.show()
-}
-
-async function updateResourceState (link) {
-  await negotiationPageStore.updateResourceStatus(link)
-  reloadResources()
-}
-
 function translateTrueFalse (value) {
   if (typeof value === "boolean") {
     return value ? "Yes" : "No"
@@ -861,10 +617,6 @@ async function reloadResources () {
   }
 }
 
-async function hideFormSubmissionModal () {
-  formSubmissionModal.value.hide()
-  await reloadResources()
-}
 
 function downloadAttachment (id, name) {
   negotiationPageStore.downloadAttachment(id, name)
@@ -892,18 +644,6 @@ function updateNegotiationPayload () {
 </script>
 
 <style scoped>
-.card-header[aria-expanded=true] .bi-chevron-down {
-  display: none;
-}
-
-.card-header:not([aria-expanded]) .bi-chevron-up {
-  display: none;
-}
-
-.card-header[aria-expanded=false] .bi-chevron-up {
-  display: none;
-}
-
 .collections-header[aria-expanded=true] .bi-chevron-down {
   display: none;
 }
