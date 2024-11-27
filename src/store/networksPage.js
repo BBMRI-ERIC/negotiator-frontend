@@ -6,10 +6,10 @@ import { useNotificationsStore } from "./notifications"
 export const useNetworksPageStore = defineStore("networksPage", () => {
   const notifications = useNotificationsStore()
 
-  function retrieveNetworkNegotiations (networkId, size, pageNumber) {
+  function retrieveNetworkNegotiations (networkId, size, pageNumber, role, filtersSortData) {
     const parameters = {
       headers: getBearerHeaders(),
-      params: { page: pageNumber, size },
+      params:{ size, page: pageNumber , role, status: filtersSortData.status, createdAfter: filtersSortData.dateStart, createdBefore: filtersSortData.dateEnd, sortBy: filtersSortData.sortBy, sortOrder: filtersSortData.sortDirection },
       paramsSerializer: { indexes: null }
     }
     return axios.get(`${apiPaths.BASE_API_PATH}/networks/${networkId}/negotiations`, parameters)

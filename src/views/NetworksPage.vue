@@ -252,18 +252,25 @@
           </div>
         </div>
       </div>
-      <div v-else-if="currentTab === 'negotiations'">
+      <div v-else-if="currentTab === 'negotiations'" class="mt-3">
+        <FilterSort
+          v-if="!loading"
+          :user-role="userRole"
+          :filters-status="states"
+          :filters-sort-data="filtersSortData"
+          @filters-sort-data="retrieveLatestNegotiations"
+        />
         <NegotiationList
           :negotiations="negotiations"
           :pagination="pagination"
           :network-activated="true"
           :filters-sort-data="filtersSortData"
-          @filters-sort-data="retrieveNegotiationsBySortAndFilter"
+          @filters-sort-data="retrieveLatestNegotiations"
         />
         <NegotiationPagination
           :negotiations="negotiations"
           :pagination="pagination"
-          @current-page-number="retrieveNegotiationsByPage"
+          @current-page-number="retrieveLatestNegotiations"
         />
       </div>
     </div>
@@ -278,8 +285,9 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/user"
 import { getBadgeColor, getBadgeIcon } from "@/composables/utils"
-import NegotiationPagination from "@/components/NegotiationPagination.vue"
+import FilterSort from "@/components/FilterSort.vue"
 import NegotiationList from "@/components/NegotiationList.vue"
+import NegotiationPagination from "@/components/NegotiationPagination.vue"
 import { useNegotiationsStore } from "@/store/negotiations"
 
 const props = defineProps({
@@ -321,6 +329,9 @@ const today = new Date()
 const startOfYear = new Date(today.getFullYear(), 0, 1)
 const startDate = ref(startOfYear.toISOString().slice(0, 10))
 const endDate = ref(today.toISOString().slice(0, 10))
+const userRole = ref('author')
+const currentPageNumber = ref(0)
+
 const total = computed(() => {
   return Object.values(stats.value).reduce((sum, stat) => sum + stat.value, 0)
 })
@@ -330,7 +341,7 @@ onMounted(async () => {
   }
   loadNegotiationStates()
   loadNetworkInfo(props.networkId)
-  retrieveLatestNegotiations(props.networkId)
+  retrieveLatestNegotiations()
   loadStats(props.networkId)
 })
 async function loadNegotiationStates () {
@@ -347,8 +358,8 @@ async function loadNetworkInfo (networkId) {
 async function loadStats (networkId) {
   stats.value = await networksPageStore.retrieveNetworkStats(networkId)
 }
-async function retrieveLatestNegotiations (networkId) {
-  const response = await networksPageStore.retrieveNetworkNegotiations(networkId, 10, 0)
+async function retrieveLatestNegotiations () {
+  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 10, currentPageNumber.value, userRole.value, filtersSortData.value)
   pagination.value = response.page
   if (response.page.totalElements === 0) {
     negotiations.value = {}
