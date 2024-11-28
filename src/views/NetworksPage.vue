@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div v-if="isLoaded">
     <div class="container">
       <div class="organization-details">
         <div class="avatar">
@@ -7,7 +7,7 @@
         </div>
         <div class="organization-info ms-3">
           <h1 class="h2 lh-condensed">
-            {{ network.name.toUpperCase() }}
+            {{ network?.name?.toUpperCase() }}
           </h1>
           <ul class="list-style-none">
             <li>
@@ -252,9 +252,12 @@
           </div>
         </div>
       </div>
-      <div v-else-if="currentTab === 'negotiations'" class="mt-3">
+      <div
+        v-else-if="currentTab === 'negotiations'"
+        class="mt-3"
+      >
         <FilterSort
-          v-if="!loading"
+          v-if="isLoaded"
           :user-role="userRole"
           :filters-status="states"
           :filters-sort-data="filtersSortData"
@@ -279,7 +282,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 import { useNetworksPageStore } from "@/store/networksPage"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { useRouter } from "vue-router"
@@ -303,9 +306,6 @@ const networksPageStore = useNetworksPageStore()
 const network = ref(undefined)
 const negotiations = ref(undefined)
 const currentTab = ref("overview") // Default tab
-const loading = computed(() => {
-  return network.value === undefined && negotiations.value === undefined && stats.value === undefined
-})
 const stats = ref(undefined)
 const userStats = ref({
   total: 5,
@@ -329,24 +329,25 @@ const today = new Date()
 const startOfYear = new Date(today.getFullYear(), 0, 1)
 const startDate = ref(startOfYear.toISOString().slice(0, 10))
 const endDate = ref(today.toISOString().slice(0, 10))
-const userRole = ref('author')
-const currentPageNumber = ref(0)
-
-const total = computed(() => {
-  return Object.values(stats.value).reduce((sum, stat) => sum + stat.value, 0)
-})
+const userRole = ref("author")
+const pageNumber = ref(0)
+const isLoaded = ref(false)
 onMounted(async () => {
-  if (Object.keys(userStore.userInfo).length === 0) {
-    await userStore.retrieveUser()
-  }
-  loadNegotiationStates()
-  loadNetworkInfo(props.networkId)
-  retrieveLatestNegotiations()
-  loadStats(props.networkId)
+  await userStore.retrieveUser()
 })
+watch(
+  [network, states, stats],
+  ([newNetwork, newStates, newStats]) => {
+    isLoaded.value = !!(newNetwork && newStates && newStats)
+  },
+  { immediate: true } // Run the watcher immediately on component mount
+)
+loadNetworkInfo(props.networkId)
+loadStats(props.networkId)
+loadNegotiationStates()
+retrieveLatestNegotiations()
 async function loadNegotiationStates () {
   states.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
-  console.log(states.value)
 }
 function getLabelByValue (value) {
   const item = states.value.find(entry => entry.value === value)
@@ -358,8 +359,11 @@ async function loadNetworkInfo (networkId) {
 async function loadStats (networkId) {
   stats.value = await networksPageStore.retrieveNetworkStats(networkId)
 }
-async function retrieveLatestNegotiations () {
-  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 10, currentPageNumber.value, userRole.value, filtersSortData.value)
+async function retrieveLatestNegotiations (currentPageNumber) {
+  if (currentPageNumber) {
+    pageNumber.value = currentPageNumber - 1
+  }
+  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 1, pageNumber.value, filtersSortData.value)
   pagination.value = response.page
   if (response.page.totalElements === 0) {
     negotiations.value = {}
@@ -367,16 +371,6 @@ async function retrieveLatestNegotiations () {
     negotiations.value = response._embedded.negotiations
   }
 }
-
-function goToNegotiation (id) {
-  if (!props.networkActivated) {
-    router.push({
-      name: "negotiation-page",
-      params: { negotiationId: id }
-    })
-  }
-}
-
 </script>
 <style>
 .avatar {
