@@ -96,13 +96,6 @@
             href="mailto:negotiator@helpdesk.bbmri-eric.eu"
           >Contact us</a>.
         </div>
-        <div class="text-center col mb-2">
-          <i class="bi bi-github" />
-          <a
-          :style="{'color':uiConfiguration?.loginLinksColor}"
-            href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
-          > GitHub</a>
-        </div>
         <div class="text-center">
           <span :style="{'color': uiConfiguration?.loginLinksTextColor, 'opacity':0.5}">This application was created using the </span> 
           <a href="https://github.com/BBMRI-ERIC/negotiator" :style="{'color': uiConfiguration?.loginLinksColor}">BBMRI-ERIC Negotiator</a>  
