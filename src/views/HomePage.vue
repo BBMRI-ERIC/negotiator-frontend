@@ -103,6 +103,12 @@
             href="https://github.com/BBMRI-ERIC/negotiator-v3-frontend"
           > GitHub</a>
         </div>
+        <div class="text-center">
+          <span :style="{'color': uiConfiguration?.loginLinksTextColor, 'opacity':0.5}">This application was created using the </span> 
+          <a href="https://github.com/BBMRI-ERIC/negotiator" :style="{'color': uiConfiguration?.loginLinksColor}">BBMRI-ERIC Negotiator</a>  
+          <span :style="{'color': uiConfiguration?.loginLinksTextColor, 'opacity':0.5}"> open source software </span>
+          <a href="https://github.com/BBMRI-ERIC/negotiator/blob/master/LICENSE" :style="{'color': uiConfiguration?.loginLinksColor}">(license: LGPLv3)</a>
+        </div>
         <div class="text-center version-class"
         :style="{'color':uiConfiguration?.loginLinksTextColor, 'opacity': 0.5}">
           UI version: <span class="pe-2">{{ gitTag }}</span>Server version: <span>{{ backendVersion }}</span>
