@@ -147,110 +147,6 @@
             </div>
           </div>
         </div>
-        <div class="card mt-4">
-          <div class="card-body">
-            <span />
-            <div class="d-flex flex-row mb-4">
-              <h4 class="card-title">
-                Users
-              </h4>
-              <i
-                class="bi bi-info-circle ml-2 mx-1 small-icon"
-                title="Stats for users involved with this Network"
-              />
-            </div>
-            <div class="row text-center">
-              <div class="col-md-4">
-                <div class="stat-box">
-                  <h5>{{ userStats.total }}</h5>
-                  <p class="text-muted">
-                    Total
-                    <i
-                      class="bi bi-info-circle small-icon"
-                      title="Total number of users that have requested access to Resources in this Network"
-                    />
-                  </p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="stat-box">
-                  <h5>{{ userStats.new }}</h5>
-                  <p class="text-muted">
-                    New
-                    <i
-                      class="bi bi-info-circle small-icon"
-                      title="Number of new requesters"
-                    />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card mt-4">
-          <div class="card-body">
-            <span />
-            <div class="d-flex flex-row mb-4">
-              <h4 class="card-title">
-                Organizations
-              </h4>
-              <i
-                class="bi bi-info-circle ml-2 mx-1 small-icon"
-                title="Stats for Network Organizations involved in Negotiations"
-              />
-            </div>
-            <div class="row text-center">
-              <div class="col-md-4">
-                <div class="stat-box">
-                  <h5>{{ orgStats.total }}</h5>
-                  <p class="text-muted">
-                    Total
-                    <i
-                      class="bi bi-info-circle small-icon"
-                      title="Total number of users that have requested access to Resources in this Network"
-                    />
-                  </p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="stat-box">
-                  <h5>{{ orgStats.responsive }}</h5>
-                  <p class="text-muted">
-                    Responsive
-                    <i
-                      class="bi bi-info-circle small-icon"
-                      title="Organizations that have updated a state or left a comment"
-                    />
-                  </p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="stat-box">
-                  <h5>{{ orgStats.unresponsive }}</h5>
-                  <p class="text-muted">
-                    Unresponsive
-                    <i
-                      class="bi bi-info-circle small-icon"
-                      title="Organizations that haven't updated a state or left a comment"
-                    />
-                  </p>
-                </div>
-              </div>
-              <div class="col-md-4 mt-2">
-                <div class="stat-box">
-                  <h5>{{ orgStats.responsive }}</h5>
-                  <p class="text-muted">
-                    Successful
-                    <i
-                      class="bi bi-info-circle small-icon"
-                      title="Organizations that gave the requester access to Resources in this Network"
-                    />
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
       <div
         v-else-if="currentTab === 'negotiations'"
@@ -282,7 +178,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue"
+import { onMounted, ref, watch } from "vue"
 import { useNetworksPageStore } from "@/store/networksPage"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { useRouter } from "vue-router"
