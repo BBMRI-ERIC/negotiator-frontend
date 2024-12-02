@@ -214,7 +214,6 @@
         <NegotiationPosts
           v-if="negotiation"
           :negotiation="negotiation"
-          :user-role="userRole"
           :resources="resources"
           :organizations="organizationsById"
           :recipients="postsRecipients"
@@ -283,35 +282,31 @@
               }}</span>
             </div>
           </li>
-          <li 
+          <li
             v-if="getLifecycleLinks(negotiation._links).length > 0"
             class="list-group-item p-2 d-flex justify-content-between"
           >
             <ul class="list-unstyled mt-1 d-flex flex-row flex-wrap">
               <li
-                  v-for="link in getLifecycleLinks(negotiation._links)"
-                  :key="link.name"
-                  class="me-2"
+                v-for="link in getLifecycleLinks(negotiation._links)"
+                :key="link.name"
+                class="me-2"
+              >
+                <button
+                  :class="getButtonColor(link.name)"
+                  class="btn btn-status mb-1 d-flex text-left"
+                  data-bs-toggle="modal"
+                  data-bs-target="#abandonModal"
+                  @click="assignStatus(link.name)"
                 >
-                  <button
-                    :class="getButtonColor(link.name)"
-                    class="btn btn-status mb-1 d-flex text-left"
-                    data-bs-toggle="modal"
-                    data-bs-target="#abandonModal"
-                    @click="assignStatus(link.name)"
-                  >
-                    <i
-                      :class="getButtonIcon(link.name)"
-                    />
-                    {{ link.name }}
-                  </button>
-                </li>
+                  <i
+                    :class="getButtonIcon(link.name)"
+                  />
+                  {{ link.name }}
+                </button>
+              </li>
             </ul>
           </li>
-          <li
-            v-if="userRole === availableRoles.ADMINISTRATOR && negotiation.status === 'SUBMITTED'"
-            class="list-group-item p-2"
-          />
 
           <li class="list-group-item p-2 btn-sm border-bottom-0">
             <PDFButton
@@ -379,10 +374,6 @@ import { useRouter } from "vue-router"
 
 const props = defineProps({
   negotiationId: {
-    type: String,
-    default: undefined
-  },
-  userRole: {
     type: String,
     default: undefined
   }
@@ -491,15 +482,9 @@ const representedOrganizations = computed(() => {
   )
 })
 const postsRecipients = computed(() => {
-  if (props.userRole === ROLES.RESEARCHER) {
-    return organizations.value.map(org => {
-      return { id: org.externalId, name: org.name }
-    })
-  } else {
-    return representedOrganizations.value.map(org => {
-      return { id: org.externalId, name: org.name }
-    })
-  }
+  return organizations.value.map(org => {
+    return { id: org.externalId, name: org.name }
+  })
 })
 function assignStatus (status) {
   selectedStatus.value = status.toUpperCase()

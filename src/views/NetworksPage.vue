@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div v-if="isLoaded">
     <div class="container">
       <div class="organization-details">
         <div class="avatar">
@@ -7,7 +7,7 @@
         </div>
         <div class="organization-info ms-3">
           <h1 class="h2 lh-condensed">
-            {{ network.name.toUpperCase() }}
+            {{ network?.name?.toUpperCase() }}
           </h1>
           <ul class="list-style-none">
             <li>
@@ -33,92 +33,161 @@
           </ul>
         </div>
       </div>
-      <h4 class="mb-4">
-        <i class="bi bi-graph-up" />
-        Insights:
-      </h4>
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">
-            Statistics Overview
-          </h4>
-          <div class="progress mb-4">
-            <div
-              v-for="(count, status) in stats.statusDistribution"
-              :key="status"
-              :class="['progress-bar', getBadgeColor(status)]"
-              :style="{ width: (count / stats.totalNumberOfNegotiations * 100) + '%' }"
-            >
-              {{ count }} {{ status }}
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs">
+        <li class="nav-item tab cursor-pointer">
+          <a
+            class="nav-link"
+            :class="{ active: currentTab === 'overview' }"
+            @click="currentTab = 'overview'"
+          >
+            Overview
+          </a>
+        </li>
+        <li class="nav-item tab cursor-pointer">
+          <a
+            class="nav-link"
+            :class="{ active: currentTab === 'negotiations' }"
+            @click="currentTab = 'negotiations'"
+          >
+            Negotiations
+          </a>
+        </li>
+      </ul>
+      <div v-if="currentTab === 'overview'">
+        <h4 class="mb-4 mt-5">
+          <i class="bi bi-graph-up" />
+          Insights
+        </h4>
+        <p class="text-muted">
+          The overview visible bellow is generated for the selected period
+        </p>
+        <div class="mb-4">
+          <div class="mb-4">
+            <div class="form-group d-inline-block mr-3">
+              <label
+                for="startDate"
+                class="form-label"
+              >Start Date:</label>
+              <input
+                id="startDate"
+                v-model="startDate"
+                type="date"
+                class="form-control"
+              >
+            </div>
+
+            <div class="form-group d-inline-block mx-4">
+              <label
+                for="endDate"
+                class="form-label"
+              >End Date:</label>
+              <input
+                id="endDate"
+                v-model="endDate"
+                type="date"
+                class="form-control"
+              >
             </div>
           </div>
-          <div class="row text-center">
-            <div class="col-md-4">
-              <div class="stat-box">
-                <h5>{{ stats.totalNumberOfNegotiations }}</h5>
-                <p class="text-muted">
-                  Total
-                </p>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <span />
+            <div class="d-flex flex-row mb-4">
+              <h4 class="card-title">
+                State of Negotiations
+              </h4>
+              <i
+                class="bi bi-info-circle ml-2 mx-1 small-icon"
+                title="States of different Negotiations involving Resources in this Network"
+              />
+            </div>
+
+            <div class="progress mb-4">
+              <div
+                v-for="(count, status) in stats.statusDistribution"
+                :key="status"
+                :class="['progress-bar', getBadgeColor(status)]"
+                :style="{ width: (count / stats.totalNumberOfNegotiations * 100) + '%' }"
+              >
+                {{ count }} {{ getLabelByValue(status) }}
               </div>
             </div>
-            <div
-              v-for="(count, status) in stats.statusDistribution"
-              :key="status"
-              class="col-md-4"
-            >
-              <div class="stat-box">
-                <h5>{{ count }}</h5>
-                <p class="text-muted">
-                  {{ status }}
-                </p>
+            <div class="row text-center">
+              <div class="col-md-4">
+                <div class="stat-box mt-2">
+                  <h5>{{ stats.totalNumberOfNegotiations }}</h5>
+                  <p class="text-muted">
+                    Total
+                    <i
+                      class="bi bi-info-circle small-icon"
+                      title="Number of Negotiations that involve resources in this network."
+                    />
+                  </p>
+                </div>
+              </div>
+              <div
+                v-for="(count, status) in stats.statusDistribution"
+                :key="status"
+                class="col-md-4"
+              >
+                <div class="stat-box mt-2">
+                  <h5>
+                    <i
+                      :class="getBadgeIcon(status)"
+                      class="small-icon px-1"
+                    />{{ count }}
+                  </h5>
+                  <p class="text-muted">
+                    {{ getLabelByValue(status) }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="d-flex align-items-center my-4">
-        <hr class="flex-grow-1">
-        <span class="mx-3 text-muted"> <i class="bi bi-circle" /> Latest Negotiations</span>
-        <hr class="flex-grow-1">
+      <div
+        v-else-if="currentTab === 'negotiations'"
+        class="mt-3"
+      >
+        <FilterSort
+          v-if="isLoaded"
+          :user-role="userRole"
+          :filters-status="states"
+          :filters-sort-data="filtersSortData"
+          @filters-sort-data="retrieveLatestNegotiations"
+        />
+        <NegotiationList
+          :negotiations="negotiations"
+          :pagination="pagination"
+          :network-activated="true"
+          :filters-sort-data="filtersSortData"
+          @filters-sort-data="retrieveLatestNegotiations"
+        />
+        <NegotiationPagination
+          :negotiations="negotiations"
+          :pagination="pagination"
+          @current-page-number="retrieveLatestNegotiations"
+        />
       </div>
-      <ul class="list-unstyled">
-        <li
-          v-for="negotiation in negotiations"
-          :key="negotiation.id"
-        >
-          <div class="d-flex align-items-center">
-            <span
-              class="badge"
-              :class="getBadgeColor(negotiation.status)"
-              style="width: 120px;"
-            >
-              <i
-                :class="getBadgeIcon(negotiation.status)"
-                class="px-1"
-              />
-              {{ transformStatus(negotiation.status) }}
-            </span>
-            <h5 class="mb-0 ms-1">
-              {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
-            </h5>
-          </div>
-          <p class="text-muted small">
-            #{{ negotiation.id }} &bullet; Created on: {{ new Date(negotiation.creationDate).toLocaleDateString() }}
-          </p>
-        </li>
-      </ul>
     </div>
   </div>
   <LoadingSpinner v-else: />
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue"
+import { onMounted, ref, watch } from "vue"
 import { useNetworksPageStore } from "@/store/networksPage"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import { useRoute } from "vue-router"
+import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/user"
-import { getBadgeColor, getBadgeIcon, transformStatus } from "@/composables/utils"
+import { getBadgeColor, getBadgeIcon } from "@/composables/utils"
+import FilterSort from "@/components/FilterSort.vue"
+import NegotiationList from "@/components/NegotiationList.vue"
+import NegotiationPagination from "@/components/NegotiationPagination.vue"
+import { useNegotiationsStore } from "@/store/negotiations"
 
 const props = defineProps({
   networkId: {
@@ -126,38 +195,78 @@ const props = defineProps({
     required: true
   }
 })
-const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
+const negotiationsStore = useNegotiationsStore()
 const networksPageStore = useNetworksPageStore()
 const network = ref(undefined)
 const negotiations = ref(undefined)
-const loading = computed(() => {
-  return network.value === undefined && negotiations.value === undefined
-})
+const currentTab = ref("overview") // Default tab
 const stats = ref(undefined)
-const total = computed(() => {
-  return Object.values(stats.value).reduce((sum, stat) => sum + stat.value, 0)
+const userStats = ref({
+  total: 5,
+  new: 0
 })
+const orgStats = ref({
+  total: 5,
+  responsive: 3,
+  unresponsive: 2
+})
+const pagination = ref(undefined)
+const states = ref(undefined)
+const filtersSortData = ref({
+  status: [],
+  dateStart: "",
+  dateEnd: "",
+  sortBy: "creationDate",
+  sortDirection: "DESC"
+})
+const today = new Date()
+const startOfYear = new Date(today.getFullYear(), 0, 1)
+const startDate = ref(startOfYear.toISOString().slice(0, 10))
+const endDate = ref(today.toISOString().slice(0, 10))
+const userRole = ref("author")
+const pageNumber = ref(0)
+const isLoaded = ref(false)
 onMounted(async () => {
-  if (Object.keys(userStore.userInfo).length === 0) {
-    await userStore.retrieveUser()
-  }
-  loadNetworkInfo(props.networkId)
-  retrieveLatestNegotiations(props.networkId)
-  loadStats(props.networkId)
+  await userStore.retrieveUser()
 })
-
+watch(
+  [network, states, stats],
+  ([newNetwork, newStates, newStats]) => {
+    isLoaded.value = !!(newNetwork && newStates && newStats)
+  },
+  { immediate: true } // Run the watcher immediately on component mount
+)
+loadNetworkInfo(props.networkId)
+loadStats(props.networkId)
+loadNegotiationStates()
+retrieveLatestNegotiations()
+async function loadNegotiationStates () {
+  states.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
+}
+function getLabelByValue (value) {
+  const item = states.value.find(entry => entry.value === value)
+  return item ? item.label : null // Returns null if the value is not found
+}
 async function loadNetworkInfo (networkId) {
   network.value = await networksPageStore.retrieveNetwork(networkId)
 }
 async function loadStats (networkId) {
   stats.value = await networksPageStore.retrieveNetworkStats(networkId)
 }
-async function retrieveLatestNegotiations (networkId) {
-  const response = await networksPageStore.retrieveNetworkNegotiations(networkId)
-  negotiations.value = response._embedded.negotiations
+async function retrieveLatestNegotiations (currentPageNumber) {
+  if (currentPageNumber) {
+    pageNumber.value = currentPageNumber - 1
+  }
+  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 1, pageNumber.value, filtersSortData.value)
+  pagination.value = response.page
+  if (response.page.totalElements === 0) {
+    negotiations.value = {}
+  } else {
+    negotiations.value = response._embedded.negotiations
+  }
 }
-
 </script>
 <style>
 .avatar {
@@ -178,7 +287,6 @@ async function retrieveLatestNegotiations (networkId) {
   margin-top: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #d1d5da;
 }
 .organization-details img {
   margin-bottom: 1rem;
@@ -235,5 +343,17 @@ async function retrieveLatestNegotiations (networkId) {
 }
 .stat-box h5 {
   margin-bottom: 0;
+}
+.negotiation-item:hover {
+  background-color: rgba(0, 0, 0, 0.075); /* Default Bootstrap hover color */
+}
+.small-icon{
+  font-size: 0.75rem;
+}
+.tab.active {
+  font-weight: bold;
+  color: #0d6efd !important; /* Bootstrap primary color */
+  background-color: #e9ecef; /* Light gray background */
+  border-color: #dee2e6 #dee2e6 #fff; /* Highlighted border */
 }
 </style>

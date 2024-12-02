@@ -3,7 +3,7 @@
     v-if="!loading"
     class="container"
   >
-    <NewRequestButton v-if="!networkActivated"/>
+    <NewRequestButton v-if="!networkActivated" />
     <div class="pt-1">
       <div class="row row-cols-2 d-grid-row mt-5 pt-3">
         <p>
@@ -138,7 +138,6 @@
               <tr
                 v-for="(fn,index) in negotiations"
                 :key="index"
-                :style="[networkActivated === true ? {cursor: pointer} : {cursor: none}]"
                 @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
               >
                 <th
@@ -235,12 +234,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from "vue"
+import { computed, onBeforeMount, ref } from "vue"
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
 import moment from "moment"
 import { useRouter } from "vue-router"
-import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
+import { getBadgeColor, getBadgeIcon, transformStatus } from "../composables/utils.js"
 import NewRequestButton from "../components/NewRequestButton.vue"
 import { useNegotiationsViewStore } from "../store/negotiationsView.js"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
@@ -321,12 +320,10 @@ function emitFilterSortData () {
   emit("filtersSortData", props.filtersSortData)
 }
 
-function goToNegotiation(id,userRole,filtersData,sortby) {
-  if(!props.networkActivated){
-      router.push({
-        name: 'negotiation-page',
-        params: { negotiationId: id, userRole: userRole, filters: filtersData, sortBy: sortby }
-      })
-    }
-  }
+function goToNegotiation (id, userRole, filtersData, sortby) {
+  router.push({
+    name: "negotiation-page",
+    params: { negotiationId: id, filters: filtersData, sortBy: sortby }
+  })
+}
 </script>

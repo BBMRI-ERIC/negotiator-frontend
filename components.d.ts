@@ -28,6 +28,7 @@ declare module '@vue/runtime-core' {
     NegotiationCard: typeof import('./src/components/NegotiationCard.vue')['default']
     NegotiationForm: typeof import('./src/components/NegotiationForm.vue')['default']
     NegotiationList: typeof import('./src/components/NegotiationList.vue')['default']
+    NegotiationOrganizationCard: typeof import('./src/components/NegotiationOrganizationCard.vue')['default']
     NegotiationPagination: typeof import('./src/components/NegotiationPagination.vue')['default']
     NegotiationPosts: typeof import('./src/components/NegotiationPosts.vue')['default']
     NegotiatorModal: typeof import('./src/components/modals/NegotiatorModal.vue')['default']

@@ -117,9 +117,9 @@
           class="dropdown-menu"
           aria-labelledby="dropdownMenuButton1"
         >
-          <div 
-          class="mx-2 my-2 dropdown-contents"                 
-          :style="{'color':uiConfiguration?.filtersSortDropdownTextColor}"
+          <div
+            class="mx-2 my-2 dropdown-contents"
+            :style="{'color':uiConfiguration?.filtersSortDropdownTextColor}"
           >
             <div class="d-flex align-items-center mb-2">
               <label
@@ -169,10 +169,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue"
 import { ROLES } from "@/config/consts"
 import { useRouter } from "vue-router"
-import { useUiConfiguration } from '../store/uiConfiguration.js'
+import { useUiConfiguration } from "../store/uiConfiguration.js"
 
 const uiConfigurationStore = useUiConfiguration()
 const router = useRouter()
@@ -206,14 +206,14 @@ const uiConfiguration = computed(() => {
 })
 
 const returnButtonActiveColor = computed(() => {
-    return {'border-color': uiConfiguration.value?.filtersSortButtonColor,'--hovercolor': uiConfiguration.value?.filtersSortButtonColor,'background-color': uiConfiguration.value?.filtersSortButtonColor,'color': '#FFFFFF'}
+  return { "border-color": uiConfiguration.value?.filtersSortButtonColor, "--hovercolor": uiConfiguration.value?.filtersSortButtonColor, "background-color": uiConfiguration.value?.filtersSortButtonColor, color: "#FFFFFF" }
 })
 const returnButtonColor = computed(() => {
-  return  {'border-color': uiConfiguration.value?.filtersSortButtonColor,'--hovercolor': uiConfiguration.value?.filtersSortButtonColor,'background-color': '#FFFFFF','color':uiConfiguration.value?.filtersSortButtonColor}
+  return { "border-color": uiConfiguration.value?.filtersSortButtonColor, "--hovercolor": uiConfiguration.value?.filtersSortButtonColor, "background-color": "#FFFFFF", color: uiConfiguration.value?.filtersSortButtonColor }
 })
 
 const returnClearButtonColor = computed(() => {
-  return  {'border-color': uiConfiguration.value?.filtersSortClearButtonColor,'--hovercolor': uiConfiguration.value?.filtersSortClearButtonColor,'background-color': '#FFFFFF','color':uiConfiguration.value?.filtersSortClearButtonColor}
+  return { "border-color": uiConfiguration.value?.filtersSortClearButtonColor, "--hovercolor": uiConfiguration.value?.filtersSortClearButtonColor, "background-color": "#FFFFFF", color: uiConfiguration.value?.filtersSortClearButtonColor }
 })
 
 function emitFilterSortData () {
@@ -233,7 +233,7 @@ function clearAllFilters () {
   props.filtersSortData.status = []
   props.filtersSortData.dateStart = ""
   props.filtersSortData.dateEnd = ""
-  props.filtersSortData.sortBy = ""
+  props.filtersSortData.sortBy = "creationDate"
   props.filtersSortData.sortDirection = "DESC"
 
   emit("filtersSortData", props.filtersSortData)
