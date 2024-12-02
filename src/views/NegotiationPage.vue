@@ -1,11 +1,11 @@
 <template>
   <div v-if="!loading">
     <GoBackButton />
-    <confirmation-modal
+    <dismissal-confirmation-modal
       id="abandonModal"
       :title="`Are you sure you want to ${selectedStatus ? selectedStatus.toLowerCase() : 'Unknown'} this Negotiation?`"
-      text="Please confirm your action."
-      @confirm="updateNegotiation()"
+      text="Before confirming, please add the reason for rejection"
+      @confirm="updateNegotiation"
     />
     <confirmation-modal
       id="negotiationUpdateModal"
@@ -349,9 +349,10 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, reactive, ref } from "vue"
+import { computed, onBeforeMount, onMounted, ref } from "vue"
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
+import DismissalConfirmationModal from "@/components/modals/DismissalConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import NegotiationOrganizationCard from "@/components/NegotiationOrganizationCard.vue"
@@ -395,7 +396,7 @@ const adminStore = useAdminStore()
 const router = useRouter()
 
 const uiConfiguration = computed(() => {
-    return uiConfigurationStore.uiConfiguration?.theme
+  return uiConfigurationStore.uiConfiguration?.theme
 })
 const getResources = computed(() => {
   return resources.value
@@ -556,10 +557,11 @@ function printDate (date) {
   return moment(date).format(dateFormat)
 }
 
-async function updateNegotiation () {
+async function updateNegotiation (details) {
   await negotiationPageStore.updateNegotiationStatus(
     negotiation.value.id,
-    selectedStatus.value
+    selectedStatus.value,
+    details
   ).then(async () => {
     negotiation.value = await negotiationPageStore.retrieveNegotiationById(
       props.negotiationId

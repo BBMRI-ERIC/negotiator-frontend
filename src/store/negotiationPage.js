@@ -6,8 +6,8 @@ import { useNotificationsStore } from "./notifications"
 export const useNegotiationPageStore = defineStore("negotiationPage", () => {
   const notifications = useNotificationsStore()
 
-  function updateNegotiationStatus (negotiationId, event) {
-    return axios.put(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, {}, { headers: getBearerHeaders() })
+  function updateNegotiationStatus (negotiationId, event, details) {
+    return axios.put(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}/lifecycle/${event}`, { details }, { headers: getBearerHeaders() })
       .then((response) => {
         notifications.setNotification(`Negotiation updated correctly with data ${response.data.id}`)
         return response.data
