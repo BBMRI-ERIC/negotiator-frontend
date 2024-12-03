@@ -8,7 +8,8 @@
         {{ text }}
       </div>
       <input
-        v-model="details"
+        v-if="messageRequired"
+        v-model="message"
         type="text"
         class="form-control"
       >
@@ -18,6 +19,7 @@
         type="button"
         class="btn btn-dark"
         data-bs-dismiss="modal"
+        @click="message = ''"
       >
         Cancel
       </button>
@@ -25,7 +27,7 @@
         type="button"
         class="btn btn-danger"
         data-bs-dismiss="modal"
-        :disabled="details == ''"
+        :disabled="messageRequired && message == ''"
         @click="emitConfirm"
       >
         Confirm
@@ -50,14 +52,18 @@ const props = defineProps({
   text: {
     type: String,
     required: true
+  },
+  messageRequired: {
+    type: Boolean
   }
 })
 
-const details = ref("")
+const message = ref("")
 
 const emit = defineEmits(["confirm"])
 
 function emitConfirm () {
-  emit("confirm", details.value)
+  console.log(message.value)
+  emit("confirm", message.value)
 }
 </script>

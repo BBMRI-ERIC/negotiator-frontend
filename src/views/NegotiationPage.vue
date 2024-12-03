@@ -1,10 +1,11 @@
 <template>
   <div v-if="!loading">
     <GoBackButton />
-    <dismissal-confirmation-modal
+    <confirmation-with-message-modal
       id="abandonModal"
-      :title="`Are you sure you want to ${selectedStatus ? selectedStatus.toLowerCase() : 'Unknown'} this Negotiation?`"
-      text="Before confirming, please add the reason for rejection"
+      :title="`Are you sure you want to ${selectedStatus ? selectedStatus.label.toLowerCase() : 'Unknown'} this Negotiation?`"
+      :text="`${selectedStatus && selectedStatus.messageRequired ? 'Please explain why and then confirm' : 'Please confirm your action'}`"
+      :message-required="selectedStatus && selectedStatus.messageRequired"
       @confirm="updateNegotiation"
     />
     <confirmation-modal
@@ -15,7 +16,10 @@
     />
     <div class="row mt-4">
       <div class="row-col-2">
-        <h1 class="fw-bold" :style="{ 'color': uiConfiguration.primaryTextColor }">
+        <h1
+          class="fw-bold"
+          :style="{ 'color': uiConfiguration.primaryTextColor }"
+        >
           {{ negotiation ? negotiation.payload.project.title?.toUpperCase() : "" }}
         </h1>
         <span
@@ -36,9 +40,9 @@
             :key="element"
             class="list-group-item p-3"
           >
-          <div v-if="negotiation?._links?.Update && Object.keys(negotiation.payload)[0] === key" class="position-absolute top-0 end-0 mt-2">
-            <button type="button" class="btn text-black status-box cursor-pointer" data-bs-toggle="modal" data-bs-target="#negotiationUpdateModal"><i class="bi bi-pencil-square cursor-pointer" /></button>
-          </div>
+            <div v-if="negotiation?._links?.Update && Object.keys(negotiation.payload)[0] === key" class="position-absolute top-0 end-0 mt-2">
+              <button type="button" class="btn text-black status-box cursor-pointer" data-bs-toggle="modal" data-bs-target="#negotiationUpdateModal"><i class="bi bi-pencil-square cursor-pointer" /></button>
+            </div>
             <span class="fs-5 fw-bold mt-3" :style="{ 'color': uiConfiguration.primaryTextColor }">
               {{ transformDashToSpace(key).toUpperCase() }}</span>
             <div
@@ -83,7 +87,7 @@
             </div>
           </li>
           <li class="list-group-item p-3">
-            <span 
+            <span
               class="fs-5 fw-bold mt-3 mb-3"
               :style="{ 'color': uiConfiguration.primaryTextColor }"
             >
@@ -112,7 +116,7 @@
                 aria-expanded="true"
                 type="button"
               >
-                <span 
+                <span
                   class="fs-5 fw-bold mt-3"
                   :style="{ 'color': uiConfiguration.primaryTextColor }"
                 >
@@ -154,7 +158,7 @@
                   type="button"
                   title="The term Resource is abstract and can for example refer to biological samples, datasets or a service such as sequencing."
                 >
-                  <span 
+                  <span
                     class="fs-5 fw-bold mt-3"
                     :style="{ 'color': uiConfiguration.primaryTextColor }"
                   >
@@ -191,21 +195,20 @@
                 <label v-if="Object.entries(representedOrganizationsById).length > 0" class="me-2 fw-bold" :style="{ 'color': uiConfiguration.secondaryTextColor }">
                   Involved Organizations/Resources
                 </label>
-            
-                <div 
+                <div
                   v-for="[orgId, org] in Object.entries(representedOrganizationsById)"
                   :key="orgId"
                 >
-                    <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
+                  <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
                 </div>
               </div>
               <div class="not-involved-organizations-resources">
                 <hr v-if="Object.entries(representedOrganizationsById).length > 0 && Object.entries(notRepresentedOrganizationsById).length > 0"/>
-                <div 
+                <div
                   v-for="[orgId, org] in Object.entries(notRepresentedOrganizationsById)"
                   :key="orgId"
                 >
-                    <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
+                  <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
                 </div>
               </div>
             </div>
@@ -223,20 +226,20 @@
       <div class="col-12 col-md-4 order-1 order-md-2">
         <ul class="list-group list-group-flush my-3">
           <li class="list-group-item p-2">
-            <div 
+            <div
               class="fw-bold"
               :style="{ 'color': uiConfiguration.primaryTextColor }"
             >
               Author:
             </div>
-            <div 
+            <div
               :style="{ 'color': uiConfiguration.secondaryTextColor }"
             >
               {{ author.name }}
             </div>
           </li>
           <li class="list-group-item p-2">
-            <div 
+            <div
               class="fw-bold"
               :style="{ 'color': uiConfiguration.primaryTextColor }"
             >
@@ -245,7 +248,7 @@
             <span :style="{ 'color': uiConfiguration.secondaryTextColor }">{{ author.email }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div 
+            <div
               class="fw-bold"
               :style="{ 'color': uiConfiguration.primaryTextColor }"
             >
@@ -254,7 +257,7 @@
             <span :style="{ 'color': uiConfiguration.secondaryTextColor }"> {{ negotiation ? negotiation.id : "" }}</span>
           </li>
           <li class="list-group-item p-2">
-            <div 
+            <div
               class="fw-bold"
               :style="{ 'color': uiConfiguration.primaryTextColor }"
             >
@@ -264,7 +267,7 @@
           </li>
           <li class="list-group-item p-2 d-flex justify-content-between">
             <div>
-              <div 
+              <div
                 class="fw-bold"
                 :style="{ 'color': uiConfiguration.primaryTextColor }"
               >
@@ -283,26 +286,26 @@
             </div>
           </li>
           <li
-            v-if="getLifecycleLinks(negotiation._links).length > 0"
+            v-if="possibleEvents.length > 0"
             class="list-group-item p-2 d-flex justify-content-between"
           >
             <ul class="list-unstyled mt-1 d-flex flex-row flex-wrap">
               <li
-                v-for="link in getLifecycleLinks(negotiation._links)"
-                :key="link.name"
+                v-for="event in possibleEvents"
+                :key="event.label"
                 class="me-2"
               >
                 <button
-                  :class="getButtonColor(link.name)"
+                  :class="getButtonColor(event.label)"
                   class="btn btn-status mb-1 d-flex text-left"
                   data-bs-toggle="modal"
                   data-bs-target="#abandonModal"
-                  @click="assignStatus(link.name)"
+                  @click="assignStatus(event)"
                 >
                   <i
-                    :class="getButtonIcon(link.name)"
+                    :class="getButtonIcon(event.label)"
                   />
-                  {{ link.name }}
+                  {{ event.label }}
                 </button>
               </li>
             </ul>
@@ -352,7 +355,7 @@
 import { computed, onBeforeMount, onMounted, ref } from "vue"
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
-import DismissalConfirmationModal from "@/components/modals/DismissalConfirmationModal.vue"
+import ConfirmationWithMessageModal from "@/components/modals/ConfirmationWithMessageModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import NegotiationOrganizationCard from "@/components/NegotiationOrganizationCard.vue"
@@ -369,8 +372,7 @@ import {
 import AddResourcesButton from "@/components/AddResourcesButton.vue"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
-import { useAdminStore } from "../store/admin.js"
-import { useUiConfiguration } from '@/store/uiConfiguration.js'
+import { useUiConfiguration } from "@/store/uiConfiguration.js"
 import { useRouter } from "vue-router"
 
 const props = defineProps({
@@ -384,7 +386,7 @@ const uiConfigurationStore = useUiConfiguration()
 const negotiation = ref(undefined)
 const resources = ref([])
 const representedResourcesIds = ref([])
-const negotiationStatusOptions = ref([])
+const possibleEvents = ref([])
 const availableRoles = ref(ROLES)
 const selectedStatus = ref(undefined)
 const attachments = ref([])
@@ -392,7 +394,6 @@ const isAddResourcesButtonVisible = ref(false)
 const resourceStates = ref([])
 const userStore = useUserStore()
 const negotiationPageStore = useNegotiationPageStore()
-const adminStore = useAdminStore()
 const router = useRouter()
 
 const uiConfiguration = computed(() => {
@@ -442,7 +443,6 @@ const organizationsById = computed(() => {
         updatable: isResourceRepresented(resource) // Set updateable to true if any resource is represented
       }
     }
- 
     return organizations
   }, {})
 })
@@ -488,7 +488,7 @@ const postsRecipients = computed(() => {
   })
 })
 function assignStatus (status) {
-  selectedStatus.value = status.toUpperCase()
+  selectedStatus.value = status
 }
 const author = computed(() => {
   return negotiation.value.author
@@ -507,11 +507,11 @@ onBeforeMount(async () => {
     isAddResourcesButtonVisible.value = hasRightsToAddResources(resourceResponse._links)
   }
   await negotiationPageStore.retrieveUserIdRepresentedResources(userStore.userInfo?.id).then((resp) => {
-    if(resp) {
+    if (resp) {
       representedResourcesIds.value = resp.map(a => a.sourceId)
     }
   })
-  negotiationStatusOptions.value = getLifecycleLinks(negotiation.value._links)
+  possibleEvents.value = await negotiationPageStore.retrievePossibleEvents(props.negotiationId)
   resourceStates.value = await negotiationPageStore.retrieveResourceAllStates()
 })
 
@@ -544,11 +544,6 @@ function isRepresentativeForResource (resourceId) {
   return representedResourcesIds.value.includes(resourceId)
 }
 
-function isRepresentativeForOrganization (organizationId) {
-  return representedOrganizations.value.map((org) => org.externalId).includes(organizationId)
-}
-
-
 function isAttachment (value) {
   return value instanceof Object
 }
@@ -557,27 +552,18 @@ function printDate (date) {
   return moment(date).format(dateFormat)
 }
 
-async function updateNegotiation (details) {
+async function updateNegotiation (message) {
   await negotiationPageStore.updateNegotiationStatus(
     negotiation.value.id,
-    selectedStatus.value,
-    details
+    selectedStatus.value.value,
+    message
   ).then(async () => {
     negotiation.value = await negotiationPageStore.retrieveNegotiationById(
       props.negotiationId
     )
   })
   await reloadResources()
-}
-
-function getLifecycleLinks (links) {
-  const lifecycleLinks = []
-  for (const key in links) {
-    if (links[key].title === "Next Lifecycle event") {
-      lifecycleLinks.push(links[key])
-    }
-  }
-  return lifecycleLinks
+  await reloadStates()
 }
 
 function getSummaryLinks (links) {
@@ -604,6 +590,9 @@ async function reloadResources () {
   }
 }
 
+async function reloadStates () {
+  possibleEvents.value = await negotiationPageStore.retrievePossibleEvents(props.negotiationId)
+}
 
 function downloadAttachment (id, name) {
   negotiationPageStore.downloadAttachment(id, name)
@@ -611,10 +600,6 @@ function downloadAttachment (id, name) {
 
 function downloadAttachmentFromLink (href) {
   negotiationPageStore.downloadAttachmentFromLink(href)
-}
-
-async function retrieveInfoRequirement (link) {
-  adminStore.retrieveInfoRequirement(link)
 }
 
 function transformDashToSpace (text) {
