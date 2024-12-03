@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading">
     <GoBackButton />
-    <confirmation-with-message-modal
+    <confirmation-modal
       id="abandonModal"
       :title="`Are you sure you want to ${selectedStatus ? selectedStatus.label.toLowerCase() : 'Unknown'} this Negotiation?`"
       :text="`${selectedStatus && selectedStatus.messageRequired ? 'Please explain why and then confirm' : 'Please confirm your action'}`"
@@ -12,6 +12,7 @@
       id="negotiationUpdateModal"
       title="Negotiation update"
       text="Are you sure you want to update Negotiation"
+      :message-required="false"
       @confirm="updateNegotiationPayload()"
     />
     <div class="row mt-4">
@@ -355,7 +356,6 @@
 import { computed, onBeforeMount, onMounted, ref } from "vue"
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
-import ConfirmationWithMessageModal from "@/components/modals/ConfirmationWithMessageModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import NegotiationOrganizationCard from "@/components/NegotiationOrganizationCard.vue"

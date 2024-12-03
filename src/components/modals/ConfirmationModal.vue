@@ -4,15 +4,22 @@
     :title="title"
   >
     <template #body>
-      <p>
+      <div class="mb-2">
         {{ text }}
-      </p>
+      </div>
+      <input
+        v-if="messageRequired"
+        v-model="message"
+        type="text"
+        class="form-control"
+      >
     </template>
     <template #footer>
       <button
         type="button"
         class="btn btn-dark"
         data-bs-dismiss="modal"
+        @click="message = ''"
       >
         Cancel
       </button>
@@ -20,6 +27,7 @@
         type="button"
         class="btn btn-danger"
         data-bs-dismiss="modal"
+        :disabled="messageRequired && message == ''"
         @click="emitConfirm"
       >
         Confirm
@@ -30,6 +38,7 @@
 
 <script setup>
 import NegotiatorModal from "./NegotiatorModal.vue"
+import { ref } from "vue"
 
 const props = defineProps({
   id: {
@@ -43,12 +52,18 @@ const props = defineProps({
   text: {
     type: String,
     required: true
+  },
+  messageRequired: {
+    type: Boolean
   }
 })
+
+const message = ref("")
 
 const emit = defineEmits(["confirm"])
 
 function emitConfirm () {
-  emit("confirm")
+  console.log(message.value)
+  emit("confirm", message.value)
 }
 </script>
