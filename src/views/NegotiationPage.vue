@@ -5,13 +5,14 @@
       id="abandonModal"
       :title="`Are you sure you want to ${selectedStatus ? selectedStatus.label.toLowerCase() : 'Unknown'} this Negotiation?`"
       text="Please confirm your action and, possibly, leave a comment"
+      :message-enabled="true"
       @confirm="updateNegotiation"
     />
     <confirmation-modal
       id="negotiationUpdateModal"
       title="Negotiation update"
       text="Are you sure you want to update Negotiation"
-      :message-required="false"
+      :message-enabled="false"
       @confirm="updateNegotiationPayload()"
     />
     <div class="row mt-4">

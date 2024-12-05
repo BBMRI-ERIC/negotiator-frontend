@@ -7,11 +7,11 @@
       <div class="mb-2">
         {{ text }}
       </div>
-      <input
+      <textarea
+        v-if="messageEnabled"
         v-model="message"
-        type="text"
         class="form-control"
-      >
+      />
     </template>
     <template #footer>
       <button
@@ -50,6 +50,10 @@ const props = defineProps({
   text: {
     type: String,
     required: true
+  },
+  messageEnabled: {
+    type: Boolean,
+    required: false
   }
 })
 
