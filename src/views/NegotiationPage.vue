@@ -4,8 +4,7 @@
     <confirmation-modal
       id="abandonModal"
       :title="`Are you sure you want to ${selectedStatus ? selectedStatus.label.toLowerCase() : 'Unknown'} this Negotiation?`"
-      :text="`${selectedStatus && selectedStatus.messageRequired ? 'Please explain why and then confirm' : 'Please confirm your action'}`"
-      :message-required="selectedStatus && selectedStatus.messageRequired"
+      text="Please confirm your action and, possibly, leave a comment"
       @confirm="updateNegotiation"
     />
     <confirmation-modal
@@ -221,6 +220,7 @@
           :resources="resources"
           :organizations="organizationsById"
           :recipients="postsRecipients"
+          :external-posts="posts"
           @new_attachment="retrieveAttachments()"
         />
       </div>

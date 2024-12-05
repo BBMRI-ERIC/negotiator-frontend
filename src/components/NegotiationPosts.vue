@@ -159,7 +159,7 @@ import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
 import { useOidcStore } from "../store/oidc"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
-import { useUiConfiguration } from '@/store/uiConfiguration.js'
+import { useUiConfiguration } from "@/store/uiConfiguration.js"
 
 const uiConfigurationStore = useUiConfiguration()
 
