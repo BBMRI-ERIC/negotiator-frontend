@@ -412,7 +412,7 @@ export default {
         commit("setNotification", "Error sending message")
       })
   },
-  async retrieveInfoRequirement ({ state }, { link }) {
+  async retrieveInfoRequirement ({ state, commit }, { link }) {
     return axios.get(`${link}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data
@@ -462,7 +462,7 @@ export default {
         commit("setNotification", error.response.data.title + ": " + error.response.data.detail)
       })
   },
-  async retrieveInformationSubmission ({ state }, { href }) {
+  async retrieveInformationSubmission ({ state, commit }, { href }) {
     return axios.get(`${href}`, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
         return response.data

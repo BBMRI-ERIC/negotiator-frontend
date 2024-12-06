@@ -24,7 +24,7 @@ library.add(faDownload)
 const pinia = createPinia()
 const app = createApp(App)
 
-if(matomo.matomoHost !== 'MATOMO_HOST_PLACEHOLDER') {
+if (matomo.matomoHost !== "MATOMO_HOST_PLACEHOLDER") {
   app.use(VueMatomo, {
     host: matomo.matomoHost,
     siteId: matomo.matomoId
@@ -41,8 +41,8 @@ app.component("FontAwesomeIcon", FontAwesomeIcon)
 
 app.mount("#app")
 
-if(matomo.matomoHost !== 'MATOMO_HOST_PLACEHOLDER') {
+if (matomo.matomoHost !== "MATOMO_HOST_PLACEHOLDER") {
   window._paq.push(["trackPageView"]) // To track a page view
 }
 
-import(`./assets/scss/theme.scss`)
+import("./assets/scss/theme.scss")

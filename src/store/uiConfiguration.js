@@ -8,30 +8,30 @@ export const useUiConfiguration = defineStore("uiConfiguration", () => {
   const notifications = useNotificationsStore()
   const uiConfiguration = ref({})
 
-  function retrieveUiConfiguration() {
+  function retrieveUiConfiguration () {
     return axios.get(`${apiPaths.BASE_API_PATH}/ui-config`)
       .then((response) => {
         uiConfiguration.value = response.data
         return response.data
       })
       .catch(() => {
-        notifications.setNotification("Error getting UI Configuration data from server", 'danger')
+        notifications.setNotification("Error getting UI Configuration data from server", "danger")
         return null
       })
   }
 
   function updateUiConfiguration (UiConfiguration) {
-    return axios.put(`${apiPaths.BASE_API_PATH}/ui-config`, UiConfiguration , { headers: getBearerHeaders() })
+    return axios.put(`${apiPaths.BASE_API_PATH}/ui-config`, UiConfiguration, { headers: getBearerHeaders() })
       .then(() => {
-        notifications.setNotification(`Than you. Your Ui-Configuration was submitted successfully`, 'success')
+        notifications.setNotification("Than you. Your Ui-Configuration was submitted successfully", "success")
       })
       .catch(() => {
-        notifications.setNotification("Error updating Ui-Configuration status", 'danger')
+        notifications.setNotification("Error updating Ui-Configuration status", "danger")
         return null
       })
   }
 
-  onMounted(async() => {
+  onMounted(async () => {
     if (Object.keys(uiConfiguration.value).length === 0) {
       await retrieveUiConfiguration()
     }
