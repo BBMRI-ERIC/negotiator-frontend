@@ -1,10 +1,10 @@
-FROM node:lts-bookworm as  build-stage
+FROM node:lts-bookworm AS  build-stage
 WORKDIR /app
 COPY . .
 RUN yarn install
 RUN yarn build
 
-FROM bitnami/nginx:1.24 as production-stage
+FROM bitnami/nginx:1.24 AS production-stage
 WORKDIR /app
 COPY --from=build-stage /app/dist .
 COPY src/assets/scss /app/assets
