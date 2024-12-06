@@ -17,7 +17,7 @@ jobs:
           cache: 'yarn'
 
       - name: Lint
-        run: eslint src
+        run: yarn eslint src
 
   install:
     runs-on: ubuntu-latest
