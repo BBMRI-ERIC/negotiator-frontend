@@ -3,6 +3,7 @@
     id="saveModal"
     title="Are you sure you want to save?"
     text="Confirming, you will change ui-configuration."
+    :message-enabled="false"
     @confirm="save()"
   />
   <h1 class="mb-5">

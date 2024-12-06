@@ -9,6 +9,7 @@
     id="feedbackModal"
     :title="notificationTitle"
     :text="notificationText"
+    :message-enabled="false"
     dismiss-button-text="Back to HomePage"
     @dismiss="backToHomePage"
     @confirm="startNegotiation"
