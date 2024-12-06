@@ -4,9 +4,9 @@
     :title="title"
   >
     <template #body>
-      <div class="mb-2">
+      <p>
         {{ text }}
-      </div>
+      </p>
       <textarea
         v-if="messageEnabled"
         v-model="message"
