@@ -259,7 +259,7 @@ async function retrieveLatestNegotiations (currentPageNumber) {
   if (currentPageNumber) {
     pageNumber.value = currentPageNumber - 1
   }
-  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 1, pageNumber.value, filtersSortData.value)
+  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 50, pageNumber.value, filtersSortData.value)
   pagination.value = response.page
   if (response.page.totalElements === 0) {
     negotiations.value = {}
