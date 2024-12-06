@@ -41,10 +41,23 @@
             :key="element"
             class="list-group-item p-3"
           >
-            <div v-if="negotiation?._links?.Update && Object.keys(negotiation.payload)[0] === key" class="position-absolute top-0 end-0 mt-2">
-              <button type="button" class="btn text-black status-box cursor-pointer" data-bs-toggle="modal" data-bs-target="#negotiationUpdateModal"><i class="bi bi-pencil-square cursor-pointer" /></button>
+            <div
+              v-if="negotiation?._links?.Update && Object.keys(negotiation.payload)[0] === key"
+              class="position-absolute top-0 end-0 mt-2"
+            >
+              <button
+                type="button"
+                class="btn text-black status-box cursor-pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#negotiationUpdateModal"
+              >
+                <i class="bi bi-pencil-square cursor-pointer" />
+              </button>
             </div>
-            <span class="fs-5 fw-bold mt-3" :style="{ 'color': uiConfiguration.primaryTextColor }">
+            <span
+              class="fs-5 fw-bold mt-3"
+              :style="{ 'color': uiConfiguration.primaryTextColor }"
+            >
               {{ transformDashToSpace(key).toUpperCase() }}</span>
             <div
               v-for="(subelement, subelementkey) in element"
@@ -193,23 +206,41 @@
               class="collapse show"
             >
               <div class="involved-organizations-resources">
-                <label v-if="Object.entries(representedOrganizationsById).length > 0" class="me-2 fw-bold" :style="{ 'color': uiConfiguration.secondaryTextColor }">
+                <label
+                  v-if="Object.entries(representedOrganizationsById).length > 0"
+                  class="me-2 fw-bold"
+                  :style="{ 'color': uiConfiguration.secondaryTextColor }"
+                >
                   Involved Organizations/Resources
                 </label>
                 <div
                   v-for="[orgId, org] in Object.entries(representedOrganizationsById)"
                   :key="orgId"
                 >
-                  <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
+                  <NegotiationOrganizationCard
+                    :org-id="orgId"
+                    :org="org"
+                    :negotiation-id="negotiationId"
+                    :resources="resources"
+                    :resource-states="resourceStates"
+                    @reload-resources="reloadResources()"
+                  />
                 </div>
               </div>
               <div class="not-involved-organizations-resources">
-                <hr v-if="Object.entries(representedOrganizationsById).length > 0 && Object.entries(notRepresentedOrganizationsById).length > 0"/>
+                <hr v-if="Object.entries(representedOrganizationsById).length > 0 && Object.entries(notRepresentedOrganizationsById).length > 0">
                 <div
                   v-for="[orgId, org] in Object.entries(notRepresentedOrganizationsById)"
                   :key="orgId"
                 >
-                  <NegotiationOrganizationCard :org-id="orgId" :org="org" :negotiation-id="negotiationId" :resources="resources" :resource-states="resourceStates" @reload-resources="reloadResources()"/>
+                  <NegotiationOrganizationCard
+                    :org-id="orgId"
+                    :org="org"
+                    :negotiation-id="negotiationId"
+                    :resources="resources"
+                    :resource-states="resourceStates"
+                    @reload-resources="reloadResources()"
+                  />
                 </div>
               </div>
             </div>
@@ -451,13 +482,13 @@ const organizationsById = computed(() => {
 const representedOrganizationsById = computed(() => {
   return Object.entries(organizationsById.value)
     .filter(([key, value]) => value.updatable === true)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 })
 
 const notRepresentedOrganizationsById = computed(() => {
   return Object.entries(organizationsById.value)
     .filter(([key, value]) => value.updatable === false)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 })
 
 // Helper function to check if a resource is represented
