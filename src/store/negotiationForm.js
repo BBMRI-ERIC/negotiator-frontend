@@ -115,7 +115,7 @@ export const useNegotiationFormStore = defineStore("negotiationForm", () => {
       }
     }
 
-    return axios.put(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}`,data, { headers: getBearerHeaders() })
+    return axios.put(`${apiPaths.NEGOTIATION_PATH}/${negotiationId}`, data, { headers: getBearerHeaders() })
       .then((response) => {
         return response.data
       })

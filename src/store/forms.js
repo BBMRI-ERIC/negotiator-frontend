@@ -50,7 +50,7 @@ export const useFormsStore = defineStore("forms", () => {
       })
   }
 
-  return { 
+  return {
     retrieveAccessFormById,
     retrieveAllAccessForms,
     retrieveDynamicAccessFormsValueSetByLink,
