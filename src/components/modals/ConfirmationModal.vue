@@ -7,12 +7,18 @@
       <p>
         {{ text }}
       </p>
+      <textarea
+        v-if="messageEnabled"
+        v-model="message"
+        class="form-control"
+      />
     </template>
     <template #footer>
       <button
         type="button"
         class="btn btn-dark"
         data-bs-dismiss="modal"
+        @click="message = ''"
       >
         Cancel
       </button>
@@ -30,6 +36,7 @@
 
 <script setup>
 import NegotiatorModal from "./NegotiatorModal.vue"
+import { ref } from "vue"
 
 const props = defineProps({
   id: {
@@ -43,12 +50,18 @@ const props = defineProps({
   text: {
     type: String,
     required: true
+  },
+  messageEnabled: {
+    type: Boolean,
+    required: false
   }
 })
+
+const message = ref("")
 
 const emit = defineEmits(["confirm"])
 
 function emitConfirm () {
-  emit("confirm")
+  emit("confirm", message.value)
 }
 </script>

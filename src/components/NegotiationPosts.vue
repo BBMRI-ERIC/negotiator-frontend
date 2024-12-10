@@ -25,16 +25,17 @@
         </div>
         <div class="d-flex justify-content-between align-items-center">
           <!-- Left Side: Author Information -->
-          <div class="d-flex align-items-center"
+          <div
+            class="d-flex align-items-center"
             :style="{ 'color': uiConfiguration.primaryTextColor}"
           >
-            <i 
-              class="bi bi-person-circle" 
+            <i
+              class="bi bi-person-circle"
             />
             <span class="ms-2">
               <strong>{{ getAuthorName(post) }}</strong>
             </span>
-            <span 
+            <span
               class="ms-1"
               :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7}"
             >
@@ -44,7 +45,10 @@
 
           <!-- Right Side: Recipient Badge -->
           <span>
-            <span class="me-1" :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7}">
+            <span
+              class="me-1"
+              :style="{ 'color': uiConfiguration.primaryTextColor, 'opacity': 0.7}"
+            >
               to
             </span>
             <span
@@ -57,9 +61,11 @@
           </span>
         </div>
       </div>
-      <div class="card-body" :style="{ 'color': uiConfiguration.secondaryTextColor }"      >
-        {{ post.text }}
-      </div>
+      <div
+        class="card-body"
+        :style="{ 'color': uiConfiguration.secondaryTextColor }"
+        v-html="formatText(post.text)"
+      />
     </div>
     <hr
       v-if="posts.length === 0"
@@ -159,7 +165,7 @@ import moment from "moment"
 import NegotiationAttachment from "./NegotiationAttachment.vue"
 import { useOidcStore } from "../store/oidc"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
-import { useUiConfiguration } from '@/store/uiConfiguration.js'
+import { useUiConfiguration } from "@/store/uiConfiguration.js"
 
 const uiConfigurationStore = useUiConfiguration()
 
@@ -189,6 +195,7 @@ const props = defineProps({
     }
   }
 })
+const formatText = (text) => text.replace(/\n/g, "<br>")
 const posts = ref([])
 const message = ref("")
 const recipientId = ref("")
@@ -204,7 +211,7 @@ const oidcUser = computed(() => {
 
 const readyToSend = computed(() => {
   return (message.value !== "" || attachment.value !== undefined) && recipientId.value !== "" &&
-  (props.negotiation.publicPostsEnabled || props.negotiation.privatePostsEnabled)
+      (props.negotiation.publicPostsEnabled || props.negotiation.privatePostsEnabled)
 })
 computed(() => {
   return props.recipients.reduce((obj, item) => Object.assign(obj, { [item.id]: { name: item.name } }), {})
@@ -273,9 +280,11 @@ function resetForm () {
 function resetAttachment () {
   attachment.value = undefined
 }
+
 function printDate (date) {
   return moment(date).format(dateFormat)
 }
+
 function showAttachment (event) {
   const file = event.target.files[0]
   attachment.value = file
@@ -307,6 +316,7 @@ function getAuthorName (post) {
 function getRecipientPostColor (post) {
   return post.type === POST_TYPE.PUBLIC ? { "bg-warning": true } : { "bg-primary": true }
 }
+
 function getRecipientIcon (post) {
   return post.type === POST_TYPE.PUBLIC ? { "bi bi-people-fill": true } : { "bi bi-lock-fill": true }
 }
@@ -320,6 +330,7 @@ function getRecipientName (post) {
     return "Everyone"
   }
 }
+
 function getUserBadges (post) {
   const badges = []
   if (post.createdBy.representativeOfAnyResource === true) {
@@ -336,6 +347,7 @@ function getUserBadges (post) {
   }
   return badges
 }
+
 function getBadgeTooltip (badge) {
   const badgeTooltips = {
     Admin: "Negotiator Administrator",
@@ -345,26 +357,32 @@ function getBadgeTooltip (badge) {
   }
   return badgeTooltips[badge] || "Badge details"
 }
+
 const emit = defineEmits(["new_attachment"])
+
+defineExpose({
+  retrievePostsByNegotiationId
+})
 </script>
 
 <style scoped>
 /** the input file is hidden */
 .btn-attachment input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    cursor: inherit;
-    display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  cursor: inherit;
+  display: block;
 }
-.bi-exclamation-diamond{
+
+.bi-exclamation-diamond {
   color: orange;
 }
 </style>

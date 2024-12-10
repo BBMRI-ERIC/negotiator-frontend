@@ -19,6 +19,7 @@
     } resources you represent in this Negotiation to ${
       orgStatus ? orgStatus.label : 'Unknown'
     } ?`"
+    :message-enabled="true"
     @confirm="updateOrganization()"
   />
   <div class="card mb-2">
