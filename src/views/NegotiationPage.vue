@@ -247,6 +247,7 @@
           </li>
         </ul>
         <NegotiationPosts
+          ref="negotiationPosts"
           v-if="negotiation"
           :negotiation="negotiation"
           :resources="resources"
@@ -427,6 +428,7 @@ const resourceStates = ref([])
 const userStore = useUserStore()
 const negotiationPageStore = useNegotiationPageStore()
 const router = useRouter()
+const negotiationPosts = ref(null);
 
 const uiConfiguration = computed(() => {
   return uiConfigurationStore.uiConfiguration?.theme
@@ -596,6 +598,8 @@ async function updateNegotiation (message) {
   })
   await reloadResources()
   await reloadStates()
+
+  negotiationPosts.value.retrievePostsByNegotiationId()
 }
 
 function getSummaryLinks (links) {

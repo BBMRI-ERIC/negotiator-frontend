@@ -359,6 +359,10 @@ function getBadgeTooltip (badge) {
 }
 
 const emit = defineEmits(["new_attachment"])
+
+defineExpose({
+  retrievePostsByNegotiationId
+})
 </script>
 
 <style scoped>
