@@ -121,7 +121,7 @@
           />
           {{ returnCurrentMode }}
         </div>
-        <Notifications
+        <NotificationsButton
           v-if="featureFlagsNotifications"
           class="me-3"
         />
@@ -162,7 +162,7 @@ import ProfileSettings from "../components/ProfileSettings.vue"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import canservLogo from "../assets/images/canserv/nav-bar-canserv.png"
 import eucaimLogo from "../assets/images/eucaim/nav-bar-eucaim.png"
-import Notifications from "../components/Notifications.vue"
+import NotificationsButton from "./NotificationsButton.vue"
 import allFeatureFlags from "@/config/featureFlags.js"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
 import { useActuatorInfoStore } from "../store/actuatorInfo"

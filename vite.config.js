@@ -8,7 +8,9 @@ import git from "git-rev-sync"
 
 const PROXY_TARGET = "http://localhost:8081"
 
+// eslint-disable-next-line
 process.env.VITE_GIT_COMMIT_HASH = git.short()
+// eslint-disable-next-line
 process.env.VITE_GIT_TAG = git.tag()
 
 export default defineConfig({
