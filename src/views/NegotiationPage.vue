@@ -419,8 +419,11 @@ const uiConfigurationStore = useUiConfiguration()
 const negotiation = ref(undefined)
 const resources = ref([])
 const representedResourcesIds = ref([])
+<<<<<<< HEAD
 const possibleEvents = ref([])
 const availableRoles = ref(ROLES)
+=======
+>>>>>>> 9fa5d62 (fix: 70 eslint errors)
 const negotiationStatusOptions = ref([])
 const selectedStatus = ref(undefined)
 const attachments = ref([])
