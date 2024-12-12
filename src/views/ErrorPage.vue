@@ -5,7 +5,10 @@
     </h1>
     <div class="image-text-box mt-5">
       <div class="errors-text">
-        <p v-for="error in useNotifications.allNotifications">
+        <p 
+          v-for="(error, index) in useNotifications.allNotifications"
+          :key="index"
+        >
           {{ error.message }}
         </p>
       </div>

@@ -227,7 +227,7 @@ export const useNegotiationPageStore = defineStore("negotiationPage", () => {
       )
       notifications.setNotification("Resources were successfully updated")
       return response.data
-    } catch (error) {
+    } catch {
       notifications.setNotification("There was an error saving the attachment")
       return undefined
     }

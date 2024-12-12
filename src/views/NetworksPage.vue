@@ -181,7 +181,6 @@
 import { onMounted, ref, watch } from "vue"
 import { useNetworksPageStore } from "@/store/networksPage"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/user"
 import { getBadgeColor, getBadgeIcon } from "@/composables/utils"
 import FilterSort from "@/components/FilterSort.vue"
@@ -195,7 +194,6 @@ const props = defineProps({
     required: true
   }
 })
-const router = useRouter()
 const userStore = useUserStore()
 const negotiationsStore = useNegotiationsStore()
 const networksPageStore = useNetworksPageStore()
@@ -203,15 +201,6 @@ const network = ref(undefined)
 const negotiations = ref(undefined)
 const currentTab = ref("overview") // Default tab
 const stats = ref(undefined)
-const userStats = ref({
-  total: 5,
-  new: 0
-})
-const orgStats = ref({
-  total: 5,
-  responsive: 3,
-  unresponsive: 2
-})
 const pagination = ref(undefined)
 const states = ref(undefined)
 const filtersSortData = ref({

@@ -256,7 +256,7 @@ async function addAttachmentToNegotiation () {
     negotiationId: props.negotiation.id,
     attachment: attachment.value
   }
-  await negotiationPageStore.addAttachmentToNegotiation(data).then((post) => {
+  await negotiationPageStore.addAttachmentToNegotiation(data).then(() => {
     if (attachment.value) {
       console.log(`Successfully uploaded file: ${attachment.value.name}`)
     }

@@ -349,14 +349,14 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, reactive, ref } from "vue"
+import { computed, onBeforeMount, onMounted, ref } from "vue"
 import NegotiationPosts from "@/components/NegotiationPosts.vue"
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue"
 import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import NegotiationOrganizationCard from "@/components/NegotiationOrganizationCard.vue"
 import PDFButton from "@/components/PDFButton.vue"
-import { dateFormat, ROLES } from "@/config/consts"
+import { dateFormat } from "@/config/consts"
 import moment from "moment"
 import {
   getBadgeColor,
@@ -368,7 +368,6 @@ import {
 import AddResourcesButton from "@/components/AddResourcesButton.vue"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
-import { useAdminStore } from "../store/admin.js"
 import { useUiConfiguration } from '@/store/uiConfiguration.js'
 import { useRouter } from "vue-router"
 
@@ -384,14 +383,12 @@ const negotiation = ref(undefined)
 const resources = ref([])
 const representedResourcesIds = ref([])
 const negotiationStatusOptions = ref([])
-const availableRoles = ref(ROLES)
 const selectedStatus = ref(undefined)
 const attachments = ref([])
 const isAddResourcesButtonVisible = ref(false)
 const resourceStates = ref([])
 const userStore = useUserStore()
 const negotiationPageStore = useNegotiationPageStore()
-const adminStore = useAdminStore()
 const router = useRouter()
 
 const uiConfiguration = computed(() => {
@@ -448,13 +445,13 @@ const organizationsById = computed(() => {
 
 const representedOrganizationsById = computed(() => {
   return Object.entries(organizationsById.value)
-    .filter(([key, value]) => value.updatable === true)
+    .filter(([, value]) => value.updatable === true)
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 })
 
 const notRepresentedOrganizationsById = computed(() => {
   return Object.entries(organizationsById.value)
-    .filter(([key, value]) => value.updatable === false)
+    .filter(([, value]) => value.updatable === false)
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 })
 
@@ -470,16 +467,6 @@ function isResourceRepresented (resource) {
 
 const numberOfResources = computed(() => {
   return getResources.value.length
-})
-const representedResources = computed(() => {
-  return getResources.value.filter(resource => isRepresentativeForResource(resource.sourceId))
-})
-const representedOrganizations = computed(() => {
-  return representedResources.value.map(resource => resource.organization).filter((value, index, self) =>
-    index === self.findIndex((t) => (
-      t.externalId === value.externalId
-    ))
-  )
 })
 const postsRecipients = computed(() => {
   return organizations.value.map(org => {
@@ -538,16 +525,6 @@ function hasRightsToAddResources (links) {
   }
   return false
 }
-
-function isRepresentativeForResource (resourceId) {
-  return representedResourcesIds.value.includes(resourceId)
-}
-
-function isRepresentativeForOrganization (organizationId) {
-  return representedOrganizations.value.map((org) => org.externalId).includes(organizationId)
-}
-
-
 function isAttachment (value) {
   return value instanceof Object
 }
@@ -609,10 +586,6 @@ function downloadAttachment (id, name) {
 
 function downloadAttachmentFromLink (href) {
   negotiationPageStore.downloadAttachmentFromLink(href)
-}
-
-async function retrieveInfoRequirement (link) {
-  adminStore.retrieveInfoRequirement(link)
 }
 
 function transformDashToSpace (text) {

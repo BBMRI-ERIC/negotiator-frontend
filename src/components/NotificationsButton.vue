@@ -43,7 +43,7 @@
 <script setup>
 import { computed } from "vue"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
-import { useNotificationsStore } from "../store/notifications"
+import { useNotificationsStore } from "../store/notifications.js"
 
 const uiConfigurationStore = useUiConfiguration()
 const notificationsStore = useNotificationsStore()

@@ -37,7 +37,7 @@ import { computed } from "vue"
 import { transformStatus, getBadgeColor, getBadgeIcon } from "../composables/utils.js"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
 
-const props = defineProps({
+defineProps({
   id: {
     type: String,
     default: ""
