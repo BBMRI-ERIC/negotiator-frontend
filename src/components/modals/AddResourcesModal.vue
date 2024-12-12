@@ -193,7 +193,7 @@ const props = defineProps({
   }
 })
 const store = useNegotiationPageStore()
-watch(() => props.shown, (first, second) => {
+watch(() => props.shown, () => {
   if (props.shown !== false) {
     loadResources()
     loadStates()
