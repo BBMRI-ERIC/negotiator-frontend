@@ -30,11 +30,9 @@ import { ROLES } from "@/config/consts.js"
 import { useRouter, useRoute } from "vue-router"
 import { useUserStore } from "../store/user"
 import { useNegotiationsStore } from "../store/negotiations"
-import { useNotificationsStore } from "@/store/notifications"
 
 const userStore = useUserStore()
 const negotiationsStore = useNegotiationsStore()
-const notifications = useNotificationsStore()
 const router = useRouter()
 const route = useRoute()
 

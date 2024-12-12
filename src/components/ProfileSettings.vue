@@ -110,7 +110,7 @@ const oidcStore = useOidcStore()
 const props = defineProps({
   user: {
     type: Object,
-    default: {}
+    default: () => ({})
   },
   isAdmin: {
     type: Boolean,
