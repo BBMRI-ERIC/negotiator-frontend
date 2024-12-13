@@ -50,7 +50,7 @@ import { useRoute } from "vue-router"
 
 const route = useRoute()
 
-const props = defineProps({
+defineProps({
   negotiations: {
     type: Array,
     default: undefined

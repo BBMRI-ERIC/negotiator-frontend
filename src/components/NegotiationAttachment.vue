@@ -62,8 +62,6 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(["removed", "download"])
-
 const downloadable = computed(() => {
   return props.id !== undefined
 })
@@ -103,8 +101,5 @@ function getFileTypeName (fileType) {
   } else if (fileType === "application/msword") {
     return "DOC"
   }
-}
-function emitRemoved () {
-  emit("removed")
 }
 </script>

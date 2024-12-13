@@ -9,7 +9,7 @@
       v-if="$route.path !== '/'"
       class="mt-5 pt-4"
     >
-      <Alert />
+      <AlertNotification />
       &nbsp;
     </div>
     <div class="container body d-flex flex-column">
@@ -43,8 +43,8 @@ import { useNotificationsStore } from "@/store/notifications.js"
 import allFeatureFlags from "@/config/featureFlags.js"
 import VueTour from "./components/VueTour.vue"
 import NavigationBar from "./components/NavigationBar.vue"
-import Alert from "./components/Alert.vue"
-import Footer from "./components/Footer.vue"
+import AlertNotification from "./components/AlertNotification.vue"
+import Footer from "./components/FooterComp.vue"
 import errorPage from "@/views/ErrorPage.vue"
 import { useUiConfiguration } from '@/store/uiConfiguration.js'
 

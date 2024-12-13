@@ -130,7 +130,8 @@
             >
               Update status:
               <div
-                v-for="link in getLifecycleLinks(resource._links)"
+                v-for="(link, index) in getLifecycleLinks(resource._links)"
+                :key="index"
                 class="lifecycle-links flex-column"
               >
                 <a
@@ -142,14 +143,14 @@
             </div>
           </div>
 
-          <div v-for="link in getSubmissionLinks(resource._links)">
+          <div v-for="(link, index) in getSubmissionLinks(resource._links)" :key="index">
             <a
               class="submission-text cursor-pointer"
               @click.prevent="openFormModal(link.href)"
               ><i class="bi bi-check-circle" /> {{ link.name }}
             </a>
           </div>
-          <div v-for="link in getRequirementLinks(resource._links)">
+          <div v-for="(link, index) in getRequirementLinks(resource._links)" :key="index">
             <a
               class="requirement-text cursor-pointer"
               @click="openModal(link.href, resource.id)"
@@ -174,25 +175,27 @@ import {
   transformStatus,
 } from "../composables/utils.js";
 import CopyTextButton from "@/components/CopyTextButton.vue";
+// eslint-disable-next-line
 import FormViewModal from "@/components/modals/FormViewModal.vue";
+// eslint-disable-next-line
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue";
 
 const props = defineProps({
   orgId: {
     type: Object,
-    default: {},
+    default: () => ({}),
   },
   org: {
     type: Object,
-    default: {},
+    default: () => ({}),
   },
   resources: {
     type: Array,
-    default: [],
+    default: () => ([]),
   },
   resourceStates: {
     type: Array,
-    default: [],
+    default: () => ([]),
   },
   negotiationId: {
     type: String,
@@ -273,6 +276,7 @@ async function openModal(href, resourcesId) {
   resourceId.value = resourcesId;
   requiredAccessForm.value = requirement.requiredAccessForm;
   requirementId.value = requirement.id;
+  // eslint-disable-next-line
   formSubmissionModal.value = new Modal(
     document.querySelector("#formSubmissionModal")
   );
@@ -284,6 +288,7 @@ async function openFormModal(href) {
     href
   );
   submittedForm.value = payload.payload;
+  // eslint-disable-next-line
   formViewModal.value = new Modal(document.querySelector("#formViewModal"));
   formViewModal.value.show();
 }

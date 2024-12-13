@@ -62,7 +62,7 @@ const router = createRouter({
     component: UserPage,
     props: { userRole: ROLES.REPRESENTATIVE },
     meta: { isPublic: false },
-    beforeEnter: async (to, from) => {
+    beforeEnter: async () => {
       return await isAllowedToAccess(ROLES.REPRESENTATIVE)
     }
   }, {
@@ -71,7 +71,7 @@ const router = createRouter({
     component: UserPage,
     props: { userRole: ROLES.ADMINISTRATOR },
     meta: { isPublic: false },
-    beforeEnter: async (to, from) => {
+    beforeEnter: async () => {
       return await isAllowedToAccess(ROLES.ADMINISTRATOR)
     }
   },
@@ -86,7 +86,7 @@ const router = createRouter({
     name: "settings",
     component: AdminSettingsPage,
     meta: { isPublic: false, middleware: [hasUser] },
-    beforeEnter: async (to, from) => {
+    beforeEnter: async () => {
       return await isAllowedToAccess(ROLES.ADMINISTRATOR)
     }
   },
@@ -95,7 +95,7 @@ const router = createRouter({
     name: "ui-configuration",
     component: AdminUiConfigurationPage,
     meta: { isPublic: false, middleware: [hasUser] },
-    beforeEnter: async (to, from) => {
+    beforeEnter: async () => {
       return await isAllowedToAccess(ROLES.ADMINISTRATOR)
     }
   },

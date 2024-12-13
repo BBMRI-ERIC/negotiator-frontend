@@ -11,6 +11,7 @@
 <script setup>
 import { computed } from "vue"
 import jsPDF from "jspdf"
+// eslint-disable-next-line
 import autoTable from "jspdf-autotable"
 import bbmriLogo from "../assets/images/bbmri/nav-bar-bbmri.png"
 import eucaimLogo from "../assets/images/eucaim/home-eucaim.png"
@@ -48,7 +49,7 @@ const returnLogoSrc = computed(() => {
   return uiConfigurationNavbar.value?.navbarLogoUrl
 })
 
-function createPDF (view) {
+function createPDF () {
   const pdfName = "negotiation"
   const doc = new jsPDF({ compress: true })
 
@@ -76,7 +77,7 @@ function createPDF (view) {
   })
 
   for (const [key, value] of Object.entries(negotiationUser)) {
-    const keyLength = 2 + (key.length * 2)
+
     doc.autoTable({
       body: [
         [`${key}:`, `${value}`]

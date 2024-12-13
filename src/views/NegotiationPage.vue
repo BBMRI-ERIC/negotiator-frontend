@@ -393,7 +393,7 @@ import NegotiationAttachment from "@/components/NegotiationAttachment.vue"
 import GoBackButton from "@/components/GoBackButton.vue"
 import NegotiationOrganizationCard from "@/components/NegotiationOrganizationCard.vue"
 import PDFButton from "@/components/PDFButton.vue"
-import { dateFormat, ROLES } from "@/config/consts"
+import { dateFormat } from "@/config/consts"
 import moment from "moment"
 import {
   getBadgeColor,
@@ -405,7 +405,7 @@ import {
 import AddResourcesButton from "@/components/AddResourcesButton.vue"
 import { useNegotiationPageStore } from "../store/negotiationPage.js"
 import { useUserStore } from "../store/user.js"
-import { useUiConfiguration } from "@/store/uiConfiguration.js"
+import { useUiConfiguration } from '@/store/uiConfiguration.js'
 import { useRouter } from "vue-router"
 
 const props = defineProps({
@@ -420,7 +420,6 @@ const negotiation = ref(undefined)
 const resources = ref([])
 const representedResourcesIds = ref([])
 const possibleEvents = ref([])
-const availableRoles = ref(ROLES)
 const selectedStatus = ref(undefined)
 const attachments = ref([])
 const isAddResourcesButtonVisible = ref(false)
@@ -483,14 +482,14 @@ const organizationsById = computed(() => {
 
 const representedOrganizationsById = computed(() => {
   return Object.entries(organizationsById.value)
-    .filter(([key, value]) => value.updatable === true)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+    .filter(([, value]) => value.updatable === true)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 })
 
 const notRepresentedOrganizationsById = computed(() => {
   return Object.entries(organizationsById.value)
-    .filter(([key, value]) => value.updatable === false)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+    .filter(([, value]) => value.updatable === false)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 })
 
 // Helper function to check if a resource is represented
@@ -505,16 +504,6 @@ function isResourceRepresented (resource) {
 
 const numberOfResources = computed(() => {
   return getResources.value.length
-})
-const representedResources = computed(() => {
-  return getResources.value.filter(resource => isRepresentativeForResource(resource.sourceId))
-})
-const representedOrganizations = computed(() => {
-  return representedResources.value.map(resource => resource.organization).filter((value, index, self) =>
-    index === self.findIndex((t) => (
-      t.externalId === value.externalId
-    ))
-  )
 })
 const postsRecipients = computed(() => {
   return organizations.value.map(org => {
@@ -573,11 +562,6 @@ function hasRightsToAddResources (links) {
   }
   return false
 }
-
-function isRepresentativeForResource (resourceId) {
-  return representedResourcesIds.value.includes(resourceId)
-}
-
 function isAttachment (value) {
   return value instanceof Object
 }
