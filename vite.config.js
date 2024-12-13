@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from "node:url"
 
-import { defineConfig,loadEnv } from "vite"
+import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import Components from "unplugin-vue-components/vite"
 import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers"
@@ -8,19 +8,10 @@ import git from "git-rev-sync"
 
 const PROXY_TARGET = "http://localhost:8081"
 
-export default defineConfig(({ command }) =>{
-  if (command === 'serve') {
-    // dev specific config
-    process.env.VITE_GIT_TAG = git.tag()
-  } else {
-    // build specific config
-    process.env.VITE_GIT_TAG = git.tag()
-    // remove this line to build localy
-    process.env.VITE_GIT_COMMIT_HASH = git.short()
-  }
+// eslint-disable-next-line
+process.env.VITE_GIT_TAG = git.tag()
 
-
-  return {
+export default defineConfig({
     plugins: [
       vue(),
       Components({
@@ -40,6 +31,5 @@ export default defineConfig(({ command }) =>{
           changeOrigin: true
         }
       }
-    }
-  }
+    },
 })
