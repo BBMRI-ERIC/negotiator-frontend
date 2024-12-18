@@ -100,7 +100,7 @@
           <span :style="{'color': uiConfiguration?.loginLinksTextColor, 'opacity':0.5}">This application was created using the </span> 
           <a href="https://github.com/BBMRI-ERIC/negotiator" :style="{'color': uiConfiguration?.loginLinksColor}">BBMRI-ERIC Negotiator</a>  
           <span :style="{'color': uiConfiguration?.loginLinksTextColor, 'opacity':0.5}"> open source software </span>
-          <a href="https://github.com/BBMRI-ERIC/negotiator/blob/master/LICENSE" :style="{'color': uiConfiguration?.loginLinksColor}">(license: LGPLv3)</a>
+          <a href="https://github.com/BBMRI-ERIC/negotiator/blob/master/LICENSE" :style="{'color': uiConfiguration?.loginLinksColor}">(license: AGPLv3)</a>
         </div>
         <div class="text-center version-class"
         :style="{'color':uiConfiguration?.loginLinksTextColor, 'opacity': 0.5}">

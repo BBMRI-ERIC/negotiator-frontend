@@ -149,7 +149,7 @@
           <span :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}">This application was created using the </span> 
           <a href="https://github.com/BBMRI-ERIC/negotiator" :style="{'color': uiConfiguration?.footerTextColor}">BBMRI-ERIC Negotiator</a>  
           <span :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}"> open source software </span>
-          <a href="https://github.com/BBMRI-ERIC/negotiator/blob/master/LICENSE" :style="{'color': uiConfiguration?.footerTextColor}">(license: LGPLv3)</a>
+          <a href="https://github.com/BBMRI-ERIC/negotiator/blob/master/LICENSE" :style="{'color': uiConfiguration?.footerTextColor}">(license: AGPLv3)</a>
           <div class="col text-center" :style="{'color': uiConfiguration?.footerTextColor, 'opacity':0.5}">
             UI: <span class="pe-2">{{ gitTag }}</span>Application: <span>{{ backendVersion }}</span>
           </div>
