@@ -123,6 +123,7 @@
             >
               <Pie
                 :data="pieData"
+                class="mb-3"
               />
             </div>
           </div>
@@ -345,7 +346,7 @@ async function retrieveLatestNegotiations (currentPageNumber) {
   }
 }
 </script>
-<style>
+<style scoped>
 .avatar {
   width: 100px;
   height: 100px;
@@ -429,20 +430,8 @@ async function retrieveLatestNegotiations (currentPageNumber) {
   padding: 0 15px;    /* Optional: Add padding for spacing */
 }
 
-.stat-box {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  padding: 20px;
-  text-align: center;
-}
-
 .stat-box h5 {
   margin-bottom: 0;
-}
-
-.negotiation-item:hover {
-  background-color: rgba(0, 0, 0, 0.075); /* Default Bootstrap hover color */
 }
 
 .small-icon {
