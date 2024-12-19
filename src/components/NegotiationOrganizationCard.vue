@@ -53,6 +53,13 @@
             </label>
           </div>
         </div>
+        <div class="d-inline-flex align-items-center mx-2">
+            <i
+              class="bi bi-info-circle cursor-pointer"
+              :style="{'color': uiConfiguration?.primaryTextColor, opacity: '0.7'}"
+              @click="redirectToOrganizationOverviewPage(org.resources[0].organization.id)"
+            />
+        </div>
         <div class="ms-2 mx-2 ms-auto d-flex flex-column">
           <div
             class="ms-2 mx-2 ms-auto d-inline-flex align-items-center status-box p-1 cursor-pointer"
@@ -176,6 +183,7 @@ import {
 import CopyTextButton from "@/components/CopyTextButton.vue";
 import FormViewModal from "@/components/modals/FormViewModal.vue";
 import FormSubmissionModal from "@/components/modals/FormSubmissionModal.vue";
+import { useRouter } from "vue-router"
 
 const props = defineProps({
   orgId: {
@@ -212,6 +220,7 @@ const negotiationPageStore = useNegotiationPageStore();
 const submittedForm = ref(undefined);
 const formViewModal = ref(null);
 const emit = defineEmits(["reloadResources"]);
+const router = useRouter()
 
 const uiConfiguration = computed(() => {
   return uiConfigurationStore.uiConfiguration?.theme;
@@ -338,6 +347,11 @@ async function updateOrganization() {
   await negotiationPageStore.addResources(data, negotiationId);
   emit("reloadResources");
 }
+
+function redirectToOrganizationOverviewPage (id){
+  if(id)
+  router.push("/organization/" + id)
+} 
 </script>
 
 <style scoped>
