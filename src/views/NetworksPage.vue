@@ -101,7 +101,7 @@
         <div class="card">
           <div class="card-body">
             <!-- Card Header -->
-            <div class="d-flex flex-row mb-4 align-items-center">
+            <div class="d-flex flex-row mb-2 align-items-center">
               <h4 class="card-title mb-0">
                 Requests
               </h4>
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Total Number of Requests -->
-            <div class="text-center mb-4">
+            <div class="text-center mb-2">
               <h5>Total Requests: {{ stats.totalNumberOfNegotiations }}</h5>
             </div>
 
@@ -123,7 +123,7 @@
             >
               <Pie
                 :data="pieData"
-                class="mb-3"
+                :options="pieOptions"
               />
             </div>
           </div>
@@ -257,6 +257,7 @@ import { useNegotiationsStore } from "@/store/negotiations"
 import { Pie } from "vue-chartjs"
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, DoughnutController } from "chart.js"
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, DoughnutController)
+import { getPieChartBackgroundColor } from "../composables/utils.js";
 
 // Pie chart data
 
@@ -290,13 +291,19 @@ const userRole = ref("author")
 const pageNumber = ref(0)
 const isLoaded = ref(false)
 // Pie chart data
-const pieData = ref({
-  labels: [],
-  datasets: [{
-    data: [],
-    backgroundColor: ["#007bff", "#28a745", "#dc3545"],
-    hoverOffset: 4
-  }]
+const pieData = ref({})
+const pieOptions = ref({
+  responsive: true,
+        plugins: {
+            legend: {
+              position: "right",
+              align: "center",
+              labels: {
+                boxWidth: 20,
+                padding: 20
+              }
+          }
+        }
 })
 onMounted(async () => {
   await userStore.retrieveUser()
@@ -330,8 +337,22 @@ async function loadNetworkInfo (networkId) {
 }
 async function loadStats (networkId) {
   stats.value = await networksPageStore.retrieveNetworkStats(networkId, startDate.value, endDate.value)
-  pieData.value.labels = Object.keys(stats.value.statusDistribution)
-  pieData.value.datasets[0].data = Object.values(stats.value.statusDistribution)
+  if(!stats.value.statusDistribution) {
+    setPieData(Object.keys(stats.value.statusDistribution),Object.values(stats.value.statusDistribution))
+  } else {
+    setPieData(['Total Requests: 0'],[100])
+  }
+}
+
+function setPieData (labelsData,datasetsData) {
+  pieData.value = {
+    labels: labelsData,
+    datasets: [{
+      data: datasetsData,
+      backgroundColor: getPieChartBackgroundColor(),
+      hoverOffset: 4
+    }]
+  }
 }
 async function retrieveLatestNegotiations (currentPageNumber) {
   if (currentPageNumber) {
@@ -439,7 +460,7 @@ async function retrieveLatestNegotiations (currentPageNumber) {
 }
 .pie-chart-container {
   width: 100%; /* Ensure it fills its container */
-  height: 200px; /* Fixed height */
+  height: 300px; /* Fixed height */
   display: flex;  /* Enable Flexbox */
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
