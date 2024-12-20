@@ -218,7 +218,7 @@ export default {
   updateResourceStatus ({ state, commit }, { link }) {
     return axios.put(`${link}`, {}, { headers: getBearerHeaders(state.oidc.access_token) })
       .then((response) => {
-        commit("setNotification", `Than you. Your action for Negotiation ${response.data.id} was submitted successfully`)
+        commit("setNotification", `Thank you. Your action for Negotiation ${response.data.id} was submitted successfully`)
         return response.data
       })
       .catch(() => {

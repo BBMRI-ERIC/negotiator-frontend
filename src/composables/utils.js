@@ -145,3 +145,7 @@ export function getStatusIcon (stateValue) {
     return "bi bi-question-circle" // Fallback icon
   }
 }
+
+export function getPieChartBackgroundColor () {
+  return ["#014685", "#dc3544", "#a4a4a4", "#f36f22", "#545456"]
+}
