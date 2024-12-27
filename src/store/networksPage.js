@@ -37,8 +37,8 @@ export const useNetworksPageStore = defineStore("networksPage", () => {
         return {}
       })
   }
-  async function retrieveNetworkStats (networkId) {
-    return await axios.get(`${apiPaths.BASE_API_PATH}/networks/${networkId}/statistics`, { headers: getBearerHeaders() })
+  async function retrieveNetworkStats (networkId, startDate, endDate) {
+    return await axios.get(`${apiPaths.BASE_API_PATH}/networks/${networkId}/statistics?since=${startDate}&until=${endDate}`, { headers: getBearerHeaders() })
       .then((response) => {
         return response.data
       })
