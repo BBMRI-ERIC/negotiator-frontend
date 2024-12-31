@@ -12,22 +12,14 @@ declare module '@vue/runtime-core' {
     AccessCriteriaSection: typeof import('./src/components/negotiation-tabs/AccessCriteriaSection.vue')['default']
     AddResourcesButton: typeof import('./src/components/AddResourcesButton.vue')['default']
     AddResourcesModal: typeof import('./src/components/modals/AddResourcesModal.vue')['default']
-<<<<<<< HEAD
-    Alert: typeof import('./src/components/Alert.vue')['default']
-=======
     Alert: typeof import('./src/components/AlertNotification.vue')['default']
->>>>>>> 9fa5d62 (fix: 70 eslint errors)
     AlertNotification: typeof import('./src/components/AlertNotification.vue')['default']
     BAvatar: typeof import('bootstrap-vue-next')['BAvatar']
     ConfirmationModal: typeof import('./src/components/modals/ConfirmationModal.vue')['default']
     CopyTextButton: typeof import('./src/components/CopyTextButton.vue')['default']
     FeedbackModal: typeof import('./src/components/modals/FeedbackModal.vue')['default']
     FilterSort: typeof import('./src/components/FilterSort.vue')['default']
-<<<<<<< HEAD
-    Footer: typeof import('./src/components/Footer.vue')['default']
-=======
     Footer: typeof import('./src/components/FooterComp.vue')['default']
->>>>>>> 9fa5d62 (fix: 70 eslint errors)
     FooterComp: typeof import('./src/components/FooterComp.vue')['default']
     FormSubmissionModal: typeof import('./src/components/modals/FormSubmissionModal.vue')['default']
     FormViewModal: typeof import('./src/components/modals/FormViewModal.vue')['default']
@@ -45,11 +37,7 @@ declare module '@vue/runtime-core' {
     NetworkSelect: typeof import('./src/components/NetworkSelect.vue')['default']
     NewRequestButton: typeof import('./src/components/NewRequestButton.vue')['default']
     NewRequestModal: typeof import('./src/components/modals/NewRequestModal.vue')['default']
-<<<<<<< HEAD
-    Notifications: typeof import('./src/components/Notifications.vue')['default']
-=======
     Notifications: typeof import('./src/components/NotificationsButton.vue')['default']
->>>>>>> 9fa5d62 (fix: 70 eslint errors)
     NotificationsButton: typeof import('./src/components/NotificationsButton.vue')['default']
     OidcCallback: typeof import('./src/components/OidcCallback.vue')['default']
     PDFButton: typeof import('./src/components/PDFButton.vue')['default']
