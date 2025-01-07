@@ -8,28 +8,28 @@ import git from "git-rev-sync"
 
 const PROXY_TARGET = "http://localhost:8081"
 
-process.env.VITE_GIT_COMMIT_HASH = git.short()
+// eslint-disable-next-line
 process.env.VITE_GIT_TAG = git.tag()
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    Components({
-      resolvers: [BootstrapVueNextResolver()]
-    })
-  ],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url))
-    }
-  },
-  server: {
-    port: 8080,
-    proxy: {
-      "^/api": {
-        target: PROXY_TARGET,
-        changeOrigin: true
+    plugins: [
+      vue(),
+      Components({
+        resolvers: [BootstrapVueNextResolver()]
+      })
+    ],
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url))
       }
-    }
-  }
+    },
+    server: {
+      port: 8080,
+      proxy: {
+        "^/api": {
+          target: PROXY_TARGET,
+          changeOrigin: true
+        }
+      }
+    },
 })

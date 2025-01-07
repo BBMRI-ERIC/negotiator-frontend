@@ -1,7 +1,7 @@
 <template>
   <FilterSort
     v-if="!loading"
-    :filters-sort-data="filtersSortData"
+    v-model:filtersSortData="filtersSortData"
     :user-role="userRole"
     :filters-status="filtersStatus"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
@@ -10,7 +10,7 @@
     :negotiations="negotiations"
     :pagination="pagination"
     :user-role="userRole"
-    :filters-sort-data="filtersSortData"
+    v-model:filtersSortData="filtersSortData"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
   <NegotiationPagination
@@ -30,11 +30,9 @@ import { ROLES } from "@/config/consts.js"
 import { useRouter, useRoute } from "vue-router"
 import { useUserStore } from "../store/user"
 import { useNegotiationsStore } from "../store/negotiations"
-import { useNotificationsStore } from "@/store/notifications"
 
 const userStore = useUserStore()
 const negotiationsStore = useNegotiationsStore()
-const notifications = useNotificationsStore()
 const router = useRouter()
 const route = useRoute()
 

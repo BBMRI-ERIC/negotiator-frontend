@@ -59,10 +59,6 @@ const uiConfiguration = computed(() => {
   return uiConfigurationStore.uiConfiguration?.theme
 })
 
-const organizations = computed(() => {
-  return Object.entries(organizationsById).map(([k, v]) => { return { externalId: k, name: v.name } })
-})
-
 const organizationsById = computed(() => {
   return props.resources.reduce((organizations, resource) => {
     if (resource.organization.externalId in organizations) {
@@ -75,13 +71,6 @@ const organizationsById = computed(() => {
       }
     }
     return organizations
-  }, {})
-})
-
-const resourcesById = computed(() => {
-  return props.resources.reduce((resourcesObjects, resource) => {
-    resourcesObjects[resource.id] = resource
-    return resourcesObjects
   }, {})
 })
 

@@ -25,7 +25,7 @@ const emit = defineEmits(["userNetworksSelected", "userNetworksSelectedName"])
 const props = defineProps({
     userNetworks: {
         type: Array,
-        default: []
+        default: () => ([])
     }
 })
 
