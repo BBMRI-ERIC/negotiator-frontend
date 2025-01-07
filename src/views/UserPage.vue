@@ -1,7 +1,7 @@
 <template>
   <FilterSort
     v-if="!loading"
-    :filters-sort-data="filtersSortData"
+    v-model:filtersSortData="filtersSortData"
     :user-role="userRole"
     :filters-status="filtersStatus"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
@@ -10,7 +10,7 @@
     :negotiations="negotiations"
     :pagination="pagination"
     :user-role="userRole"
-    :filters-sort-data="filtersSortData"
+    v-model:filtersSortData="filtersSortData"
     @filters-sort-data="retrieveNegotiationsBySortAndFilter"
   />
   <NegotiationPagination

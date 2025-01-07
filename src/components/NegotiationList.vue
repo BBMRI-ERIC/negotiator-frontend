@@ -61,7 +61,7 @@
           :submitter="fn.author.name"
           :creation-date="formatDate(fn.creationDate)"
           :class="networkActivated === true ? '' : 'cursor-pointer'"
-          @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
+          @click="goToNegotiation(fn.id)"
         />
       </div>
 
@@ -138,7 +138,7 @@
               <tr
                 v-for="(fn,index) in negotiations"
                 :key="index"
-                @click="goToNegotiation(fn.id,userRole,filtersData,sortby)"
+                @click="goToNegotiation(fn.id)"
               >
                 <th
                   scope="row"
@@ -234,7 +234,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, ref } from "vue"
+import { computed, onBeforeMount } from "vue"
 import NegotiationCard from "@/components/NegotiationCard.vue"
 import { ROLES } from "@/config/consts"
 import moment from "moment"
@@ -244,6 +244,7 @@ import NewRequestButton from "../components/NewRequestButton.vue"
 import { useNegotiationsViewStore } from "../store/negotiationsView.js"
 import { useUiConfiguration } from '../store/uiConfiguration.js'
 
+const filtersSortData = defineModel('filtersSortData')
 const uiConfigurationStore = useUiConfiguration()
 const router = useRouter()
 const negotiationsViewStore = useNegotiationsViewStore()
@@ -262,21 +263,11 @@ const props = defineProps({
     required: true,
     validator: (prop) => [ROLES.RESEARCHER, ROLES.REPRESENTATIVE, ROLES.ADMINISTRATOR].includes(prop)
   },
-  filtersSortData: {
-    type: Object,
-    default: undefined
-  },
   networkActivated: {
     type: Boolean,
     default: false
   }
 })
-
-const sortBy = ref([
-  { value: "title", label: "Title" },
-  { value: "creationDate", label: "Creation Date" },
-  { value: "currentState", label: "Current State" }
-])
 
 const loading = computed(() => {
   return props.negotiations === undefined
@@ -305,12 +296,12 @@ function formatDate (date) {
 }
 
 function changeSortDirection (sortBy) {
-  if (props.filtersSortData.sortDirection === "DESC") {
-    props.filtersSortData.sortBy = sortBy
-    props.filtersSortData.sortDirection = "ASC"
+  if (filtersSortData.value.sortDirection === "DESC") {
+    filtersSortData.value.sortBy = sortBy
+    filtersSortData.value.sortDirection = "ASC"
   } else {
-    props.filtersSortData.sortBy = sortBy
-    props.filtersSortData.sortDirection = "DESC"
+    filtersSortData.value.sortBy = sortBy
+    filtersSortData.value.sortDirection = "DESC"
   }
 }
 
@@ -320,10 +311,10 @@ function emitFilterSortData () {
   emit("filtersSortData", props.filtersSortData)
 }
 
-function goToNegotiation (id, userRole, filtersData, sortby) {
+function goToNegotiation (id) {
   router.push({
     name: "negotiation-page",
-    params: { negotiationId: id, filters: filtersData, sortBy: sortby }
+    params: { negotiationId: id}
   })
 }
 </script>

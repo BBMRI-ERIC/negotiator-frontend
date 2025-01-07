@@ -174,14 +174,11 @@ import { ROLES } from "@/config/consts"
 import { useRouter } from "vue-router"
 import { useUiConfiguration } from "../store/uiConfiguration.js"
 
+const filtersSortData = defineModel('filtersSortData')
 const uiConfigurationStore = useUiConfiguration()
 const router = useRouter()
 
-const props = defineProps({
-  filtersSortData: {
-    type: Object,
-    default: undefined
-  },
+defineProps({
   filtersStatus: {
     type: Array,
     default: () => []
@@ -217,31 +214,31 @@ const returnClearButtonColor = computed(() => {
 })
 
 function emitFilterSortData () {
-  emit("filtersSortData", props.filtersSortData)
+  emit("filtersSortData", filtersSortData.value)
 }
 
 function changeSortDirection () {
-  if (props.filtersSortData.sortDirection === "DESC") {
-    props.filtersSortData.sortDirection = "ASC"
+  if (filtersSortData.value.sortDirection === "DESC") {
+    filtersSortData.value.sortDirection = "ASC"
   } else {
-    props.filtersSortData.sortDirection = "DESC"
+    filtersSortData.value.sortDirection = "DESC"
   }
-  emit("filtersSortData", props.filtersSortData)
+  emit("filtersSortData", filtersSortData.value)
 }
 
 function clearAllFilters () {
-  props.filtersSortData.status = []
-  props.filtersSortData.dateStart = ""
-  props.filtersSortData.dateEnd = ""
-  props.filtersSortData.sortBy = "creationDate"
-  props.filtersSortData.sortDirection = "DESC"
+  filtersSortData.value.status = []
+  filtersSortData.value.dateStart = ""
+  filtersSortData.value.dateEnd = ""
+  filtersSortData.value.sortBy = "creationDate"
+  filtersSortData.value.sortDirection = "DESC"
 
-  emit("filtersSortData", props.filtersSortData)
+  emit("filtersSortData", filtersSortData.value)
   router.push({ query: { } })
 }
 
 function isChecked (value) {
-  return props.filtersSortData.sortBy === value
+  return filtersSortData.value.sortBy === value
 }
 </script>
 

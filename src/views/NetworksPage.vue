@@ -224,14 +224,14 @@
           v-if="isLoaded"
           :user-role="userRole"
           :filters-status="states"
-          :filters-sort-data="filtersSortData"
+          v-model:filtersSortData="filtersSortData"
           @filters-sort-data="retrieveLatestNegotiations"
         />
         <NegotiationList
           :negotiations="negotiations"
           :pagination="pagination"
           :network-activated="true"
-          :filters-sort-data="filtersSortData"
+          v-model:filtersSortData="filtersSortData"
           @filters-sort-data="retrieveLatestNegotiations"
         />
         <NegotiationPagination
@@ -327,10 +327,6 @@ loadNegotiationStates()
 retrieveLatestNegotiations()
 async function loadNegotiationStates () {
   states.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
-}
-function getLabelByValue (value) {
-  const item = states.value.find(entry => entry.value === value)
-  return item ? item.label : null // Returns null if the value is not found
 }
 async function loadNetworkInfo (networkId) {
   network.value = await networksPageStore.retrieveNetwork(networkId)
