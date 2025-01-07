@@ -225,19 +225,19 @@
           :user-role="userRole"
           :filters-status="states"
           v-model:filtersSortData="filtersSortData"
-          @filters-sort-data="retrieveLatestNegotiations"
+          @filters-sort-data="retrieveNegotiationsBySortAndFilter"
         />
         <NegotiationList
           :negotiations="negotiations"
           :pagination="pagination"
           :network-activated="true"
           v-model:filtersSortData="filtersSortData"
-          @filters-sort-data="retrieveLatestNegotiations"
+          @filters-sort-data="retrieveNegotiationsBySortAndFilter"
         />
         <NegotiationPagination
           :negotiations="negotiations"
           :pagination="pagination"
-          @current-page-number="retrieveLatestNegotiations"
+          @current-page-number="retrieveNegotiationsByPage"
         />
       </div>
     </div>
@@ -288,7 +288,6 @@ const startOfYear = new Date(today.getFullYear(), 0, 1)
 const startDate = ref(startOfYear.toISOString().slice(0, 10))
 const endDate = ref(today.toISOString().slice(0, 10))
 const userRole = ref("author")
-const pageNumber = ref(0)
 const isLoaded = ref(false)
 // Pie chart data
 const pieData = ref({})
@@ -324,7 +323,7 @@ watch(
 loadNetworkInfo(props.networkId)
 loadStats(props.networkId)
 loadNegotiationStates()
-retrieveLatestNegotiations()
+retrieveLatestNegotiations(0)
 async function loadNegotiationStates () {
   states.value = await negotiationsStore.retrieveNegotiationLifecycleStates()
 }
@@ -351,10 +350,7 @@ function setPieData (labelsData,datasetsData) {
   }
 }
 async function retrieveLatestNegotiations (currentPageNumber) {
-  if (currentPageNumber) {
-    pageNumber.value = currentPageNumber - 1
-  }
-  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 50, pageNumber.value, filtersSortData.value)
+  const response = await networksPageStore.retrieveNetworkNegotiations(props.networkId, 50, currentPageNumber, filtersSortData.value)
   pagination.value = response.page
   if (response.page.totalElements === 0) {
     negotiations.value = {}
@@ -362,6 +358,22 @@ async function retrieveLatestNegotiations (currentPageNumber) {
     negotiations.value = response._embedded.negotiations
   }
 }
+
+function incriseDateEndIfSame () {
+  if (filtersSortData.value.dateStart && filtersSortData.value.dateStart === filtersSortData.value.dateEnd) {
+    filtersSortData.value.dateEnd = moment(filtersSortData.value.dateEnd).add(1, "days").format("YYYY-MM-DD")
+  }
+}
+
+function retrieveNegotiationsBySortAndFilter () {
+  incriseDateEndIfSame()
+  retrieveLatestNegotiations(0)
+}
+
+function retrieveNegotiationsByPage (currentPageNumber) {
+  retrieveLatestNegotiations(currentPageNumber - 1)
+}
+
 </script>
 <style scoped>
 .avatar {
