@@ -247,6 +247,7 @@
 
 <script setup>
 import { onMounted, ref, watch } from "vue"
+import moment from "moment"
 import { useNetworksPageStore } from "@/store/networksPage"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { useUserStore } from "@/store/user"
